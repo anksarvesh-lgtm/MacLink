@@ -133,80 +133,26 @@ QtObject {
     readonly property color errorContainer: Qt.tint(surfaceContainerHigh, Qt.rgba(error.r, error.g, error.b, dark ? 0.22 : 0.14))
     readonly property color errorContainerContent: surfaceContent
 
-    // ---- Component colors (docs/design/assets/nl.css) ----
-    // Hive: nearly opaque, so the comb shows through as texture without
-    // ever crossing text.
-    readonly property color cardColor: hive
-        ? (function() {
-            const c = Qt.tint(surfaceContainer, Qt.rgba(primaryContainer.r, primaryContainer.g, primaryContainer.b, dark ? 0.12 : 0.18))
-            return Qt.rgba(c.r, c.g, c.b, dark ? 0.90 : 0.92)
-        })()
-        : graphite ? "transparent"
-        : (glass
-            ? Qt.tint(
-                Qt.rgba(surfaceContainer.r, surfaceContainer.g, surfaceContainer.b, amoled ? 0.56 : (dark ? 0.36 : 0.52)),
-                Qt.rgba(primary.r, primary.g, primary.b, dark ? 0.08 : 0.06)
-            )
-            : (artworkAmbientActive
-                ? Qt.rgba(surfaceContainer.r, surfaceContainer.g, surfaceContainer.b, dark ? 0.74 : 0.80)
-                : (amoled
-                    ? Qt.tint(surfaceContainer, Qt.rgba(primaryContainer.r, primaryContainer.g, primaryContainer.b, 0.08))
-                    : Qt.tint(
-                        surfaceContainer,
-                        Qt.rgba(primaryContainer.r, primaryContainer.g, primaryContainer.b, isPhoneSeed ? (dark ? 0.28 : 0.36) : (dark ? 0.16 : 0.22))
-                    ))))
-    // Hive: a faint honey edge, like wax around a cell.
-    readonly property color cardBorder: hive
-        ? Qt.rgba(primary.r, primary.g, primary.b, dark ? 0.14 : 0.16)
-        : graphite ? outlineVariant
-        : (glass
-            ? (dark ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.28))
-            : (artworkAmbientActive
-                ? Qt.rgba(outlineVariant.r, outlineVariant.g, outlineVariant.b, dark ? 0.36 : 0.45)
-                : (amoled ? "#1D1F27" : "transparent")))
-    readonly property color tileColor: hive
-        ? Qt.tint(surfaceContainerHigh, Qt.rgba(primaryContainer.r, primaryContainer.g, primaryContainer.b, dark ? 0.14 : 0.20))
-        : graphite ? "transparent"
-        : (glass
-            ? Qt.tint(
-                Qt.rgba(1, 1, 1, dark ? 0.08 : 0.48),
-                Qt.rgba(primary.r, primary.g, primary.b, dark ? 0.08 : 0.06)
-            )
-            : (artworkAmbientActive
-                ? Qt.rgba(surfaceContainerHigh.r, surfaceContainerHigh.g, surfaceContainerHigh.b, dark ? 0.76 : 0.82)
-                : (amoled
-                    ? Qt.tint(surfaceContainerHigh, Qt.rgba(primaryContainer.r, primaryContainer.g, primaryContainer.b, 0.10))
-                    : Qt.tint(
-                        surfaceContainerHigh,
-                        Qt.rgba(primaryContainer.r, primaryContainer.g, primaryContainer.b, isPhoneSeed ? (dark ? 0.32 : 0.42) : (dark ? 0.18 : 0.24))
-                    ))))
-    readonly property color heroColor: hive
-        ? Qt.tint(surface, Qt.rgba(primaryContainer.r, primaryContainer.g, primaryContainer.b, dark ? 0.55 : 0.62))
-        : graphite ? "transparent"
-        : Qt.tint(
-            ambientBlurActive
-                ? Qt.rgba(surface.r, surface.g, surface.b, glass ? (amoled ? 0.54 : (dark ? 0.34 : 0.48)) : (dark ? 0.65 : 0.72))
-                : (amoled ? "#090A0E" : surface),
-            Qt.rgba(primaryContainer.r, primaryContainer.g, primaryContainer.b, glass ? (dark ? 0.30 : 0.38) : (artworkAmbientActive ? 0.52 : (amoled ? 0.32 : 0.68)))
-        )
-    readonly property color heroContent: graphite ? surfaceContent : primaryContainerContent
-    // Hive's rail is the comb itself.
-    readonly property color railColor: graphite || hive ? "transparent"
-        : (glass
-            ? Qt.rgba(surfaceLow.r, surfaceLow.g, surfaceLow.b, amoled ? 0.48 : (dark ? 0.28 : 0.42))
-            : (artworkAmbientActive
-                ? Qt.rgba(surfaceLow.r, surfaceLow.g, surfaceLow.b, dark ? 0.62 : 0.68)
-                : (amoled
-                    ? "#030305"
-                    : Qt.tint(
-                        surfaceLow,
-                        Qt.rgba(primaryContainer.r, primaryContainer.g, primaryContainer.b, isPhoneSeed ? (dark ? 0.24 : 0.32) : (dark ? 0.14 : 0.18))
-                    ))))
-    readonly property color indicator: graphite ? surfaceContent : (hive ? primaryContainer : secondaryContainer)
-    readonly property color indicatorContent: graphite ? surface : (hive ? primaryContainerContent : secondaryContainerContent)
-    // Hive: the honey halo around a primary control on hover.
+    // ---- Component colors (Liquid Glass UI) ----
+    readonly property color cardColor: Qt.tint(
+        Qt.rgba(surfaceContainer.r, surfaceContainer.g, surfaceContainer.b, dark ? 0.38 : 0.52),
+        Qt.rgba(primary.r, primary.g, primary.b, dark ? 0.08 : 0.06)
+    )
+    readonly property color cardBorder: dark ? Qt.rgba(1, 1, 1, 0.10) : Qt.rgba(1, 1, 1, 0.30)
+    readonly property color tileColor: Qt.tint(
+        Qt.rgba(1, 1, 1, dark ? 0.08 : 0.48),
+        Qt.rgba(primary.r, primary.g, primary.b, dark ? 0.08 : 0.06)
+    )
+    readonly property color heroColor: Qt.tint(
+        Qt.rgba(surface.r, surface.g, surface.b, dark ? 0.36 : 0.50),
+        Qt.rgba(primaryContainer.r, primaryContainer.g, primaryContainer.b, dark ? 0.30 : 0.38)
+    )
+    readonly property color heroContent: primaryContainerContent
+    readonly property color railColor: Qt.rgba(surfaceLow.r, surfaceLow.g, surfaceLow.b, dark ? 0.28 : 0.42)
+    readonly property color indicator: secondaryContainer
+    readonly property color indicatorContent: secondaryContainerContent
     readonly property color glow: Qt.rgba(primary.r, primary.g, primary.b, dark ? 0.30 : 0.22)
-    readonly property color buttonShadow: graphite ? palette.buttonShadow : "transparent"
+    readonly property color buttonShadow: "transparent"
     readonly property color scrim: Qt.rgba(0, 0, 0, dark ? 0.5 : 0.32)
 
     // ---- Shape ----

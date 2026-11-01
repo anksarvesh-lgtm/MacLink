@@ -215,10 +215,12 @@ Window {
         Rectangle {
             id: panel
             anchors.fill: parent
-            radius: Theme.graphite ? Theme.radiusMd : Theme.radiusXl
-            color: Theme.surface
+            radius: Theme.radiusXl
+            color: Qt.rgba(Theme.surface.r, Theme.surface.g, Theme.surface.b, Theme.dark ? 0.72 : 0.82)
             border.width: 1
-            border.color: shelfDropArea.containsDrag ? Theme.primary : Theme.outlineVariant
+            border.color: shelfDropArea.containsDrag ? Theme.primary : Theme.cardBorder
+
+            GlassRim { radius: panel.radius }
 
             Behavior on border.color {
                 enabled: !Theme.reduceMotion
