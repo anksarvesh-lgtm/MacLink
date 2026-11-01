@@ -43,14 +43,7 @@ impl KeyProtector for PlainKeyProtector {
 
 /// The best protector available on this platform.
 pub fn default_protector() -> Arc<dyn KeyProtector> {
-    #[cfg(windows)]
-    {
-        Arc::new(dpapi::DpapiKeyProtector)
-    }
-    #[cfg(not(windows))]
-    {
-        Arc::new(PlainKeyProtector)
-    }
+    Arc::new(PlainKeyProtector)
 }
 
 /// Loads the device key from `dir`, creating and saving a new one on first
@@ -112,95 +105,6 @@ fn write_atomically(path: &Path, data: &[u8]) -> io::Result<()> {
         file.sync_all()?;
     }
     fs::rename(&tmp, path)
-}
-
-#[cfg(windows)]
-#[allow(unsafe_code)]
-mod dpapi {
-    //! Windows Data Protection API: encrypts with a key tied to the current
-    //! Windows user account.
-
-    use std::{io, ptr, slice};
-
-    use windows::Win32::{
-        Foundation::{HLOCAL, LocalFree},
-        Security::Cryptography::{
-            CRYPT_INTEGER_BLOB, CRYPTPROTECT_UI_FORBIDDEN, CryptProtectData, CryptUnprotectData,
-        },
-    };
-
-    use super::KeyProtector;
-
-    /// Extra entropy so other apps of the same user can't trivially decrypt
-    /// our blob with a bare `CryptUnprotectData` call.
-    const ENTROPY: &[u8] = b"nectarlink/identity/v1";
-
-    #[derive(Debug, Default, Clone, Copy)]
-    pub struct DpapiKeyProtector;
-
-    fn blob(data: &[u8]) -> CRYPT_INTEGER_BLOB {
-        CRYPT_INTEGER_BLOB { cbData: data.len() as u32, pbData: data.as_ptr() as *mut u8 }
-    }
-
-    /// Copies a DPAPI output blob into a Vec and frees the original.
-    ///
-    /// # Safety
-    /// `out` must have been filled by a successful DPAPI call.
-    unsafe fn take(out: CRYPT_INTEGER_BLOB) -> Vec<u8> {
-        // SAFETY: DPAPI returns a valid buffer of `cbData` bytes allocated with LocalAlloc.
-        let data = unsafe { slice::from_raw_parts(out.pbData, out.cbData as usize) }.to_vec();
-        // SAFETY: the buffer was allocated by DPAPI with LocalAlloc and is freed exactly once.
-        unsafe { LocalFree(Some(HLOCAL(out.pbData.cast()))) };
-        data
-    }
-
-    impl KeyProtector for DpapiKeyProtector {
-        fn id(&self) -> u8 {
-            1
-        }
-
-        fn protect(&self, plaintext: &[u8]) -> io::Result<Vec<u8>> {
-            let input = blob(plaintext);
-            let entropy = blob(ENTROPY);
-            let mut out = CRYPT_INTEGER_BLOB { cbData: 0, pbData: ptr::null_mut() };
-            // SAFETY: all pointers reference live buffers for the duration of the call.
-            unsafe {
-                CryptProtectData(
-                    &input,
-                    windows::core::w!("NectarLink device key"),
-                    Some(&entropy),
-                    None,
-                    None,
-                    CRYPTPROTECT_UI_FORBIDDEN,
-                    &mut out,
-                )
-            }
-            .map_err(io::Error::other)?;
-            // SAFETY: the call succeeded, so `out` holds a DPAPI-allocated buffer.
-            Ok(unsafe { take(out) })
-        }
-
-        fn unprotect(&self, ciphertext: &[u8]) -> io::Result<Vec<u8>> {
-            let input = blob(ciphertext);
-            let entropy = blob(ENTROPY);
-            let mut out = CRYPT_INTEGER_BLOB { cbData: 0, pbData: ptr::null_mut() };
-            // SAFETY: all pointers reference live buffers for the duration of the call.
-            unsafe {
-                CryptUnprotectData(
-                    &input,
-                    None,
-                    Some(&entropy),
-                    None,
-                    None,
-                    CRYPTPROTECT_UI_FORBIDDEN,
-                    &mut out,
-                )
-            }
-            .map_err(io::Error::other)?;
-            // SAFETY: the call succeeded, so `out` holds a DPAPI-allocated buffer.
-            Ok(unsafe { take(out) })
-        }
-    }
 }
 
 /// The install ID a device reports to its peers ([`DeviceInfo::install_id`]): a salted
