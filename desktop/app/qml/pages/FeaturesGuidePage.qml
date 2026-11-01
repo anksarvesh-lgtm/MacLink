@@ -528,22 +528,40 @@ Item {
     }
 
     function visualFlowForFeature(id) {
-        if (id === "mirroring" || id === "app_windows")
+        if (id === "mirroring" || id === "app_windows" || id === "app_streams")
             return { from: qsTr("Phone Screen"), to: qsTr("Mac Window"), badge: qsTr("60 FPS H.264 Mirror"), icon: Icons.window, color: Theme.primary }
-        if (id === "files" || id === "send_files" || id === "file_transfer")
-            return { from: qsTr("Finder / Mac"), to: qsTr("Android Storage"), badge: qsTr("P2P File Transfer"), icon: Icons.folder, color: Theme.primary }
+        if (id === "pc_mirror")
+            return { from: qsTr("Mac Display"), to: qsTr("Phone Screen"), badge: qsTr("Low-Latency Stream"), icon: Icons.desktop, color: Theme.primary }
+        if (id === "files" || id === "send_files" || id === "transfers" || id === "send_queue" || id === "folder_sync")
+            return { from: qsTr("Finder / Mac"), to: qsTr("Android Storage"), badge: qsTr("P2P High-Speed Transfer"), icon: Icons.folder, color: Theme.primary }
+        if (id === "photos")
+            return { from: qsTr("Phone DCIM / Gallery"), to: qsTr("Mac Photo Library"), badge: qsTr("Instant Sync & Drag"), icon: Icons.camera, color: Theme.primary }
         if (id === "shelf")
             return { from: qsTr("Screen Edge Shelf"), to: qsTr("Phone Drops"), badge: qsTr("Instant Drag & Drop"), icon: Icons.shelf, color: Theme.primary }
         if (id === "clipboard")
             return { from: qsTr("Mac Clipboard (⌘C)"), to: qsTr("Phone Clipboard"), badge: qsTr("Bidirectional Sync"), icon: Icons.copy, color: Theme.primary }
-        if (id === "notifications" || id === "sms")
-            return { from: qsTr("Android Apps"), to: qsTr("Mac Notification Banner"), badge: qsTr("Live Push & Reply"), icon: Icons.chat, color: Theme.primary }
+        if (id === "notifications")
+            return { from: qsTr("Android System"), to: qsTr("Mac Notification Banner"), badge: qsTr("Live Push & Actions"), icon: Icons.chat, color: Theme.primary }
+        if (id === "messages" || id === "sms")
+            return { from: qsTr("SMS / RCS App"), to: qsTr("Mac Messages Thread"), badge: qsTr("Instant PC Reply"), icon: Icons.chat, color: Theme.primary }
         if (id === "calls")
             return { from: qsTr("Cellular Call"), to: qsTr("Mac Audio & Mic"), badge: qsTr("Bluetooth HFP Link"), icon: Icons.phone, color: Theme.primary }
-        if (id === "phone_mic")
+        if (id === "phone_mic" || id === "speaker" || id === "recordings")
             return { from: qsTr("Phone Microphone"), to: qsTr("Mac Virtual Mic"), badge: qsTr("Studio Audio Input"), icon: Icons.mic, color: Theme.primary }
         if (id === "remote_input" || id === "type_on_phone")
-            return { from: qsTr("Mac Trackpad/Keys"), to: qsTr("Android Input"), badge: qsTr("Zero-Latency Input"), icon: Icons.keyboard, color: Theme.primary }
+            return { from: qsTr("Mac Keyboard/Keys"), to: qsTr("Android Input"), badge: qsTr("Direct Native Input"), icon: Icons.keyboard, color: Theme.primary }
+        if (id === "quick_actions")
+            return { from: qsTr("Mac Quick Bar"), to: qsTr("Android Toggles"), badge: qsTr("Device Controls"), icon: Icons.flashlight, color: Theme.primary }
+        if (id === "now_playing" || id === "deck" || id === "desk_mode")
+            return { from: qsTr("Phone Media Player"), to: qsTr("Mac Now Playing"), badge: qsTr("Playback Remote"), icon: Icons.sound, color: Theme.primary }
+        if (id === "timeline")
+            return { from: qsTr("Device Events"), to: qsTr("Chronological Feed"), badge: qsTr("Unified Timeline"), icon: Icons.history, color: Theme.primary }
+        if (id === "command_palette")
+            return { from: qsTr("Command Palette (⌘K)"), to: qsTr("MacLink Actions"), badge: qsTr("Action Runner"), icon: Icons.terminal, color: Theme.primary }
+        if (id === "wol")
+            return { from: qsTr("Phone Network"), to: qsTr("Mac Ethernet/Wi-Fi"), badge: qsTr("Wake-on-LAN Packet"), icon: Icons.power, color: Theme.primary }
+        if (id === "doctor")
+            return { from: qsTr("System Diagnostics"), to: qsTr("Local Network & QUIC"), badge: qsTr("Firewall Doctor"), icon: Icons.refresh, color: Theme.primary }
         return { from: qsTr("MacLink Host"), to: qsTr("Android Node"), badge: qsTr("QUIC TLS 1.3 P2P"), icon: Icons.bolt, color: Theme.primary }
     }
 
