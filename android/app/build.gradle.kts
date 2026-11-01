@@ -139,6 +139,11 @@ abstract class UniffiBindgen : DefaultTask() {
 
     @TaskAction
     fun generate() {
+        val out = outputDir.get().asFile
+        if (out.exists()) {
+            out.deleteRecursively()
+            out.mkdirs()
+        }
         exec.exec {
             workingDir = workspace.get().asFile
             commandLine(
