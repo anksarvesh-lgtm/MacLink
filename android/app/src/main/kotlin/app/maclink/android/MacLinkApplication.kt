@@ -127,5 +127,3 @@ class MacLinkApplication : Application(), DefaultLifecycleObserver {
         const val STOP_IDLE_DEBOUNCE_MS = 2_000L
     }
 }
-
-typealias MacLinkApplication = MacLinkApplication
