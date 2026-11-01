@@ -573,7 +573,7 @@ Item {
                             width: parent.width
                             iconPath: Icons.globe
                             title: qsTr("Language")
-                            description: qsTr("NectarLink follows Windows unless you pick one.")
+                            description: qsTr("MacLink follows macOS unless you pick one.")
                             Segmented {
                                 readonly property var other: page.languages.find(
                                     (l) => l.code === Preferences.language && l.code !== "en")
@@ -2525,7 +2525,7 @@ Item {
                             title: qsTr("MacLink %1").arg(AppController.version)
                             description: AppController.updateStatus.length > 0
                                          ? AppController.updateStatus
-                                         : qsTr("This PC: %1").arg(AppController.deviceName)
+                                         : qsTr("This Mac: %1").arg(AppController.deviceName)
                             Row {
                                 spacing: 8
                                 // The download's progress, or a spinner while its size isn't known.
@@ -2593,7 +2593,7 @@ Item {
                             opacity: enabled ? 1 : 0.5
                             iconPath: Icons.download
                             title: qsTr("Install updates automatically")
-                            description: qsTr("When nobody is using the PC and nothing is in progress.")
+                            description: qsTr("When nobody is using the Mac and nothing is in progress.")
                             Toggle {
                                 label: qsTr("Install updates automatically")
                                 checked: Preferences.installUpdates
@@ -2683,8 +2683,8 @@ Item {
                 role: "body"
                 muted: true
                 text: hotspotSheet.networks.length > 0
-                    ? qsTr("Wi-Fi networks this PC has joined before. Windows keeps their passwords; NectarLink never sees them.")
-                    : qsTr("This PC hasn't saved any Wi-Fi networks yet. Join the phone's hotspot once from Windows' Wi-Fi list first.")
+                    ? qsTr("Wi-Fi networks this Mac has joined before. macOS keeps their passwords; MacLink never sees them.")
+                    : qsTr("This Mac hasn't saved any Wi-Fi networks yet. Join the phone's hotspot once from Wi-Fi settings first.")
             }
             // A PC can have saved dozens of networks: the list scrolls.
             ListView {

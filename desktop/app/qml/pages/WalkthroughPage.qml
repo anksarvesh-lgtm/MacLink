@@ -19,7 +19,7 @@ FocusScope {
 
     readonly property int totalSteps: 7
     // Matches the APK name on the GitHub release (see .github/workflows/release.yml).
-    readonly property string adbCommand: "adb install -r Nectarlink-" + AppController.version + "-android.apk"
+    readonly property string adbCommand: "adb install -r MacLink-" + AppController.version + "-android.apk"
     property int step: Math.max(0, Math.min(totalSteps - 1, Preferences.walkthroughStep))
     property alias currentStep: walkthrough.step
 
@@ -971,6 +971,15 @@ FocusScope {
                                         spacing: 8
 
                                         Button {
+                                            text: qsTr("Download APK")
+                                            iconPath: Icons.download
+                                            variant: "filled"
+                                            size: "sm"
+                                            Accessible.name: "Download Android APK directly"
+                                            onClicked: Qt.openUrlExternally("https://github.com/anksarvesh-lgtm/MacLink/releases/latest/download/MacLink-" + AppController.version + "-android.apk")
+                                        }
+
+                                        Button {
                                             text: qsTr("Open release page")
                                             iconPath: Icons.openExternal
                                             variant: "tonal"
@@ -982,13 +991,13 @@ FocusScope {
                                         Button {
                                             id: copyUrlBtn
                                             property bool copied: false
-                                            text: copied ? "Copied link" : "Copy link"
+                                            text: copied ? "Copied APK link" : "Copy APK link"
                                             iconPath: copied ? Icons.check : Icons.copy
                                             variant: "outline"
                                             size: "sm"
-                                            Accessible.name: "Copy Android release URL"
+                                            Accessible.name: "Copy Android APK download URL"
                                             onClicked: {
-                                                AppController.copyText("https://github.com/anksarvesh-lgtm/MacLink/releases/latest")
+                                                AppController.copyText("https://github.com/anksarvesh-lgtm/MacLink/releases/latest/download/MacLink-" + AppController.version + "-android.apk")
                                                 copied = true
                                                 resetCopyUrlTimer.restart()
                                             }
@@ -1461,15 +1470,15 @@ FocusScope {
 
                                         Txt {
                                             Layout.fillWidth: true
-                                            text: qsTr("Windows notifications")
+                                            text: qsTr("macOS notifications")
                                             role: "title"
                                         }
 
                                         Txt {
                                             Layout.fillWidth: true
                                             text: AppController.toastsEnabled
-                                                ? "Enabled in Windows Settings."
-                                                : "Notifications are off for NectarLink in Windows Settings."
+                                                ? "Enabled in System Settings."
+                                                : "Notifications are off for MacLink in System Settings."
                                             role: "caption"
                                             color: Theme.surfaceContentVariant
                                             wrapMode: Text.WordWrap

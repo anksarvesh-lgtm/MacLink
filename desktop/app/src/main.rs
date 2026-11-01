@@ -363,7 +363,13 @@ fn parse_options_from<I: IntoIterator<Item = std::ffi::OsString>>(iter: I) -> Op
 }
 
 fn default_data_dir() -> PathBuf {
-    dirs::data_local_dir().unwrap_or_else(std::env::temp_dir).join("Nectarlink")
+    let base = dirs::data_local_dir().unwrap_or_else(std::env::temp_dir);
+    let maclink = base.join("MacLink");
+    let legacy = base.join("Nectarlink");
+    if !maclink.exists() && legacy.exists() {
+        let _ = std::fs::rename(&legacy, &maclink);
+    }
+    maclink
 }
 
 /// Network changes come in bursts; tell the core once things settle.

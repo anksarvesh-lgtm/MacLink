@@ -416,7 +416,7 @@ pub fn screenshot_clipboard(window: Window) {
     }
 }
 
-/// Saves the current mirror frame for `window` to `Downloads\Nectarlink` as a PNG file.
+/// Saves the current mirror frame for `window` to `Downloads/MacLink` as a PNG file.
 pub fn screenshot_file(window: Window) {
     let Some(bitmap) = latest_bitmap(&window) else {
         set_notice(window, "Wait for the screen to appear first");
@@ -435,7 +435,7 @@ pub fn screenshot_file(window: Window) {
     let base_name = local_timestamp_filename("Screenshot", "png");
     let dir = core_host::downloads_dir();
     if let Err(e) = std::fs::create_dir_all(&dir) {
-        tracing::warn!(error = %e, "can't create Downloads\\Nectarlink");
+        tracing::warn!(error = %e, "can't create Downloads/MacLink");
         set_notice(window, "Couldn't save screenshot");
         show_message(tr!("Mirror", "The screenshot couldn't be saved."));
         return;
@@ -467,7 +467,7 @@ pub fn screenshot_file(window: Window) {
         device: TOAST_GROUP.into(),
         key: path.to_string_lossy().into_owned(),
         title: file_name.clone(),
-        body: tr!("Mirror", "Screenshot from %1, saved in Downloads\\Nectarlink", device_name),
+        body: tr!("Mirror", "Screenshot from %1, saved in Downloads/MacLink", device_name),
         attribution: "MacLink".into(),
         icon: None,
         image: Some(path),
@@ -478,7 +478,7 @@ pub fn screenshot_file(window: Window) {
         call: false,
     });
     set_notice(window, tr!("Mirror", "Saved %1", file_name));
-    show_message(tr!("Mirror", "Saved %1 to Downloads\\Nectarlink.", file_name));
+    show_message(tr!("Mirror", "Saved %1 to Downloads/MacLink.", file_name));
 }
 
 /// Whether `window` is currently recording to an MP4 file.
@@ -518,7 +518,7 @@ pub fn toggle_recording(window: Window) {
     let base_name = local_timestamp_filename("Mirror", "mp4");
     let dir = core_host::downloads_dir();
     if let Err(e) = std::fs::create_dir_all(&dir) {
-        tracing::warn!(error = %e, "can't create Downloads\\Nectarlink");
+        tracing::warn!(error = %e, "can't create Downloads/MacLink");
         set_notice(window, "Couldn't start recording");
         show_message(tr!("Mirror", "Couldn't start recording."));
         return;
@@ -609,7 +609,7 @@ pub fn stop_recording(window: Window) {
                     device: TOAST_GROUP.into(),
                     key: path.to_string_lossy().into_owned(),
                     title: file_name.clone(),
-                    body: tr!("Mirror", "Recording from %1, saved in Downloads\\Nectarlink", device_name),
+                    body: tr!("Mirror", "Recording from %1, saved in Downloads/MacLink", device_name),
                     attribution: "MacLink".into(),
                     icon: None,
                     image: None,
@@ -623,7 +623,7 @@ pub fn stop_recording(window: Window) {
                     call: false,
                 });
                 set_notice(window, tr!("Mirror", "Saved %1", file_name));
-                show_message(tr!("Mirror", "Saved %1 to Downloads\\Nectarlink.", file_name));
+                show_message(tr!("Mirror", "Saved %1 to Downloads/MacLink.", file_name));
             }
             Ok(Err(msg)) => {
                 set_notice(window, msg.clone());

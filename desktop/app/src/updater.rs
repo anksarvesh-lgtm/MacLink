@@ -73,7 +73,7 @@ pub struct Update {
 
 /// The scheduled task the installer registers (see the module docs).
 #[cfg(windows)]
-pub const TASK: &str = "Nectarlink Update";
+pub const TASK: &str = "MacLink Update";
 /// What the task runs: `maclink-desktop.exe --update-service`.
 pub const SERVICE_ARG: &str = "--update-service";
 /// How long nobody may have used the PC before an update installs by itself.

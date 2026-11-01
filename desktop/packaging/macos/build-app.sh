@@ -21,6 +21,15 @@ BIN="${BIN:-target/release/maclink-desktop}"
 OUT_DIR="${OUT_DIR:-dist}"
 APP="${OUT_DIR}/MacLink.app"
 
+if [[ -z "${QT_ROOT_DIR:-}" ]]; then
+    for candidate in /Users/sarvesh/Qt/6.*/macos ~/Qt/6.*/macos /opt/homebrew/opt/qt6 /usr/local/opt/qt6; do
+        if [[ -x "${candidate}/bin/macdeployqt" ]]; then
+            QT_ROOT_DIR="${candidate}"
+            break
+        fi
+    done
+fi
+
 [[ -x "$BIN" ]] || { echo "build it first: cargo build --release --bin maclink-desktop" >&2; exit 1; }
 MACDEPLOYQT="${QT_ROOT_DIR:+${QT_ROOT_DIR}/bin/}macdeployqt"
 command -v "$MACDEPLOYQT" >/dev/null || { echo "macdeployqt not found; set QT_ROOT_DIR" >&2; exit 1; }
@@ -96,18 +105,12 @@ PLIST
 # Qt frameworks, plugins and the QML modules the app imports.
 "$MACDEPLOYQT" "$APP" -qmldir=desktop/app/qml -always-overwrite
 
+# Clean any extended attributes/resource forks before signing
+xattr -cr "$APP"
+
 # Ad-hoc signature: no identity, but Apple Silicon won't run unsigned code.
 codesign --force --deep --sign - "$APP"
 codesign --verify --deep --strict "$APP"
-
-# Apply Finder bundle icon via AppKit so macOS Finder displays it immediately
-swift -e "
-import AppKit
-let ws = NSWorkspace.shared
-if let img = NSImage(contentsOfFile: \"assets/brand/icon-512.png\") {
-    _ = ws.setIcon(img, forFile: \"$APP\", options: [])
-}
-" || true
 
 # Verify Apple Silicon Mach-O slice and signature with REA if available
 if command -v rea >/dev/null 2>&1; then
@@ -133,3 +136,10 @@ rm -f "$DMG"
 hdiutil create -volname "MacLink" -srcfolder "$DMG_STAGING" -ov -format UDZO "$DMG" >/dev/null
 rm -rf "$DMG_STAGING"
 echo "Built $DMG"
+cp -f "$DMG" "${OUT_DIR}/MacLink-${VERSION}.dmg"
+if [[ -d "${REPO_ROOT}/../dist" ]]; then
+    cp -Rf "$APP" "${REPO_ROOT}/../dist/"
+    cp -f "$DMG" "${REPO_ROOT}/../dist/"
+    cp -f "$ZIP" "${REPO_ROOT}/../dist/"
+    cp -f "${OUT_DIR}/MacLink-${VERSION}.dmg" "${REPO_ROOT}/../dist/"
+fi

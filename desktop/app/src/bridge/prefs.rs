@@ -77,7 +77,7 @@ pub mod qobject {
         #[qproperty(bool, battery_alerts)]
         /// Folder where voice recordings from phones are saved.
         #[qproperty(QString, recordings_folder)]
-        /// Whether `recordings_folder` is the default (`Documents\Nectarlink Recordings`).
+        /// Whether `recordings_folder` is the default (`Documents/MacLink Recordings`).
         #[qproperty(bool, recordings_folder_is_default)]
         /// "m4a", "mp3", "wav" or "flac".
         #[qproperty(QString, recordings_format)]
@@ -186,7 +186,7 @@ pub mod qobject {
         /// Sets the folder where voice recordings are saved (from a `file:` URL or path).
         #[qinvokable]
         fn choose_recordings_folder(self: Pin<&mut Preferences>, url: &QString);
-        /// Resets the recordings folder to `Documents\Nectarlink Recordings`.
+        /// Resets the recordings folder to `Documents/MacLink Recordings`.
         #[qinvokable]
         fn reset_recordings_folder(self: Pin<&mut Preferences>);
         /// Adds a folder sync rule between a phone folder and a PC folder.

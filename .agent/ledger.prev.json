@@ -1,55 +1,55 @@
 {
   "version": 1,
-  "task_id": "t-20261101-2726",
-  "goal": "Replace app icon and logo with the newly provided frosted glass artwork, removing the black background for transparent alpha across macOS and Android assets",
-  "status": "done",
-  "created_at": "2026-11-01T14:58:23.987Z",
-  "updated_at": "2026-11-01T15:05:15.318Z",
-  "checkpoint_count": 4,
+  "task_id": "t-20261101-1492",
+  "goal": "Build macOS .app and DMG installer, commit changes, push to GitHub, and publish release assets",
+  "status": "active",
+  "created_at": "2026-11-01T16:01:34.645Z",
+  "updated_at": "2026-11-01T16:01:34.645Z",
+  "checkpoint_count": 0,
   "steps": [
     {
       "id": "s1",
-      "title": "Extract mask and produce transparent PNG",
-      "status": "done",
+      "title": "Compile maclink-desktop and package MacLink.app and DMG",
+      "status": "in_progress",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": "Extracted squircle matte and eliminated black background using flood-fill segmentation and un-premultiplied edge anti-aliasing. Produced 1024x1024 transparent RGBA image (/tmp/maclink_icon_clean.png) with zero black fringe on light backgrounds.",
+      "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T15:02:02.523Z"
+      "updated_at": "2026-11-01T16:01:34.645Z"
     },
     {
       "id": "s2",
-      "title": "Replace macOS brand and desktop icon assets",
-      "status": "done",
+      "title": "Verify MacLink.app bundle and DMG mountability",
+      "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": "Replaced assets/brand/icon-1024.png, icon-512.png, maclink-liquid-logo.png, generated MacLink.icns with iconutil, and refreshed all 9 desktop raw icons in desktop/app/src/icons_raw/ with the transparent frosted glass mark.",
+      "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T15:03:16.842Z"
+      "updated_at": "2026-11-01T16:01:34.645Z"
     },
     {
       "id": "s3",
-      "title": "Replace Android app logo and launcher icons",
-      "status": "done",
+      "title": "Push commits and tags to origin main",
+      "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": "Updated android/app/src/main/res/drawable/maclink_logo.png and all densities (mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi) for ic_launcher.png, ic_launcher_round.png, and ic_launcher_foreground.png with the new transparent frosted glass icon.",
+      "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T15:04:44.038Z"
+      "updated_at": "2026-11-01T16:01:34.645Z"
     },
     {
       "id": "s4",
-      "title": "Verify assets and unit tests",
-      "status": "done",
+      "title": "Create GitHub release and publish DMG and app assets",
+      "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": "Verified all 19 PNG assets for dimension accuracy, RGBA format, and transparent corner pixels. Ran maclink-core unit tests (113 passed) and maclink-protocol unit tests (62 passed) with 0 failures without executing full app builds.",
+      "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T15:05:15.318Z"
+      "updated_at": "2026-11-01T16:01:34.645Z"
     }
   ]
 }

@@ -2586,7 +2586,7 @@ fn load_guide_doc_content(raw_key: &str) -> (String, String) {
             tr!(
                 "Guide",
                 "What it does\n\
-             Exposes an opt-in localhost HTTP/JSON and Server-Sent Events API on 127.0.0.1 (default port 53320) protected by a bearer token so scripts, CLI tools, and Stream Deck plugins can trigger NectarLink actions.\n\n\
+             Exposes an opt-in localhost HTTP/JSON and Server-Sent Events API on 127.0.0.1 (default port 53320) protected by a bearer token so scripts, CLI tools, and Stream Deck plugins can trigger MacLink actions.\n\n\
              Where to find it\n\
              - Settings › Connection & About › Local automation API.\n\n\
              What it needs\n\
@@ -2725,7 +2725,7 @@ fn compute_shelf_items_json(current_device_idx: i32) -> String {
         }
     }
 
-    // 3. Scan Downloads\Nectarlink for mirror screenshots ("Screenshot ...") and saved photos.
+    // 3. Scan Downloads/MacLink for mirror screenshots ("Screenshot ...") and saved photos.
     let dl_dir = core_host::downloads_dir();
     let mut dl_files: Vec<(i64, u64, std::path::PathBuf, String)> = Vec::new();
     if let Ok(entries) = std::fs::read_dir(&dl_dir) {

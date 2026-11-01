@@ -477,7 +477,7 @@ Window {
             wrapMode: Text.WordWrap
             role: "bodySmall"
             color: "white"
-            text: qsTr("To control the phone, turn on Control from your PC in NectarLink's settings on the phone.")
+            text: qsTr("To control the phone, turn on Control from your Mac in MacLink's settings on the phone.")
         }
         Button {
             id: notifyPhoneBtn

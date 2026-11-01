@@ -38,8 +38,8 @@ Item {
                 role: "body"
                 muted: true
                 text: page.status === "failed"
-                      ? qsTr("NectarLink couldn't start.")
-                      : qsTr("Your phone and this PC, together. Pair once and they find each other from then on.")
+                      ? qsTr("MacLink couldn't start.")
+                      : qsTr("Your phone and this Mac, together. Pair once and they find each other from then on.")
             }
         }
 

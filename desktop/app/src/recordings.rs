@@ -71,15 +71,15 @@ pub fn set_format(format: RecordingFormat) {
     cfg.updated_at = Some(SystemTime::now());
 }
 
-/// Default folder: `Documents\Nectarlink Recordings`.
+/// Default folder: `Documents/MacLink Recordings`.
 pub fn default_folder() -> PathBuf {
     dirs::document_dir()
         .unwrap_or_else(|| core_host::host().data_dir.join("recordings"))
-        .join("Nectarlink Recordings")
+        .join("MacLink Recordings")
 }
 
 /// The folder where recordings go right now (`configured` if set, otherwise
-/// `Documents\Nectarlink Recordings`).
+/// `Documents/MacLink Recordings`).
 pub fn effective_folder(configured: Option<&Path>) -> PathBuf {
     configured.filter(|p| !p.as_os_str().is_empty()).map(Path::to_path_buf).unwrap_or_else(default_folder)
 }

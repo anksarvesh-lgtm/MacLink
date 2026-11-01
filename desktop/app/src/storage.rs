@@ -80,7 +80,7 @@ mod imp {
     };
 
     /// Provider prefix for sync root IDs (`NectarLink!<device_id>`).
-    const PROVIDER_PREFIX: &str = "Nectarlink!";
+    const PROVIDER_PREFIX: &str = "MacLink!";
 
     /// Difference between Windows FILETIME epoch (1601-01-01) and Unix epoch
     /// (1970-01-01) in 100-nanosecond intervals.
@@ -266,7 +266,7 @@ mod imp {
     }
 
     fn base_sync_dir() -> Option<PathBuf> {
-        dirs::home_dir().map(|h| h.join("Nectarlink"))
+        dirs::home_dir().map(|h| h.join("MacLink"))
     }
 
     fn sync_root_id(device: DeviceId) -> HSTRING {

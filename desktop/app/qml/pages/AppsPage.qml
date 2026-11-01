@@ -86,8 +86,8 @@ Item {
             role: "body"
             muted: true
             text: page.deviceId.length === 0
-                ? qsTr("Pair your phone to open its apps in windows on this PC.")
-                : (page.feature.reason || qsTr("Set up Wireless debugging in NectarLink on the phone to open its apps here."))
+                ? qsTr("Pair your phone to open its apps in windows on this Mac.")
+                : (page.feature.reason || qsTr("Set up Wireless debugging in MacLink on the phone to open its apps here."))
         }
         LockChip {
             anchors.horizontalCenter: parent.horizontalCenter
