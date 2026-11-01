@@ -63,10 +63,12 @@ class NectarlinkApplication : Application(), DefaultLifecycleObserver {
             .registerOnSharedPreferenceChangeListener(prefListener)
 
         if (Preferences.isBackgroundServiceEnabled(this)) {
-            android.view.Choreographer.getInstance().postFrameCallback {
-                scope.launch {
-                    core.start()
-                    core.reconnectNow()
+            runCatching {
+                android.view.Choreographer.getInstance().postFrameCallback {
+                    scope.launch {
+                        core.start()
+                        core.reconnectNow()
+                    }
                 }
             }
             scope.launch {

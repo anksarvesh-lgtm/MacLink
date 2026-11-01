@@ -25,6 +25,9 @@ android {
         targetSdk = 37
         versionCode = appVersionCode
         versionName = appVersion
+        ndk {
+            abiFilters.addAll(listOf("arm64-v8a", "x86_64"))
+        }
     }
 
     // Only the languages the app offers (res/xml/locales_config.xml) go into the APK: a
