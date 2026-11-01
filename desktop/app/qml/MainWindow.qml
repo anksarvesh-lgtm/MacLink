@@ -650,15 +650,15 @@ NativeWindow {
                 onClicked: window.page = "deck"
             }
             NavItem {
-                iconPath: Icons.book
-                text: qsTr("Guide")
-                selected: window.page === "guide"
-                activeHover: rail.hoveredNav === "guide"
+                iconPath: Icons.info
+                text: qsTr("Help Center")
+                selected: window.page === "help_center" || window.page === "guide"
+                activeHover: rail.hoveredNav === "help_center" || rail.hoveredNav === "guide"
                 onHoveredChanged: {
-                    if (hovered) rail.hoveredNav = "guide"
-                    else if (rail.hoveredNav === "guide") rail.hoveredNav = ""
+                    if (hovered) rail.hoveredNav = "help_center"
+                    else if (rail.hoveredNav === "help_center" || rail.hoveredNav === "guide") rail.hoveredNav = ""
                 }
-                onClicked: window.page = "guide"
+                onClicked: window.page = "help_center"
             }
             NavItem {
                 iconPath: Icons.settings
@@ -718,7 +718,7 @@ NativeWindow {
                     : window.page === "photos" ? qsTr("Photos")
                     : window.page === "apps" ? qsTr("Apps")
                     : window.page === "deck" ? qsTr("Deck")
-                    : window.page === "guide" ? qsTr("Features guide")
+                    : (window.page === "help_center" || window.page === "guide") ? qsTr("Help Center")
                     : qsTr("Settings")
                 role: "headline"
                 size: 20
@@ -933,6 +933,7 @@ NativeWindow {
                     case "photos": return "qrc:/qt/qml/app/nectarlink/qml/pages/PhotosPage.qml"
                     case "apps": return "qrc:/qt/qml/app/nectarlink/qml/pages/AppsPage.qml"
                     case "deck": return "qrc:/qt/qml/app/nectarlink/qml/pages/DeckPage.qml"
+                    case "help_center":
                     case "guide": return "qrc:/qt/qml/app/nectarlink/qml/pages/FeaturesGuidePage.qml"
                     case "settings": return "qrc:/qt/qml/app/nectarlink/qml/pages/SettingsPage.qml"
                     default: return "qrc:/qt/qml/app/nectarlink/qml/pages/HomePage.qml"
@@ -996,7 +997,7 @@ NativeWindow {
             if ("deviceName" in item)
                 item.deviceName = Qt.binding(() => window.currentDeviceName)
             item.completed.connect(() => { window.page = "home" })
-            item.openGuideRequested.connect(() => { window.page = "guide" })
+            item.openGuideRequested.connect(() => { window.page = "help_center" })
             item.doctorRequested.connect(() => { AppController.runDoctor() })
         }
     }

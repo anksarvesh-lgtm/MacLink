@@ -527,6 +527,26 @@ Item {
         return { label: qsTr("Ready"), tone: "available", visible: true }
     }
 
+    function visualFlowForFeature(id) {
+        if (id === "mirroring" || id === "app_windows")
+            return { from: qsTr("Phone Screen"), to: qsTr("Mac Window"), badge: qsTr("60 FPS H.264 Mirror"), icon: Icons.window, color: Theme.primary }
+        if (id === "files" || id === "send_files" || id === "file_transfer")
+            return { from: qsTr("Finder / Mac"), to: qsTr("Android Storage"), badge: qsTr("P2P File Transfer"), icon: Icons.folder, color: Theme.primary }
+        if (id === "shelf")
+            return { from: qsTr("Screen Edge Shelf"), to: qsTr("Phone Drops"), badge: qsTr("Instant Drag & Drop"), icon: Icons.shelf, color: Theme.primary }
+        if (id === "clipboard")
+            return { from: qsTr("Mac Clipboard (⌘C)"), to: qsTr("Phone Clipboard"), badge: qsTr("Bidirectional Sync"), icon: Icons.copy, color: Theme.primary }
+        if (id === "notifications" || id === "sms")
+            return { from: qsTr("Android Apps"), to: qsTr("Mac Notification Banner"), badge: qsTr("Live Push & Reply"), icon: Icons.chat, color: Theme.primary }
+        if (id === "calls")
+            return { from: qsTr("Cellular Call"), to: qsTr("Mac Audio & Mic"), badge: qsTr("Bluetooth HFP Link"), icon: Icons.phone, color: Theme.primary }
+        if (id === "phone_mic")
+            return { from: qsTr("Phone Microphone"), to: qsTr("Mac Virtual Mic"), badge: qsTr("Studio Audio Input"), icon: Icons.mic, color: Theme.primary }
+        if (id === "remote_input" || id === "type_on_phone")
+            return { from: qsTr("Mac Trackpad/Keys"), to: qsTr("Android Input"), badge: qsTr("Zero-Latency Input"), icon: Icons.keyboard, color: Theme.primary }
+        return { from: qsTr("MacLink Host"), to: qsTr("Android Node"), badge: qsTr("QUIC TLS 1.3 P2P"), icon: Icons.bolt, color: Theme.primary }
+    }
+
     ColumnLayout {
         anchors.fill: parent
         anchors.leftMargin: 28
@@ -543,7 +563,7 @@ Item {
 
             Txt {
                 Layout.fillWidth: true
-                text: qsTr("Every feature in MacLink, what it needs, and where to find it.")
+                text: qsTr("Help Center: visual feature guides, device connection status, and documentation.")
                 role: "body"
                 color: Theme.surfaceContentVariant
                 wrapMode: Text.WordWrap
@@ -890,6 +910,122 @@ Item {
                                     text: qsTr("Learn more ›")
                                     role: "label"
                                     color: learnHover.hovered ? Theme.primary : Theme.surfaceContentVariant
+                                }
+                            }
+                        }
+                    }
+
+                    // Visual Representation Box
+                    Rectangle {
+                        Layout.fillWidth: true
+                        implicitHeight: 46
+                        radius: Theme.radiusSm
+                        color: Qt.rgba(visualFlow.color.r, visualFlow.color.g, visualFlow.color.b, 0.08)
+                        border.width: 1
+                        border.color: Qt.rgba(visualFlow.color.r, visualFlow.color.g, visualFlow.color.b, 0.22)
+
+                        readonly property var visualFlow: guide.visualFlowForFeature(modelData.id)
+
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.leftMargin: 12
+                            anchors.rightMargin: 12
+                            spacing: 10
+
+                            // Source Endpoint Badge
+                            Rectangle {
+                                radius: Theme.radiusSm
+                                color: Theme.surfaceContainer
+                                border.width: 1
+                                border.color: Theme.outlineVariant
+                                implicitWidth: srcTxt.implicitWidth + 16
+                                implicitHeight: 26
+
+                                RowLayout {
+                                    anchors.centerIn: parent
+                                    spacing: 5
+                                    Icon {
+                                        path: Icons.laptop
+                                        width: 12; height: 12
+                                        color: Theme.surfaceContentVariant
+                                    }
+                                    Txt {
+                                        id: srcTxt
+                                        text: parent.parent.parent.parent.visualFlow.from
+                                        role: "caption"
+                                        size: 11
+                                    }
+                                }
+                            }
+
+                            // Flow Stream Arrow & Badge
+                            RowLayout {
+                                Layout.fillWidth: true
+                                spacing: 6
+
+                                Rectangle {
+                                    Layout.fillWidth: true
+                                    height: 1
+                                    color: Qt.rgba(parent.parent.visualFlow.color.r, parent.parent.visualFlow.color.g, parent.parent.visualFlow.color.b, 0.40)
+                                }
+
+                                Rectangle {
+                                    radius: 10
+                                    color: Qt.rgba(parent.parent.visualFlow.color.r, parent.parent.visualFlow.color.g, parent.parent.visualFlow.color.b, 0.16)
+                                    border.width: 1
+                                    border.color: parent.parent.visualFlow.color
+                                    implicitWidth: flowBadgeTxt.implicitWidth + 14
+                                    implicitHeight: 20
+
+                                    RowLayout {
+                                        anchors.centerIn: parent
+                                        spacing: 4
+                                        Icon {
+                                            path: parent.parent.parent.parent.visualFlow.icon
+                                            width: 10; height: 10
+                                            color: parent.parent.parent.parent.visualFlow.color
+                                        }
+                                        Txt {
+                                            id: flowBadgeTxt
+                                            text: parent.parent.parent.parent.visualFlow.badge
+                                            role: "code"
+                                            size: 9
+                                            weight: 600
+                                            color: parent.parent.parent.parent.visualFlow.color
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    Layout.fillWidth: true
+                                    height: 1
+                                    color: Qt.rgba(parent.parent.visualFlow.color.r, parent.parent.visualFlow.color.g, parent.parent.visualFlow.color.b, 0.40)
+                                }
+                            }
+
+                            // Destination Endpoint Badge
+                            Rectangle {
+                                radius: Theme.radiusSm
+                                color: Theme.surfaceContainer
+                                border.width: 1
+                                border.color: Theme.outlineVariant
+                                implicitWidth: dstTxt.implicitWidth + 16
+                                implicitHeight: 26
+
+                                RowLayout {
+                                    anchors.centerIn: parent
+                                    spacing: 5
+                                    Icon {
+                                        path: Icons.phone
+                                        width: 12; height: 12
+                                        color: Theme.surfaceContentVariant
+                                    }
+                                    Txt {
+                                        id: dstTxt
+                                        text: parent.parent.parent.parent.visualFlow.to
+                                        role: "caption"
+                                        size: 11
+                                    }
                                 }
                             }
                         }

@@ -2622,14 +2622,14 @@ Item {
                         Divider { width: parent.width }
                         ListRow {
                             width: parent.width
-                            iconPath: Icons.book
-                            title: qsTr("Features guide")
-                            description: qsTr("What each feature needs and where to find it.")
+                            iconPath: Icons.info
+                            title: qsTr("Help Center")
+                            description: qsTr("Visual feature guides, setup walkthrough, and troubleshooting.")
                             Button {
                                 variant: "tonal"
                                 size: "sm"
                                 text: qsTr("Open")
-                                onClicked: AppController.currentPage = "guide"
+                                onClicked: AppController.currentPage = "help_center"
                             }
                         }
                     }
