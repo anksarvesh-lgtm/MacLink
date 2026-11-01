@@ -391,15 +391,40 @@ fn show(device: DeviceId, n: &Notification) {
     }
     actions.extend(n.actions.iter().filter(|a| !a.reply).map(|a| (a.id.clone(), a.title.clone())));
     let reply = n.actions.iter().find(|a| a.reply);
+
+    // Format Title and Subtitle (Attribution) matching native macOS companion style:
+    // When title exists: Title = Contact/Sender name, Subtitle = "AppName · Sub" or "AppName"
+    // When title is empty: Title = AppName, Subtitle = Sub or DeviceName
+    let (notif_title, notif_sub) = match (&n.title, &n.sub) {
+        (Some(title), Some(sub)) if !title.trim().is_empty() && !sub.trim().is_empty() => (
+            title.trim().to_owned(),
+            format!("{} · {}", n.app_name.trim(), sub.trim()),
+        ),
+        (Some(title), _) if !title.trim().is_empty() => (
+            title.trim().to_owned(),
+            n.app_name.trim().to_owned(),
+        ),
+        (None, Some(sub)) if !sub.trim().is_empty() => (
+            n.app_name.trim().to_owned(),
+            sub.trim().to_owned(),
+        ),
+        _ => (
+            n.app_name.trim().to_owned(),
+            match &device_name {
+                Some(name) => name.clone(),
+                None => String::new(),
+            },
+        ),
+    };
+
+    let icon = icon.or_else(|| icons::existing(&core_host::host().data_dir, &n.app));
+
     let toast = Toast {
         device: device.to_string(),
         key: n.key.clone(),
-        title: n.title.clone().unwrap_or_else(|| n.app_name.clone()),
+        title: notif_title,
         body: n.text.clone().unwrap_or_default(),
-        attribution: match device_name {
-            Some(name) => format!("{} · {name}", n.app_name),
-            None => n.app_name.clone(),
-        },
+        attribution: notif_sub,
         icon,
         image,
         actions,

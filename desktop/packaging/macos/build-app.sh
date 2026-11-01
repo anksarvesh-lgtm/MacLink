@@ -22,7 +22,7 @@ OUT_DIR="${OUT_DIR:-dist}"
 APP="${OUT_DIR}/MacLink.app"
 
 if [[ -z "${QT_ROOT_DIR:-}" ]]; then
-    for candidate in /Users/sarvesh/Qt/6.*/macos ~/Qt/6.*/macos /opt/homebrew/opt/qt6 /usr/local/opt/qt6; do
+    for candidate in ~/Qt/6.*/macos /Users/*/Qt/6.*/macos /opt/homebrew/opt/qt6 /usr/local/opt/qt6; do
         if [[ -x "${candidate}/bin/macdeployqt" ]]; then
             QT_ROOT_DIR="${candidate}"
             break
@@ -76,6 +76,10 @@ cat > "$APP/Contents/Info.plist" <<PLIST
     <key>NSHighResolutionCapable</key><true/>
     <key>NSSupportsAutomaticGraphicsSwitching</key><true/>
     <key>NSUserNotificationAlertStyle</key><string>banner</string>
+    <key>NSUserActivityTypes</key>
+    <array>
+        <string>INSendMessageIntent</string>
+    </array>
     <key>NSBluetoothAlwaysUsageDescription</key>
     <string>MacLink uses Bluetooth to detect paired phones nearby.</string>
     <key>NSLocalNetworkUsageDescription</key>

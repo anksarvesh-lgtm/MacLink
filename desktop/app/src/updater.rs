@@ -255,13 +255,13 @@ fn newer_release_for(release: Release, current: &str, suffix: &str) -> Option<Up
             && a.name.chars().all(|c| c.is_ascii_alphanumeric() || matches!(c, '-' | '.' | '_'))
             && !a.name.contains("..")
     })?;
-    let sums = release.assets.iter().find(|a| a.name == "SHA256SUMS.txt");
+    let sums = release.assets.iter().find(|a| a.name == "SHA256SUMS.txt")?;
     Some(Update {
         version,
         notes_url: release.html_url,
         installer_url: installer.browser_download_url.clone(),
         installer_name: installer.name.clone(),
-        sums_url: sums.map(|s| s.browser_download_url.clone()).unwrap_or_default(),
+        sums_url: sums.browser_download_url.clone(),
     })
 }
 
@@ -579,8 +579,8 @@ mod tests {
         assert_eq!(note_running_version(dir.path()), None);
         assert_eq!(note_running_version(dir.path()), None);
         // An older version ran before this one: updated, said once.
-        std::fs::write(dir.path().join(LAST_VERSION_FILE), "0.0.1\n").unwrap();
-        assert_eq!(note_running_version(dir.path()).as_deref(), Some("0.0.1"));
+        std::fs::write(dir.path().join(LAST_VERSION_FILE), "0.0.0\n").unwrap();
+        assert_eq!(note_running_version(dir.path()).as_deref(), Some("0.0.0"));
         assert_eq!(note_running_version(dir.path()), None);
         assert_eq!(std::fs::read_to_string(dir.path().join(LAST_VERSION_FILE)).unwrap(), current);
         // Going back to an older build isn't an update.
@@ -592,7 +592,7 @@ mod tests {
     fn installer_names_that_are_not_plain_file_names_are_refused() {
         for name in [r"..\..\evil.dmg", "MacLink-9/../x.dmg", "evil.dmg"] {
             let mut r = release("v9.0.0");
-            r.assets[0].name = name.into();
+            r.assets[1].name = name.into();
             assert!(newer_release_for(r, "0.0.1", ".dmg").is_none(), "{name}");
         }
     }

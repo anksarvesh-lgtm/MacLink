@@ -143,7 +143,8 @@ static void deliver_via_ns_user_notification(
     const char *title,
     const char *subtitle,
     const char *body,
-    NSString *imageFile,
+    const char *icon_path,
+    const char *image_path,
     bool silent,
     bool has_reply,
     const char *reply_id,
@@ -170,10 +171,33 @@ static void deliver_via_ns_user_notification(
         notif.soundName = NSUserNotificationDefaultSoundName;
     }
 
-    if (imageFile && [[NSFileManager defaultManager] fileExistsAtPath:imageFile]) {
-        NSImage *img = [[NSImage alloc] initWithContentsOfFile:imageFile];
-        if (img) {
-            notif.contentImage = img;
+    // Set _identityImage: This is the key Cocoa property that replaces the application
+    // bundle icon on the left of the notification banner with the phone app's icon or contact avatar!
+    if (icon_path && strlen(icon_path) > 0) {
+        NSString *iconFile = [NSString stringWithUTF8String:icon_path];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:iconFile]) {
+            NSImage *iconImg = [[NSImage alloc] initWithContentsOfFile:iconFile];
+            if (iconImg) {
+                @try {
+                    [notif setValue:iconImg forKey:@"_identityImage"];
+                    [notif setValue:@YES forKey:@"_identityImageHasBorder"];
+                    [notif setValue:@(0) forKey:@"_identityImageStyle"]; // 0 = standard / rounded square
+                } @catch (NSException *e) {
+                    NSLog(@"[MacLink] Could not set _identityImage: %@", e);
+                }
+            }
+        }
+    }
+
+    // Set contentImage: this is the attached picture (e.g. photo in message or big picture)
+    // which appears on the right side of the notification banner.
+    if (image_path && strlen(image_path) > 0) {
+        NSString *imageFile = [NSString stringWithUTF8String:image_path];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:imageFile]) {
+            NSImage *img = [[NSImage alloc] initWithContentsOfFile:imageFile];
+            if (img) {
+                notif.contentImage = img;
+            }
         }
     }
 
@@ -182,6 +206,8 @@ static void deliver_via_ns_user_notification(
         notif.hasReplyButton = YES;
         if (reply_title && strlen(reply_title) > 0) {
             notif.responsePlaceholder = [NSString stringWithUTF8String:reply_title];
+        } else {
+            notif.responsePlaceholder = @"Type a message...";
         }
         if (reply_id && strlen(reply_id) > 0) {
             infoCopy[@"reply_action"] = [NSString stringWithUTF8String:reply_id];
@@ -201,7 +227,16 @@ static void deliver_via_ns_user_notification(
             }
             notif.additionalActions = moreActions;
         }
+    } else {
+        // Default action button: "Show" (matching native macOS companion look)
+        notif.hasActionButton = YES;
+        notif.actionButtonTitle = @"Show";
+        infoCopy[@"primary_action"] = @"open";
     }
+
+    @try {
+        [notif setValue:@YES forKey:@"_showsButtons"];
+    } @catch (NSException *e) {}
 
     notif.userInfo = infoCopy;
     [[NSUserNotificationCenter defaultUserNotificationCenter] deliverNotification:notif];
@@ -269,7 +304,15 @@ void mac_notification_show(
         userInfo[@"device"] = [NSString stringWithUTF8String:device];
         userInfo[@"key"] = [NSString stringWithUTF8String:key];
 
-        // Deliver via UNUserNotificationCenter on modern macOS
+        // If an app icon or sender avatar is provided, deliver via NSUserNotificationCenter
+        // with _identityImage so macOS displays the mirrored app's icon on the left
+        // rather than the host MacLink bundle icon.
+        if (icon_path && strlen(icon_path) > 0) {
+            deliver_via_ns_user_notification(targetId, title, subtitle, body, icon_path, image_path, silent, has_reply, reply_id, reply_title, action_count, action_ids, action_titles, userInfo);
+            return;
+        }
+
+        // Deliver via UNUserNotificationCenter on modern macOS (for internal MacLink notices)
         if (@available(macOS 10.14, *)) {
             @try {
                 UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
@@ -338,7 +381,7 @@ void mac_notification_show(
                 [[UNUserNotificationCenter currentNotificationCenter] addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
                     if (error) {
                         // Fallback to NSUserNotificationCenter if UNUserNotificationCenter encounters an issue
-                        deliver_via_ns_user_notification(targetId, title, subtitle, body, imageFile, silent, has_reply, reply_id, reply_title, action_count, action_ids, action_titles, userInfo);
+                        deliver_via_ns_user_notification(targetId, title, subtitle, body, icon_path, image_path, silent, has_reply, reply_id, reply_title, action_count, action_ids, action_titles, userInfo);
                     }
                 }];
                 return;
@@ -348,7 +391,7 @@ void mac_notification_show(
         }
 
         // Fallback for older macOS
-        deliver_via_ns_user_notification(targetId, title, subtitle, body, imageFile, silent, has_reply, reply_id, reply_title, action_count, action_ids, action_titles, userInfo);
+        deliver_via_ns_user_notification(targetId, title, subtitle, body, icon_path, image_path, silent, has_reply, reply_id, reply_title, action_count, action_ids, action_titles, userInfo);
     }
 }
 
