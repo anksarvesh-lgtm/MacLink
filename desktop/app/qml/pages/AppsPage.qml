@@ -13,7 +13,7 @@ Item {
 
     readonly property var feature: AppController.capsRevision >= 0 && deviceId.length > 0
         ? AppController.featureState(deviceId, "mirroring.app_windows") : ({})
-    readonly property bool available: feature.state === "available" || feature.state === "partial"
+    readonly property bool available: deviceId.length > 0
 
     readonly property var apps: {
         if (Mirror.appsDevice !== deviceId)
@@ -59,12 +59,12 @@ Item {
     onAvailableChanged: loadIfNeeded()
     Component.onCompleted: loadIfNeeded()
 
-    // ---- No phone, or opening apps isn't available yet ----
+    // ---- No phone connected ----
     Column {
         anchors.centerIn: parent
         width: Math.min(parent.width - Theme.contentPadding * 2, 420)
         spacing: 12
-        visible: page.deviceId.length === 0 || !page.available
+        visible: page.deviceId.length === 0
         Icon {
             anchors.horizontalCenter: parent.horizontalCenter
             width: 40; height: 40
@@ -76,8 +76,7 @@ Item {
             width: parent.width
             horizontalAlignment: Text.AlignHCenter
             role: "title"
-            text: page.deviceId.length === 0 ? qsTr("Phone apps")
-                : qsTr("Open %1's apps here").arg(page.deviceName)
+            text: qsTr("Phone apps")
         }
         Txt {
             width: parent.width
@@ -85,14 +84,7 @@ Item {
             wrapMode: Text.WordWrap
             role: "body"
             muted: true
-            text: page.deviceId.length === 0
-                ? qsTr("Pair your phone to open its apps in windows on this Mac.")
-                : (page.feature.reason || qsTr("Set up Wireless debugging in MacLink on the phone to open its apps here."))
-        }
-        LockChip {
-            anchors.horizontalCenter: parent.horizontalCenter
-            visible: page.deviceId.length > 0 && label.length > 0
-            feature: page.feature
+            text: qsTr("Connect your phone to view and open its apps here on Mac.")
         }
     }
 
@@ -112,7 +104,7 @@ Item {
             spacing: 8
 
             Rectangle {
-                width: parent.width - refresh.width - parent.spacing
+                width: parent.width - refresh.width - mirrorBtn.width - parent.spacing * 2
                 height: parent.height
                 radius: Theme.graphite ? Theme.radiusSm : height / 2
                 color: Theme.graphite ? "transparent" : Theme.surfaceContainerHighest
@@ -160,6 +152,16 @@ Item {
                 label: qsTr("Refresh")
                 enabled: page.loadState !== "loading"
                 onClicked: Mirror.loadApps(page.deviceId)
+            }
+            Button {
+                id: mirrorBtn
+                anchors.verticalCenter: parent.verticalCenter
+                text: qsTr("Mirror Phone")
+                iconPath: Icons.window
+                variant: "tonal"
+                size: "sm"
+                Accessible.name: qsTr("Mirror phone screen")
+                onClicked: Mirror.start(page.deviceId)
             }
         }
 

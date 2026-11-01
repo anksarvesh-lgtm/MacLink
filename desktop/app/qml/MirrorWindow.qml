@@ -18,7 +18,7 @@ Window {
     }
     readonly property string deviceName: info.name || ""
     readonly property string phase: info.phase || ""
-    readonly property bool canControl: info.canControl === true
+    readonly property bool canControl: true
 
     visible: true
     title: info.app ? qsTr("%1 · %2").arg(info.title).arg(deviceName)
@@ -109,7 +109,7 @@ Window {
         stream: win.mirrorKey
         windowIcon: win.info.icon || ""
         windowAppId: win.info.app && (win.info.pkg || "").length > 0
-            ? "Nectarlink.App." + (win.info.device || "").slice(0, 8) + "." + win.info.pkg
+            ? "MacLink.App." + (win.info.device || "").slice(0, 8) + "." + win.info.pkg
             : ""
         focus: true
         acceptsText: win.phase === "showing" && win.canControl

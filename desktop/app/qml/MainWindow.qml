@@ -628,6 +628,17 @@ NativeWindow {
                 onClicked: window.page = "photos"
             }
             NavItem {
+                iconPath: Icons.folder
+                text: qsTr("Files")
+                selected: window.page === "files"
+                activeHover: rail.hoveredNav === "files"
+                onHoveredChanged: {
+                    if (hovered) rail.hoveredNav = "files"
+                    else if (rail.hoveredNav === "files") rail.hoveredNav = ""
+                }
+                onClicked: window.page = "files"
+            }
+            NavItem {
                 iconPath: Icons.apps
                 text: qsTr("Apps")
                 selected: window.page === "apps"
@@ -716,6 +727,7 @@ NativeWindow {
                     : window.page === "messages" ? qsTr("Messages")
                     : window.page === "calls" ? qsTr("Calls")
                     : window.page === "photos" ? qsTr("Photos")
+                    : window.page === "files" ? qsTr("Files")
                     : window.page === "apps" ? qsTr("Apps")
                     : window.page === "deck" ? qsTr("Deck")
                     : (window.page === "help_center" || window.page === "guide") ? qsTr("Help Center")
@@ -931,6 +943,7 @@ NativeWindow {
                     case "messages": return "qrc:/qt/qml/app/nectarlink/qml/pages/MessagesPage.qml"
                     case "calls": return "qrc:/qt/qml/app/nectarlink/qml/pages/CallsPage.qml"
                     case "photos": return "qrc:/qt/qml/app/nectarlink/qml/pages/PhotosPage.qml"
+                    case "files": return "qrc:/qt/qml/app/nectarlink/qml/pages/FilesPage.qml"
                     case "apps": return "qrc:/qt/qml/app/nectarlink/qml/pages/AppsPage.qml"
                     case "deck": return "qrc:/qt/qml/app/nectarlink/qml/pages/DeckPage.qml"
                     case "help_center":
