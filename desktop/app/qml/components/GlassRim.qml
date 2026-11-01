@@ -10,7 +10,7 @@ ShaderEffect {
     property real radius: Theme.radiusLg
     property real strength: 1.0
     readonly property size itemSize: Qt.size(width, height)
-    readonly property color rimColor: Theme.dark ? Qt.rgba(0.50, 0.85, 1.0, 0.65) : Qt.rgba(1, 1, 1, 0.95)
+    readonly property color rimColor: Qt.rgba(1, 1, 1, 0.35)
 
     anchors.fill: parent
     visible: Theme.glass && width > 0 && height > 0

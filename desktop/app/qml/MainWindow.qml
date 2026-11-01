@@ -420,15 +420,22 @@ NativeWindow {
                 Theme.isPhoneSeed ? (Theme.dark ? 0.22 : 0.30) : (Theme.dark ? 0.12 : 0.18)
             )
         )
+    // Window background: near-black warm brown with soft amber glow at top-right (Image 2)
     Rectangle {
         anchors.fill: parent
-        color: Qt.rgba(
-            window.windowSurface.r,
-            window.windowSurface.g,
-            window.windowSurface.b,
-            Theme.dark ? 0.38 : 0.46
-        )
-        Behavior on color { ColorAnimation { duration: Theme.fadeNormal } }
+        color: Theme.windowBg
+    }
+    Rectangle {
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.topMargin: -90
+        anchors.rightMargin: -90
+        width: 520; height: 520; radius: 260
+        gradient: Gradient {
+            GradientStop { position: 0.0; color: Qt.rgba(0.72, 0.45, 0.10, 0.20) }
+            GradientStop { position: 0.45; color: Qt.rgba(0.72, 0.45, 0.10, 0.06) }
+            GradientStop { position: 1.0; color: "transparent" }
+        }
     }
 
     // Hive: the living comb behind everything, growing from the logo. It
@@ -552,19 +559,53 @@ NativeWindow {
         }
     }
 
-    // ---- Navigation rail ----
+    readonly property bool isWideSidebar: window.width >= 1000
+
+    // ---- Navigation rail / wide sidebar ----
     Rectangle {
         id: rail
         visible: !window.welcome
-        width: Theme.railWidth
+        width: window.isWideSidebar ? Theme.sidebarWidth : Theme.sidebarRailWidth
         height: parent.height
         color: "transparent"
         property string hoveredNav: ""
+        Behavior on width {
+            enabled: !Theme.reduceMotion
+            NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
+        }
 
+        // Wide mode brand header
+        Row {
+            id: brandHeader
+            visible: window.isWideSidebar
+            anchors.left: parent.left
+            anchors.leftMargin: 20
+            anchors.top: parent.top
+            anchors.topMargin: 20
+            spacing: 11
+
+            Image {
+                anchors.verticalCenter: parent.verticalCenter
+                width: 26; height: 26
+                source: "qrc:/brand/maclink-liquid-logo.png"
+                mipmap: true; smooth: true
+                fillMode: Image.PreserveAspectFit
+            }
+            Txt {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "MacLink"
+                role: "title"
+                size: 16
+                weight: 700
+                color: Theme.textPrimary
+            }
+        }
+
+        // Compact rail mark
         Rectangle {
             id: mark
+            visible: !window.isWideSidebar
             anchors.horizontalCenter: parent.horizontalCenter
-            // Centered on the top bar, level with the page title and the window buttons.
             y: (Theme.topBarHeight - height) / 2
             width: 38; height: 38
             radius: Theme.radiusSm
@@ -579,11 +620,17 @@ NativeWindow {
             }
         }
         Column {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: mark.bottom
-            anchors.topMargin: 31
-            spacing: 6
+            anchors.left: window.isWideSidebar ? parent.left : undefined
+            anchors.leftMargin: window.isWideSidebar ? 12 : 0
+            anchors.right: window.isWideSidebar ? parent.right : undefined
+            anchors.rightMargin: window.isWideSidebar ? 12 : 0
+            anchors.horizontalCenter: window.isWideSidebar ? undefined : parent.horizontalCenter
+            anchors.top: window.isWideSidebar ? brandHeader.bottom : mark.bottom
+            anchors.topMargin: window.isWideSidebar ? 22 : 31
+            spacing: window.isWideSidebar ? 4 : 6
+
             NavItem {
+                wide: window.isWideSidebar
                 iconPath: Icons.home
                 text: qsTr("Home")
                 selected: window.page === "home" || window.page === "timeline"
@@ -595,6 +642,7 @@ NativeWindow {
                 onClicked: window.page = "home"
             }
             NavItem {
+                wide: window.isWideSidebar
                 iconPath: Icons.messages
                 text: qsTr("Messages")
                 selected: window.page === "messages"
@@ -606,6 +654,7 @@ NativeWindow {
                 onClicked: window.page = "messages"
             }
             NavItem {
+                wide: window.isWideSidebar
                 iconPath: Icons.call
                 text: qsTr("Calls")
                 selected: window.page === "calls"
@@ -617,6 +666,7 @@ NativeWindow {
                 onClicked: window.page = "calls"
             }
             NavItem {
+                wide: window.isWideSidebar
                 iconPath: Icons.photo
                 text: qsTr("Photos")
                 selected: window.page === "photos"
@@ -628,6 +678,7 @@ NativeWindow {
                 onClicked: window.page = "photos"
             }
             NavItem {
+                wide: window.isWideSidebar
                 iconPath: Icons.folder
                 text: qsTr("Files")
                 selected: window.page === "files"
@@ -639,6 +690,7 @@ NativeWindow {
                 onClicked: window.page = "files"
             }
             NavItem {
+                wide: window.isWideSidebar
                 iconPath: Icons.apps
                 text: qsTr("Apps")
                 selected: window.page === "apps"
@@ -650,6 +702,7 @@ NativeWindow {
                 onClicked: window.page = "apps"
             }
             NavItem {
+                wide: window.isWideSidebar
                 iconPath: Icons.deck
                 text: qsTr("Deck")
                 selected: window.page === "deck"
@@ -660,7 +713,28 @@ NativeWindow {
                 }
                 onClicked: window.page = "deck"
             }
+
+            // Tools section (wide mode)
+            Txt {
+                visible: window.isWideSidebar
+                text: qsTr("TOOLS")
+                role: "caption"
+                size: 11
+                weight: 600
+                color: Theme.textSecondary
+                leftPadding: 12
+                topPadding: 12
+                bottomPadding: 4
+            }
             NavItem {
+                wide: window.isWideSidebar
+                iconPath: Icons.mirror
+                text: qsTr("Mirror Screen")
+                selected: AppController.mirrorActive
+                onClicked: AppController.openMirror()
+            }
+            NavItem {
+                wide: window.isWideSidebar
                 iconPath: Icons.info
                 text: qsTr("Help Center")
                 selected: window.page === "help_center" || window.page === "guide"
@@ -672,6 +746,7 @@ NativeWindow {
                 onClicked: window.page = "help_center"
             }
             NavItem {
+                wide: window.isWideSidebar
                 iconPath: Icons.settings
                 text: qsTr("Settings")
                 selected: window.page === "settings"
@@ -683,7 +758,79 @@ NativeWindow {
                 onClicked: window.page = "settings"
             }
         }
+
+        // Wide mode bottom device chip
+        Rectangle {
+            id: deviceChip
+            visible: window.isWideSidebar
+            anchors.left: parent.left
+            anchors.leftMargin: 12
+            anchors.right: parent.right
+            anchors.rightMargin: 12
+            anchors.bottom: parent.bottom
+            anchors.bottomMargin: 16
+            height: 48
+            radius: 14
+            color: Theme.cardFill
+            border.width: 1
+            border.color: Theme.cardBorderSubtle
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                cursorShape: Qt.PointingHandCursor
+                onClicked: window.openPairing()
+            }
+
+            Row {
+                anchors.left: parent.left
+                anchors.leftMargin: 12
+                anchors.right: plusBtn.left
+                anchors.rightMargin: 4
+                anchors.verticalCenter: parent.verticalCenter
+                spacing: 9
+
+                Rectangle {
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 8; height: 8; radius: 4
+                    color: AppController.hasDevices ? Theme.successGreen : Theme.textSecondary
+                }
+                Column {
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 1
+                    Txt {
+                        text: window.currentDeviceName.length > 0 ? window.currentDeviceName : qsTr("Android Phone")
+                        role: "label"
+                        size: 12
+                        weight: 600
+                        color: Theme.textPrimary
+                        elide: Text.ElideRight
+                        width: deviceChip.width - 76
+                    }
+                    Txt {
+                        text: AppController.hasDevices ? qsTr("Connected") : qsTr("Pair device")
+                        role: "caption"
+                        size: 11
+                        color: Theme.textSecondary
+                    }
+                }
+            }
+            IconButton {
+                id: plusBtn
+                anchors.right: parent.right
+                anchors.rightMargin: 6
+                anchors.verticalCenter: parent.verticalCenter
+                iconPath: Icons.plus
+                iconSize: 13
+                label: qsTr("Pair a new device")
+                tonal: true
+                onClicked: window.openPairing()
+            }
+        }
+
+        // Compact rail bottom pair button
         IconButton {
+            visible: !window.isWideSidebar
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 18
@@ -717,8 +864,78 @@ NativeWindow {
                 onClicked: window.page = "home"
                 Component.onCompleted: window.addCaptionHole(backToHome)
             }
+            // Top bar search field (Image 2)
+            Rectangle {
+                id: topSearchPill
+                anchors.left: backToHome.visible ? backToHome.right : parent.left
+                anchors.leftMargin: backToHome.visible ? 8 : Theme.contentPadding
+                anchors.verticalCenter: parent.verticalCenter
+                width: Math.min(360, Math.max(220, topBarActions.x - x - 20))
+                height: 34
+                radius: 17
+                color: Qt.rgba(1, 1, 1, 0.05)
+                border.width: 1
+                border.color: topSearchMouse.containsMouse ? Theme.cardBorderHover : Theme.cardBorderSubtle
+                visible: (topBarActions.x - x) > 180
+
+                MouseArea {
+                    id: topSearchMouse
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: AppController.openCommandPalette()
+                }
+
+                Row {
+                    anchors.left: parent.left
+                    anchors.leftMargin: 11
+                    anchors.right: cmdKBadge.left
+                    anchors.rightMargin: 6
+                    anchors.verticalCenter: parent.verticalCenter
+                    spacing: 8
+
+                    Icon {
+                        anchors.verticalCenter: parent.verticalCenter
+                        path: Icons.search
+                        width: 14; height: 14
+                        color: Theme.textSecondary
+                    }
+                    Txt {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: qsTr("Search devices, files, or commands…")
+                        role: "body"
+                        size: 12
+                        color: Theme.textSecondary
+                        elide: Text.ElideRight
+                        width: topSearchPill.width - 85
+                    }
+                }
+
+                Rectangle {
+                    id: cmdKBadge
+                    anchors.right: parent.right
+                    anchors.rightMargin: 8
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: 28; height: 18
+                    radius: 4
+                    color: Qt.rgba(1, 1, 1, 0.08)
+                    border.width: 1
+                    border.color: Qt.rgba(1, 1, 1, 0.12)
+                    Txt {
+                        anchors.centerIn: parent
+                        text: "⌘K"
+                        role: "caption"
+                        size: 10
+                        weight: 600
+                        color: Theme.textSecondary
+                    }
+                }
+                Component.onCompleted: window.addCaptionHole(topSearchPill)
+            }
+
             Txt {
                 id: pageTitle
+                visible: !topSearchPill.visible
                 anchors.left: backToHome.visible ? backToHome.right : parent.left
                 anchors.leftMargin: backToHome.visible ? 6 : Theme.contentPadding
                 anchors.verticalCenter: parent.verticalCenter
@@ -871,6 +1088,16 @@ NativeWindow {
                     }
                     Component.onCompleted: window.addCaptionHole(refresh)
                 }
+                IconButton {
+                    id: settingsGearBtn
+                    anchors.verticalCenter: parent.verticalCenter
+                    iconPath: Icons.settings
+                    iconSize: 16
+                    label: qsTr("Settings")
+                    tonal: window.page === "settings"
+                    onClicked: window.page = "settings"
+                    Component.onCompleted: window.addCaptionHole(settingsGearBtn)
+                }
             }
         }
 
@@ -881,13 +1108,7 @@ NativeWindow {
             width: parent.width
             clip: true
             topLeftRadius: 18
-            // Hive: lets the comb show faintly through, under opaque cards.
-            color: Theme.hive
-                ? Qt.rgba(Theme.surfaceContainerLow.r, Theme.surfaceContainerLow.g, Theme.surfaceContainerLow.b, Theme.dark ? 0.50 : 0.58)
-                : Theme.amoled
-                ? "#07080C"
-                : (Theme.glass
-                    ? Qt.rgba(Theme.surfaceContainerLow.r, Theme.surfaceContainerLow.g, Theme.surfaceContainerLow.b, Theme.dark ? 0.34 : 0.46)
+            color: "transparent"
                     : (Theme.graphite
                         ? Theme.surfaceContainerLow
                         : Qt.rgba(Theme.surfaceContainerLow.r, Theme.surfaceContainerLow.g, Theme.surfaceContainerLow.b, Theme.dark ? 0.56 : 0.68)))

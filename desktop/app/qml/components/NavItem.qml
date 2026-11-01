@@ -2,18 +2,20 @@
 import QtQuick
 import app.maclink
 
-// A navigation rail destination: an icon in a pill indicator above a label.
+// A navigation rail / sidebar destination: an icon in a pill indicator above a label,
+// or a wide row with icon + label in wide sidebar mode.
 FocusScope {
     id: item
     property string iconPath
     property string text
     property bool selected: false
+    property bool wide: false
     readonly property alias hovered: mouse.containsMouse
     property bool activeHover: mouse.containsMouse
     signal clicked
 
-    implicitWidth: 72
-    implicitHeight: 56
+    implicitWidth: wide ? (parent ? parent.width : 206) : 72
+    implicitHeight: wide ? 38 : 56
     activeFocusOnTab: true
 
     Accessible.role: Accessible.PageTab
@@ -27,8 +29,58 @@ FocusScope {
         }
     }
 
+    // ---- Wide sidebar mode ----
+    Rectangle {
+        id: widePill
+        visible: item.wide
+        anchors.fill: parent
+        radius: 12
+        scale: mouse.pressed ? Theme.pressScale : 1.0
+        Behavior on scale { enabled: !Theme.reduceMotion; NumberAnimation { duration: 120; easing.type: Easing.OutCubic } }
+
+        gradient: item.selected ? amberGrad : null
+        color: item.selected ? "transparent" : (item.activeHover ? Qt.rgba(1, 1, 1, 0.06) : "transparent")
+        border.width: item.selected ? 1 : (item.activeHover ? 1 : 0)
+        border.color: item.selected ? Qt.rgba(1, 0.85, 0.55, 0.65) : Qt.rgba(1, 1, 1, 0.08)
+
+        Gradient {
+            id: amberGrad
+            orientation: Gradient.Horizontal
+            GradientStop { position: 0.0; color: "#A86210" }
+            GradientStop { position: 1.0; color: "#F2A93B" }
+        }
+
+        Row {
+            anchors.left: parent.left
+            anchors.leftMargin: 12
+            anchors.right: parent.right
+            anchors.rightMargin: 12
+            anchors.verticalCenter: parent.verticalCenter
+            spacing: 11
+
+            Icon {
+                anchors.verticalCenter: parent.verticalCenter
+                path: item.iconPath
+                color: item.selected ? "#FFFFFF" : (item.activeHover ? Theme.textPrimary : Theme.textSecondary)
+                width: 18; height: 18
+            }
+
+            Txt {
+                anchors.verticalCenter: parent.verticalCenter
+                text: item.text
+                role: "body"
+                size: 13
+                weight: item.selected ? 600 : 500
+                color: item.selected ? "#FFFFFF" : (item.activeHover ? Theme.textPrimary : Theme.textSecondary)
+                elide: Text.ElideRight
+            }
+        }
+    }
+
+    // ---- Compact rail mode ----
     Rectangle {
         id: pill
+        visible: !item.wide
         anchors.horizontalCenter: parent.horizontalCenter
         y: 2
         width: 52; height: 30
@@ -80,6 +132,7 @@ FocusScope {
         }
     }
     Txt {
+        visible: !item.wide
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.top: pill.bottom
         anchors.topMargin: 4

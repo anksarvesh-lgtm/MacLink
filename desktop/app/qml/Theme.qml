@@ -92,70 +92,76 @@ QtObject {
             : seedColors[dark ? "dark" : "light"])
     readonly property var status: graphite || hive ? palette : Tokens.data.themes.bloom.status[dark ? "dark" : "light"]
 
+    // ---- MacLink Dark Glass & Amber Design Tokens (maclink_ui_style_prompt) ----
+    readonly property color windowBg: "#0B0806"
+    readonly property color amberGlow: "#B8721A"
+    readonly property color amberAccent: "#F2A93B"
+    readonly property color amberAccentDeep: "#B8721A"
+    readonly property color amberBorder: Qt.rgba(0.95, 0.66, 0.23, 0.50)
+    readonly property color textPrimary: "#F5F0EA"
+    readonly property color textSecondary: "#A89C8E"
+    readonly property color successGreen: "#3ECF6E"
+    readonly property color cardFill: Qt.rgba(1, 1, 1, 0.045)
+    readonly property color cardBorderSubtle: Qt.rgba(1, 1, 1, 0.08)
+    readonly property color cardBorderHover: Qt.rgba(1, 1, 1, 0.16)
+    readonly property int cardCornerRadius: 20
+    readonly property int tileCornerRadius: 14
+    readonly property int cardGap: 16
+    readonly property int cardPadding: 20
+    readonly property int sidebarWidth: 230
+    readonly property int sidebarRailWidth: 72
+
     // ---- Color roles ----
-    readonly property color primary: palette.primary
-    readonly property color primaryContent: palette.onPrimary
-    readonly property color primaryContainer: palette.primaryContainer
-    readonly property color primaryContainerContent: palette.onPrimaryContainer
-    readonly property color secondaryContainer: palette.secondaryContainer
-    readonly property color secondaryContainerContent: palette.onSecondaryContainer
-    readonly property color surface: amoled ? "#000000" : palette.surface
-    readonly property color surfaceLow: amoled ? "#050507" : palette.surfaceContainerLow
-    readonly property color surfaceContainerLow: amoled ? "#050507" : palette.surfaceContainerLow
-    readonly property color surfaceContainer: amoled ? "#0A0B0E" : palette.surfaceContainer
-    readonly property color surfaceContainerHigh: amoled ? "#121318" : palette.surfaceContainerHigh
-    readonly property color surfaceContainerHighest: amoled ? "#1A1C23" : palette.surfaceContainerHighest
-    readonly property color surfaceContent: palette.onSurface
-    readonly property color surfaceContentVariant: palette.onSurfaceVariant
-    readonly property color outline: palette.outline
-    readonly property color outlineVariant: amoled ? "#22242C" : palette.outlineVariant
-    // Success never gets its own (green) color: it uses the theme's ink.
-    readonly property color success: primary
+    readonly property color primary: amberAccent
+    readonly property color primaryContent: "#1C1206"
+    readonly property color primaryContainer: amberAccentDeep
+    readonly property color primaryContainerContent: textPrimary
+    readonly property color secondaryContainer: Qt.rgba(0.95, 0.66, 0.23, 0.16)
+    readonly property color secondaryContainerContent: textPrimary
+    readonly property color surface: windowBg
+    readonly property color surfaceLow: windowBg
+    readonly property color surfaceContainerLow: windowBg
+    readonly property color surfaceContainer: windowBg
+    readonly property color surfaceContainerHigh: Qt.rgba(1, 1, 1, 0.06)
+    readonly property color surfaceContainerHighest: Qt.rgba(1, 1, 1, 0.09)
+    readonly property color surfaceContent: textPrimary
+    readonly property color surfaceContentVariant: textSecondary
+    readonly property color outline: cardBorderSubtle
+    readonly property color outlineVariant: cardBorderSubtle
+    readonly property color success: successGreen
     readonly property color warning: status.warning
     readonly property color error: status.error
     readonly property color errorContent: status.onError
-    // A quiet error surface (the "sharing your screen" pill): the error hue
-    // over the surface, with the surface's own ink so text stays readable.
-    readonly property color errorContainer: Qt.tint(surfaceContainerHigh, Qt.rgba(error.r, error.g, error.b, dark ? 0.22 : 0.14))
+    readonly property color errorContainer: Qt.rgba(error.r, error.g, error.b, 0.22)
     readonly property color errorContainerContent: surfaceContent
 
     // ---- Component colors (Liquid Glass UI) ----
-    readonly property color cardColor: Qt.tint(
-        Qt.rgba(surfaceContainer.r, surfaceContainer.g, surfaceContainer.b, dark ? 0.38 : 0.52),
-        Qt.rgba(primary.r, primary.g, primary.b, dark ? 0.08 : 0.06)
-    )
-    readonly property color cardBorder: dark ? Qt.rgba(1, 1, 1, 0.10) : Qt.rgba(1, 1, 1, 0.30)
-    readonly property color tileColor: Qt.tint(
-        Qt.rgba(1, 1, 1, dark ? 0.08 : 0.48),
-        Qt.rgba(primary.r, primary.g, primary.b, dark ? 0.08 : 0.06)
-    )
-    readonly property color heroColor: Qt.tint(
-        Qt.rgba(surface.r, surface.g, surface.b, dark ? 0.36 : 0.50),
-        Qt.rgba(primaryContainer.r, primaryContainer.g, primaryContainer.b, dark ? 0.30 : 0.38)
-    )
-    readonly property color heroContent: primaryContainerContent
-    readonly property color railColor: Qt.rgba(surfaceLow.r, surfaceLow.g, surfaceLow.b, dark ? 0.28 : 0.42)
-    readonly property color indicator: secondaryContainer
-    readonly property color indicatorContent: secondaryContainerContent
-    readonly property color glow: Qt.rgba(primary.r, primary.g, primary.b, dark ? 0.30 : 0.22)
+    readonly property color cardColor: cardFill
+    readonly property color cardBorder: cardBorderSubtle
+    readonly property color tileColor: Qt.rgba(1, 1, 1, 0.04)
+    readonly property color heroColor: cardFill
+    readonly property color heroContent: textPrimary
+    readonly property color railColor: Qt.rgba(0.04, 0.03, 0.02, 0.65)
+    readonly property color indicator: amberAccent
+    readonly property color indicatorContent: textPrimary
+    readonly property color glow: Qt.rgba(0.72, 0.45, 0.10, 0.25)
     readonly property color buttonShadow: "transparent"
-    readonly property color scrim: Qt.rgba(0, 0, 0, dark ? 0.5 : 0.32)
+    readonly property color scrim: Qt.rgba(0, 0, 0, 0.65)
 
     // ---- Shape ----
     readonly property var shape: graphite ? Tokens.data.themes.graphite.shape
         : (hive ? Tokens.data.themes.hive.shape : Tokens.data.themes.bloom.shape)
-    readonly property int radiusXs: shape.xs
-    readonly property int radiusSm: shape.sm
-    readonly property int radiusMd: shape.md
-    readonly property int radiusLg: shape.lg
-    readonly property int radiusXl: shape.xl
+    readonly property int radiusXs: 6
+    readonly property int radiusSm: 10
+    readonly property int radiusMd: tileCornerRadius
+    readonly property int radiusLg: cardCornerRadius
+    readonly property int radiusXl: 24
     // "Pill": half the height of whatever uses it, in Bloom.
-    function pill(height) { return graphite ? shape.full : height / 2 }
+    function pill(height) { return height / 2 }
 
     // ---- Type ----
-    // Bundled with the app (assets/fonts).
-    readonly property string fontUi: "Figtree"
-    readonly property string fontDisplay: graphite ? "Instrument Serif" : "Figtree"
+    readonly property string fontUi: Qt.platform.os === "osx" ? "SF Pro Display" : "Figtree"
+    readonly property string fontDisplay: Qt.platform.os === "osx" ? "SF Pro Display" : "Figtree"
     readonly property string fontMono: "Space Mono"
     readonly property var typography: Tokens.data.typography
     readonly property var labelStyle: graphite ? Tokens.data.themes.graphite.label
