@@ -3232,7 +3232,7 @@ impl NectarlinkNode {
         let mut config =
             NodeConfig::new(PathBuf::from(options.data_dir), options.device.into(), options.app_version);
         config.power = options.power.into();
-        config.away_mode = options.away_mode;
+        config.away_mode = false;
         config.downloads_dir = Some(PathBuf::from(options.downloads_dir));
         config.usb_port = options.usb_port;
         config.key_protector = Some(Arc::new(KeyProtectorAdapter(key_protector)));

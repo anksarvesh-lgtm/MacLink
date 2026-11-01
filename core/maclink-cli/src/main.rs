@@ -2547,7 +2547,7 @@ async fn start_node(cli: &Cli) -> Result<Node> {
     config.usb_port = cli.usb_port;
     config.adb_server = cli.adb_server;
     config.lan_discovery = !cli.no_lan;
-    config.away_mode = cli.away;
+    config.away_mode = false;
     config.power = power;
     if cli.as_phone {
         let storage_root = cli.storage_root.clone().unwrap_or_else(|| data_dir.join("sample-storage"));

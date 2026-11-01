@@ -1,6 +1,6 @@
-<!-- BRIEF: COMMIT=77233bf7 HASH=330c1621 DATE=2026-11-01T11:24:12.797Z -->
+<!-- BRIEF: COMMIT=e4e26006 HASH=0477ad3f DATE=2026-11-01T11:53:43.518Z -->
 # Project Brief: nectarlink
-- **Commit**: `77233bf7` | **Updated**: 2026-11-01T11:24:12.797Z | **Files Tracked**: 669
+- **Commit**: `e4e26006` | **Updated**: 2026-11-01T11:53:43.518Z | **Files Tracked**: 691
 
 ## Overview
 **Your Android phone and your Mac, working seamlessly as one.**
@@ -11,14 +11,15 @@
 ## Project Map (Directory Tree)
 ```text
 .
+├── .agent/ (6 files)
 ├── .cargo/ (1 file)
 ├── .github/ (9 files)
 │   ├── ISSUE_TEMPLATE/ (3 files)
 │   ├── scripts/ (1 file)
 │   └── workflows/ (2 files)
 ├── LICENSES/ (5 files)
-├── android/ (184 files)
-│   ├── app/ (175 files)
+├── android/ (191 files)
+│   ├── app/ (182 files)
 │   └── gradle/ (3 files)
 ├── assets/ (16 files)
 │   ├── brand/ (8 files)
@@ -29,8 +30,8 @@
 │   ├── maclink-core/ (40 files)
 │   ├── maclink-ffi/ (4 files)
 │   └── maclink-protocol/ (9 files)
-├── desktop/ (256 files)
-│   ├── app/ (250 files)
+├── desktop/ (265 files)
+│   ├── app/ (259 files)
 │   ├── packaging/ (1 file)
 │   └── vcam/ (5 files)
 ├── docs/ (117 files)

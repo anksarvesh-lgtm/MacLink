@@ -11,7 +11,7 @@ use std::{
 
 use iroh::{
     Endpoint, EndpointAddr, RelayMode,
-    address_lookup::{DnsAddressLookup, MemoryLookup, PkarrPublisher, PkarrResolver},
+    address_lookup::MemoryLookup,
     endpoint::{Connection, QuicTransportConfig, VarInt, presets},
     endpoint_info::{EndpointInfo, UserData},
     protocol::{AcceptError, ProtocolHandler, Router},
@@ -566,7 +566,8 @@ impl Shared {
     }
 
     pub fn away_mode(&self) -> bool {
-        self.away_mode.load(std::sync::atomic::Ordering::Relaxed)
+        // Mobile network / away mode removed: connections are strictly LAN or USB only.
+        false
     }
 
     pub(crate) fn is_allowed_peer_ip(&self, ip: std::net::IpAddr) -> bool {
@@ -1475,7 +1476,7 @@ impl Node {
             lan_seen: Mutex::new(HashMap::new()),
             dial_failures: Mutex::new(HashMap::new()),
             matrices: Mutex::new(HashMap::new()),
-            away_mode: std::sync::atomic::AtomicBool::new(config.away_mode),
+            away_mode: std::sync::atomic::AtomicBool::new(false),
             memory,
             notifications: Feed::default(),
             notification_history: Mutex::new(Vec::new()),
@@ -1533,22 +1534,18 @@ impl Node {
         tokio::task::spawn_blocking(move || transfer::clean_incoming(&incoming));
 
         for peer in shared.store.list_peers()? {
-            if !config.away_mode {
-                let lan_only: Vec<SocketAddr> = peer
-                    .last_addrs
-                    .iter()
-                    .copied()
-                    .filter(|a| !a.ip().to_canonical().is_loopback() && crate::session::is_lan_ip(a.ip()))
-                    .collect();
-                if lan_only.len() != peer.last_addrs.len()
-                    && let Some(seen) = peer.last_seen
-                {
-                    let _ = shared.store.record_seen(&peer.id, seen, &lan_only);
-                }
-                shared.remember_addrs(&peer.id, &lan_only);
-            } else {
-                shared.remember_addrs(&peer.id, &peer.last_addrs);
+            let lan_only: Vec<SocketAddr> = peer
+                .last_addrs
+                .iter()
+                .copied()
+                .filter(|a| !a.ip().to_canonical().is_loopback() && crate::session::is_lan_ip(a.ip()))
+                .collect();
+            if lan_only.len() != peer.last_addrs.len()
+                && let Some(seen) = peer.last_seen
+            {
+                let _ = shared.store.record_seen(&peer.id, seen, &lan_only);
             }
+            shared.remember_addrs(&peer.id, &lan_only);
             shared.start_supervisor(peer.id);
         }
         run_queue_coordinator(Arc::downgrade(&shared), shared.cancel.child_token());
@@ -1561,41 +1558,9 @@ impl Node {
         self.shared.away_mode()
     }
 
-    /// Enables or disables connecting over mobile data / non-LAN paths at runtime.
-    pub fn set_away_mode(&self, enabled: bool) {
-        self.shared.away_mode.store(enabled, std::sync::atomic::Ordering::Relaxed);
-        if !enabled {
-            for session in self.shared.live_sessions() {
-                if !self.shared.is_connection_allowed(&session.conn) {
-                    tracing::info!(peer = %session.peer.short(), "closing non-LAN session after disabling away_mode");
-                    session.close(CLOSE_NORMAL, b"away mode disabled");
-                }
-            }
-            if let Ok(peers) = self.shared.store.list_peers() {
-                for peer in peers {
-                    let lan_only: Vec<SocketAddr> = peer
-                        .last_addrs
-                        .iter()
-                        .copied()
-                        .filter(|a| !a.ip().to_canonical().is_loopback() && crate::session::is_lan_ip(a.ip()))
-                        .collect();
-                    if lan_only.len() != peer.last_addrs.len()
-                        && let Some(seen) = peer.last_seen
-                    {
-                        let _ = self.shared.store.record_seen(&peer.id, seen, &lan_only);
-                    }
-                    self.shared.remember_addrs(&peer.id, &lan_only);
-                }
-            }
-        } else {
-            if let Ok(peers) = self.shared.store.list_peers() {
-                for peer in peers {
-                    self.shared.remember_addrs(&peer.id, &peer.last_addrs);
-                }
-            }
-            self.shared.nudge_reconnect();
-        }
-        self.shared.refresh_all_capabilities();
+    /// Mobile network / away mode has been removed: connection is strictly LAN or USB.
+    pub fn set_away_mode(&self, _enabled: bool) {
+        self.shared.away_mode.store(false, std::sync::atomic::Ordering::Relaxed);
     }
 
     /// Stops all sessions and networking.
@@ -3722,7 +3687,7 @@ impl Ports {
 
 /// Binds the endpoint on `ports`, or any free ports.
 async fn bind_endpoint(
-    config: &NodeConfig,
+    _config: &NodeConfig,
     secret: iroh::SecretKey,
     ports: Option<Ports>,
 ) -> Result<Endpoint> {
@@ -3740,31 +3705,13 @@ async fn bind_endpoint(
         .secret_key(secret)
         .alpns(vec![ALPN_SESSION.to_vec(), ALPN_PAIR.to_vec()])
         .transport_config(transport);
-    builder = if config.away_mode {
-        builder
-            .relay_mode(RelayMode::Default)
-            .address_lookup(PkarrPublisher::n0_dns())
-            .address_lookup(PkarrResolver::n0_dns())
-            .address_lookup(DnsAddressLookup::n0_dns())
-    } else {
-        // LAN only: no relays, nothing published outside the network.
-        builder.relay_mode(RelayMode::Disabled)
-    };
-    if !config.away_mode {
-        let v4_port = ports.map_or(0, |p| p.v4);
-        builder = builder
-            .clear_ip_transports()
-            .bind_addr(SocketAddr::from(([0, 0, 0, 0], v4_port)))
-            .map_err(crate::error::net)?;
-    } else if let Some(ports) = ports {
-        builder = builder
-            .clear_ip_transports()
-            .bind_addr(SocketAddr::from(([0, 0, 0, 0], ports.v4)))
-            .map_err(crate::error::net)?;
-        if let Some(v6) = ports.v6 {
-            builder = builder.bind_addr(SocketAddr::from(([0u16; 8], v6))).map_err(crate::error::net)?;
-        }
-    }
+    // LAN only: no relays, mobile network away mode removed.
+    builder = builder.relay_mode(RelayMode::Disabled);
+    let v4_port = ports.map_or(0, |p| p.v4);
+    builder = builder
+        .clear_ip_transports()
+        .bind_addr(SocketAddr::from(([0, 0, 0, 0], v4_port)))
+        .map_err(crate::error::net)?;
     builder.bind().await.map_err(crate::error::net)
 }
 

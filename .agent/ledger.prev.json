@@ -1,66 +1,66 @@
 {
   "version": 1,
-  "task_id": "t-20261101-1163",
-  "goal": "Fix app icon and in-app brand logo across macOS desktop and Android applications",
+  "task_id": "t-20261101-6076",
+  "goal": "Remove mobile network away_mode for stayconnected and make pairing codes alphanumeric",
   "status": "active",
-  "created_at": "2026-11-01T11:28:34.644Z",
-  "updated_at": "2026-11-01T11:28:34.644Z",
+  "created_at": "2026-11-01T11:55:57.679Z",
+  "updated_at": "2026-11-01T11:55:57.679Z",
   "checkpoint_count": 0,
   "steps": [
     {
       "id": "s1",
-      "title": "Fix Android launcher icon and logo assets",
+      "title": "Disable mobile network relay (away_mode) in maclink-core, node config, and CLI",
       "status": "in_progress",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T11:28:34.644Z"
+      "updated_at": "2026-11-01T11:55:57.679Z"
     },
     {
       "id": "s2",
-      "title": "Add logo to Android app UI",
+      "title": "Remove mobile network stay-connected toggles in desktop and Android UI & settings",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T11:28:34.644Z"
+      "updated_at": "2026-11-01T11:55:57.679Z"
     },
     {
       "id": "s3",
-      "title": "Fix macOS desktop app icon and UI logo",
+      "title": "Update SAS derivation and protocol in maclink-protocol to generate alphanumeric codes",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T11:28:34.644Z"
+      "updated_at": "2026-11-01T11:55:57.679Z"
     },
     {
       "id": "s4",
-      "title": "Rebuild and deploy macOS app and Android APK",
+      "title": "Update pairing logic and UI inputs across desktop and Android to accept alphanumeric pairing codes",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T11:28:34.644Z"
+      "updated_at": "2026-11-01T11:55:57.679Z"
     },
     {
       "id": "s5",
-      "title": "Verify and push changes",
+      "title": "Verify with unit tests (without building apps), commit to git, and push to remote",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T11:28:34.644Z"
+      "updated_at": "2026-11-01T11:55:57.679Z"
     }
   ]
 }
