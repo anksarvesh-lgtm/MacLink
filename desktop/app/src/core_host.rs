@@ -248,6 +248,13 @@ async fn run(data_dir: PathBuf, platform: Arc<dyn Platform>) {
     });
     host.started.notify_waiters();
 
+    if let Some(node) = self::node() {
+        let node_reconnect = node.clone();
+        host.runtime.spawn(async move {
+            node_reconnect.network_changed().await;
+        });
+    }
+
     host.runtime.spawn(async {
         let mut was_active = false;
         let mut last_sent_at = std::time::Instant::now() - std::time::Duration::from_secs(60);

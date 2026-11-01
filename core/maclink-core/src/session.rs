@@ -31,9 +31,8 @@ pub(crate) mod wake;
 
 pub(crate) const HANDSHAKE_TIMEOUT: Duration = Duration::from_secs(10);
 pub(crate) const REQUEST_TIMEOUT: Duration = Duration::from_secs(10);
-const HEARTBEAT_INTERVAL: Duration = Duration::from_millis(2500);
-const HEARTBEAT_TIMEOUT: Duration = Duration::from_millis(3000);
-const HEARTBEAT_RETRY_TIMEOUT: Duration = Duration::from_millis(1500);
+const HEARTBEAT_INTERVAL: Duration = Duration::from_millis(4000);
+const HEARTBEAT_TIMEOUT: Duration = Duration::from_millis(4000);
 const OUTBOX_CAPACITY: usize = 256;
 
 /// QUIC close code used when a duplicate connection is dropped.
@@ -650,7 +649,17 @@ pub(crate) async fn probe_after_network_change(shared: &Arc<Shared>, session: &A
     }
     let probe_start = Instant::now();
     let Ok(ping) = Envelope::new(types::PING, &Ping { ts: 0 }) else { return };
-    if session.request(ping, Duration::from_millis(2000)).await.is_err() && !session.rx_since(probe_start) {
+    for attempt in 1..=3 {
+        if session.request(ping.clone(), Duration::from_millis(2000)).await.is_ok()
+            || session.rx_since(probe_start)
+        {
+            return;
+        }
+        if attempt < 3 {
+            tokio::time::sleep(Duration::from_millis(500)).await;
+        }
+    }
+    if !session.rx_since(probe_start) {
         tracing::info!(peer = %session.peer.short(), "closing unreachable session after network change");
         session.close(CLOSE_NORMAL, b"network lost");
     }
@@ -660,6 +669,7 @@ async fn heartbeat(session: &Arc<Session>, shared: &Weak<Shared>) {
     let started = Instant::now();
     let mut interval = tokio::time::interval(HEARTBEAT_INTERVAL);
     interval.set_missed_tick_behavior(tokio::time::MissedTickBehavior::Delay);
+    let mut consecutive_failures: u32 = 0;
     loop {
         interval.tick().await;
         if let Some(shared_arc) = shared.upgrade()
@@ -674,6 +684,7 @@ async fn heartbeat(session: &Arc<Session>, shared: &Weak<Shared>) {
         let Ok(ping) = Envelope::new(types::PING, &Ping { ts }) else { continue };
         match session.request(ping, HEARTBEAT_TIMEOUT).await {
             Ok(reply) if reply.t == types::PONG => {
+                consecutive_failures = 0;
                 if let Some(shared_arc) = shared.upgrade() {
                     let rtt = sent_at.elapsed().as_millis().min(u32::MAX as u128) as u32;
                     let previous = session.rtt_ms.swap(rtt, Ordering::Relaxed);
@@ -682,22 +693,22 @@ async fn heartbeat(session: &Arc<Session>, shared: &Weak<Shared>) {
                     }
                 }
             }
-            Ok(_) => {}
-            Err(_) if session.rx_since(sent_at) => {}
+            Ok(_) => {
+                consecutive_failures = 0;
+            }
+            Err(_) if session.rx_since(sent_at) => {
+                consecutive_failures = 0;
+            }
             Err(e) => {
-                // Retry once; if still unreachable and no frames arrived, close.
-                let retry_ts = started.elapsed().as_millis() as u64;
-                let alive = if let Ok(retry_ping) = Envelope::new(types::PING, &Ping { ts: retry_ts }) {
-                    matches!(session.request(retry_ping, HEARTBEAT_RETRY_TIMEOUT).await, Ok(r) if r.t == types::PONG)
-                        || session.rx_since(sent_at)
-                } else {
-                    session.rx_since(sent_at)
-                };
-                if !alive {
-                    tracing::info!(peer = %session.peer.short(), error = %e, "heartbeat timed out; closing dead session");
+                consecutive_failures += 1;
+                // Allow up to 3 consecutive missed heartbeats (12-15s total silence) before closing,
+                // so background radio power saves and momentary network hops do not break the connection.
+                if consecutive_failures >= 3 && !session.rx_since(sent_at) {
+                    tracing::info!(peer = %session.peer.short(), error = %e, failures = consecutive_failures, "heartbeat timed out; closing dead session");
                     session.close(CLOSE_NORMAL, b"heartbeat timeout");
                     return;
                 }
+                tracing::debug!(peer = %session.peer.short(), error = %e, failures = consecutive_failures, "heartbeat missed; retrying");
             }
         }
     }

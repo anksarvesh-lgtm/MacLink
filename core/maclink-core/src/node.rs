@@ -42,7 +42,7 @@ use crate::{
 
 const DIAL_TIMEOUT: Duration = Duration::from_secs(15);
 const BACKOFF_MIN: Duration = Duration::from_secs(1);
-const BACKOFF_MAX: Duration = Duration::from_secs(30);
+const BACKOFF_MAX: Duration = Duration::from_secs(8);
 /// How long the device with the higher ID waits before dialing (see `maintain`).
 const DEFER_DIAL: Duration = Duration::from_millis(750);
 /// How long a phone plugged into a PC waits for the PC to dial through the cable before
@@ -1172,6 +1172,18 @@ impl Shared {
         if let Some(usb_addr) = self.usb_peer_addr(&peer) {
             addr = addr.with_ip_addr(usb_addr);
         }
+        if let Some((_, addrs)) = lock(&self.lan_seen).get(&peer) {
+            for a in addrs {
+                addr = addr.with_ip_addr(*a);
+            }
+        }
+        if let Ok(Some(record)) = self.store.get_peer(&peer) {
+            for a in &record.last_addrs {
+                if crate::session::is_lan_ip(a.ip()) {
+                    addr = addr.with_ip_addr(*a);
+                }
+            }
+        }
         let conn = tokio::time::timeout(DIAL_TIMEOUT, self.endpoint.connect(addr, ALPN_SESSION))
             .await
             .map_err(|_| Error::Timeout)?
@@ -1274,11 +1286,14 @@ async fn maintain(shared: Weak<Shared>, peer: DeviceId, wake: Arc<Notify>, cance
             }
             let jitter = backoff.mul_f64(rand::random::<f64>() * 0.2);
             tokio::select! {
-                _ = tokio::time::sleep(backoff + jitter) => {}
-                _ = wake.notified() => {}
+                _ = tokio::time::sleep(backoff + jitter) => {
+                    backoff = (backoff * 2).min(BACKOFF_MAX);
+                }
+                _ = wake.notified() => {
+                    backoff = BACKOFF_MIN;
+                }
                 _ = cancel.cancelled() => return,
             }
-            backoff = (backoff * 2).min(BACKOFF_MAX);
             continue;
         }
         // When both devices come up together they'd dial each other at once and
@@ -1289,6 +1304,9 @@ async fn maintain(shared: Weak<Shared>, peer: DeviceId, wake: Arc<Notify>, cance
             drop(node);
             tokio::select! {
                 _ = tokio::time::sleep(DEFER_DIAL) => {}
+                _ = wake.notified() => {
+                    backoff = BACKOFF_MIN;
+                }
                 _ = cancel.cancelled() => return,
             }
             let Some(again) = shared.upgrade() else { return };
@@ -1316,11 +1334,14 @@ async fn maintain(shared: Weak<Shared>, peer: DeviceId, wake: Arc<Notify>, cance
         // Up to 20% jitter so many devices don't retry in lockstep.
         let jitter = backoff.mul_f64(rand::random::<f64>() * 0.2);
         tokio::select! {
-            _ = tokio::time::sleep(backoff + jitter) => {}
-            _ = wake.notified() => {}
+            _ = tokio::time::sleep(backoff + jitter) => {
+                backoff = (backoff * 2).min(BACKOFF_MAX);
+            }
+            _ = wake.notified() => {
+                backoff = BACKOFF_MIN;
+            }
             _ = cancel.cancelled() => return,
         }
-        backoff = (backoff * 2).min(BACKOFF_MAX);
     }
 }
 
@@ -1547,6 +1568,7 @@ impl Node {
             }
             shared.remember_addrs(&peer.id, &lan_only);
             shared.start_supervisor(peer.id);
+            shared.wake_supervisor(&peer.id);
         }
         run_queue_coordinator(Arc::downgrade(&shared), shared.cancel.child_token());
         tracing::info!(device = %id.short(), lan = config.lan_discovery, away = config.away_mode, "node started");
@@ -3613,7 +3635,11 @@ impl Node {
 
     /// Records a LAN discovery sighting for `peer` (e.g. from mDNS or LocalSend).
     pub fn record_lan_sighting(&self, peer: DeviceId, addrs: Vec<SocketAddr>) {
-        lock(&self.shared.lan_seen).insert(peer, (std::time::Instant::now(), addrs));
+        lock(&self.shared.lan_seen).insert(peer, (std::time::Instant::now(), addrs.clone()));
+        self.shared.remember_addrs(&peer, &addrs);
+        if self.shared.store.is_paired(&peer).unwrap_or(false) {
+            self.shared.wake_supervisor(&peer);
+        }
     }
 
     /// Increments the consecutive dial failure counter for `peer`.
@@ -3746,7 +3772,8 @@ fn start_lan_discovery(shared: &Arc<Shared>, name: &str) -> Result<()> {
                 DiscoveryEvent::Discovered { endpoint_info, .. } => {
                     let id = crate::device_id(&endpoint_info.endpoint_id);
                     let addrs: Vec<SocketAddr> = endpoint_info.ip_addrs().copied().collect();
-                    lock(&shared.lan_seen).insert(id, (std::time::Instant::now(), addrs));
+                    lock(&shared.lan_seen).insert(id, (std::time::Instant::now(), addrs.clone()));
+                    shared.remember_addrs(&id, &addrs);
                     if shared.store.is_paired(&id).unwrap_or(false) {
                         shared.wake_supervisor(&id);
                         continue;
