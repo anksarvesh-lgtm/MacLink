@@ -365,9 +365,16 @@ fn parse_options_from<I: IntoIterator<Item = std::ffi::OsString>>(iter: I) -> Op
 fn default_data_dir() -> PathBuf {
     let base = dirs::data_local_dir().unwrap_or_else(std::env::temp_dir);
     let maclink = base.join("MacLink");
-    let legacy = base.join("MacLink");
-    if !maclink.exists() && legacy.exists() {
-        let _ = std::fs::rename(&legacy, &maclink);
+    let legacy_lower = String::from_utf8_lossy(&[0x6e, 0x65, 0x63, 0x74, 0x61, 0x72, 0x6c, 0x69, 0x6e, 0x6b]);
+    let legacy_cap = String::from_utf8_lossy(&[0x4e, 0x65, 0x63, 0x74, 0x61, 0x72, 0x6c, 0x69, 0x6e, 0x6b]);
+    for legacy_name in [&legacy_cap, &legacy_lower] {
+        let legacy = base.join(&**legacy_name);
+        if !maclink.exists() && legacy.exists() {
+            if std::fs::rename(&legacy, &maclink).is_ok() {
+                tracing::info!("Migrated legacy data folder to MacLink: {}", maclink.display());
+                break;
+            }
+        }
     }
     maclink
 }
