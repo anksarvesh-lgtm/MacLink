@@ -343,25 +343,12 @@
             android:name=".mic.MicDeclineReceiver"
             android:exported="false" />
 
-        <service
-            android:name=".webcam.WebcamService"
-            android:exported="false"
-            android:foregroundServiceType="camera" />
-
-        <!-- Continuity Camera: takes a photo or scans a document for a paired PC. -->
         <!-- Play on phone: a PC player's picture and sound, full screen. -->
         <activity
             android:name=".ui.watch.WatchActivity"
             android:configChanges="orientation|screenSize|screenLayout|smallestScreenSize|keyboard|keyboardHidden"
             android:exported="false"
             android:launchMode="singleTop"
-            android:theme="@style/Theme.Nectarlink" />
-
-        <activity
-            android:name=".camera.ContinuityCameraActivity"
-            android:exported="false"
-            android:showWhenLocked="true"
-            android:turnScreenOn="true"
             android:theme="@style/Theme.Nectarlink" />
 
         <service

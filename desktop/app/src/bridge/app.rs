@@ -996,8 +996,8 @@ fn on_tray_event(qt: &CxxQtThread<qobject::AppController>, event: tray::TrayEven
         tray::TrayEvent::Shelf => {
             let _ = qt.queue(|object| object.toggle_shelf());
         }
-        tray::TrayEvent::TakePhoto => crate::continuity_camera::start("photo"),
-        tray::TrayEvent::ScanDocument => crate::continuity_camera::start("scan"),
+        tray::TrayEvent::TakePhoto => {}
+        tray::TrayEvent::ScanDocument => {}
         tray::TrayEvent::OpenLinkOnPhone => crate::links::open_copied_link_on_phone(),
         tray::TrayEvent::Quit => {
             let _ = qt.queue(|object| object.quit_requested());
@@ -2238,7 +2238,7 @@ fn load_guide_doc_content(raw_key: &str) -> (String, String) {
              - SMS and Contacts: Required only if you want to read and send SMS/MMS messages or look up contact names on your PC.\n\
              - Phone and Call Log: Required only if you want incoming call alerts, call history, or dialing from your PC.\n\
              - Media and Photos: Required only if you want the Photos gallery, Shelf latest photo, or folder sync.\n\
-             - Camera and Microphone: Required only while streaming your phone as a webcam, taking a Continuity Camera shot, or recording a voice note."
+             - Microphone: Required only while recording a voice note or using phone as microphone."
             ),
         ),
         "elevated" => (
@@ -2389,33 +2389,6 @@ fn load_guide_doc_content(raw_key: &str) -> (String, String) {
              - The per-device Share PC screen to phone switch on your PC, or one-time approval when your phone requests to view your screen."
             ),
         ),
-        "webcam" => (
-            tr!("Guide", "Phone as webcam"),
-            tr!(
-                "Guide",
-                "What it does\n\
-             Streams your phone camera into the NectarLink Virtual Camera on Windows so Zoom, Teams, Meet, Discord, and OBS can use your phone's rear or front camera at up to 4K.\n\n\
-             Where to find it\n\
-             - Home › Phone as webcam.\n\
-             - Settings › Camera & Audio › Start webcam.\n\n\
-             What it needs\n\
-             - Camera permission on your phone.\n\
-             - For other apps to see it: Virtual camera add-on in Settings › Camera & Audio."
-            ),
-        ),
-        "continuity-camera" => (
-            tr!("Guide", "Continuity camera"),
-            tr!(
-                "Guide",
-                "What it does\n\
-             Triggers your phone camera from any Windows app to snap a photo or scan a document, then copies the result to the Windows clipboard and pastes it into the active window.\n\n\
-             Where to find it\n\
-             - Global hotkeys Ctrl+Alt+C (Take photo with phone) and Ctrl+Alt+D (Scan document with phone).\n\
-             - Home › Continuity Camera.\n\n\
-             What it needs\n\
-             - Camera permission on your phone."
-            ),
-        ),
         "speaker" => (
             tr!("Guide", "Phone as speaker"),
             tr!(
@@ -2424,7 +2397,7 @@ fn load_guide_doc_content(raw_key: &str) -> (String, String) {
              Streams your PC system audio to your connected phone in real time over the encrypted connection so you can listen through your phone speakers or headphones.\n\n\
              Where to find it\n\
              - Home › Phone as speaker.\n\
-             - Settings › Camera & Audio › Stream PC audio to phone.\n\n\
+             - Settings › Audio & Calls › Stream PC audio to phone.\n\n\
              What it needs\n\
              - Paired phone connected over local Wi-Fi or USB."
             ),

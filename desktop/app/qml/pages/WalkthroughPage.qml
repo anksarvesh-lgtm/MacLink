@@ -729,7 +729,7 @@ FocusScope {
                                         {
                                             icon: Icons.mirror,
                                             title: qsTr("Mirroring, Camera, and Audio"),
-                                            body: "Stream your phone screen, use your phone as a webcam, or route PC audio."
+                                            body: "Stream your phone screen, mirror displays, or route PC audio."
                                         },
                                         {
                                             icon: Icons.lock,

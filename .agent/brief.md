@@ -1,6 +1,6 @@
-<!-- BRIEF: COMMIT=e4e26006 HASH=0477ad3f DATE=2026-11-01T11:53:43.518Z -->
+<!-- BRIEF: COMMIT=5f070e07 HASH=e6d86678 DATE=2026-11-01T13:01:35.834Z -->
 # Project Brief: nectarlink
-- **Commit**: `e4e26006` | **Updated**: 2026-11-01T11:53:43.518Z | **Files Tracked**: 691
+- **Commit**: `5f070e07` | **Updated**: 2026-11-01T13:01:35.834Z | **Files Tracked**: 692
 
 ## Overview
 **Your Android phone and your Mac, working seamlessly as one.**
@@ -34,7 +34,7 @@
 │   ├── app/ (259 files)
 │   ├── packaging/ (1 file)
 │   └── vcam/ (5 files)
-├── docs/ (117 files)
+├── docs/ (118 files)
 │   ├── adr/ (9 files)
 │   ├── architecture/ (2 files)
 │   ├── design/ (6 files)
@@ -43,7 +43,7 @@
 │   ├── protocol/ (19 files)
 │   ├── research/ (1 file)
 │   ├── screenshots/ (14 files)
-│   └── technical/ (8 files)
+│   └── technical/ (9 files)
 ├── scripts/ (7 files)
 ├── tools/ (4 files)
 │   └── xtask/ (4 files)

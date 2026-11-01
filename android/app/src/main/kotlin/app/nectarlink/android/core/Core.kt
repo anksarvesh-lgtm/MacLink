@@ -38,8 +38,6 @@ import app.nectarlink.android.storage.PhoneStorage
 import app.nectarlink.android.mic.MicService
 import app.nectarlink.android.mirror.MirrorService
 import app.nectarlink.android.toggles.PhoneToggles
-import app.nectarlink.android.webcam.WebcamRequests
-import app.nectarlink.android.webcam.WebcamService
 import app.nectarlink.core.FfiQueueStatus
 import app.nectarlink.core.Event
 import app.nectarlink.core.EventListener
@@ -138,17 +136,6 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
         storage = { storage },
         onMirror = { pc, request ->
             MirrorRequests.show(this.context, request, _state.value.nameOf(pc).orEmpty())
-        },
-        onWebcam = { pc, request ->
-            val session = WebcamService.session.value
-            if (session.active && session.pcId == pc && WebcamService.hasPermission(this.context)) {
-                WebcamService.start(this.context, pc, request.height, request.fps, request.camera)
-                true
-            } else {
-                _state.update { it.copy(webcamRequest = request) }
-                WebcamRequests.show(this.context, request, _state.value.nameOf(pc).orEmpty())
-                true
-            }
         },
         appWindows = AppWindows(this.context, scope, open = { pc -> mirrorOpen(pc) }, nameOf = { pc -> _state.value.nameOf(pc).orEmpty() }),
         nameOf = { pc -> _state.value.nameOf(pc).orEmpty() },
@@ -326,10 +313,9 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
                 s.sendQueue.any { it.status is FfiQueueStatus.Sending || it.status is FfiQueueStatus.Waiting }
         }.distinctUntilChanged(),
         MirrorService.session.map { it.active }.distinctUntilChanged(),
-        WebcamService.session.map { it.active || it.connecting }.distinctUntilChanged(),
         MicService.streaming.map { it != null }.distinctUntilChanged(),
-    ) { hasTransfers: Boolean, isMirroring: Boolean, isWebcam: Boolean, isMic: Boolean ->
-        hasTransfers || isMirroring || isWebcam || isMic
+    ) { hasTransfers: Boolean, isMirroring: Boolean, isMic: Boolean ->
+        hasTransfers || isMirroring || isMic
     }.stateIn(scope, SharingStarted.Eagerly, false)
 
     /** Short messages for the user (a command failed). */
@@ -1049,21 +1035,7 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
     }
 
     /** Opens this phone's camera stream to a PC (`webcam`), or emits a message on failure. */
-    suspend fun webcamOpenOrMessage(pcId: String): MirrorStream? {
-        startJob?.join()
-        val node = node ?: return null
-        return try {
-            node.webcamOpen(pcId)
-        } catch (e: NectarlinkException) {
-            val name = _state.value.nameOf(pcId).orEmpty()
-            val msg = when (e) {
-                is NectarlinkException.Denied -> context.getString(R.string.webcam_denied_text, name)
-                else -> describe(e)
-            }
-            _messages.tryEmit(msg)
-            null
-        }
-    }
+    suspend fun webcamOpenOrMessage(pcId: String): MirrorStream? = null
 
     /** Opens this phone's microphone stream to [pcId] (docs/protocol/mic.md); null if it can't. */
     suspend fun micOpen(pcId: String): MirrorStream? {
@@ -1134,51 +1106,7 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
         return PerPcToggles(storage, micOff)
     }
 
-    fun clearWebcamRequest(pcId: String? = null) {
-        if (pcId != null) WebcamRequests.dismiss(context, pcId)
-        _state.update { s ->
-            if (pcId == null || s.webcamRequest?.pcId == pcId) s.copy(webcamRequest = null) else s
-        }
-    }
-
-    /** Sends a captured photo or scanned document back to the requesting PC (`camera.result`). */
-    fun sendCameraCaptureResult(
-        pcId: String,
-        requestId: String,
-        mode: String,
-        fileName: String,
-        mime: String,
-        width: Int,
-        height: Int,
-        data: ByteArray,
-    ) {
-        scope.launch(Dispatchers.IO) {
-            startJob?.join()
-            val currentNode = node ?: return@launch
-            try {
-                currentNode.sendCameraCaptureResult(
-                    pcId = pcId,
-                    requestId = requestId,
-                    mode = mode,
-                    fileName = fileName,
-                    mime = mime,
-                    width = width.coerceAtLeast(1).toUInt(),
-                    height = height.coerceAtLeast(1).toUInt(),
-                    data = data,
-                )
-            } catch (e: NectarlinkException) {
-                _messages.tryEmit(describe(e))
-            }
-        }
-    }
-
-    /** Notifies the requesting PC that a Continuity Camera capture was cancelled (`camera.cancel`). */
-    fun cancelCameraCapture(pcId: String, requestId: String, reason: String? = null) {
-        scope.launch(Dispatchers.IO) {
-            startJob?.join()
-            runCatching { node?.cancelCameraCapture(pcId, requestId, reason) }
-        }
-    }
+    fun clearWebcamRequest(pcId: String? = null) {}
 
     /**
      * Sends picked or shared files to a PC; problems arrive as messages.
@@ -1821,8 +1749,6 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
             (if (PhoneSms.canRead(context)) listOf("sms.read") else emptyList()) +
             (if (PhoneSms.canSend(context)) listOf("sms.send") else emptyList()) +
             PhoneStorage.capabilities(context) +
-            (if (WebcamService.hasPermission(context)) listOf("camera.stream") else emptyList()) +
-            (if (context.packageManager.hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY)) listOf("camera.capture") else emptyList()) +
             (if (InputService.running || Elevated.running) listOf("mirror.input") else emptyList()) +
             (if (Elevated.running) listOf("clip.read.auto") else emptyList()) +
             // Apps in windows of their own run on displays the Elevated helper makes.

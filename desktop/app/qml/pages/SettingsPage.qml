@@ -19,7 +19,7 @@ Item {
         { id: "appearance", title: qsTr("Appearance"), icon: Icons.palette, subtitle: qsTr("Liquid Glass & system theme") },
         { id: "general", title: qsTr("General"), icon: Icons.laptop, subtitle: qsTr("Startup, clipboard & desktop") },
         { id: "devices", title: qsTr("Devices"), icon: Icons.phone, subtitle: qsTr("Paired phones & permissions") },
-        { id: "camera_audio", title: qsTr("Camera & Audio"), icon: Icons.video, subtitle: qsTr("Webcam, speaker & calls") },
+        { id: "camera_audio", title: qsTr("Audio & Calls"), icon: Icons.speaker, subtitle: qsTr("Speaker, mic & phone calls") },
         { id: "notifications", title: qsTr("Notifications"), icon: Icons.bell, subtitle: qsTr("Do not disturb & app rules") },
         { id: "files_sync", title: qsTr("Files & Sync"), icon: Icons.folder, subtitle: qsTr("Folder sync, storage & recordings") },
         { id: "shortcuts", title: qsTr("Shortcuts & Rules"), icon: Icons.bolt, subtitle: qsTr("Hotkeys & automations") },
@@ -38,7 +38,6 @@ Item {
     }
 
     function syncSectionSideEffects() {
-        Webcam.setPreviewActive(page.active && (page.currentSection === "camera_audio" || Webcam.phase === "streaming"))
         if (page.active && (page.currentSection === "storage" || page.currentSection === "appearance"))
             AppController.refreshDataRetention()
     }
@@ -116,7 +115,6 @@ Item {
         if (active)
             syncSectionSideEffects()
     }
-    Component.onDestruction: Webcam.setPreviewActive(false)
 
     Connections {
         target: DeviceList
@@ -166,7 +164,6 @@ Item {
         pc_actions: qsTr("Lock, sleep & wake PC"),
         mirroring: qsTr("Screen mirroring"),
         pc_mirror: qsTr("Share PC screen to phone"),
-        webcam: qsTr("Webcam"),
         storage: qsTr("File Explorer integration"),
         remote_input: qsTr("Remote mouse, keyboard & Deck"),
         commands: qsTr("Run Deck shell commands"),
@@ -187,7 +184,6 @@ Item {
         pc_actions: Icons.lock,
         mirroring: Icons.mirror,
         pc_mirror: Icons.laptop,
-        webcam: Icons.video,
         storage: Icons.folder,
         remote_input: Icons.deck,
         commands: Icons.terminal,
@@ -209,8 +205,8 @@ Item {
             keys: ["clipboard", "files", "photos", "recordings", "storage", "remote_files"]
         },
         {
-            title: qsTr("Screen, camera & control"),
-            keys: ["media", "toggles", "mirroring", "pc_mirror", "webcam", "pc_actions", "remote_input", "commands"]
+            title: qsTr("Screen & control"),
+            keys: ["media", "toggles", "mirroring", "pc_mirror", "pc_actions", "remote_input", "commands"]
         }
     ]
 
@@ -240,7 +236,7 @@ Item {
     readonly property var allGroupedKeys: [
         "notifications", "messages", "calls", "contacts",
         "clipboard", "files", "photos", "recordings", "storage", "remote_files",
-        "media", "toggles", "mirroring", "pc_mirror", "webcam", "pc_actions", "remote_input", "commands"
+        "media", "toggles", "mirroring", "pc_mirror", "pc_actions", "remote_input", "commands"
     ]
 
     FolderDialog {
@@ -1366,204 +1362,6 @@ Item {
                                 onMoved: (v) => PhoneMic.setLoudness(v)
                             }
                         }
-
-                        Divider { width: parent.width }
-
-                        // Row 2: Virtual camera add-on
-                        ListRow {
-                            width: parent.width
-                            iconPath: Icons.video
-                            title: qsTr("Virtual camera add-on")
-                            description: Webcam.addonRegistered
-                                ? qsTr("Registered for Zoom, Teams & Meet.")
-                                : qsTr("One-time setup (admin required) for Zoom, Teams & Meet.")
-                            Row {
-                                spacing: 12
-                                Spinner {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    visible: Webcam.addonBusy
-                                }
-                                Row {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    visible: Webcam.addonRegistered
-                                    spacing: 6
-                                    StatusDot {
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        online: true
-                                    }
-                                    Txt {
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        role: "bodySmall"
-                                        muted: true
-                                        text: qsTr("Ready")
-                                    }
-                                }
-                                Button {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    variant: Webcam.addonRegistered ? "outline" : "tonal"
-                                    size: "sm"
-                                    enabled: !Webcam.addonBusy
-                                    text: Webcam.addonRegistered ? qsTr("Remove") : qsTr("Set up")
-                                    onClicked: Webcam.addonRegistered ? Webcam.removeAddon() : Webcam.setupAddon()
-                                }
-                            }
-                        }
-
-                        Divider { width: parent.width; visible: DeviceList.count > 1 }
-                        ListRow {
-                            width: parent.width
-                            visible: DeviceList.count > 1
-                            iconPath: Icons.phone
-                            title: qsTr("Phone")
-                            Row {
-                                spacing: 8
-                                Repeater {
-                                    model: DeviceList
-                                    delegate: Chip {
-                                        required property string deviceId
-                                        required property string name
-                                        interactive: true
-                                        text: name
-                                        selected: Webcam.selectedPhone === deviceId
-                                        onClicked: Webcam.selectPhone(deviceId)
-                                    }
-                                }
-                            }
-                        }
-
-                        Divider { width: parent.width }
-
-                        // Row 3: Camera (Back | Front) | Mirror image
-                        Item {
-                            id: camMirrorPairRow
-                            width: parent.width
-                            readonly property bool splitCols: width >= 460
-                            readonly property real colWidth: splitCols ? Math.floor((width - 37) / 2) : width
-                            implicitHeight: splitCols
-                                ? Math.max(cameraSelectRow.implicitHeight, mirrorCamRow.implicitHeight)
-                                : (cameraSelectRow.implicitHeight + 1 + mirrorCamRow.implicitHeight)
-
-                            ListRow {
-                                id: cameraSelectRow
-                                x: 0
-                                y: camMirrorPairRow.splitCols ? Math.round((parent.height - height) / 2) : 0
-                                width: camMirrorPairRow.colWidth
-                                iconPath: Icons.camera
-                                title: qsTr("Camera")
-                                Segmented {
-                                    options: [
-                                        { value: "back", label: qsTr("Back") },
-                                        { value: "front", label: qsTr("Front") }
-                                    ]
-                                    value: Webcam.camera
-                                    onPicked: (value) => Webcam.setCamera(value)
-                                }
-                            }
-
-                            Rectangle {
-                                visible: camMirrorPairRow.splitCols
-                                x: Math.floor(parent.width / 2)
-                                y: 8
-                                width: 1
-                                height: Math.max(24, parent.height - 16)
-                                color: Theme.outlineVariant
-                            }
-
-                            Divider {
-                                visible: !camMirrorPairRow.splitCols
-                                y: cameraSelectRow.implicitHeight
-                                width: parent.width
-                            }
-
-                            ListRow {
-                                id: mirrorCamRow
-                                x: camMirrorPairRow.splitCols ? (parent.width - width) : 0
-                                y: camMirrorPairRow.splitCols
-                                    ? Math.round((parent.height - height) / 2)
-                                    : (cameraSelectRow.implicitHeight + 1)
-                                width: camMirrorPairRow.colWidth
-                                iconPath: Icons.mirror
-                                title: qsTr("Mirror image")
-                                Toggle {
-                                    label: qsTr("Mirror image")
-                                    checked: Webcam.mirror
-                                    onToggled: (on) => Webcam.setMirrorImage(on)
-                                }
-                            }
-                        }
-
-                        Divider { width: parent.width }
-                        ListRow {
-                            width: parent.width
-                            iconPath: Icons.camera
-                            title: qsTr("Resolution")
-                            Segmented {
-                                // 4K only when the phone's camera in use can stream it.
-                                options: [
-                                    { value: "720", label: "720p" },
-                                    { value: "1080", label: "1080p" }
-                                ].concat(Webcam.uhd ? [{ value: "2160", label: "4K" }] : [])
-                                value: String(Webcam.height)
-                                onPicked: (value) => Webcam.setResolution(Number(value))
-                            }
-                        }
-
-                        Divider { width: parent.width }
-                        Column {
-                            width: parent.width
-                            spacing: 10
-                            topPadding: 8
-                            Item {
-                                width: parent.width
-                                height: Math.max(webcamStatusLabel.height, webcamStartBtn.height)
-                                Txt {
-                                    id: webcamStatusLabel
-                                    anchors.left: parent.left
-                                    anchors.right: webcamStartBtn.left
-                                    anchors.rightMargin: 12
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    role: "bodySmall"
-                                    muted: Webcam.phase !== "streaming"
-                                    elide: Text.ElideRight
-                                    text: Webcam.statusText.length > 0
-                                        ? Webcam.statusText
-                                        : (Webcam.selectedPhoneName.length > 0
-                                           ? qsTr("Preview · %1").arg(Webcam.selectedPhoneName)
-                                           : qsTr("Pair a phone to use its camera as a webcam"))
-                                }
-                                Button {
-                                    id: webcamStartBtn
-                                    anchors.right: parent.right
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    enabled: DeviceList.count > 0
-                                    variant: Webcam.phase === "streaming" || Webcam.phase === "asking" ? "outline" : "tonal"
-                                    size: "sm"
-                                    iconPath: Webcam.phase === "streaming" || Webcam.phase === "asking" ? Icons.close : Icons.video
-                                    text: Webcam.phase === "streaming" || Webcam.phase === "asking"
-                                        ? qsTr("Stop webcam")
-                                        : qsTr("Start webcam")
-                                    onClicked: {
-                                        if (Webcam.phase === "streaming" || Webcam.phase === "asking")
-                                            Webcam.stop()
-                                        else
-                                            Webcam.start("")
-                                    }
-                                }
-                            }
-                            Rectangle {
-                                width: parent.width
-                                height: Math.round(width * 9 / 16)
-                                radius: Theme.radiusMd
-                                color: "#121318"
-                                border.width: 1
-                                border.color: Theme.outlineVariant
-                                clip: true
-                                VideoView {
-                                    anchors.fill: parent
-                                    stream: "webcam"
-                                }
-                            }
-                        }
                     }
                 }
             }
@@ -2143,152 +1941,6 @@ Item {
                                             }
                                             onEditingFinished: Preferences.shelfHotkey = text.trim()
                                             Accessible.name: qsTr("Shelf shortcut")
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        Divider { width: parent.width }
-
-                        // Row 2: Take photo | Scan document
-                        Item {
-                            id: shortcutsPairRow2
-                            width: parent.width
-                            readonly property bool splitCols: width >= 540
-                            readonly property real colWidth: splitCols ? Math.floor((width - 37) / 2) : width
-                            implicitHeight: splitCols
-                                ? Math.max(photoShortcutRow.implicitHeight, scanShortcutRow.implicitHeight)
-                                : (photoShortcutRow.implicitHeight + 1 + scanShortcutRow.implicitHeight)
-
-                            ListRow {
-                                id: photoShortcutRow
-                                x: 0
-                                y: shortcutsPairRow2.splitCols ? Math.round((parent.height - height) / 2) : 0
-                                width: shortcutsPairRow2.colWidth
-                                iconPath: Icons.camera
-                                title: qsTr("Take photo")
-                                description: qsTr("Capture & paste photo.")
-                                Row {
-                                    spacing: 6
-                                    Button {
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        visible: Preferences.continuityPhotoHotkey !== "Ctrl+Alt+C"
-                                        variant: "text"
-                                        size: "sm"
-                                        text: qsTr("Reset")
-                                        onClicked: {
-                                            photoHotkeyInput.text = "Ctrl+Alt+C"
-                                            Preferences.continuityPhotoHotkey = "Ctrl+Alt+C"
-                                        }
-                                    }
-                                    Rectangle {
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        width: 124
-                                        height: 32
-                                        radius: Theme.radiusSm
-                                        color: Theme.surfaceContainerHighest
-                                        border.width: photoHotkeyInput.activeFocus ? 2 : 1
-                                        border.color: photoHotkeyInput.activeFocus ? Theme.primary : Theme.outlineVariant
-                                        TextInput {
-                                            id: photoHotkeyInput
-                                            anchors.fill: parent
-                                            anchors.leftMargin: 8
-                                            anchors.rightMargin: 8
-                                            verticalAlignment: TextInput.AlignVCenter
-                                            horizontalAlignment: TextInput.AlignHCenter
-                                            font.family: Theme.fontUi
-                                            font.pixelSize: 12
-                                            color: Theme.surfaceContent
-                                            selectionColor: Theme.primaryContainer
-                                            selectedTextColor: Theme.primaryContainerContent
-                                            clip: true
-                                            text: Preferences.continuityPhotoHotkey
-                                            Keys.onPressed: (event) => {
-                                                const combo = page.formatKeyCombo(event)
-                                                if (combo.length > 0) {
-                                                    text = combo
-                                                    Preferences.continuityPhotoHotkey = combo
-                                                    event.accepted = true
-                                                }
-                                            }
-                                            onEditingFinished: Preferences.continuityPhotoHotkey = text.trim()
-                                            Accessible.name: qsTr("Take photo shortcut")
-                                        }
-                                    }
-                                }
-                            }
-
-                            Rectangle {
-                                visible: shortcutsPairRow2.splitCols
-                                x: Math.floor(parent.width / 2)
-                                y: 8
-                                width: 1
-                                height: Math.max(24, parent.height - 16)
-                                color: Theme.outlineVariant
-                            }
-
-                            Divider {
-                                visible: !shortcutsPairRow2.splitCols
-                                y: photoShortcutRow.implicitHeight
-                                width: parent.width
-                            }
-
-                            ListRow {
-                                id: scanShortcutRow
-                                x: shortcutsPairRow2.splitCols ? (parent.width - width) : 0
-                                y: shortcutsPairRow2.splitCols
-                                    ? Math.round((parent.height - height) / 2)
-                                    : (photoShortcutRow.implicitHeight + 1)
-                                width: shortcutsPairRow2.colWidth
-                                iconPath: Icons.clipboardList
-                                title: qsTr("Scan document")
-                                description: qsTr("Scan & paste document.")
-                                Row {
-                                    spacing: 6
-                                    Button {
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        visible: Preferences.continuityScanHotkey !== "Ctrl+Alt+D"
-                                        variant: "text"
-                                        size: "sm"
-                                        text: qsTr("Reset")
-                                        onClicked: {
-                                            scanHotkeyInput.text = "Ctrl+Alt+D"
-                                            Preferences.continuityScanHotkey = "Ctrl+Alt+D"
-                                        }
-                                    }
-                                    Rectangle {
-                                        anchors.verticalCenter: parent.verticalCenter
-                                        width: 124
-                                        height: 32
-                                        radius: Theme.radiusSm
-                                        color: Theme.surfaceContainerHighest
-                                        border.width: scanHotkeyInput.activeFocus ? 2 : 1
-                                        border.color: scanHotkeyInput.activeFocus ? Theme.primary : Theme.outlineVariant
-                                        TextInput {
-                                            id: scanHotkeyInput
-                                            anchors.fill: parent
-                                            anchors.leftMargin: 8
-                                            anchors.rightMargin: 8
-                                            verticalAlignment: TextInput.AlignVCenter
-                                            horizontalAlignment: TextInput.AlignHCenter
-                                            font.family: Theme.fontUi
-                                            font.pixelSize: 12
-                                            color: Theme.surfaceContent
-                                            selectionColor: Theme.primaryContainer
-                                            selectedTextColor: Theme.primaryContainerContent
-                                            clip: true
-                                            text: Preferences.continuityScanHotkey
-                                            Keys.onPressed: (event) => {
-                                                const combo = page.formatKeyCombo(event)
-                                                if (combo.length > 0) {
-                                                    text = combo
-                                                    Preferences.continuityScanHotkey = combo
-                                                    event.accepted = true
-                                                }
-                                            }
-                                            onEditingFinished: Preferences.continuityScanHotkey = text.trim()
-                                            Accessible.name: qsTr("Scan document shortcut")
                                         }
                                     }
                                 }

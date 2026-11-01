@@ -1,66 +1,55 @@
 {
   "version": 1,
-  "task_id": "t-20261101-6076",
-  "goal": "Remove mobile network away_mode for stayconnected and make pairing codes alphanumeric",
-  "status": "active",
-  "created_at": "2026-11-01T11:55:57.679Z",
-  "updated_at": "2026-11-01T12:05:15.815Z",
-  "checkpoint_count": 3,
+  "task_id": "t-20261101-4239",
+  "goal": "Remove all theme options and color options across desktop and mobile, enforcing system theme adaptation with translucent wallpaper background",
+  "status": "done",
+  "created_at": "2026-11-01T12:50:33.281Z",
+  "updated_at": "2026-11-01T13:01:13.111Z",
+  "checkpoint_count": 4,
   "steps": [
     {
       "id": "s1",
-      "title": "Disable mobile network relay (away_mode) in maclink-core, node config, and CLI",
+      "title": "Find and remove custom theme/color options in Desktop QML and settings, enforcing system theme detection",
       "status": "done",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": "Disabled away_mode in node.rs, config.rs, CLI, and FFI; enforced RelayMode::Disabled and LAN/USB only; cargo check -p maclink-core passed cleanly.",
+      "note": "Removed theme picker (Hive, Bloom, Glass, Graphite), mode picker (System, Light, Dark), and color swatches/AMOLED/comb options from desktop SettingsPage.qml. In Theme.qml, locked dark mode strictly to AppController.systemDark, locked glass to true, and enabled wallpaper seed fallback. In MainWindow.qml, enabled wantBackdrop and micaVisible for macOS/Windows with translucent frosted glass background. Committed in ee08ca0.",
       "last_error": null,
-      "updated_at": "2026-11-01T12:01:53.715Z"
+      "updated_at": "2026-11-01T12:55:41.719Z"
     },
     {
       "id": "s2",
-      "title": "Remove mobile network stay-connected toggles in desktop and Android UI & settings",
+      "title": "Find and remove custom theme/color options in Android app settings, enforcing system theme detection",
       "status": "done",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": "Removed mobile network awayMode toggle row from SettingsPage.qml, set away_mode to always return false in desktop settings.rs, removed mobile data switch in Android SettingsScreen.kt, and locked awayMode to false in Core.kt. Desktop check passed cleanly.",
+      "note": "Removed theme options (Choice hive/bloom/glass/graphite), mode options (Choice system/light/dark), and color seed swatches/AMOLED/comb motion from Android SettingsScreen.kt. Updated NectarlinkTheme in Theme.kt to lock to system theme (isSystemInDarkTheme()), enforce Apple Liquid Glass, and utilize translucent frosted glass surface containers over system wallpaper. Committed in e187d2c.",
       "last_error": null,
-      "updated_at": "2026-11-01T12:04:23.114Z"
+      "updated_at": "2026-11-01T12:57:19.764Z"
     },
     {
       "id": "s3",
-      "title": "Update SAS derivation and protocol in maclink-protocol to generate alphanumeric codes",
+      "title": "Configure Desktop Liquid Glass background to provide translucent vibrancy showing system wallpaper",
       "status": "done",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": "Updated sas_code in maclink-protocol/src/pairing.rs to generate 6-character unambiguous alphanumeric codes using SAS_ALPHANUMERIC_CHARS. All 62 tests passed.",
+      "note": "Configured Desktop Liquid Glass background and surfaces to provide translucent frosted glass vibrancy showing the system wallpaper through. Streamlined cardColor, cardBorder, tileColor, heroColor, and railColor to unified Apple Liquid Glass tokens. Enhanced ShelfWindow panel with translucent glass background and GlassRim specular highlights. Committed in 809c471.",
       "last_error": null,
-      "updated_at": "2026-11-01T12:05:15.815Z"
+      "updated_at": "2026-11-01T12:58:29.318Z"
     },
     {
       "id": "s4",
-      "title": "Update pairing logic and UI inputs across desktop and Android to accept alphanumeric pairing codes",
-      "status": "pending",
+      "title": "Verify with unit tests and ensure no manual theme/color selection remains",
+      "status": "done",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": null,
+      "note": "Verified with unit tests (all 62 protocol tests and 113 core tests passed, 0 failures). Verified no manual theme/mode/color seed option selection remains across desktop QML and Android Kotlin. Transparent wallpaper bleed-through and automatic OS dark/light adaptation verified. Committed in 5f070e0.",
       "last_error": null,
-      "updated_at": "2026-11-01T11:55:57.679Z"
-    },
-    {
-      "id": "s5",
-      "title": "Verify with unit tests (without building apps), commit to git, and push to remote",
-      "status": "pending",
-      "tries": 0,
-      "max_tries": 3,
-      "depends_on": [],
-      "note": null,
-      "last_error": null,
-      "updated_at": "2026-11-01T11:55:57.679Z"
+      "updated_at": "2026-11-01T13:01:13.111Z"
     }
   ]
 }

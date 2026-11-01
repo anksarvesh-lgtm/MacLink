@@ -243,32 +243,6 @@ Item {
             docKey: "pc-mirror"
         },
         {
-            id: "webcam",
-            name: "Phone as webcam",
-            icon: Icons.video,
-            area: "camera_audio",
-            capKey: "webcam",
-            toggleKey: "",
-            summary: "Use your phone camera as the NectarLink Virtual Camera in Zoom, Teams, Meet, and OBS.",
-            whereLabel: "Home › Phone as webcam",
-            needsLabel: "Camera permission on phone and Virtual Camera registered on PC",
-            targetId: "settings:camera_audio:webcam",
-            docKey: "webcam"
-        },
-        {
-            id: "continuity_camera",
-            name: "Continuity camera",
-            icon: Icons.camera,
-            area: "camera_audio",
-            capKey: "webcam",
-            toggleKey: "",
-            summary: "Capture a photo or scan a document with your phone and paste it into the active PC window.",
-            whereLabel: "Home › Continuity Camera (Ctrl+Alt+C / Ctrl+Alt+D)",
-            needsLabel: "Camera permission on phone",
-            targetId: "home:continuity",
-            docKey: "continuity-camera"
-        },
-        {
             id: "speaker",
             name: "Phone as speaker",
             icon: Icons.speaker,

@@ -1670,116 +1670,6 @@ Item {
                 visible: PhoneCall.active && PhoneCall.device === home.deviceId
             }
 
-            // Active webcam session on this phone.
-            Card {
-                id: webcamHomeCard
-                width: parent.width
-                readonly property var webcamFeature: home.feature("camera.webcam")
-                readonly property bool isThisPhone: (Webcam.phase === "streaming" || Webcam.phase === "asking")
-                                                    && Webcam.activeDevice === home.deviceId
-                visible: isThisPhone
-                onIsThisPhoneChanged: {
-                    if (isThisPhone)
-                        Webcam.setPreviewActive(true)
-                }
-                Component.onCompleted: {
-                    if (isThisPhone)
-                        Webcam.setPreviewActive(true)
-                }
-                Column {
-                    width: parent.width
-                    spacing: 10
-                    Item {
-                        width: parent.width
-                        height: Math.max(webcamHeaderLeft.height, webcamStopBtn.height)
-                        Row {
-                            id: webcamHeaderLeft
-                            anchors.left: parent.left
-                            anchors.right: webcamStopBtn.left
-                            anchors.rightMargin: 12
-                            anchors.verticalCenter: parent.verticalCenter
-                            spacing: 8
-                            Icon {
-                                anchors.verticalCenter: parent.verticalCenter
-                                path: Icons.video
-                                color: Theme.primary
-                            }
-                            Column {
-                                width: parent.width - 28
-                                anchors.verticalCenter: parent.verticalCenter
-                                spacing: 1
-                                Txt {
-                                    width: parent.width
-                                    text: qsTr("Webcam")
-                                    role: "label"
-                                    elide: Text.ElideRight
-                                }
-                                Txt {
-                                    width: parent.width
-                                    role: "caption"
-                                    muted: true
-                                    elide: Text.ElideRight
-                                    text: Webcam.statusText.length > 0
-                                          ? Webcam.statusText
-                                          : qsTr("Streaming from %1").arg(home.name)
-                                }
-                            }
-                        }
-                        Button {
-                            id: webcamStopBtn
-                            anchors.right: parent.right
-                            anchors.verticalCenter: parent.verticalCenter
-                            variant: "tonal"
-                            size: "sm"
-                            iconPath: Icons.close
-                            text: qsTr("Stop")
-                            onClicked: Webcam.stop()
-                        }
-                    }
-                    Rectangle {
-                        width: parent.width
-                        height: Math.round(width * 9 / 16)
-                        radius: Theme.radiusMd
-                        color: "#121318"
-                        border.width: 1
-                        border.color: Theme.outlineVariant
-                        clip: true
-                        VideoView {
-                            anchors.fill: parent
-                            stream: "webcam"
-                        }
-                    }
-                    Flow {
-                        width: parent.width
-                        spacing: 6
-                        Segmented {
-                            options: [
-                                { value: "back", label: qsTr("Back") },
-                                { value: "front", label: qsTr("Front") }
-                            ]
-                            value: Webcam.camera
-                            onPicked: (v) => Webcam.setCamera(v)
-                        }
-                        Segmented {
-                            // 4K only when the phone's camera in use can stream it.
-                            options: [
-                                { value: "720", label: "720p" },
-                                { value: "1080", label: "1080p" }
-                            ].concat(Webcam.uhd ? [{ value: "2160", label: "4K" }] : [])
-                            value: String(Webcam.height)
-                            onPicked: (v) => Webcam.setResolution(Number(v))
-                        }
-                        Button {
-                            variant: Webcam.mirror ? "tonal" : "outline"
-                            size: "sm"
-                            iconPath: Icons.mirror
-                            text: qsTr("Mirror")
-                            onClicked: Webcam.setMirrorImage(!Webcam.mirror)
-                        }
-                    }
-                }
-            }
-
             // Quick settings on the phone (toggles, plus expandable ringer/volume/brightness).
             Card {
                 id: phoneControls
@@ -1810,7 +1700,6 @@ Item {
                 readonly property var brightnessFeature: home.feature("toggles.brightness")
                 readonly property var wifiFeature: home.feature("toggles.wifi")
                 readonly property var bluetoothFeature: home.feature("toggles.bluetooth")
-                readonly property var webcamFeature: home.feature("camera.webcam")
                 readonly property var activeLockFeature: {
                     if (hoveredLockedFeature && hoveredLockedFeature.state === "locked")
                         return hoveredLockedFeature
@@ -2045,62 +1934,7 @@ Item {
                 }
             }
 
-            // Camera & remote typing above Timeline.
-            Row {
-                id: sideCameraGrid
-                width: parent.width
-                spacing: 10
-                readonly property real tileWidth: (width - spacing) / 2
-
-                ActionTile {
-                    width: sideCameraGrid.tileWidth
-                    deviceOnline: home.online
-                    queueableWhenOffline: true
-                    accented: true
-                    title: qsTr("Continuity Camera")
-                    subtitle: AppController.continuityCameraBusy
-                              ? AppController.continuityCameraStatus
-                              : ""
-                    iconPath: Icons.camera
-                    feature: home.feature("camera.continuity")
-                    active: AppController.continuityCameraBusy
-                    onClicked: AppController.startContinuityCamera("photo")
-                    sideIcon: AppController.continuityCameraBusy ? Icons.close : Icons.scan
-                    sideLabel: AppController.continuityCameraBusy
-                               ? qsTr("Cancel")
-                               : qsTr("Scan document")
-                    onSideClicked: {
-                        if (AppController.continuityCameraBusy)
-                            AppController.cancelContinuityCamera()
-                        else
-                            AppController.startContinuityCamera("scan")
-                    }
-                }
-
-                ActionTile {
-                    width: sideCameraGrid.tileWidth
-                    deviceOnline: home.online
-                    playableWhenAddonMissing: true
-                    title: qsTr("Phone as webcam")
-                    subtitle: (Webcam.phase === "streaming" || Webcam.phase === "asking")
-                              && Webcam.activeDevice === home.deviceId
-                              ? (Webcam.statusText.length > 0 ? Webcam.statusText : qsTr("Streaming"))
-                              : ""
-                    iconPath: Icons.video
-                    feature: home.feature("camera.webcam")
-                    active: (Webcam.phase === "streaming" || Webcam.phase === "asking")
-                            && Webcam.activeDevice === home.deviceId
-                    onClicked: {
-                        if ((Webcam.phase === "streaming" || Webcam.phase === "asking")
-                            && Webcam.activeDevice === home.deviceId)
-                            Webcam.stop()
-                        else
-                            Webcam.start(home.deviceId)
-                    }
-                }
-            }
-
-            // Type on phone (compact card below camera tiles; expands to capture live keystrokes).
+            // Type on phone (compact card; expands to capture live keystrokes).
             Card {
                 id: typeOnPhoneCard
                 width: parent.width
@@ -2306,7 +2140,7 @@ Item {
                 }
             }
 
-            // Recent timeline items across devices (placed below Continuity Camera, Phone as webcam, and Type on phone).
+            // Recent timeline items across devices (placed below quick controls and Type on phone).
             Card {
                 id: timelineHomeCard
                 width: parent.width

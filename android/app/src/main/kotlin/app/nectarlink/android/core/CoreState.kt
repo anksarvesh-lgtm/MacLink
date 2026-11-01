@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 package app.nectarlink.android.core
 
-import app.nectarlink.android.webcam.WebcamRequest
 import app.nectarlink.core.ClipboardHistoryEntry
 import app.nectarlink.core.DiscoveredDevice
 import app.nectarlink.core.Event
@@ -211,8 +210,6 @@ data class CoreState(
     val storageSafFolders: List<String> = emptyList(),
     /** ID of a paired PC that asked to browse this phone's storage while `storage` is off. */
     val storageRequestedFrom: String? = null,
-    /** Pending request from a paired PC asking to use this phone's camera as a webcam. */
-    val webcamRequest: WebcamRequest? = null,
     /** ID of a paired PC asking for this phone's microphone, until the user answers. */
     val micRequestFrom: String? = null,
     /** File transfers, newest first (running ones and the latest finished). */
@@ -306,7 +303,6 @@ data class CoreState(
             sendQueue = sendQueue.filterNot { it.peerId == event.id },
             ringingFrom = if (ringingFrom == nameOf(event.id)) null else ringingFrom,
             storageRequestedFrom = if (storageRequestedFrom == event.id) null else storageRequestedFrom,
-            webcamRequest = if (webcamRequest?.pcId == event.id) null else webcamRequest,
             micRequestFrom = if (micRequestFrom == event.id) null else micRequestFrom,
             keyboardFromPc = keyboardFromPc - event.id,
         )

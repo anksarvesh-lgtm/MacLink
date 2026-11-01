@@ -488,92 +488,16 @@ fn reconfigure_active_stream() {
 }
 
 /// Requests a webcam stream from `device` (or the selected phone).
-pub fn start(device: Option<DeviceId>) {
-    let Some(device) = device.or_else(selected_phone) else { return };
-    set_selected_phone(device);
-    state(|s| s.phase = Phase::Asking { device });
-    core_host::host().hub.changed(Changes::WEBCAM);
-
-    let Some(node) = core_host::node() else { return };
-    let options = current_webcam_start();
-    core_host::spawn(async move {
-        if let Err(e) = node.webcam_start(device, options).await {
-            let reason = match e {
-                Error::Denied => "Webcam is turned off for this phone.".to_owned(),
-                Error::Unsupported => {
-                    "This phone's app doesn't support Webcam yet. Update NectarLink on the phone.".into()
-                }
-                Error::Offline | Error::NotPaired => "The phone isn't connected.".into(),
-                e => describe(&e),
-            };
-            state(|s| {
-                if matches!(s.phase, Phase::Asking { device: d } if d == device) {
-                    s.phase = Phase::Ended { reason };
-                }
-            });
-            refresh_idle_frame();
-            core_host::host().hub.changed(Changes::WEBCAM);
-        }
-    });
-}
+pub fn start(_device: Option<DeviceId>) {}
 
 /// Stops the active or pending webcam stream.
-pub fn stop() {
-    let device = state(|s| {
-        let dev = match s.phase {
-            Phase::Asking { device } | Phase::Streaming { device, .. } => Some(device),
-            Phase::Idle | Phase::Ended { .. } => None,
-        };
-        s.phase = Phase::Idle;
-        dev
-    });
-    refresh_idle_frame();
-    core_host::host().hub.changed(Changes::WEBCAM);
-    if let (Some(device), Some(node)) = (device, core_host::node()) {
-        core_host::spawn(async move {
-            node.webcam_stop(device).await;
-        });
-    }
-}
+pub fn stop() {}
 
-pub fn on_event(event: &NodeEvent) {
-    match event {
-        NodeEvent::Webcam { device, on: true } => {
-            state(|s| {
-                s.preferred_phone = Some(*device);
-                if !matches!(s.phase, Phase::Streaming { device: d, .. } if d == *device) {
-                    s.phase = Phase::Streaming { device: *device, width: 1280, height: 720, fps: 30 };
-                }
-            });
-            core_host::host().hub.changed(Changes::WEBCAM);
-        }
-        NodeEvent::Webcam { device, on: false }
-        | NodeEvent::LinkChanged { device, link: maclink_core::LinkState::Offline { .. } } => {
-            let changed = state(|s| {
-                if matches!(s.phase, Phase::Asking { device: d } | Phase::Streaming { device: d, .. } if d == *device)
-                {
-                    s.phase = Phase::Idle;
-                    true
-                } else {
-                    false
-                }
-            });
-            if changed {
-                refresh_idle_frame();
-                core_host::host().hub.changed(Changes::WEBCAM);
-            }
-        }
-        NodeEvent::DeviceAdded(_) | NodeEvent::DeviceRemoved(_) | NodeEvent::PeerInfoChanged { .. } => {
-            refresh_idle_frame();
-            core_host::host().hub.changed(Changes::WEBCAM);
-        }
-        _ => {}
-    }
-}
+pub fn on_event(_event: &NodeEvent) {}
 
 /// Returns a [`WebcamSink`] for an incoming `"webcam"` stream from `device`.
-pub fn sink(device: &DeviceId) -> Option<Arc<dyn WebcamSink>> {
-    Some(Arc::new(Sink::new(*device)))
+pub fn sink(_device: &DeviceId) -> Option<Arc<dyn WebcamSink>> {
+    None
 }
 
 enum Item {

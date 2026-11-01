@@ -106,7 +106,6 @@ pub fn compute_capabilities(
     let mut caps = vec![
         "pc.power".into(),
         maclink_core::PHOTOS_SHOW.into(),
-        maclink_core::CAMERA_CONTINUITY.into(),
         maclink_core::CALLS_SHOW.into(),
         maclink_core::CONTACTS_SHOW.into(),
         maclink_core::SMS_SHOW.into(),
@@ -124,7 +123,6 @@ pub fn compute_capabilities(
         caps.push(maclink_core::DECK_ACTIONS.into());
         caps.push(maclink_core::PC_AUDIO.into());
         caps.push(maclink_core::RECORDER.into());
-        caps.push(maclink_core::WEBCAM_VIRTUAL.into());
         caps.push(maclink_core::MEDIA_STREAM.into());
         caps.push(maclink_core::MIC_LISTEN.into());
     }
@@ -447,7 +445,7 @@ mod tests {
         // Ensure supported features on macOS are advertised
         assert!(caps.contains(&"pc.power".into()));
         assert!(caps.contains(&maclink_core::PHOTOS_SHOW.into()));
-        assert!(caps.contains(&maclink_core::CAMERA_CONTINUITY.into()));
+        assert!(!caps.contains(&maclink_core::CAMERA_CONTINUITY.into()));
         assert!(caps.contains(&maclink_core::CALLS_SHOW.into()));
         assert!(caps.contains(&maclink_core::CONTACTS_SHOW.into()));
         assert!(caps.contains(&maclink_core::SMS_SHOW.into()));

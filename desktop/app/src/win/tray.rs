@@ -651,9 +651,6 @@ fn show_menu(hwnd: HWND, x: i32, y: i32) {
     let command = unsafe {
         let Ok(menu): windows::core::Result<HMENU> = CreatePopupMenu() else { return };
         let find_flags = if CAN_FIND_PHONE.with(Cell::get) { MF_STRING } else { MF_STRING | MF_GRAYED };
-        let _ = AppendMenuW(menu, find_flags, CMD_TAKE_PHOTO as usize, PCWSTR(take_photo.as_ptr()));
-        let _ = AppendMenuW(menu, find_flags, CMD_SCAN_DOCUMENT as usize, PCWSTR(scan_doc.as_ptr()));
-        let _ = AppendMenuW(menu, MF_SEPARATOR, 0, PCWSTR::null());
         let _ = AppendMenuW(menu, MF_STRING, CMD_OPEN as usize, PCWSTR(open.as_ptr()));
         let _ = AppendMenuW(menu, MF_STRING, CMD_COMMAND_PALETTE as usize, PCWSTR(palette.as_ptr()));
         let _ = AppendMenuW(menu, MF_STRING, CMD_SHELF as usize, PCWSTR(shelf.as_ptr()));

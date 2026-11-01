@@ -147,3 +147,4 @@ Smart Connect's `AVR4InputMsgImeFocusEvent` architecture is mapped to MacLink:
 2. **Localhost Isolation:** The Elevated helper binds exclusively to `127.0.0.1` and authenticates every connection using a cryptographically secure 24-byte per-session bearer token.
 3. **No Network Exposure:** Video and audio data are strictly confined to the end-to-end encrypted Iroh QUIC session; no cloud servers or relay proxies have access to unencrypted payloads.
 4. **Android Privacy Flags:** Streaming services enforce Android's `FLAG_SECURE` compliance, preventing sensitive banking and protected media apps from being recorded or leaked without user consent.
+

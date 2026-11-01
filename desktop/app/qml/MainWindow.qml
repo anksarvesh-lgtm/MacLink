@@ -1153,56 +1153,6 @@ NativeWindow {
         }
     }
 
-    Sheet {
-        id: continuityPasteSheet
-        opened: AppController.continuityPastePromptVisible
-        cardWidth: 440
-        onOpenedChanged: {
-            if (!opened && AppController.continuityPastePromptVisible)
-                AppController.dismissContinuityPaste()
-        }
-        Column {
-            width: parent.width
-            spacing: 16
-            Avatar {
-                anchors.horizontalCenter: parent.horizontalCenter
-                width: 56; height: 56
-                iconPath: Icons.camera
-                emphasized: true
-            }
-            Txt {
-                width: parent.width
-                horizontalAlignment: Text.AlignHCenter
-                text: AppController.continuityPastePromptTitle.length > 0
-                    ? AppController.continuityPastePromptTitle
-                    : qsTr("Photo ready on clipboard")
-                role: "headline"
-                wrapMode: Text.WordWrap
-            }
-            Txt {
-                width: parent.width
-                horizontalAlignment: Text.AlignHCenter
-                text: AppController.continuityPastePromptBody
-                role: "body"
-                muted: true
-                wrapMode: Text.WordWrap
-            }
-            Row {
-                anchors.right: parent.right
-                spacing: 10
-                Button {
-                    variant: "text"
-                    text: qsTr("Keep on clipboard")
-                    onClicked: AppController.dismissContinuityPaste()
-                }
-                Button {
-                    text: qsTr("Paste into active window")
-                    onClicked: AppController.confirmContinuityPaste()
-                }
-            }
-        }
-    }
-
     CaptionButtons {
         id: captionButtons
         window: window

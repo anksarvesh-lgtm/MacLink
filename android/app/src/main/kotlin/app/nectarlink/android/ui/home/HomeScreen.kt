@@ -130,7 +130,6 @@ import app.nectarlink.android.ui.theme.glassModalScrimColor
 import app.nectarlink.android.ui.theme.liquidGlassCard
 import app.nectarlink.android.update.AppUpdater
 import app.nectarlink.android.update.UpdateCard
-import app.nectarlink.android.webcam.WebcamSession
 import android.app.DownloadManager
 import android.content.Intent
 import androidx.compose.foundation.horizontalScroll
@@ -199,8 +198,6 @@ fun HomeScreen(
     onRefreshLocalSend: () -> Unit = {},
     onAllowStorage: (pcId: String) -> Unit = {},
     onDismissStorageRequest: () -> Unit = {},
-    onAcceptWebcamRequest: (app.nectarlink.android.webcam.WebcamRequest) -> Unit = {},
-    onDismissWebcamRequest: () -> Unit = {},
     onDeclineMicRequest: (pcId: String) -> Unit = {},
     onStartMic: (pcId: String) -> Unit = {},
     onStopMic: () -> Unit = {},
@@ -222,13 +219,10 @@ fun HomeScreen(
         onSaved(null)
     },
     mirrorSession: MirrorSession = MirrorSession(),
-    webcamSession: WebcamSession = WebcamSession(),
     recorderSession: RecorderSession = RecorderSession(),
     /** The PC this phone's microphone streams to, if any. */
     micStreamingTo: String? = null,
     onStopMirror: () -> Unit = {},
-    onOpenWebcam: (pcId: String) -> Unit = {},
-    onStopWebcam: () -> Unit = {},
     onOpenRecorder: (pcId: String) -> Unit = {},
     onStopRecorder: () -> Unit = {},
     showWhatsNewGuideBanner: Boolean = false,
@@ -397,31 +391,6 @@ fun HomeScreen(
                 )
             }
         }
-        if (webcamSession.active) {
-            item(key = "webcam_active_banner", contentType = "banner") {
-                val pcName = webcamSession.pcId?.let { state.nameOf(it) }
-                    ?: stringResource(R.string.your_pc)
-                val cameraLabel = stringResource(
-                    if (webcamSession.camera == "front") R.string.webcam_camera_front else R.string.webcam_camera_back,
-                )
-                LiveStreamingBanner(
-                    title = stringResource(R.string.webcam_notification_streaming, pcName),
-                    subtitle = stringResource(
-                        R.string.webcam_notification_detail,
-                        webcamSession.width,
-                        webcamSession.height,
-                        cameraLabel,
-                    ),
-                    primaryActionLabel = stringResource(R.string.webcam_stop),
-                    onPrimaryAction = onStopWebcam,
-                    secondaryActionLabel = if (webcamSession.pcId != null) {
-                        stringResource(R.string.action_open_controls)
-                    } else {
-                        null
-                    },
-                    onSecondaryAction = webcamSession.pcId?.let { id -> { onOpenWebcam(id) } },
-                )
-            }
         }
         if (recorderSession.active) {
             item(key = "recorder_active_banner", contentType = "banner") {
@@ -463,33 +432,6 @@ fun HomeScreen(
                 KeyboardBanner(pcName, onStop = { onStopKeyboardFromPc(pcId) })
             }
         }
-        state.webcamRequest?.let { req ->
-            item(key = "webcam_request", contentType = "request") {
-                val pcName = state.nameOf(req.pcId) ?: stringResource(R.string.your_pc)
-                Surface(
-                    shape = MaterialTheme.shapes.extraLarge,
-                    color = MaterialTheme.colorScheme.secondaryContainer,
-                ) {
-                    Column(Modifier.fillMaxWidth().padding(20.dp)) {
-                        Text(
-                            stringResource(R.string.webcam_request_title, pcName),
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        )
-                        Spacer(Modifier.height(4.dp))
-                        Text(
-                            stringResource(R.string.webcam_request_text),
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer,
-                        )
-                        Spacer(Modifier.height(12.dp))
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Button(onClick = { onAcceptWebcamRequest(req) }) {
-                                Text(stringResource(R.string.webcam_start))
-                            }
-                            OutlinedButton(onClick = onDismissWebcamRequest) {
-                                Text(stringResource(R.string.action_not_now))
-                            }
                         }
                     }
                 }
@@ -1539,21 +1481,6 @@ private fun PcCard(
                         )
                         Spacer(Modifier.width(6.dp))
                         ButtonLabel(stringResource(R.string.action_desk_pc))
-                    }
-                    FilledTonalButton(
-                        contentPadding = CardButtonPadding,
-                        enabled = device.online,
-                        colors = tonal,
-                        onClick = { onWebcam(device.id) },
-                        modifier = Modifier.weight(1f).heightIn(min = 44.dp),
-                    ) {
-                        Icon(
-                            imageVector = CameraLensIcon,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp),
-                        )
-                        Spacer(Modifier.width(6.dp))
-                        ButtonLabel(stringResource(R.string.action_webcam_pc))
                     }
                 }
 

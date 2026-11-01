@@ -1,66 +1,55 @@
 {
   "version": 1,
-  "task_id": "t-20261101-6076",
-  "goal": "Remove mobile network away_mode for stayconnected and make pairing codes alphanumeric",
+  "task_id": "t-20261101-9387",
+  "goal": "Remove webcam/camera continuity completely, add startup GitHub update check and auto-download with platform-specific asset delivery, and set monochrome notification icon",
   "status": "active",
-  "created_at": "2026-11-01T11:55:57.679Z",
-  "updated_at": "2026-11-01T12:07:43.084Z",
-  "checkpoint_count": 4,
+  "created_at": "2026-11-01T13:01:42.666Z",
+  "updated_at": "2026-11-01T13:01:42.666Z",
+  "checkpoint_count": 0,
   "steps": [
     {
       "id": "s1",
-      "title": "Disable mobile network relay (away_mode) in maclink-core, node config, and CLI",
-      "status": "done",
+      "title": "Remove phone camera webcam and camera continuity completely from desktop and Android apps",
+      "status": "in_progress",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": "Disabled away_mode in node.rs, config.rs, CLI, and FFI; enforced RelayMode::Disabled and LAN/USB only; cargo check -p maclink-core passed cleanly.",
+      "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T12:01:53.715Z"
+      "updated_at": "2026-11-01T13:01:42.666Z"
     },
     {
       "id": "s2",
-      "title": "Remove mobile network stay-connected toggles in desktop and Android UI & settings",
-      "status": "done",
-      "tries": 0,
-      "max_tries": 3,
-      "depends_on": [],
-      "note": "Removed mobile network awayMode toggle row from SettingsPage.qml, set away_mode to always return false in desktop settings.rs, removed mobile data switch in Android SettingsScreen.kt, and locked awayMode to false in Core.kt. Desktop check passed cleanly.",
-      "last_error": null,
-      "updated_at": "2026-11-01T12:04:23.114Z"
-    },
-    {
-      "id": "s3",
-      "title": "Update SAS derivation and protocol in maclink-protocol to generate alphanumeric codes",
-      "status": "done",
-      "tries": 0,
-      "max_tries": 3,
-      "depends_on": [],
-      "note": "Updated sas_code in maclink-protocol/src/pairing.rs to generate 6-character unambiguous alphanumeric codes using SAS_ALPHANUMERIC_CHARS. All 62 tests passed.",
-      "last_error": null,
-      "updated_at": "2026-11-01T12:05:15.815Z"
-    },
-    {
-      "id": "s4",
-      "title": "Update pairing logic and UI inputs across desktop and Android to accept alphanumeric pairing codes",
-      "status": "done",
-      "tries": 0,
-      "max_tries": 3,
-      "depends_on": [],
-      "note": "Updated pairing bridge, CodeDigits components, and docs. Verified end-to-end nearby pairing with alphanumeric codes via test nearby_pairing_with_matching_codes (passed).",
-      "last_error": null,
-      "updated_at": "2026-11-01T12:07:43.084Z"
-    },
-    {
-      "id": "s5",
-      "title": "Verify with unit tests (without building apps), commit to git, and push to remote",
+      "title": "Add GitHub auto-update check on every app start with platform-specific asset download",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T11:55:57.679Z"
+      "updated_at": "2026-11-01T13:01:42.666Z"
+    },
+    {
+      "id": "s3",
+      "title": "Create and configure monochrome notification icon of app icon for notifications",
+      "status": "pending",
+      "tries": 0,
+      "max_tries": 3,
+      "depends_on": [],
+      "note": null,
+      "last_error": null,
+      "updated_at": "2026-11-01T13:01:42.666Z"
+    },
+    {
+      "id": "s4",
+      "title": "Verify changes with unit tests and ensure clean references",
+      "status": "pending",
+      "tries": 0,
+      "max_tries": 3,
+      "depends_on": [],
+      "note": null,
+      "last_error": null,
+      "updated_at": "2026-11-01T13:01:42.666Z"
     }
   ]
 }

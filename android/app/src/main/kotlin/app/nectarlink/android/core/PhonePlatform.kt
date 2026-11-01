@@ -9,7 +9,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import app.nectarlink.android.calls.PhoneCalls
-import app.nectarlink.android.camera.ContinuityCameraRequests
 import app.nectarlink.android.clipboard.PhoneClipboard
 import app.nectarlink.android.contacts.PhoneContacts
 import app.nectarlink.android.notifications.NotificationListener
@@ -24,9 +23,6 @@ import app.nectarlink.android.mirror.MirrorService
 import app.nectarlink.android.sms.PhoneSms
 import app.nectarlink.android.storage.PhoneStorage
 import app.nectarlink.android.toggles.PhoneToggles
-import app.nectarlink.android.webcam.WebcamRequest
-import app.nectarlink.android.webcam.WebcamRequests
-import app.nectarlink.android.webcam.WebcamService
 import app.nectarlink.core.CallCommand
 import app.nectarlink.core.CallLogEntry
 import app.nectarlink.core.Contact
@@ -81,8 +77,6 @@ internal class PhonePlatform(
     private val storage: () -> PhoneStorage,
     /** Asks the user to share the screen with a PC: (PC's ID, request) → asked. */
     private val onMirror: (String, MirrorRequest) -> Boolean,
-    /** Asks the user to stream the camera as a webcam to a PC: (PC's ID, request) → asked. */
-    private val onWebcam: (String, WebcamRequest) -> Boolean,
     /** Apps in windows of their own on PCs (Elevated). */
     private val appWindows: AppWindows,
     /** Resolves a paired PC's display name by ID. */
@@ -198,17 +192,7 @@ internal class PhonePlatform(
         if (!Elevated.handle(input)) InputService.handle(input)
     }
 
-    override fun webcamRequested(pcId: String, options: WebcamOptions): Boolean {
-        val request = WebcamRequest(
-            pcId = pcId,
-            width = options.width.toInt(),
-            height = options.height.toInt(),
-            fps = options.fps.toInt(),
-            bitrate = options.bitrate.toInt(),
-            camera = options.camera,
-        )
-        return onWebcam(pcId, request)
-    }
+    override fun webcamRequested(pcId: String, options: WebcamOptions): Boolean = false
 
     override fun micRequested(pcId: String): Boolean = onMic(pcId)
 
@@ -217,20 +201,13 @@ internal class PhonePlatform(
         app.nectarlink.android.mic.MicService.stop(context)
     }
 
-    override fun webcamStopRequested(pcId: String) {
-        WebcamRequests.dismiss(context, pcId)
-        WebcamService.stopForPc(context, pcId)
-    }
+    override fun webcamStopRequested(pcId: String) {}
 
-    override fun webcamKeyframeRequested(pcId: String) =
-        WebcamService.keyframe(pcId)
+    override fun webcamKeyframeRequested(pcId: String) {}
 
-    override fun cameraCaptureRequested(pcId: String, requestId: String, mode: String): Boolean =
-        ContinuityCameraRequests.show(context, pcId, requestId, mode, nameOf(pcId))
+    override fun cameraCaptureRequested(pcId: String, requestId: String, mode: String): Boolean = false
 
-    override fun cameraCaptureCancelled(pcId: String, requestId: String) {
-        ContinuityCameraRequests.cancelFromPc(context, pcId, requestId)
-    }
+    override fun cameraCaptureCancelled(pcId: String, requestId: String) {}
 
     override fun phoneApps(): List<PhoneApp> = AppWindows.list(context)
 
