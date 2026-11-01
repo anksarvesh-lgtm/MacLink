@@ -391,7 +391,6 @@ fun HomeScreen(
                 )
             }
         }
-        }
         if (recorderSession.active) {
             item(key = "recorder_active_banner", contentType = "banner") {
                 val pcName = recorderSession.pcId?.let { state.nameOf(it) }
@@ -430,11 +429,6 @@ fun HomeScreen(
             item(key = "keyboard_$pcId", contentType = "banner") {
                 val pcName = state.nameOf(pcId) ?: stringResource(R.string.your_pc)
                 KeyboardBanner(pcName, onStop = { onStopKeyboardFromPc(pcId) })
-            }
-        }
-                        }
-                    }
-                }
             }
         }
         state.micRequestFrom?.takeIf { it != micStreamingTo }?.let { pcId ->
