@@ -1621,13 +1621,13 @@ impl Node {
     }
 
     /// Starts nearby pairing with a discovered device. The other device must
-    /// be in pairing mode (showing its pairing screen). The 6-digit code
+    /// be in pairing mode (showing its pairing screen). The alphanumeric code
     /// arrives as [`PairingEvent::SasCode`] on both devices.
     pub async fn pairing_start_nearby(&self, peer: DeviceId) -> Result<()> {
         pairing::start_nearby(&self.shared, peer).await
     }
 
-    /// Answers the 6-digit code comparison shown via
+    /// Answers the alphanumeric code comparison shown via
     /// [`PairingEvent::SasCode`].
     pub fn pairing_confirm(&self, codes_match: bool) -> Result<()> {
         self.shared.pairing.decide(codes_match)

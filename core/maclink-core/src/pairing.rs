@@ -252,8 +252,8 @@ pub(crate) async fn join_qr(shared: &Arc<Shared>, uri: &PairingUri) -> Result<()
     settle_initiator(shared, &conn, uri.id, result).await
 }
 
-/// Starts the nearby (numeric comparison) flow with a device in pairing
-/// mode. The 6-digit code arrives as [`PairingEvent::SasCode`]; answer with
+/// Starts the nearby (code comparison) flow with a device in pairing
+/// mode. The alphanumeric code arrives as [`PairingEvent::SasCode`]; answer with
 /// [`crate::Node::pairing_confirm`].
 pub(crate) async fn start_nearby(shared: &Arc<Shared>, peer: DeviceId) -> Result<()> {
     let nearby = shared.pairing.begin_nearby().ok_or(Error::Denied)?;

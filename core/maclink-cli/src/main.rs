@@ -4256,7 +4256,7 @@ async fn nearby(node: &Node, peer: DeviceId) -> Result<()> {
     }
 }
 
-/// Asks the user to compare the 6-digit code (stdin is read off the runtime).
+/// Asks the user to compare the alphanumeric code (stdin is read off the runtime).
 async fn confirm_code(code: String) -> Result<bool> {
     tokio::task::spawn_blocking(move || -> Result<bool> {
         print!("Does the other device show {} {}? [y/N] ", &code[..3], &code[3..]);

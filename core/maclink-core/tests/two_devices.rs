@@ -847,7 +847,7 @@ async fn too_many_wrong_attempts_end_pairing_mode() {
 }
 
 async fn sas_code(dev: &mut TestDevice) -> String {
-    wait_for(dev, "6-digit code", |e| match e {
+    wait_for(dev, "alphanumeric code", |e| match e {
         NodeEvent::Pairing(PairingEvent::SasCode { code, .. }) => Some(code.clone()),
         _ => None,
     })
@@ -4971,7 +4971,7 @@ async fn usb_auto_pair_requires_consent_on_both_sides_and_connects_over_usb() {
         }
     }
 
-    // 2. Both emitted matching 6-digit SAS codes without calling pairing_start_qr or pairing_start_nearby.
+    // 2. Both emitted matching alphanumeric SAS codes without calling pairing_start_qr or pairing_start_nearby.
     let code_a = pc_code.unwrap();
     let code_b = phone_code.unwrap();
     assert_eq!(code_a.len(), 6);

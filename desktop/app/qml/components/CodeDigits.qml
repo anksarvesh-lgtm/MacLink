@@ -2,7 +2,7 @@
 import QtQuick
 import app.nectarlink
 
-// The 6-digit pairing code, one digit per tile, as both screens show it.
+// The 6-character alphanumeric pairing code, one tile per character, as both screens show it.
 Row {
     id: digits
     property string code

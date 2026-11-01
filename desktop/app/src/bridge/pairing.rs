@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 //! `Pairing`: drives the pairing screen. Shows a QR code that refreshes
 //! itself until a phone pairs, lists nearby devices for code pairing, and
-//! handles the 6-digit code check.
+//! handles the alphanumeric code check.
 
 use std::{
     pin::Pin,
@@ -42,7 +42,7 @@ pub mod qobject {
         #[qproperty(i32, qr_size)]
         /// When the QR code expires (ms since the epoch); it refreshes itself.
         #[qproperty(f64, expires_at)]
-        /// The 6-digit code to compare, and the device it's shared with.
+        /// The alphanumeric code to compare, and the device it's shared with.
         #[qproperty(QString, code)]
         #[qproperty(QString, peer_name)]
         /// Why pairing failed: "rejected", "declined", "expired",
