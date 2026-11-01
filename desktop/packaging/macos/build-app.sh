@@ -120,3 +120,16 @@ ZIP="${OUT_DIR}/MacLink-${VERSION}-macos-${ARCH}.zip"
 rm -f "$ZIP"
 ditto -c -k --keepParent "$APP" "$ZIP"
 echo "Built $ZIP"
+
+DMG="${OUT_DIR}/MacLink-${VERSION}-macos-${ARCH}.dmg"
+DMG_STAGING="$(mktemp -d)/dmg_staging"
+mkdir -p "$DMG_STAGING"
+cp -R "$APP" "$DMG_STAGING/MacLink.app"
+ln -s /Applications "$DMG_STAGING/Applications"
+cp assets/brand/MacLink.icns "$DMG_STAGING/.VolumeIcon.icns"
+SetFile -c icnC "$DMG_STAGING/.VolumeIcon.icns" 2>/dev/null || true
+SetFile -a C "$DMG_STAGING" 2>/dev/null || true
+rm -f "$DMG"
+hdiutil create -volname "MacLink" -srcfolder "$DMG_STAGING" -ov -format UDZO "$DMG" >/dev/null
+rm -rf "$DMG_STAGING"
+echo "Built $DMG"
