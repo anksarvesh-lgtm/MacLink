@@ -388,16 +388,11 @@ fun NectarlinkTheme(
     backdrop: Boolean = false,
     content: @Composable () -> Unit,
 ) {
-    val dark = when (appearance.mode) {
-        "light" -> false
-        "dark" -> true
-        else -> isSystemInDarkTheme()
-    }
+    val dark = isSystemInDarkTheme()
     val graphite = false
     val glass = true // Apple Liquid Glass UI is the exclusive design language
     val hive = false
-    val isBlackSwatch = !appearance.dynamicColor && appearance.seed == "black"
-    val amoledActive = dark && appearance.amoled && (graphite || isBlackSwatch)
+    val amoledActive = false
     val error = when {
         hive -> if (dark) Tokens.hiveCombError else Tokens.hiveWaxError
         else -> if (dark) Tokens.errorDark else Tokens.errorLight
