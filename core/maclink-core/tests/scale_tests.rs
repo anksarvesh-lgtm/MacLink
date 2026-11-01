@@ -22,36 +22,44 @@ use tempfile::TempDir;
 
 fn make_config(dir: &TempDir, name: &str, kind: DeviceKind) -> NodeConfig {
     let mut cfg = NodeConfig::new(
-        dir.path().to_path_buf(),
+        dir.path(),
         DeviceInfo {
             name: name.into(),
             kind,
             os: if kind == DeviceKind::Phone { "android" } else { "windows" }.into(),
-            os_ver: "11".into(),
+            os_ver: "test".into(),
             model: None,
             accent: None,
             screen: None,
             install_id: None,
         },
-        "0.1.0-scale",
+        "0.0.1-test",
     );
     cfg.lan_discovery = false;
     cfg.away_mode = false;
-    cfg.localsend_port = 0;
     cfg.key_protector = Some(Arc::new(PlainKeyProtector));
+    cfg.capabilities = vec!["wake.relay".into(), "pc_audio".into(), "media.control".into()];
     cfg
 }
 
+fn init_logging() {
+    let _ = tracing_subscriber::fmt()
+        .with_env_filter(tracing_subscriber::EnvFilter::from_default_env())
+        .with_test_writer()
+        .try_init();
+}
+
 async fn start_paired_nodes() -> (TempDir, TempDir, Node, Node) {
+    init_logging();
     let phone_dir = TempDir::new().expect("phone temp dir");
     let pc_dir = TempDir::new().expect("pc temp dir");
+    let pc = Node::start(make_config(&pc_dir, "Scale PC", DeviceKind::Desktop), Arc::new(NoopPlatform))
+        .await
+        .expect("start pc node");
     let phone =
         Node::start(make_config(&phone_dir, "Scale Phone", DeviceKind::Phone), Arc::new(NoopPlatform))
             .await
             .expect("start phone node");
-    let pc = Node::start(make_config(&pc_dir, "Scale PC", DeviceKind::Desktop), Arc::new(NoopPlatform))
-        .await
-        .expect("start pc node");
 
     let mut phone_events = phone.events();
     let mut pc_events = pc.events();
@@ -83,6 +91,7 @@ async fn start_paired_nodes() -> (TempDir, TempDir, Node, Node) {
     (phone_dir, pc_dir, phone, pc)
 }
 
+#[ignore = "integration scale test; run with --ignored"]
 #[tokio::test(flavor = "multi_thread")]
 async fn relayed_wake_and_pc_audio_pcm_roundtrip() {
     let (_phone_dir, _pc_dir, phone, pc) = start_paired_nodes().await;

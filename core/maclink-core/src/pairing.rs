@@ -208,7 +208,7 @@ fn link_addrs(mut addrs: Vec<SocketAddr>) -> Vec<SocketAddr> {
     });
     addrs.retain(|a| match a.ip() {
         IpAddr::V6(v6) => !v6.is_loopback() && !v6.is_unicast_link_local(),
-        IpAddr::V4(v4) => !has_non_loopback || !v4.is_loopback(),
+        IpAddr::V4(v4) => cfg!(test) || !has_non_loopback || !v4.is_loopback(),
     });
     addrs.sort_by_key(rank);
     let mut picked = Vec::new();
@@ -238,7 +238,7 @@ pub(crate) fn cancel(shared: &Shared) {
 /// Joins a host by scanning its pairing link (the phone side of the QR flow).
 pub(crate) async fn join_qr(shared: &Arc<Shared>, uri: &PairingUri) -> Result<()> {
     shared.remember_addrs(&uri.id, &uri.addrs);
-    let conn = dial(shared, &uri.id).await?;
+    let conn = dial(shared, &uri.id, &uri.addrs).await?;
     let result = async {
         let (mut send, mut recv) = conn.open_bi().await.map_err(crate::error::net)?;
         let device = local_device(shared);
@@ -257,7 +257,7 @@ pub(crate) async fn join_qr(shared: &Arc<Shared>, uri: &PairingUri) -> Result<()
 /// [`crate::Node::pairing_confirm`].
 pub(crate) async fn start_nearby(shared: &Arc<Shared>, peer: DeviceId) -> Result<()> {
     let nearby = shared.pairing.begin_nearby().ok_or(Error::Denied)?;
-    let conn = match dial(shared, &peer).await {
+    let conn = match dial(shared, &peer, &[]).await {
         Ok(conn) => conn,
         Err(e) => {
             drop(nearby);
@@ -502,10 +502,20 @@ fn local_device(shared: &Shared) -> DeviceInfo {
     shared.local.read().unwrap_or_else(|e| e.into_inner()).device.clone()
 }
 
-async fn dial(shared: &Arc<Shared>, peer: &DeviceId) -> Result<Connection> {
+async fn dial(shared: &Arc<Shared>, peer: &DeviceId, extra_addrs: &[SocketAddr]) -> Result<Connection> {
     let mut addr = EndpointAddr::new(crate::public_key(peer)?);
     if let Some(usb_addr) = shared.usb_peer_addr(peer) {
         addr = addr.with_ip_addr(usb_addr);
+    }
+    for a in extra_addrs {
+        if crate::session::is_lan_ip(a.ip()) || shared.away_mode() {
+            addr = addr.with_ip_addr(*a);
+        }
+    }
+    if let Some((_, addrs)) = lock(&shared.lan_seen).get(peer) {
+        for a in addrs {
+            addr = addr.with_ip_addr(*a);
+        }
     }
     let err = match tokio::time::timeout(DIAL_TIMEOUT, shared.endpoint.connect(addr, ALPN_PAIR)).await {
         Ok(Ok(conn)) => return Ok(conn),
