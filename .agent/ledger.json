@@ -1,55 +1,44 @@
 {
   "version": 1,
-  "task_id": "t-20261101-3658",
-  "goal": "Remove Windows and Linux desktop components, restricting the platform exclusively to macOS and Android, and remove old push/update workflows and legacy trademark references",
+  "task_id": "t-20261101-9218",
+  "goal": "Push all commits and tags to remote GitHub repository",
   "status": "active",
-  "created_at": "2026-11-01T14:38:32.352Z",
-  "updated_at": "2026-11-01T14:48:49.521Z",
-  "checkpoint_count": 2,
+  "created_at": "2026-11-01T15:06:42.612Z",
+  "updated_at": "2026-11-01T15:06:42.612Z",
+  "checkpoint_count": 0,
   "steps": [
     {
       "id": "s1",
-      "title": "Audit Windows, Linux, and trademark artifacts",
-      "status": "done",
+      "title": "Check local repository state",
+      "status": "in_progress",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": "Audited codebase: identified Windows/Linux scripts in scripts/ (*.ps1), Windows-only packaging and CI jobs in .github/workflows/ (ci.yml, release.yml), Windows/Linux platform code in desktop/app/src/win, desktop/app/src/linux, desktop/app/Cargo.toml, core/maclink-cli/Cargo.toml, and old trademark notes in docs/PLAN.md and root TRADEMARKS.md. Ready to remove Windows/Linux packaging, scripts, and workflows.",
+      "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T14:41:12.589Z"
+      "updated_at": "2026-11-01T15:06:42.612Z"
     },
     {
       "id": "s2",
-      "title": "Remove Windows and Linux packaging and scripts",
-      "status": "done",
+      "title": "Push commits and tags to origin",
+      "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": "Removed Windows/Linux scripts (*.ps1), purged desktop/app/src/win and desktop/app/src/linux, removed Windows/Linux dependencies across Cargo.toml files, updated build.rs to link macOS frameworks only, updated updater.rs to target macOS artifacts (.dmg, .pkg, .zip), and updated CI and Release workflows to exclusively build macOS and Android. Committed to git (775b8e4).",
+      "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T14:48:49.521Z"
+      "updated_at": "2026-11-01T15:06:42.612Z"
     },
     {
       "id": "s3",
-      "title": "Purge legacy trademark files",
+      "title": "Verify remote status",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T14:38:32.352Z"
-    },
-    {
-      "id": "s4",
-      "title": "Verify test suite and build integrity",
-      "status": "pending",
-      "tries": 0,
-      "max_tries": 3,
-      "depends_on": [],
-      "note": null,
-      "last_error": null,
-      "updated_at": "2026-11-01T14:38:32.352Z"
+      "updated_at": "2026-11-01T15:06:42.612Z"
     }
   ]
 }
