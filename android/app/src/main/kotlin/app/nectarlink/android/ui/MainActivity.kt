@@ -903,11 +903,8 @@ private fun App(
                                     onOpenRecorder = { pcId -> recordPcId = pcId },
                                     onStopRecorder = { RecorderService.stop(context) },
                                     showWhatsNewGuideBanner = startupWalkthrough.showWhatsNewGuideBanner,
-                                    showHiveInvite = hiveInviteShown && appearance.theme != "hive",
-                                    onTryHive = {
-                                        preferences.answerHiveInvite()
-                                        preferences.update { it.copy(theme = "hive") }
-                                    },
+                                    showHiveInvite = false,
+                                    onTryHive = { preferences.answerHiveInvite() },
                                     onDismissHiveInvite = preferences::answerHiveInvite,
                                     backgroundServiceEnabled = backgroundServiceEnabled,
                                     onTurnOnBackgroundService = {

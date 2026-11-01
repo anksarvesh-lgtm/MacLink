@@ -65,28 +65,14 @@ QtObject {
         }
     }
     readonly property string artworkUrl: MediaList.activeArt
-    readonly property bool isArtworkSeed: Preferences.seed === "artwork"
+    readonly property bool isArtworkSeed: false
     readonly property bool artworkAmbientActive: false
     readonly property bool ambientBlurActive: glass
     // Material You color schemes from paired phones (`[{ id, key, name, label, hasAccent, scheme }]`).
     readonly property var phoneSeeds: AppController.phoneColors !== ""
         ? JSON.parse(AppController.phoneColors) : []
-    readonly property bool isPhoneSeed: Preferences.seed === "phone" || Preferences.seed.startsWith("phone:")
-    readonly property var activePhoneSeed: {
-        if (!isPhoneSeed)
-            return null
-        const targetId = Preferences.seed.startsWith("phone:") ? Preferences.seed.slice(6) : ""
-        for (let i = 0; i < phoneSeeds.length; i++) {
-            const p = phoneSeeds[i]
-            if (targetId !== "" && p.id === targetId && p.scheme)
-                return p.scheme
-        }
-        for (let i = 0; i < phoneSeeds.length; i++) {
-            if (phoneSeeds[i].scheme)
-                return phoneSeeds[i].scheme
-        }
-        return null
-    }
+    readonly property bool isPhoneSeed: false
+    readonly property var activePhoneSeed: null
     function phonePalette(deviceId) {
         for (let i = 0; i < phoneSeeds.length; i++) {
             const p = phoneSeeds[i]
