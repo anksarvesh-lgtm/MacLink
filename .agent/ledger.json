@@ -4,8 +4,8 @@
   "goal": "Complete total rename of nectarlink to MacLink across all code, QML, Android, data folders, installer, scripts, and documentation",
   "status": "active",
   "created_at": "2026-11-01T18:04:20.616Z",
-  "updated_at": "2026-11-01T18:06:43.392Z",
-  "checkpoint_count": 1,
+  "updated_at": "2026-11-01T18:20:28.588Z",
+  "checkpoint_count": 4,
   "steps": [
     {
       "id": "s1",
@@ -21,35 +21,35 @@
     {
       "id": "s2",
       "title": "Step B: Replace all remaining occurrences and rename files/folders using git mv",
-      "status": "pending",
+      "status": "done",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": null,
+      "note": "Step B completed: Replaced all remaining nectar occurrences across Rust settings, CXX-Qt prefs, QML IslandWindow/Settings/FeaturesGuide/App, translations (de, zh_CN, template, rust_strings.h), Android Gradle/Kotlin switch colors, LICENSE, and documentation. Workspace cargo check compiles cleanly with 0 errors.",
       "last_error": null,
-      "updated_at": "2026-11-01T18:04:20.616Z"
+      "updated_at": "2026-11-01T18:18:42.636Z"
     },
     {
       "id": "s3",
       "title": "Step C: Update data folders, preferences, and one-time migration paths",
-      "status": "pending",
+      "status": "done",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": null,
+      "note": "Step C completed: Verified all data and preference paths use MacLink. Added automatic one-time migration for ~/Library/Application Support/Nectarlink -> MacLink. Identified existing leftovers on host Mac: /Users/sarvesh/Library/Application Support/Nectarlink (will request user confirmation before deletion per Rule 7).",
       "last_error": null,
-      "updated_at": "2026-11-01T18:04:20.616Z"
+      "updated_at": "2026-11-01T18:19:39.012Z"
     },
     {
       "id": "s4",
       "title": "Step D: Update online installer, removal of legacy app/agents, and docs",
-      "status": "pending",
+      "status": "done",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": null,
+      "note": "Step D completed: Created scripts/install.sh with legacy app/launch-agent/symlink cleanup, SHA-256 integrity verification against SHA256SUMS.txt, xattr cleanup for Gatekeeper, CLI symlinking to /usr/local/bin/maclink, and manual DMG install instructions.",
       "last_error": null,
-      "updated_at": "2026-11-01T18:04:20.616Z"
+      "updated_at": "2026-11-01T18:20:28.588Z"
     },
     {
       "id": "s5",

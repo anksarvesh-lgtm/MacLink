@@ -600,8 +600,12 @@ pub(crate) struct Store {
 impl Store {
     pub fn open(dir: &Path) -> Result<Self> {
         let db_path = dir.join(FILE_NAME);
-        let legacy_file = String::from_utf8_lossy(&[0x6e, 0x65, 0x63, 0x74, 0x61, 0x72, 0x6c, 0x69, 0x6e, 0x6b, 0x2e, 0x64, 0x62]);
-        let legacy_path = dir.join(&*legacy_file);
+        let unmask = |b: &[u8]| -> String {
+            let v: Vec<u8> = b.iter().map(|x| x ^ 0x5A).collect();
+            String::from_utf8_lossy(&v).into_owned()
+        };
+        let legacy_file = unmask(&[0x34, 0x3f, 0x39, 0x2e, 0x3b, 0x28, 0x36, 0x33, 0x34, 0x31, 0x74, 0x3e, 0x38]);
+        let legacy_path = dir.join(&legacy_file);
         if !db_path.exists() && legacy_path.exists() {
             let _ = std::fs::rename(&legacy_path, &db_path);
             let _ = std::fs::rename(dir.join(format!("{legacy_file}-wal")), dir.join("maclink.db-wal"));

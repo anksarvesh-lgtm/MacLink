@@ -215,15 +215,19 @@ void mac_notification_start(const char *app_icon_path, MacNotificationCallback c
         ensure_bundle_identifier();
         
         if (@available(macOS 10.14, *)) {
-            s_un_delegate = [[MacUNNotificationDelegate alloc] init];
-            s_un_delegate.callback = callback;
-            UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-            center.delegate = s_un_delegate;
-            [center requestAuthorizationWithOptions:(UNAuthorizationOptionAlert | UNAuthorizationOptionSound | UNAuthorizationOptionBadge)
-                                  completionHandler:^(BOOL granted, NSError * _Nullable error) {
-                (void)granted;
-                (void)error;
-            }];
+            @try {
+                s_un_delegate = [[MacUNNotificationDelegate alloc] init];
+                s_un_delegate.callback = callback;
+                UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+                center.delegate = s_un_delegate;
+                [center requestAuthorizationWithOptions:(UNAuthorizationOptionAlert | UNAuthorizationOptionSound | UNAuthorizationOptionBadge)
+                                      completionHandler:^(BOOL granted, NSError * _Nullable error) {
+                    (void)granted;
+                    (void)error;
+                }];
+            } @catch (NSException *e) {
+                // When running outside an application bundle, UNUserNotificationCenter is not available
+            }
         }
         
         s_ns_delegate = [[MacNotificationDelegate alloc] init];
@@ -267,76 +271,80 @@ void mac_notification_show(
 
         // Deliver via UNUserNotificationCenter on modern macOS
         if (@available(macOS 10.14, *)) {
-            UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
-            if (title && strlen(title) > 0) {
-                content.title = [NSString stringWithUTF8String:title];
-            }
-            if (subtitle && strlen(subtitle) > 0) {
-                content.subtitle = [NSString stringWithUTF8String:subtitle];
-            }
-            if (body && strlen(body) > 0) {
-                content.body = [NSString stringWithUTF8String:body];
-            }
-            if (silent) {
-                content.sound = nil;
-            } else {
-                content.sound = [UNNotificationSound defaultSound];
-            }
-
-            if (imageFile && [[NSFileManager defaultManager] fileExistsAtPath:imageFile]) {
-                NSURL *fileUrl = [NSURL fileURLWithPath:imageFile];
-                NSError *attErr = nil;
-                UNNotificationAttachment *attachment = [UNNotificationAttachment attachmentWithIdentifier:@"icon" URL:fileUrl options:nil error:&attErr];
-                if (attachment) {
-                    content.attachments = @[attachment];
+            @try {
+                UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
+                if (title && strlen(title) > 0) {
+                    content.title = [NSString stringWithUTF8String:title];
                 }
-            }
-
-            NSString *categoryId = [NSString stringWithFormat:@"cat_%s_%s", device, key];
-            NSMutableArray<UNNotificationAction *> *unActions = [NSMutableArray array];
-
-            if (has_reply) {
-                NSString *replyIdStr = (reply_id && strlen(reply_id) > 0) ? [NSString stringWithUTF8String:reply_id] : @"reply";
-                NSString *replyTitleStr = (reply_title && strlen(reply_title) > 0) ? [NSString stringWithUTF8String:reply_title] : @"Reply";
-                userInfo[@"reply_action"] = replyIdStr;
-                UNTextInputNotificationAction *replyAction = [UNTextInputNotificationAction actionWithIdentifier:replyIdStr
-                                                                                                           title:replyTitleStr
-                                                                                                         options:UNNotificationActionOptionNone
-                                                                                            textInputButtonTitle:@"Send"
-                                                                                            textInputPlaceholder:@"Type a message..."];
-                [unActions addObject:replyAction];
-            } else if (action_count > 0 && action_ids && action_titles) {
-                userInfo[@"primary_action"] = [NSString stringWithUTF8String:action_ids[0]];
-                for (int i = 0; i < action_count; i++) {
-                    NSString *actId = [NSString stringWithUTF8String:action_ids[i]];
-                    NSString *actTitle = [NSString stringWithUTF8String:action_titles[i]];
-                    UNNotificationAction *action = [UNNotificationAction actionWithIdentifier:actId
-                                                                                        title:actTitle
-                                                                                      options:UNNotificationActionOptionForeground];
-                    [unActions addObject:action];
+                if (subtitle && strlen(subtitle) > 0) {
+                    content.subtitle = [NSString stringWithUTF8String:subtitle];
                 }
-            }
-
-            if (unActions.count > 0) {
-                UNNotificationCategory *category = [UNNotificationCategory categoryWithIdentifier:categoryId
-                                                                                           actions:unActions
-                                                                                 intentIdentifiers:@[]
-                                                                                           options:UNNotificationCategoryOptionCustomDismissAction];
-                UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-                [center setNotificationCategories:[NSSet setWithObject:category]];
-                content.categoryIdentifier = categoryId;
-            }
-
-            content.userInfo = userInfo;
-
-            UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:targetId content:content trigger:nil];
-            [[UNUserNotificationCenter currentNotificationCenter] addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
-                if (error) {
-                    // Fallback to NSUserNotificationCenter if UNUserNotificationCenter encounters an issue
-                    deliver_via_ns_user_notification(targetId, title, subtitle, body, imageFile, silent, has_reply, reply_id, reply_title, action_count, action_ids, action_titles, userInfo);
+                if (body && strlen(body) > 0) {
+                    content.body = [NSString stringWithUTF8String:body];
                 }
-            }];
-            return;
+                if (silent) {
+                    content.sound = nil;
+                } else {
+                    content.sound = [UNNotificationSound defaultSound];
+                }
+
+                if (imageFile && [[NSFileManager defaultManager] fileExistsAtPath:imageFile]) {
+                    NSURL *fileUrl = [NSURL fileURLWithPath:imageFile];
+                    NSError *attErr = nil;
+                    UNNotificationAttachment *attachment = [UNNotificationAttachment attachmentWithIdentifier:@"icon" URL:fileUrl options:nil error:&attErr];
+                    if (attachment) {
+                        content.attachments = @[attachment];
+                    }
+                }
+
+                NSString *categoryId = [NSString stringWithFormat:@"cat_%s_%s", device, key];
+                NSMutableArray<UNNotificationAction *> *unActions = [NSMutableArray array];
+
+                if (has_reply) {
+                    NSString *replyIdStr = (reply_id && strlen(reply_id) > 0) ? [NSString stringWithUTF8String:reply_id] : @"reply";
+                    NSString *replyTitleStr = (reply_title && strlen(reply_title) > 0) ? [NSString stringWithUTF8String:reply_title] : @"Reply";
+                    userInfo[@"reply_action"] = replyIdStr;
+                    UNTextInputNotificationAction *replyAction = [UNTextInputNotificationAction actionWithIdentifier:replyIdStr
+                                                                                                               title:replyTitleStr
+                                                                                                             options:UNNotificationActionOptionNone
+                                                                                                textInputButtonTitle:@"Send"
+                                                                                                textInputPlaceholder:@"Type a message..."];
+                    [unActions addObject:replyAction];
+                } else if (action_count > 0 && action_ids && action_titles) {
+                    userInfo[@"primary_action"] = [NSString stringWithUTF8String:action_ids[0]];
+                    for (int i = 0; i < action_count; i++) {
+                        NSString *actId = [NSString stringWithUTF8String:action_ids[i]];
+                        NSString *actTitle = [NSString stringWithUTF8String:action_titles[i]];
+                        UNNotificationAction *action = [UNNotificationAction actionWithIdentifier:actId
+                                                                                            title:actTitle
+                                                                                          options:UNNotificationActionOptionForeground];
+                        [unActions addObject:action];
+                    }
+                }
+
+                if (unActions.count > 0) {
+                    UNNotificationCategory *category = [UNNotificationCategory categoryWithIdentifier:categoryId
+                                                                                               actions:unActions
+                                                                                     intentIdentifiers:@[]
+                                                                                               options:UNNotificationCategoryOptionCustomDismissAction];
+                    UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+                    [center setNotificationCategories:[NSSet setWithObject:category]];
+                    content.categoryIdentifier = categoryId;
+                }
+
+                content.userInfo = userInfo;
+
+                UNNotificationRequest *request = [UNNotificationRequest requestWithIdentifier:targetId content:content trigger:nil];
+                [[UNUserNotificationCenter currentNotificationCenter] addNotificationRequest:request withCompletionHandler:^(NSError * _Nullable error) {
+                    if (error) {
+                        // Fallback to NSUserNotificationCenter if UNUserNotificationCenter encounters an issue
+                        deliver_via_ns_user_notification(targetId, title, subtitle, body, imageFile, silent, has_reply, reply_id, reply_title, action_count, action_ids, action_titles, userInfo);
+                    }
+                }];
+                return;
+            } @catch (NSException *e) {
+                // Fall through to NSUserNotificationCenter
+            }
         }
 
         // Fallback for older macOS
@@ -364,8 +372,10 @@ void mac_notification_remove(const char *device, const char *key) {
     @autoreleasepool {
         NSString *targetId = [NSString stringWithFormat:@"%s:%s", device, key];
         if (@available(macOS 10.14, *)) {
-            [[UNUserNotificationCenter currentNotificationCenter] removeDeliveredNotificationsWithIdentifiers:@[targetId]];
-            [[UNUserNotificationCenter currentNotificationCenter] removePendingNotificationRequestsWithIdentifiers:@[targetId]];
+            @try {
+                [[UNUserNotificationCenter currentNotificationCenter] removeDeliveredNotificationsWithIdentifiers:@[targetId]];
+                [[UNUserNotificationCenter currentNotificationCenter] removePendingNotificationRequestsWithIdentifiers:@[targetId]];
+            } @catch (NSException *e) {}
         }
         
         NSString *devStr = [NSString stringWithUTF8String:device];
@@ -384,18 +394,20 @@ void mac_notification_remove_device(const char *device) {
         NSString *devStr = [NSString stringWithUTF8String:device];
         
         if (@available(macOS 10.14, *)) {
-            UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-            [center getDeliveredNotificationsWithCompletionHandler:^(NSArray<UNNotification *> * _Nonnull notifications) {
-                NSMutableArray<NSString *> *toRemove = [NSMutableArray array];
-                for (UNNotification *n in notifications) {
-                    if ([n.request.content.userInfo[@"device"] isEqualToString:devStr]) {
-                        [toRemove addObject:n.request.identifier];
+            @try {
+                UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+                [center getDeliveredNotificationsWithCompletionHandler:^(NSArray<UNNotification *> * _Nonnull notifications) {
+                    NSMutableArray<NSString *> *toRemove = [NSMutableArray array];
+                    for (UNNotification *n in notifications) {
+                        if ([n.request.content.userInfo[@"device"] isEqualToString:devStr]) {
+                            [toRemove addObject:n.request.identifier];
+                        }
                     }
-                }
-                if (toRemove.count > 0) {
-                    [center removeDeliveredNotificationsWithIdentifiers:toRemove];
-                }
-            }];
+                    if (toRemove.count > 0) {
+                        [center removeDeliveredNotificationsWithIdentifiers:toRemove];
+                    }
+                }];
+            } @catch (NSException *e) {}
         }
         
         NSUserNotificationCenter *center = [NSUserNotificationCenter defaultUserNotificationCenter];
@@ -410,10 +422,12 @@ void mac_notification_remove_device(const char *device) {
 void mac_notification_unregister(void) {
     @autoreleasepool {
         if (@available(macOS 10.14, *)) {
-            [[UNUserNotificationCenter currentNotificationCenter] removeAllDeliveredNotifications];
-            [[UNUserNotificationCenter currentNotificationCenter] removeAllPendingNotificationRequests];
-            [UNUserNotificationCenter currentNotificationCenter].delegate = nil;
-            s_un_delegate = nil;
+            @try {
+                [[UNUserNotificationCenter currentNotificationCenter] removeAllDeliveredNotifications];
+                [[UNUserNotificationCenter currentNotificationCenter] removeAllPendingNotificationRequests];
+                [UNUserNotificationCenter currentNotificationCenter].delegate = nil;
+                s_un_delegate = nil;
+            } @catch (NSException *e) {}
         }
         [[NSUserNotificationCenter defaultUserNotificationCenter] removeAllDeliveredNotifications];
         [NSUserNotificationCenter defaultUserNotificationCenter].delegate = nil;

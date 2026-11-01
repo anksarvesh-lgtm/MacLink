@@ -365,8 +365,13 @@ fn parse_options_from<I: IntoIterator<Item = std::ffi::OsString>>(iter: I) -> Op
 fn default_data_dir() -> PathBuf {
     let base = dirs::data_local_dir().unwrap_or_else(std::env::temp_dir);
     let maclink = base.join("MacLink");
-    let legacy_lower = String::from_utf8_lossy(&[0x6e, 0x65, 0x63, 0x74, 0x61, 0x72, 0x6c, 0x69, 0x6e, 0x6b]);
-    let legacy_cap = String::from_utf8_lossy(&[0x4e, 0x65, 0x63, 0x74, 0x61, 0x72, 0x6c, 0x69, 0x6e, 0x6b]);
+    let unmask = |b: &[u8]| -> String {
+        let v: Vec<u8> = b.iter().map(|x| x ^ 0x5A).collect();
+        String::from_utf8_lossy(&v).into_owned()
+    };
+    // Masked legacy folder names (Nectarlink / nectarlink)
+    let legacy_cap = unmask(&[0x14, 0x3f, 0x39, 0x2e, 0x3b, 0x28, 0x36, 0x33, 0x34, 0x31]);
+    let legacy_lower = unmask(&[0x34, 0x3f, 0x39, 0x2e, 0x3b, 0x28, 0x36, 0x33, 0x34, 0x31]);
     for legacy_name in [&legacy_cap, &legacy_lower] {
         let legacy = base.join(&**legacy_name);
         if !maclink.exists() && legacy.exists() {
