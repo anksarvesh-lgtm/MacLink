@@ -14,9 +14,8 @@ QtObject {
     readonly property bool hive: false
     readonly property bool graphite: false
     readonly property bool glass: true
-    readonly property bool dark: Preferences.colorMode === "dark"
-                                 || (Preferences.colorMode !== "light" && AppController.systemDark)
-    readonly property bool amoled: dark && Preferences.amoled && (graphite || Preferences.seed === "black")
+    readonly property bool dark: AppController.systemDark
+    readonly property bool amoled: false
     readonly property bool reduceMotion: AppController.reduceMotion
 
     // ---- Hive's comb ----
@@ -98,18 +97,8 @@ QtObject {
     }
     // "artwork", "wallpaper", "phone" / "phone:<id>", or a preset name; dynamic
     // seeds fall back to wallpaper or the default preset until their colors are known.
-    readonly property string seed: isArtworkSeed
-        ? (artworkSeed ? "artwork" : (wallpaperSeed ? "wallpaper" : Tokens.data.themes.bloom.defaultSeed))
-        : isPhoneSeed
-          ? (activePhoneSeed ? Preferences.seed : (wallpaperSeed ? "wallpaper" : Tokens.data.themes.bloom.defaultSeed))
-          : Preferences.seed === "wallpaper"
-            ? (wallpaperSeed ? "wallpaper" : Tokens.data.themes.bloom.defaultSeed)
-            : (bloomSeeds[Preferences.seed] ? Preferences.seed : Tokens.data.themes.bloom.defaultSeed)
-    readonly property var seedColors: seed === "artwork"
-        ? artworkSeed
-        : (seed === "phone" || seed.startsWith("phone:"))
-          ? activePhoneSeed
-          : (seed === "wallpaper" ? wallpaperSeed : bloomSeeds[seed])
+    readonly property string seed: wallpaperSeed ? "wallpaper" : Tokens.data.themes.bloom.defaultSeed
+    readonly property var seedColors: wallpaperSeed ? wallpaperSeed : bloomSeeds[Tokens.data.themes.bloom.defaultSeed]
     readonly property var palette: hive
         ? Tokens.data.themes.hive.variants[dark ? "comb" : "wax"]
         : (graphite

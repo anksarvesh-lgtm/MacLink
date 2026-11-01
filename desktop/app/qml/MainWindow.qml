@@ -349,11 +349,11 @@ NativeWindow {
     // window turns translucent only once the backdrop is in place, and opaque again
     // before it is removed.
     // Hive keeps its own fixed colors, so it never shows the wallpaper through.
-    readonly property bool wantBackdrop: Qt.platform.os === "windows" && (Preferences.backdrop || Theme.glass) && !Theme.amoled && !Theme.hive
+    readonly property bool wantBackdrop: (Qt.platform.os === "windows" || Qt.platform.os === "osx") && !Theme.amoled && !Theme.hive
     property bool micaApplied: false
-    property bool micaVisible: false
+    property bool micaVisible: Qt.platform.os === "osx" || wantBackdrop
     backdrop: micaApplied
-    acrylic: Theme.glass && !Theme.amoled
+    acrylic: Theme.glass
     Timer {
         id: micaSettle
         interval: 220
@@ -422,14 +422,12 @@ NativeWindow {
         )
     Rectangle {
         anchors.fill: parent
-        color: window.micaVisible && !Theme.amoled
-            ? Qt.rgba(
-                window.windowSurface.r,
-                window.windowSurface.g,
-                window.windowSurface.b,
-                Theme.glass ? (Theme.dark ? 0.38 : 0.46) : (Theme.dark ? 0.76 : 0.84)
-            )
-            : window.windowSurface
+        color: Qt.rgba(
+            window.windowSurface.r,
+            window.windowSurface.g,
+            window.windowSurface.b,
+            Theme.dark ? 0.38 : 0.46
+        )
         Behavior on color { ColorAnimation { duration: Theme.fadeNormal } }
     }
 
