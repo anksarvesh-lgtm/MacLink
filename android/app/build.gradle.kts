@@ -49,14 +49,14 @@ android {
     // Without it, a local release build is signed with the debug key so it can be
     // installed over a debug build for testing. Never publish such a build: the
     // release workflow refuses to run without the key and verifies the signature.
-    val keystore = (System.getenv("MACLINK_KEYSTORE") ?: System.getenv("NECTARLINK_KEYSTORE"))?.let(::file)?.takeIf { it.exists() }
+    val keystore = System.getenv("MACLINK_KEYSTORE")?.let(::file)?.takeIf { it.exists() }
     signingConfigs {
         if (keystore != null) {
             create("release") {
                 storeFile = keystore
-                storePassword = System.getenv("MACLINK_KEYSTORE_PASSWORD") ?: System.getenv("NECTARLINK_KEYSTORE_PASSWORD")
+                storePassword = System.getenv("MACLINK_KEYSTORE_PASSWORD")
                 keyAlias = "maclink"
-                keyPassword = System.getenv("MACLINK_KEYSTORE_PASSWORD") ?: System.getenv("NECTARLINK_KEYSTORE_PASSWORD")
+                keyPassword = System.getenv("MACLINK_KEYSTORE_PASSWORD")
             }
         }
     }
@@ -120,12 +120,7 @@ abstract class CargoNdkBuild : DefaultTask() {
         abis.get().forEach { abi ->
             val abiDir = outputDir.get().asFile.resolve(abi)
             val macSo = abiDir.resolve("libmaclink_ffi.so")
-            val necSo = abiDir.resolve("libnectarlink_ffi.so")
-            if (macSo.exists() && !necSo.exists()) {
-                macSo.copyTo(necSo, overwrite = true)
-            } else if (necSo.exists() && !macSo.exists()) {
-                necSo.copyTo(macSo, overwrite = true)
-            }
+            check(macSo.exists()) { "Missing native library: ${macSo.path}" }
         }
     }
 }
@@ -177,8 +172,7 @@ abstract class BundleFonts : DefaultTask() {
 
 val workspaceDir: Directory = rootProject.layout.projectDirectory.dir("..")
 val rustAbis: List<String> =
-    (findProperty("maclink.abis") as String?
-        ?: findProperty("nectarlink.abis") as String?)?.split(",")?.map(String::trim)
+    (findProperty("maclink.abis") as String?)?.split(",")?.map(String::trim)
         ?: listOf("arm64-v8a", "x86_64")
 
 androidComponents {

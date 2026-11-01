@@ -1,8 +1,7 @@
 # The MacLink mark
 
-The Waggle Dance: two loops, the phone and the PC, around a drop of nectar,
-tilted like the run of a honeybee's waggle dance, which is how bees tell each
-other where to find nectar.
+The Waggle Dance: two loops, the phone and the PC, around a glowing drop,
+tilted like the run of a honeybee's waggle dance, which is how devices connect seamlessly.
 
 | File | What it is |
 |---|---|
@@ -17,6 +16,6 @@ size) and `android/app/src/main/res/drawable/ic_launcher_*.xml` and
 `ic_notification.xml`.
 
 Colors (Honey palette, `docs/design/tokens.json`): tile `#2C1600`, glow
-`#693C00`, phone loop `#FFF8F3`, PC loop `#FFDDB8`, nectar and rim `#FFB95F`.
+`#693C00`, phone loop `#FFF8F3`, PC loop `#FFDDB8`, center and rim `#FFB95F`.
 
 The name and the mark are covered by the [trademark policy](../../TRADEMARKS.md).

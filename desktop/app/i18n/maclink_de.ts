@@ -2509,8 +2509,8 @@ Assistenz-Modus (Android-Bedienungshilfen)
     </message>
     <message>
         <location filename="rust_strings.h" line="254" />
-        <source>Nectar Island</source>
-        <translation>Nectar Island</translation>
+        <source>MacLink Island</source>
+        <translation>MacLink Island</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="255" />
@@ -2713,18 +2713,18 @@ Voraussetzungen
 Displays a compact pill at the top center of your primary monitor for incoming calls, live file transfer progress, media playback, and optional notification previews.
 
 Where to find it
-- Settings › General › Nectar Island.
+- Settings › General › MacLink Island.
 
 What it needs
-- Turn on Nectar Island in Settings › General and pick which events should appear.</source>
+- Turn on MacLink Island in Settings › General and pick which events should appear.</source>
         <translation>Funktion
 Zeigt oben mittig auf deinem Hauptbildschirm eine kompakte Leiste für eingehende Anrufe, laufende Dateiübertragungen, Medienwiedergabe und optionale Benachrichtigungsvorschauen an.
 
 Wo zu finden
-- Einstellungen › Allgemein › Nectar Island.
+- Einstellungen › Allgemein › MacLink Island.
 
 Voraussetzungen
-- Aktiviere Nectar Island unter Einstellungen › Allgemein und wähle aus, welche Ereignisse angezeigt werden sollen.</translation>
+- Aktiviere MacLink Island unter Einstellungen › Allgemein und wähle aus, welche Ereignisse angezeigt werden sollen.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="279" />
@@ -3073,7 +3073,7 @@ Shows incoming and active phone calls on your PC with Answer, Decline, and Rejec
 
 Where to find it
 - Left navigation rail › Calls.
-- Incoming call banner on Home and Nectar Island.
+- Incoming call banner on Home and MacLink Island.
 
 What it needs
 - Phone, Call Log, and Contacts permissions on your Android phone.
@@ -3083,7 +3083,7 @@ Zeigt eingehende und aktive Telefonate auf deinem PC mit Aktionen zum Annehmen, 
 
 Wo zu finden
 - Linke Seitenleiste › Anrufe.
-- Banner für eingehende Anrufe auf der Startseite und in der Nectar Island.
+- Banner für eingehende Anrufe auf der Startseite und in der MacLink Island.
 
 Voraussetzungen
 - Berechtigungen für Telefon, Anrufliste und Kontakte auf deinem Android-Gerät.
@@ -4124,8 +4124,8 @@ Voraussetzungen
     <name>IslandWindow</name>
     <message>
         <location filename="../qml/IslandWindow.qml" line="16" />
-        <source>Nectar Island</source>
-        <translation>Nectar Island</translation>
+        <source>MacLink Island</source>
+        <translation>MacLink Island</translation>
     </message>
     <message>
         <location filename="../qml/IslandWindow.qml" line="213" />
@@ -4161,13 +4161,13 @@ Voraussetzungen
     </message>
     <message>
         <location filename="../qml/IslandWindow.qml" line="228" />
-        <source>Nectar Island · %1</source>
-        <translation>Nectar Island · %1</translation>
+        <source>MacLink Island · %1</source>
+        <translation>MacLink Island · %1</translation>
     </message>
     <message>
         <location filename="../qml/IslandWindow.qml" line="229" />
-        <source>Nectar Island · Ready</source>
-        <translation>Nectar Island · Bereit</translation>
+        <source>MacLink Island · Ready</source>
+        <translation>MacLink Island · Bereit</translation>
     </message>
     <message>
         <location filename="../qml/IslandWindow.qml" line="234" />
@@ -6590,8 +6590,8 @@ Voraussetzungen
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="998" />
         <location filename="../qml/pages/SettingsPage.qml" line="1001" />
-        <source>Nectar Island</source>
-        <translation>Nectar Island</translation>
+        <source>MacLink Island</source>
+        <translation>MacLink Island</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="999" />

@@ -1,7 +1,7 @@
 # MacLink: Product & Engineering Plan
 
 > **MacLink** connects Android phones and Macs. It's one open-source app that replaces Phone Link, KDE Connect, scrcpy, LocalSend and Intel Unison.
-> *Bees carry nectar back to the hive. MacLink carries everything between your phone and your PC.*
+> *MacLink carries everything seamlessly between your phone and your Mac.*
 > Status: **in active development (Qt Quick + Rust on macOS, Kotlin + Jetpack Compose on Android, shared Rust core).** Phase 1 and most of Phases 2 to 3 work end to end; see §3 for per-feature status. Last updated 2026-10-09.
 
 ---
@@ -213,7 +213,7 @@ current Android.
 ### 3.11 Ambient & signature experiences (what makes MacLink special)
 | Feature | Tier |
 |---|---|
-| **Nectar Island** (optional extra, off by default (`nectar_island: false`), with per-trigger toggles when enabled): a small, animated pill at the top of the PC screen showing live phone activity (call, timer, music, transfer, Live Update, OTP, voice recording). Expands on hover. A nice touch, not a pillar (done) | P2 |
+| **MacLink Island** (optional extra, off by default (`maclink_island: false`), with per-trigger toggles when enabled): a small, animated pill at the top of the PC screen showing live phone activity (call, timer, music, transfer, Live Update, OTP, voice recording). Expands on hover. A nice touch, not a pillar (done) | P2 |
 | **Shelf**: slide-out edge panel with the latest photo, screenshot, clipboard and recent files. Drag anything in to send (done) | P1 |
 | **Command Palette** (global hotkey): "send clipboard", "find my phone", "text Mom", "open last photo", "mirror Spotify", "record voice" (done) | P1 |
 | **Material You sync**: the PC app takes its accent and theme from the phone's wallpaper colors, so both apps look like one (done) | P1 |
@@ -536,7 +536,7 @@ Build Home, a notification card, the Deck grid, one hero transition and a live m
 - Mica backdrop, layered surfaces, real in-app blur and glass (MultiEffect), subtle shader accents, Segoe UI Variable for body text plus a characterful display face for headings.
 - Layout: slim left rail (device switcher at top) → **Home** with a live "phone hero" (wallpaper, battery, signal, now playing, quick toggles), feature surfaces (Messages, Notifications, Photos, Files, Apps, Calls, Deck), and settings that read like explanations, not checkboxes.
 - Keyboard-first: Ctrl+K palette in-app plus a global hotkey. Every action is reachable by keyboard.
-- Ambient UI: Nectar Island, Shelf and tray flyout, so most interactions never open the main window.
+- Ambient UI: MacLink Island, Shelf and tray flyout, so most interactions never open the main window.
 
 **Phone (Compose)**
 - Material 3 Expressive. A big tactile card for the connected PC (online state, laptop battery, quick actions: send clipboard, record voice, Deck, lock PC, mirror, touchpad).
@@ -620,7 +620,7 @@ Each phase ends with a usable, releasable product. Phase sizes are relative; act
   - **Unlock PC with phone fingerprint** (own workstream + external review)
   - PC in your pocket: reverse mirroring
   - Flow (cross-device mouse)
-  - Nectar Island (optional), proximity lock, automations, folder sync
+  - MacLink Island (optional), proximity lock, automations, folder sync
   - Tablet as second screen, phone as mic/speaker
   - Bluetooth fallback link
   - **macOS desktop**, plugin API
@@ -739,7 +739,7 @@ Each phase ends with a usable, releasable product. Phase sizes are relative; act
   | Notifications | Windows toasts | UserNotifications (needs a signed app) |
   | Window glass | Mica | macOS vibrancy |
   | Tray | System tray | Menu-bar icon |
-  | Nectar Island | Top-of-screen pill | Around the MacBook notch |
+  | MacLink Island | Top-of-screen pill | Around the MacBook notch |
   | Phone storage in file manager | Explorer (Cloud Files) | Finder (File Provider extension) |
   | "Send to phone" right-click | Explorer context menu | Finder Share / Sync extension |
   | Phone as webcam | macOS virtual camera | Camera Extension (approved once by the user) |

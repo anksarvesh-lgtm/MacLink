@@ -2509,8 +2509,8 @@ Assist mode (Android Accessibility Service)
     </message>
     <message>
         <location filename="rust_strings.h" line="254"/>
-        <source>Nectar Island</source>
-        <translation>Nectar 岛</translation>
+        <source>MacLink Island</source>
+        <translation>MacLink 岛</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="255"/>
@@ -2713,18 +2713,18 @@ What it needs
 Displays a compact pill at the top center of your primary monitor for incoming calls, live file transfer progress, media playback, and optional notification previews.
 
 Where to find it
-- Settings › General › Nectar Island.
+- Settings › General › MacLink Island.
 
 What it needs
-- Turn on Nectar Island in Settings › General and pick which events should appear.</source>
+- Turn on MacLink Island in Settings › General and pick which events should appear.</source>
         <translation>功能
 在主显示器顶部中央显示一个小巧的胶囊，用于来电、实时文件传输进度、媒体播放以及可选的通知预览。
 
 位置
-- 设置 › 通用 › Nectar 岛。
+- 设置 › 通用 › MacLink 岛。
 
 需要
-- 在 设置 › 通用 中开启 Nectar 岛，并选择要显示哪些事件。</translation>
+- 在 设置 › 通用 中开启 MacLink 岛，并选择要显示哪些事件。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="279"/>
@@ -3073,7 +3073,7 @@ Shows incoming and active phone calls on your PC with Answer, Decline, and Rejec
 
 Where to find it
 - Left navigation rail › Calls.
-- Incoming call banner on Home and Nectar Island.
+- Incoming call banner on Home and MacLink Island.
 
 What it needs
 - Phone, Call Log, and Contacts permissions on your Android phone.
@@ -3083,7 +3083,7 @@ What it needs
 
 位置
 - 左侧导航栏 › 通话。
-- 首页和 Nectar 岛上的来电横幅。
+- 首页和 MacLink 岛上的来电横幅。
 
 需要
 - Android 手机上的电话、通话记录和通讯录权限。
@@ -4122,8 +4122,8 @@ What it needs
     <name>IslandWindow</name>
     <message>
         <location filename="../qml/IslandWindow.qml" line="16"/>
-        <source>Nectar Island</source>
-        <translation>Nectar 岛</translation>
+        <source>MacLink Island</source>
+        <translation>MacLink 岛</translation>
     </message>
     <message>
         <location filename="../qml/IslandWindow.qml" line="213"/>
@@ -4159,13 +4159,13 @@ What it needs
     </message>
     <message>
         <location filename="../qml/IslandWindow.qml" line="228"/>
-        <source>Nectar Island · %1</source>
-        <translation>Nectar 岛 · %1</translation>
+        <source>MacLink Island · %1</source>
+        <translation>MacLink 岛 · %1</translation>
     </message>
     <message>
         <location filename="../qml/IslandWindow.qml" line="229"/>
-        <source>Nectar Island · Ready</source>
-        <translation>Nectar 岛 · 就绪</translation>
+        <source>MacLink Island · Ready</source>
+        <translation>MacLink 岛 · 就绪</translation>
     </message>
     <message>
         <location filename="../qml/IslandWindow.qml" line="234"/>
@@ -6586,8 +6586,8 @@ What it needs
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="998"/>
         <location filename="../qml/pages/SettingsPage.qml" line="1001"/>
-        <source>Nectar Island</source>
-        <translation>Nectar 岛</translation>
+        <source>MacLink Island</source>
+        <translation>MacLink 岛</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="999"/>

@@ -4611,7 +4611,7 @@ mod tests {
     }
 }
 
-/// `app.nectarlink.android.core.AndroidContext.nativeInstall(context)`: gives the
+/// `app.maclink.android.core.AndroidContext.nativeInstall(context)`: gives the
 /// core the application's `Context`, so it reads the phone's DNS servers
 /// (see `maclink_core::install_android_context`). The library is loaded
 /// with `System.loadLibrary` for this; JNA's calls use the same copy.
@@ -4619,17 +4619,6 @@ mod tests {
 #[allow(unsafe_code)]
 #[unsafe(no_mangle)]
 pub extern "system" fn Java_app_maclink_android_core_AndroidContext_nativeInstall(
-    env: *mut jni_sys::JNIEnv,
-    class: jni_sys::jclass,
-    context: jni_sys::jobject,
-) {
-    Java_app_nectarlink_android_core_AndroidContext_nativeInstall(env, class, context);
-}
-
-#[cfg(target_os = "android")]
-#[allow(unsafe_code)]
-#[unsafe(no_mangle)]
-pub extern "system" fn Java_app_nectarlink_android_core_AndroidContext_nativeInstall(
     env: *mut jni_sys::JNIEnv,
     _class: jni_sys::jclass,
     context: jni_sys::jobject,

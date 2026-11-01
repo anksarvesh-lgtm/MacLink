@@ -1,55 +1,66 @@
 {
   "version": 1,
-  "task_id": "t-20261101-7837",
-  "goal": "Build native Android release APK and macOS desktop MacLink.app and DMG, generate checksums, and update dist",
+  "task_id": "t-20261101-9981",
+  "goal": "Complete total rename of nectarlink to MacLink across all code, QML, Android, data folders, installer, scripts, and documentation",
   "status": "active",
-  "created_at": "2026-11-01T17:08:54.668Z",
-  "updated_at": "2026-11-01T17:09:34.464Z",
+  "created_at": "2026-11-01T18:04:20.616Z",
+  "updated_at": "2026-11-01T18:06:43.392Z",
   "checkpoint_count": 1,
   "steps": [
     {
       "id": "s1",
-      "title": "Build Android release APK",
+      "title": "Step A: Search and inventory all nectarlink occurrences across code, crates, scripts, docs, and files",
       "status": "done",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": "Successfully compiled and assembled native Android release APK (dist/MacLink-0.0.1-android.apk, 93MB) via Gradle 9.8 with NDK 30 arm64-v8a/x86_64 native libraries and UniFFI bindings.",
+      "note": "Step A completed: Inventoried all 202 occurrences across 27 source files and presented full category table to user. User approved proceeding to Step B.",
       "last_error": null,
-      "updated_at": "2026-11-01T17:09:34.464Z"
+      "updated_at": "2026-11-01T18:06:43.392Z"
     },
     {
       "id": "s2",
-      "title": "Build macOS release binary",
+      "title": "Step B: Replace all remaining occurrences and rename files/folders using git mv",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T17:08:54.668Z"
+      "updated_at": "2026-11-01T18:04:20.616Z"
     },
     {
       "id": "s3",
-      "title": "Package MacLink.app and DMG",
+      "title": "Step C: Update data folders, preferences, and one-time migration paths",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T17:08:54.668Z"
+      "updated_at": "2026-11-01T18:04:20.616Z"
     },
     {
       "id": "s4",
-      "title": "Verify artifacts and update dist",
+      "title": "Step D: Update online installer, removal of legacy app/agents, and docs",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T17:08:54.668Z"
+      "updated_at": "2026-11-01T18:04:20.616Z"
+    },
+    {
+      "id": "s5",
+      "title": "Step E: Verification - zero nectar occurrences, cargo check, assembleDebug, strings check",
+      "status": "pending",
+      "tries": 0,
+      "max_tries": 3,
+      "depends_on": [],
+      "note": null,
+      "last_error": null,
+      "updated_at": "2026-11-01T18:04:20.616Z"
     }
   ]
 }

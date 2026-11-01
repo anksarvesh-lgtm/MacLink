@@ -43,6 +43,7 @@ command -v "$LRELEASE" >/dev/null || { echo "lrelease not found; set QT_ROOT_DIR
 for ts in desktop/app/i18n/maclink_*.ts; do
     name="$(basename "$ts" .ts)"
     "$LRELEASE" -silent "$ts" -qm "$APP/Contents/MacOS/${name}.qm"
+    cp -f "$APP/Contents/MacOS/${name}.qm" "$APP/Contents/Resources/${name}.qm"
 done
 
 # The icon: every size macOS asks for, from the 1024 px brand icon.
@@ -75,6 +76,8 @@ cat > "$APP/Contents/Info.plist" <<PLIST
     <key>NSHighResolutionCapable</key><true/>
     <key>NSSupportsAutomaticGraphicsSwitching</key><true/>
     <key>NSUserNotificationAlertStyle</key><string>banner</string>
+    <key>NSBluetoothAlwaysUsageDescription</key>
+    <string>MacLink uses Bluetooth to detect paired phones nearby.</string>
     <key>NSLocalNetworkUsageDescription</key>
     <string>MacLink finds your phone and connects to it on this network.</string>
     <key>NSBonjourServices</key>

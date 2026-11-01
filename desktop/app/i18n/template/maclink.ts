@@ -2484,7 +2484,7 @@ Assist mode (Android Accessibility Service)
     </message>
     <message>
         <location filename="../rust_strings.h" line="254"/>
-        <source>Nectar Island</source>
+        <source>MacLink Island</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2648,10 +2648,10 @@ What it needs
 Displays a compact pill at the top center of your primary monitor for incoming calls, live file transfer progress, media playback, and optional notification previews.
 
 Where to find it
-- Settings › General › Nectar Island.
+- Settings › General › MacLink Island.
 
 What it needs
-- Turn on Nectar Island in Settings › General and pick which events should appear.</source>
+- Turn on MacLink Island in Settings › General and pick which events should appear.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -2871,7 +2871,7 @@ Shows incoming and active phone calls on your PC with Answer, Decline, and Rejec
 
 Where to find it
 - Left navigation rail › Calls.
-- Incoming call banner on Home and Nectar Island.
+- Incoming call banner on Home and MacLink Island.
 
 What it needs
 - Phone, Call Log, and Contacts permissions on your Android phone.
@@ -3861,7 +3861,7 @@ What it needs
     <name>IslandWindow</name>
     <message>
         <location filename="../../qml/IslandWindow.qml" line="16"/>
-        <source>Nectar Island</source>
+        <source>MacLink Island</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -3898,12 +3898,12 @@ What it needs
     </message>
     <message>
         <location filename="../../qml/IslandWindow.qml" line="228"/>
-        <source>Nectar Island · %1</source>
+        <source>MacLink Island · %1</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../../qml/IslandWindow.qml" line="229"/>
-        <source>Nectar Island · Ready</source>
+        <source>MacLink Island · Ready</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -6325,7 +6325,7 @@ What it needs
     <message>
         <location filename="../../qml/pages/SettingsPage.qml" line="998"/>
         <location filename="../../qml/pages/SettingsPage.qml" line="1001"/>
-        <source>Nectar Island</source>
+        <source>MacLink Island</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

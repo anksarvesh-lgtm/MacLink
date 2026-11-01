@@ -1894,7 +1894,7 @@ impl qobject::AppController {
 
     pub fn style_shelf_window(&self) {
         win::tray::apply_no_activate_style_by_title("MacLink Shelf");
-        win::tray::apply_no_activate_style_by_title("Nectar Island");
+        win::tray::apply_no_activate_style_by_title("MacLink Island");
     }
 
     pub fn start_shelf_drag(&self, kind: &QString, id_or_path: &QString, text: &QString) -> bool {
@@ -2315,7 +2315,7 @@ fn load_guide_doc_content(raw_key: &str) -> (String, String) {
              Shows incoming and active phone calls on your PC with Answer, Decline, and Reject with SMS actions, plus browsable call history, contacts, and a dialpad.\n\n\
              Where to find it\n\
              - Left navigation rail › Calls.\n\
-             - Incoming call banner on Home and Nectar Island.\n\n\
+             - Incoming call banner on Home and MacLink Island.\n\n\
              What it needs\n\
              - Phone, Call Log, and Contacts permissions on your Android phone.\n\
              - Call audio stays on your phone (or a headset paired to your phone); Elevated mode on Android 12+ unlocks mute, speakerphone, hold, and keypad controls."
@@ -2480,16 +2480,16 @@ fn load_guide_doc_content(raw_key: &str) -> (String, String) {
              - Paired phone; Photos permission on your phone for the latest photo and screenshot tiles."
             ),
         ),
-        "nectar-island" => (
-            tr!("Guide", "Nectar Island"),
+        "maclink-island" => (
+            tr!("Guide", "MacLink Island"),
             tr!(
                 "Guide",
                 "What it does\n\
              Displays a compact pill at the top center of your primary monitor for incoming calls, live file transfer progress, media playback, and optional notification previews.\n\n\
              Where to find it\n\
-             - Settings › General › Nectar Island.\n\n\
+             - Settings › General › MacLink Island.\n\n\
              What it needs\n\
-             - Turn on Nectar Island in Settings › General and pick which events should appear."
+             - Turn on MacLink Island in Settings › General and pick which events should appear."
             ),
         ),
         "timeline" => (

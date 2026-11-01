@@ -1,0 +1,66 @@
+{
+  "version": 1,
+  "task_id": "t-20261101-8221",
+  "goal": "Inspect, build, sign, package, and test native Android APK and macOS desktop app with unified build script and checksums",
+  "status": "active",
+  "created_at": "2026-11-01T18:00:56.501Z",
+  "updated_at": "2026-11-01T18:02:36.924Z",
+  "checkpoint_count": 2,
+  "steps": [
+    {
+      "id": "s1",
+      "title": "Task 0: Inspect environment, versions, Cargo workspace, and verify doubts",
+      "status": "done",
+      "tries": 0,
+      "max_tries": 3,
+      "depends_on": [],
+      "note": "Completed Task 0 inspection: rustc 1.98.1, cargo 1.98.1, clang 21.0.0, Java 21 LTS, Android NDK 30.0.16248370, cargo-ndk 4.1.2, Qt 6.8.2 (macdeployqt & lrelease). Android SDK: compileSdk 37, targetSdk 37, minSdk 26. Profile android present in Cargo.toml. DMG name standardized to MacLink-0.0.1-macos-arm64.dmg.",
+      "last_error": null,
+      "updated_at": "2026-11-01T18:01:21.202Z"
+    },
+    {
+      "id": "s2",
+      "title": "Task 1: Android build audit, keystore setup, ProGuard rules, 16KB alignment check, APK assemble and verification",
+      "status": "done",
+      "tries": 0,
+      "max_tries": 3,
+      "depends_on": [],
+      "note": "Completed Task 1: Verified Cargo.toml [profile.android], Gradle CargoNdkBuild is source of truth, debug signing config used when release keystore is absent (passes apksigner v2 scheme), ProGuard keeps JNA/UniFFI/app.maclink.core, AndroidManifest declares all foregroundServiceTypes, ELF PT_LOAD has 16KB alignment (0x4000), verified unzip shows arm64-v8a & x86_64, aapt package is in.maclink.srv, apksigner verifies true.",
+      "last_error": null,
+      "updated_at": "2026-11-01T18:02:36.924Z"
+    },
+    {
+      "id": "s3",
+      "title": "Task 2: macOS desktop app build, Info.plist verification, packaging into MacLink.app and MacLink.dmg, runtime check",
+      "status": "pending",
+      "tries": 0,
+      "max_tries": 3,
+      "depends_on": [],
+      "note": null,
+      "last_error": null,
+      "updated_at": "2026-11-01T18:00:56.501Z"
+    },
+    {
+      "id": "s4",
+      "title": "Task 3: Create and verify unified build-all.sh script, execute clean build, generate SHA256SUMS.txt",
+      "status": "pending",
+      "tries": 0,
+      "max_tries": 3,
+      "depends_on": [],
+      "note": null,
+      "last_error": null,
+      "updated_at": "2026-11-01T18:00:56.501Z"
+    },
+    {
+      "id": "s5",
+      "title": "Task 4: Run workspace cargo test, cargo clippy, and Android unit tests",
+      "status": "pending",
+      "tries": 0,
+      "max_tries": 3,
+      "depends_on": [],
+      "note": null,
+      "last_error": null,
+      "updated_at": "2026-11-01T18:00:56.501Z"
+    }
+  ]
+}

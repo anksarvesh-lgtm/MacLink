@@ -350,19 +350,19 @@ Item {
             docKey: "shelf"
         },
         {
-            id: "nectar_island",
-            name: "Nectar Island",
+            id: "maclink_island",
+            name: "MacLink Island",
             icon: Icons.island,
             area: "surfaces",
             capKey: "",
             toggleKey: "",
             pcLocal: true,
-            prefKey: "nectarIsland",
+            prefKey: "maclinkIsland",
             summary: "Compact floating pill at the top center of your monitor for calls, transfers, media, and alerts.",
-            whereLabel: "Settings › General › Nectar Island",
-            needsLabel: "Nectar Island enabled in Settings",
+            whereLabel: "Settings › General › MacLink Island",
+            needsLabel: "MacLink Island enabled in Settings",
             targetId: "settings:general:island",
-            docKey: "nectar-island"
+            docKey: "maclink-island"
         },
         {
             id: "timeline",

@@ -131,7 +131,7 @@ fun CheckForUpdates(updater: AppUpdater) {
         Switch(
             checked = auto,
             onCheckedChange = updater::setAutoInstall,
-            colors = app.maclink.android.ui.theme.nectarSwitchColors(),
+            colors = app.maclink.android.ui.theme.maclinkSwitchColors(),
         )
     }
     val update = state.update

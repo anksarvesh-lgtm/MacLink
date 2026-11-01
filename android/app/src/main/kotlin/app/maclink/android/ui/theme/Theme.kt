@@ -359,7 +359,7 @@ private fun shapes(graphite: Boolean, glass: Boolean, hive: Boolean) = when {
 
 /** Frosted Switch colors when Glass mode is active, or standard Material 3 Switch colors otherwise. */
 @Composable
-fun nectarSwitchColors(): androidx.compose.material3.SwitchColors {
+fun maclinkSwitchColors(): androidx.compose.material3.SwitchColors {
     val isGlass = LocalGlassTheme.current
     val scheme = MaterialTheme.colorScheme
     return if (isGlass) {

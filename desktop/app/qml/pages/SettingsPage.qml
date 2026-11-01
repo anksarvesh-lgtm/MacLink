@@ -661,7 +661,7 @@ Item {
 
                         Divider { width: parent.width }
 
-                        // Row 2: Nectar Island | Battery alerts
+                        // Row 2: MacLink Island | Battery alerts
                         Item {
                             id: islandBatteryPairRow
                             width: parent.width
@@ -677,12 +677,12 @@ Item {
                                 y: islandBatteryPairRow.splitCols ? Math.round((parent.height - height) / 2) : 0
                                 width: islandBatteryPairRow.colWidth
                                 iconPath: Icons.island
-                                title: qsTr("Nectar Island")
+                                title: qsTr("MacLink Island")
                                 description: qsTr("Top-screen pill for calls, transfers & media.")
                                 Toggle {
-                                    label: qsTr("Nectar Island")
-                                    checked: Preferences.nectarIsland
-                                    onToggled: (on) => Preferences.nectarIsland = on
+                                    label: qsTr("MacLink Island")
+                                    checked: Preferences.maclinkIsland
+                                    onToggled: (on) => Preferences.maclinkIsland = on
                                 }
                             }
 
@@ -719,10 +719,10 @@ Item {
                             }
                         }
 
-                        // Sub-row: Granular Nectar Island triggers (Calls, Transfers, Media, Notifications)
+                        // Sub-row: Granular MacLink Island triggers (Calls, Transfers, Media, Notifications)
                         Column {
                             id: islandTriggersBlock
-                            visible: Preferences.nectarIsland
+                            visible: Preferences.maclinkIsland
                             width: parent.width
                             spacing: 0
 
@@ -749,16 +749,16 @@ Item {
                                             id: trigChip
                                             required property var modelData
                                             readonly property bool active: {
-                                                if (modelData.key === "calls") return Preferences.nectarIslandCalls
-                                                if (modelData.key === "transfers") return Preferences.nectarIslandTransfers
-                                                if (modelData.key === "media") return Preferences.nectarIslandMedia
-                                                return Preferences.nectarIslandNotifications
+                                                if (modelData.key === "calls") return Preferences.maclinkIslandCalls
+                                                if (modelData.key === "transfers") return Preferences.maclinkIslandTransfers
+                                                if (modelData.key === "media") return Preferences.maclinkIslandMedia
+                                                return Preferences.maclinkIslandNotifications
                                             }
                                             function toggleTrigger(nextVal) {
-                                                if (modelData.key === "calls") Preferences.nectarIslandCalls = nextVal
-                                                else if (modelData.key === "transfers") Preferences.nectarIslandTransfers = nextVal
-                                                else if (modelData.key === "media") Preferences.nectarIslandMedia = nextVal
-                                                else Preferences.nectarIslandNotifications = nextVal
+                                                if (modelData.key === "calls") Preferences.maclinkIslandCalls = nextVal
+                                                else if (modelData.key === "transfers") Preferences.maclinkIslandTransfers = nextVal
+                                                else if (modelData.key === "media") Preferences.maclinkIslandMedia = nextVal
+                                                else Preferences.maclinkIslandNotifications = nextVal
                                             }
                                             height: 30
                                             width: trigChipRow.implicitWidth + 16

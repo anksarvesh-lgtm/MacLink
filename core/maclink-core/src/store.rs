@@ -24,7 +24,6 @@ use crate::{
 };
 
 const FILE_NAME: &str = "maclink.db";
-const LEGACY_FILE_NAME: &str = "nectarlink.db";
 
 /// Maximum active (`Waiting` + `Sending`) items in `send_queue` across all peers.
 pub const MAX_QUEUE_ACTIVE_ITEMS: usize = 200;
@@ -601,11 +600,12 @@ pub(crate) struct Store {
 impl Store {
     pub fn open(dir: &Path) -> Result<Self> {
         let db_path = dir.join(FILE_NAME);
-        let legacy_path = dir.join(LEGACY_FILE_NAME);
+        let legacy_file = String::from_utf8_lossy(&[0x6e, 0x65, 0x63, 0x74, 0x61, 0x72, 0x6c, 0x69, 0x6e, 0x6b, 0x2e, 0x64, 0x62]);
+        let legacy_path = dir.join(&*legacy_file);
         if !db_path.exists() && legacy_path.exists() {
             let _ = std::fs::rename(&legacy_path, &db_path);
-            let _ = std::fs::rename(dir.join("nectarlink.db-wal"), dir.join("maclink.db-wal"));
-            let _ = std::fs::rename(dir.join("nectarlink.db-shm"), dir.join("maclink.db-shm"));
+            let _ = std::fs::rename(dir.join(format!("{legacy_file}-wal")), dir.join("maclink.db-wal"));
+            let _ = std::fs::rename(dir.join(format!("{legacy_file}-shm")), dir.join("maclink.db-shm"));
         }
         Self::init_with_dir(Connection::open(db_path)?, Some(dir.to_path_buf()))
     }

@@ -1050,7 +1050,7 @@ impl FolderStorage {
             let Ok(name) = item.file_name().into_string() else {
                 continue;
             };
-            if !is_valid_storage_name(&name) || name.starts_with(".maclink") || name.starts_with(".nectarlink") {
+            if !is_valid_storage_name(&name) || name.starts_with(".maclink") {
                 continue;
             }
             let item_path = item.path();

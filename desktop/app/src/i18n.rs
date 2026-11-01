@@ -41,6 +41,14 @@ fn select_translation_dir(exe_dir: &Path) -> PathBuf {
     if has_qm_files(exe_dir) {
         return exe_dir.to_path_buf();
     }
+    #[cfg(target_os = "macos")]
+    {
+        if let Some(res_dir) = exe_dir.parent().map(|p| p.join("Resources"))
+            && has_qm_files(&res_dir)
+        {
+            return res_dir;
+        }
+    }
     #[cfg(target_os = "linux")]
     {
         if let Some(rel_share) = exe_dir.parent().map(|p| p.join("share").join("maclink"))

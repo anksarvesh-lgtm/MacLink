@@ -29,14 +29,14 @@ Controls the visual theme, light/dark mode, accent palette, OLED black surfaces,
 
 ### 2. General
 
-Controls startup behavior, the system tray, `Nectar Island`, battery notifications, and clipboard automation.
+Controls startup behavior, the system tray, `MacLink Island`, battery notifications, and clipboard automation.
 
 | Setting | Default | What It Does |
 | :--- | :--- | :--- |
 | **Start with Windows** | **On** for installed copies | Launches MacLink quietly in the Windows system tray when you sign in to your PC. |
 | **Stay in system tray** | **On** | Keeps MacLink running in the system tray (unloading the UI window to ~5 to 10 MB working set) when you close the main window, so your phone stays connected. When turned off, closing the window quits the app completely. |
-| **Nectar Island** | **Off** | Shows a compact pill at the top center of your primary monitor during active phone events. Automatically hides during full-screen games/videos or Windows Do Not Disturb. |
-| **Island triggers** *(shown when Nectar Island is On)* | **Calls**: On, **Transfers**: On, **Media**: On, **Alerts**: Off | Toggles which phone events expand `Nectar Island`: incoming/active **Calls**, active file **Transfers**, now-playing **Media**, and phone notification **Alerts** (including OTPs, timers, and recordings). |
+| **MacLink Island** | **Off** | Shows a compact pill at the top center of your primary monitor during active phone events. Automatically hides during full-screen games/videos or Windows Do Not Disturb. |
+| **Island triggers** *(shown when MacLink Island is On)* | **Calls**: On, **Transfers**: On, **Media**: On, **Alerts**: Off | Toggles which phone events expand `MacLink Island`: incoming/active **Calls**, active file **Transfers**, now-playing **Media**, and phone notification **Alerts** (including OTPs, timers, and recordings). |
 | **Battery alerts** | **On** | Shows a desktop notification when a connected phone's battery drops low or reaches a full charge. |
 | **Sync clipboard to phone** | **On** | Automatically sends text and images copied on this PC (`Ctrl+C`) to connected phones. |
 | **Clipboard follows control** | **On** | Sends the PC clipboard to the phone when you start controlling it: the mouse moves into its mirror window, or a remote control session starts. |
