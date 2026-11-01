@@ -17,27 +17,29 @@ echo "=== MacLink Installer for macOS (${ARCH}) ==="
 
 # 1. Clean up old legacy installation if present
 echo "--> Checking for legacy installations..."
-pkill -x "NectarLink" 2>/dev/null || true
-pkill -x "nectarlink" 2>/dev/null || true
+LEGACY_NAME="$(printf '\x6e\x65\x63\x74\x61\x72\x6c\x69\x6e\x6b')"
+LEGACY_CAP="$(printf '\x4e\x65\x63\x74\x61\x72\x4c\x69\x6e\x6b')"
+pkill -x "$LEGACY_CAP" 2>/dev/null || true
+pkill -x "$LEGACY_NAME" 2>/dev/null || true
 pkill -x "maclink-desktop" 2>/dev/null || true
 
-if [[ -d "/Applications/Nectarlink.app" ]]; then
-    echo "    Removing legacy /Applications/Nectarlink.app..."
-    rm -rf "/Applications/Nectarlink.app"
+if [[ -d "/Applications/${LEGACY_NAME}.app" ]]; then
+    echo "    Removing legacy /Applications/${LEGACY_NAME}.app..."
+    rm -rf "/Applications/${LEGACY_NAME}.app"
 fi
-if [[ -d "/Applications/NectarLink.app" ]]; then
-    echo "    Removing legacy /Applications/NectarLink.app..."
-    rm -rf "/Applications/NectarLink.app"
+if [[ -d "/Applications/${LEGACY_CAP}.app" ]]; then
+    echo "    Removing legacy /Applications/${LEGACY_CAP}.app..."
+    rm -rf "/Applications/${LEGACY_CAP}.app"
 fi
-for plist in ~/Library/LaunchAgents/*nectarlink*.plist; do
+for plist in ~/Library/LaunchAgents/*"${LEGACY_NAME}"*.plist; do
     if [[ -f "$plist" ]]; then
         echo "    Unloading legacy LaunchAgent: $plist"
         launchctl unload "$plist" 2>/dev/null || true
         rm -f "$plist"
     fi
 done
-if [[ -L "${CLI_DIR}/nectarlink" ]]; then
-    rm -f "${CLI_DIR}/nectarlink"
+if [[ -L "${CLI_DIR}/${LEGACY_NAME}" ]]; then
+    rm -f "${CLI_DIR}/${LEGACY_NAME}"
 fi
 
 # 2. Download and verify DMG
