@@ -4,19 +4,19 @@
   "goal": "Remove Windows and Linux desktop components, restricting the platform exclusively to macOS and Android, and remove old push/update workflows and legacy trademark references",
   "status": "active",
   "created_at": "2026-11-01T14:38:32.352Z",
-  "updated_at": "2026-11-01T14:38:32.352Z",
-  "checkpoint_count": 0,
+  "updated_at": "2026-11-01T14:41:12.589Z",
+  "checkpoint_count": 1,
   "steps": [
     {
       "id": "s1",
       "title": "Audit Windows, Linux, and trademark artifacts",
-      "status": "in_progress",
+      "status": "done",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": null,
+      "note": "Audited codebase: identified Windows/Linux scripts in scripts/ (*.ps1), Windows-only packaging and CI jobs in .github/workflows/ (ci.yml, release.yml), Windows/Linux platform code in desktop/app/src/win, desktop/app/src/linux, desktop/app/Cargo.toml, core/maclink-cli/Cargo.toml, and old trademark notes in docs/PLAN.md and root TRADEMARKS.md. Ready to remove Windows/Linux packaging, scripts, and workflows.",
       "last_error": null,
-      "updated_at": "2026-11-01T14:38:32.352Z"
+      "updated_at": "2026-11-01T14:41:12.589Z"
     },
     {
       "id": "s2",

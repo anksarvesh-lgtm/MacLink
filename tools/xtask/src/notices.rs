@@ -16,7 +16,7 @@ use anyhow::{Context, Result, bail};
 use serde_json::Value;
 
 const ROOT_PACKAGE: &str = "maclink-desktop";
-const DEFAULT_TARGET: &str = "x86_64-pc-windows-msvc";
+const DEFAULT_TARGET: &str = "aarch64-apple-darwin";
 
 /// License-ish files a crate ships.
 fn is_license_file(name: &str) -> bool {
@@ -51,12 +51,12 @@ pub fn run(args: &[&str]) -> Result<()> {
     let crates = shipped_crates(&metadata)?;
 
     let mut text = String::new();
-    writeln!(text, "NectarLink for Windows: third-party notices")?;
-    writeln!(text, "{}", "=".repeat(43))?;
+    writeln!(text, "MacLink: third-party notices")?;
+    writeln!(text, "{}", "=".repeat(28))?;
     writeln!(
         text,
-        "\nNectarLink is free software under the GNU General Public License, version 3\n\
-         or later (LICENSE.txt). It includes the software below, under these terms.\n"
+        "\nMacLink is free software under the GNU General Public License, version 3\n\
+         or later (LICENSE). It includes the software below, under these terms.\n"
     )?;
     write_qt(&mut text, &root)?;
     write_fonts(&mut text, &root)?;

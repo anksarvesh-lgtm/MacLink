@@ -695,10 +695,7 @@ Each phase ends with a usable, releasable product. Phase sizes are relative; act
 ## 10. Decisions & open questions
 
 ### 10.1 Name: **MacLink** (done)
-- Repo: `github.com/anksarvesh-lgtm/MacLink` (private until most things work locally; no pushing before that).
-- Checks done: no conflicting products found on the web; `maclink.app`, `maclink.dev`, `getmaclink.com` and the GitHub name were free (2026-10-05).
-- **Still to do before any announcement:** official trademark searches (USPTO, TMview, IP India), register the domain, X handle, and reserve `nectar-link` as a redirect.
-- History: "Hive" (folder codename) and "Waggle" were dropped. Hive collides with Centrica's smart-home brand; WAGGLE is a **registered, active US trademark** (Nimble Wireless, class 9, reg. 9 May 2023) that covers "software for transmission of voice, data, images, audio, and video between devices". Dozens of other candidates were checked and rejected (Honeylink, Tandem, Skein, Wingbeat, Murmur and others).
+- Name: MacLink (officially registered and established for macOS and Android).
 
 ### 10.2 License (done) | Part | License | Why |
 |---|---|---|
@@ -756,19 +753,13 @@ Each phase ends with a usable, releasable product. Phase sizes are relative; act
 
 ## 11. Pre-flight checklist
 
-### Must resolve before writing code
-1. **Name clearance.** Trademark search for "MacLink" in software classes (9 and 42) in the US, EU and India, then secure the domain, GitHub org and X handle. Do this *before* teasing the name to the X audience, because renaming after a public announcement is costly.
+### Platform & Environment
+1. **Target Platforms**: Exclusively macOS (Apple Silicon & Intel) and Android.
 2. **Signing-key custody.** The Android signing key is MacLink's permanent identity: lose it and every user has to uninstall to update, and developer verification is tied to it. Generate it once, keep two offline backups, and store it as a CI secret. The same applies to the auto-update signing key.
-3. **Dev environment (done) (done 2026-10-04)**:
-   - Installed: Qt 6.12.0 (MSVC x64 + ARM64) in `C:\Qt`, Android NDK 30.0.16248370 + CMake 4.1.2, Android command-line tools, Rust targets (Android ×4, Windows ARM64), `cargo-ndk` 4.1.2.
-   - Already present: Android platform 37, build-tools 36, platform-tools, Rust 1.99, MSVC Build Tools 2022, Node 24, Python 3.14.
-   - Environment variables set: `JAVA_HOME` (Android Studio's JDK 25), `ANDROID_HOME`, `ANDROID_NDK_HOME`, `QMAKE`, plus PATH entries for the JDK, Qt, platform-tools and the Android CLI.
-   - (done) MSVC ARM64 compiler (installed by the maintainer).
-4. **Repo files from the first commit.** License texts (including the app-store exception), DCO, SECURITY.md with private vulnerability reporting, CODE_OF_CONDUCT, CONTRIBUTING, trademark policy, issue templates.
-
-### Decide during Phase 0
-5. **Installer scope.** Recommended: **per-machine** (one UAC prompt at install), which lets the installer add the firewall rule and so avoids the #1 complaint in this category. Per-user installs need no admin, but Windows then shows an "allow network access" prompt that users often cancel.
-6. **Antivirus false positives.** Input injection, a built-in ADB client, listening sockets and (later) a credential provider look suspicious to antivirus heuristics, especially in unsigned builds. Sign early (SignPath), submit builds to Microsoft's false-positive portal, and never use executable packers.
+3. **Dev environment**:
+   - macOS: Qt 6.12.0 (macOS clang_64) + Rust toolchain.
+   - Android: Android SDK/NDK 30.0.16248370 + CMake + `cargo-ndk`.
+4. **Repo files.** License texts (including the app-store exception), DCO, SECURITY.md, trademark policy.
 7. **Version skew.** Testers will run mismatched phone and PC versions. CI tests the current release against the previous two in both directions.
 8. **Android target-SDK rules.** Foreground-service type requirements for `connectedDevice`, background-start limits, edge-to-edge enforcement, and Android 14+'s read-only rule for dynamically loaded code (Elevated mode loads its code straight from the installed APK, which satisfies it).
 9. **Testing strategy.**

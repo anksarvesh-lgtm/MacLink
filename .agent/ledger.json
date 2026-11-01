@@ -4,8 +4,8 @@
   "goal": "Remove Windows and Linux desktop components, restricting the platform exclusively to macOS and Android, and remove old push/update workflows and legacy trademark references",
   "status": "active",
   "created_at": "2026-11-01T14:38:32.352Z",
-  "updated_at": "2026-11-01T14:41:12.589Z",
-  "checkpoint_count": 1,
+  "updated_at": "2026-11-01T14:48:49.521Z",
+  "checkpoint_count": 2,
   "steps": [
     {
       "id": "s1",
@@ -21,13 +21,13 @@
     {
       "id": "s2",
       "title": "Remove Windows and Linux packaging and scripts",
-      "status": "pending",
+      "status": "done",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": null,
+      "note": "Removed Windows/Linux scripts (*.ps1), purged desktop/app/src/win and desktop/app/src/linux, removed Windows/Linux dependencies across Cargo.toml files, updated build.rs to link macOS frameworks only, updated updater.rs to target macOS artifacts (.dmg, .pkg, .zip), and updated CI and Release workflows to exclusively build macOS and Android. Committed to git (775b8e4).",
       "last_error": null,
-      "updated_at": "2026-11-01T14:38:32.352Z"
+      "updated_at": "2026-11-01T14:48:49.521Z"
     },
     {
       "id": "s3",

@@ -176,7 +176,7 @@ pub fn check_now(told: bool) -> Option<String> {
             }
             Some(tr!("Updater", "MacLink %1 is available.", update.version))
         }
-        Ok(None) => told.then(|| tr!("Updater", "NectarLink is up to date.")),
+        Ok(None) => told.then(|| tr!("Updater", "MacLink is up to date.")),
         Err(e) => {
             tracing::info!(error = %e, "couldn't check for updates");
             told.then(|| tr!("Updater", "Couldn't check for updates. Check your internet connection."))
@@ -188,7 +188,7 @@ fn announce(update: &Update) {
     toast::show(toast::Toast {
         device: TOAST_GROUP.into(),
         key: update.version.clone(),
-        title: tr!("Updater", "NectarLink %1 is available", update.version),
+        title: tr!("Updater", "MacLink %1 is available", update.version),
         body: tr!("Updater", "Update now, or later from Settings."),
         attribution: "MacLink".into(),
         icon: None,
