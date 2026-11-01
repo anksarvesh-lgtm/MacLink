@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import QtQuick
+import QtQuick.Layouts
 import QtQuick.Dialogs
 import app.nectarlink
 
@@ -2631,6 +2632,208 @@ Item {
                                 text: qsTr("Open")
                                 onClicked: AppController.currentPage = "help_center"
                             }
+                        }
+                    }
+                }
+
+                // About Agrigence & App Info Card
+                Card {
+                    width: parent.width
+
+                    property bool showWhatsNew: false
+
+                    Column {
+                        width: parent.width
+                        spacing: 14
+
+                        // Header with Agrigence Brand
+                        RowLayout {
+                            width: parent.width
+                            spacing: 12
+
+                            Rectangle {
+                                width: 42
+                                height: 42
+                                radius: Theme.radiusMd
+                                color: Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.14)
+                                border.width: 1
+                                border.color: Theme.primary
+
+                                Icon {
+                                    anchors.centerIn: parent
+                                    path: Icons.desktop
+                                    width: 22
+                                    height: 22
+                                    color: Theme.primary
+                                }
+                            }
+
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                spacing: 2
+
+                                RowLayout {
+                                    spacing: 8
+                                    Txt {
+                                        text: qsTr("MacLink")
+                                        role: "title"
+                                        size: 16
+                                    }
+                                    Rectangle {
+                                        radius: 10
+                                        color: Theme.primary
+                                        implicitWidth: agrigenceTxt.implicitWidth + 14
+                                        implicitHeight: 20
+                                        Txt {
+                                            id: agrigenceTxt
+                                            anchors.centerIn: parent
+                                            text: qsTr("by Agrigence")
+                                            role: "code"
+                                            size: 10
+                                            weight: 600
+                                            color: Theme.primaryContent
+                                        }
+                                    }
+                                }
+
+                                Txt {
+                                    Layout.fillWidth: true
+                                    text: qsTr("Engineered by Agrigence. Zero-cloud, high-speed ecosystem connecting Android with macOS.")
+                                    role: "caption"
+                                    color: Theme.surfaceContentVariant
+                                    wrapMode: Text.WordWrap
+                                }
+                            }
+                        }
+
+                        Divider { width: parent.width }
+
+                        // App Info Telemetry Grid
+                        GridLayout {
+                            width: parent.width
+                            columns: width >= 480 ? 2 : 1
+                            columnSpacing: 16
+                            rowSpacing: 10
+
+                            ColumnLayout {
+                                spacing: 2
+                                Txt { text: qsTr("Application Version"); role: "caption"; color: Theme.surfaceContentVariant }
+                                Txt { text: "MacLink v" + AppController.version + " (Universal)"; role: "bodySmall"; weight: 600 }
+                            }
+
+                            ColumnLayout {
+                                spacing: 2
+                                Txt { text: qsTr("Engineered By"); role: "caption"; color: Theme.surfaceContentVariant }
+                                Txt { text: "Agrigence (agrigence.com)"; role: "bodySmall"; weight: 600 }
+                            }
+
+                            ColumnLayout {
+                                spacing: 2
+                                Txt { text: qsTr("Architecture & Core"); role: "caption"; color: Theme.surfaceContentVariant }
+                                Txt { text: "macOS arm64 / x86_64 · QUIC TLS 1.3"; role: "bodySmall"; weight: 600 }
+                            }
+
+                            ColumnLayout {
+                                spacing: 2
+                                Txt { text: qsTr("License & Source"); role: "caption"; color: Theme.surfaceContentVariant }
+                                Txt { text: "GPL-3.0-or-later · Privacy-First Zero-Cloud"; role: "bodySmall"; weight: 600 }
+                            }
+                        }
+
+                        Divider { width: parent.width }
+
+                        // What's New Expander Section
+                        RowLayout {
+                            width: parent.width
+                            spacing: 10
+
+                            Icon {
+                                path: Icons.sparkle
+                                width: 16
+                                height: 16
+                                color: Theme.primary
+                            }
+
+                            Txt {
+                                Layout.fillWidth: true
+                                text: qsTr("What's New in MacLink")
+                                role: "title"
+                                size: 14
+                            }
+
+                            Button {
+                                variant: "tonal"
+                                size: "sm"
+                                text: parent.parent.parent.showWhatsNew ? qsTr("Hide") : qsTr("View Changelog")
+                                onClicked: parent.parent.parent.showWhatsNew = !parent.parent.parent.showWhatsNew
+                            }
+                        }
+
+                        // Changelog details container
+                        Rectangle {
+                            width: parent.width
+                            implicitHeight: whatsNewCol.implicitHeight + 20
+                            visible: parent.showWhatsNew
+                            radius: Theme.radiusSm
+                            color: Theme.surfaceContainerLow
+                            border.width: 1
+                            border.color: Theme.outlineVariant
+
+                            ColumnLayout {
+                                id: whatsNewCol
+                                anchors.fill: parent
+                                anchors.margins: 12
+                                spacing: 8
+
+                                Txt {
+                                    text: qsTr("Latest Release Highlights (v%1)").arg(AppController.version)
+                                    role: "caption"
+                                    weight: 600
+                                    color: Theme.primary
+                                }
+
+                                Txt {
+                                    Layout.fillWidth: true
+                                    text: qsTr("• Task Manager Telemetry: Live host and P2P connection performance monitor.\n• Unlocked Screen Mirroring & App Play: Instant phone screen streaming.\n• Type on Phone: Type from your Mac keyboard directly onto Android.\n• Android File Manager: Explore, upload, and download files directly.\n• 3-Step Streamlined Setup: Fast and simple device onboarding.\n• Help Center: Visual interactive feature flow diagrams.")
+                                    role: "bodySmall"
+                                    color: Theme.surfaceContent
+                                    wrapMode: Text.WordWrap
+                                }
+                            }
+                        }
+
+                        Divider { width: parent.width }
+
+                        // Action Buttons: Releases & GitHub Repo
+                        RowLayout {
+                            width: parent.width
+                            spacing: 10
+
+                            Button {
+                                variant: "tonal"
+                                size: "sm"
+                                iconPath: Icons.refresh
+                                text: qsTr("Check Updates")
+                                onClicked: AppController.checkForUpdates()
+                            }
+
+                            Button {
+                                variant: "tonal"
+                                size: "sm"
+                                iconPath: Icons.openExternal
+                                text: qsTr("GitHub Releases")
+                                onClicked: Qt.openUrlExternally("https://github.com/anksarvesh-lgtm/MacLink/releases")
+                            }
+
+                            Button {
+                                variant: "outline"
+                                size: "sm"
+                                iconPath: Icons.openExternal
+                                text: qsTr("Agrigence Repository")
+                                onClicked: Qt.openUrlExternally("https://github.com/anksarvesh-lgtm/MacLink")
+                            }
+
+                            Item { Layout.fillWidth: true }
                         }
                     }
                 }
