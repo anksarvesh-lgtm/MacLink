@@ -7,7 +7,6 @@ members = [
     "core/maclink-cli",
     "core/maclink-ffi",
     "desktop/app",
-    "desktop/vcam",
     "tools/xtask",
 ]
 
@@ -27,7 +26,6 @@ name = "Beta"
 maclink-adb = { path = "core/maclink-adb", version = "0.0.1" }
 maclink-protocol = { path = "core/maclink-protocol", version = "0.0.1" }
 maclink-core = { path = "core/maclink-core", version = "0.0.1" }
-maclink-vcam = { path = "desktop/vcam", version = "0.0.1" }
 
 anyhow = "1"
 ciborium = "0.2"

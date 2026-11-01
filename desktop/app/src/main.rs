@@ -59,6 +59,8 @@ mod webcam;
 #[cfg(target_os = "macos")]
 #[path = "mac/mod.rs"]
 mod win;
+#[cfg(target_os = "macos")]
+use win as mac;
 #[cfg(not(target_os = "macos"))]
 compile_error!("MacLink desktop is exclusively supported on macOS.");
 

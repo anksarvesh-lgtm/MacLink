@@ -25,7 +25,6 @@ dirs.workspace = true
 hostname.workspace = true
 material-colors.workspace = true
 maclink-core.workspace = true
-maclink-vcam.workspace = true
 qrcode.workspace = true
 serde.workspace = true
 serde_json.workspace = true

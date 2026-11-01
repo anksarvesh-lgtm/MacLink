@@ -131,14 +131,10 @@ pub fn start() {
                     && AUTO_INSTALL.load(Ordering::Relaxed)
                     && available().is_some()
                     && quiet()
-                    && task_registered()
                 {
                     tracing::info!("installing the update at a quiet moment");
-                    let staged = available().map(|update| stage(&update, |_, _| {}));
-                    if let Some(Err(e)) = staged {
-                        tracing::info!(error = %e, "the automatic update couldn't be downloaded yet");
-                    } else if let Err(e) = install_with_task(false) {
-                        tracing::warn!(error = e, "the automatic update didn't start");
+                    if let Err(e) = install(|_, _| {}) {
+                        tracing::warn!(error = %e, "the automatic update couldn't be installed yet");
                     }
                 }
                 std::thread::sleep(left.min(LOOK_FOR_QUIET));
