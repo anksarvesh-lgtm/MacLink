@@ -78,13 +78,33 @@ NativeWindow {
         Keys.onReturnPressed: if (!disclosure.open && window.phase !== "working") window.primary()
         Keys.onEnterPressed: if (!disclosure.open && window.phase !== "working") window.primary()
 
-        HiveBackdrop {
+        // Modern Task Manager telemetry grid backdrop
+        Item {
             anchors.fill: parent
-            animate: window.animate
-            lineColor: window.comb
-            glowColor: window.combGlow
-            strength: window.removing ? 0.7 : 1
-            origin: Qt.point(width / 2, window.phase === "done" && !window.removing ? 40 : 112)
+            opacity: 0.20
+
+            Canvas {
+                anchors.fill: parent
+                onPaint: {
+                    let ctx = getContext("2d")
+                    ctx.reset()
+                    ctx.strokeStyle = window.comb
+                    ctx.lineWidth = 1
+                    let step = 32
+                    for (let x = 0; x < width; x += step) {
+                        ctx.beginPath()
+                        ctx.moveTo(x, 0)
+                        ctx.lineTo(x, height)
+                        ctx.stroke()
+                    }
+                    for (let y = 0; y < height; y += step) {
+                        ctx.beginPath()
+                        ctx.moveTo(0, y)
+                        ctx.lineTo(width, y)
+                        ctx.stroke()
+                    }
+                }
+            }
         }
 
         // There is no title bar, so the window moves from anywhere that
