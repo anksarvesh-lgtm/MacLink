@@ -114,6 +114,16 @@ abstract class CargoNdkBuild : DefaultTask() {
                 },
             )
         }
+        abis.get().forEach { abi ->
+            val abiDir = outputDir.get().asFile.resolve(abi)
+            val macSo = abiDir.resolve("libmaclink_ffi.so")
+            val necSo = abiDir.resolve("libnectarlink_ffi.so")
+            if (macSo.exists() && !necSo.exists()) {
+                macSo.copyTo(necSo, overwrite = true)
+            } else if (necSo.exists() && !macSo.exists()) {
+                necSo.copyTo(macSo, overwrite = true)
+            }
+        }
     }
 }
 
@@ -174,7 +184,11 @@ androidComponents {
         }
         val bindgen = tasks.register<UniffiBindgen>("uniffiBindgen$suffix") {
             description = "Generates the Kotlin bindings for the Rust core."
-            library.set(cargo.flatMap { it.outputDir.file("${rustAbis.first()}/libnectarlink_ffi.so") })
+            library.set(cargo.flatMap {
+                val abi = rustAbis.first()
+                val macSo = it.outputDir.file("$abi/libmaclink_ffi.so")
+                if (macSo.asFile.exists()) macSo else it.outputDir.file("$abi/libnectarlink_ffi.so")
+            })
             workspace.set(workspaceDir)
         }
         val fonts = tasks.register<BundleFonts>("bundleFonts$suffix") {

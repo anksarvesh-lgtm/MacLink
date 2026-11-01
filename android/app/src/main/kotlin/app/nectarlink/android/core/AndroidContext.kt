@@ -17,7 +17,11 @@ object AndroidContext {
         installed = true
         runCatching {
             // The core's library, as JNA loads it for everything else: the same copy.
-            System.loadLibrary("nectarlink_ffi")
+            try {
+                System.loadLibrary("maclink_ffi")
+            } catch (e: Throwable) {
+                System.loadLibrary("nectarlink_ffi")
+            }
             nativeInstall(context.applicationContext)
         }.onFailure { Log.w(TAG, "the core can't read the phone's DNS servers", it) }
     }
