@@ -187,11 +187,7 @@ androidComponents {
         }
         val bindgen = tasks.register<UniffiBindgen>("uniffiBindgen$suffix") {
             description = "Generates the Kotlin bindings for the Rust core."
-            library.set(cargo.flatMap {
-                val abi = rustAbis.first()
-                val macSo = it.outputDir.file("$abi/libmaclink_ffi.so")
-                if (macSo.asFile.exists()) macSo else it.outputDir.file("$abi/libnectarlink_ffi.so")
-            })
+            library.set(cargo.flatMap { it.outputDir.file("${rustAbis.first()}/libmaclink_ffi.so") })
             workspace.set(workspaceDir)
         }
         val fonts = tasks.register<BundleFonts>("bundleFonts$suffix") {
