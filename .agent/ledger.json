@@ -4,19 +4,19 @@
   "goal": "Remove webcam/camera continuity completely, add startup GitHub update check and auto-download with platform-specific asset delivery, and set monochrome notification icon",
   "status": "active",
   "created_at": "2026-11-01T13:01:42.666Z",
-  "updated_at": "2026-11-01T13:01:42.666Z",
-  "checkpoint_count": 0,
+  "updated_at": "2026-11-01T13:20:22.016Z",
+  "checkpoint_count": 1,
   "steps": [
     {
       "id": "s1",
       "title": "Remove phone camera webcam and camera continuity completely from desktop and Android apps",
-      "status": "in_progress",
+      "status": "done",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": null,
+      "note": "Removed phone camera webcam and camera continuity completely across Android (deleted WebcamService, GlSurfacePipe, CameraEncoder, ContinuityCameraActivity, UI routes, tests) and Desktop (removed QML cards/tiles, settings section, shortcuts, tray items, capabilities). All core tests passed (113 maclink-core, 62 maclink-protocol). Git commit f46499e.",
       "last_error": null,
-      "updated_at": "2026-11-01T13:01:42.666Z"
+      "updated_at": "2026-11-01T13:20:22.016Z"
     },
     {
       "id": "s2",

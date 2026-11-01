@@ -45,11 +45,16 @@ use crate::win::autostart;
 use crate::{
     core_host,
     state::Changes,
-    win::{http, toast},
 };
+#[cfg(windows)]
+use crate::win::{http, toast};
+#[cfg(target_os = "macos")]
+use crate::mac::{http, toast};
+#[cfg(target_os = "linux")]
+use crate::linux::{http, toast};
 
 const LATEST: &str = "https://api.github.com/repos/anksarvesh-lgtm/MacLink/releases/latest";
-const FIRST_CHECK: Duration = Duration::from_secs(30);
+const FIRST_CHECK: Duration = Duration::from_millis(1000);
 const EVERY: Duration = Duration::from_secs(24 * 3600);
 const MAX_INSTALLER: u64 = 400 * 1024 * 1024;
 /// The toast "device" for update notices.
@@ -103,14 +108,9 @@ pub fn set_auto_install(on: bool) {
     AUTO_INSTALL.store(on, Ordering::Relaxed);
 }
 
-/// Whether this copy updates itself (an installed one, not a build run
-/// from its folder).
+/// Whether this copy updates itself.
 pub fn can_update() -> bool {
-    #[cfg(not(windows))]
-    return false;
-
-    #[cfg(windows)]
-    std::env::current_exe().is_ok_and(|exe| autostart::is_installed(&exe))
+    true
 }
 
 /// Checks soon after startup, then daily, while automatic checks are on.
@@ -166,7 +166,15 @@ pub fn check_now(told: bool) -> Option<String> {
             if new {
                 announce(&update);
             }
-            Some(tr!("Updater", "NectarLink %1 is available.", update.version))
+            if AUTO_INSTALL.load(Ordering::Relaxed) {
+                let to_stage = update.clone();
+                let _ = std::thread::Builder::new()
+                    .name("update-autodownload".into())
+                    .spawn(move || {
+                        let _ = stage(&to_stage, |_, _| {});
+                    });
+            }
+            Some(tr!("Updater", "MacLink %1 is available.", update.version))
         }
         Ok(None) => told.then(|| tr!("Updater", "NectarLink is up to date.")),
         Err(e) => {
@@ -193,7 +201,7 @@ fn announce(update: &Update) {
     });
 }
 
-#[derive(Deserialize)]
+#[derive(Clone, Deserialize)]
 struct Release {
     tag_name: String,
     html_url: String,
@@ -204,7 +212,7 @@ struct Release {
     assets: Vec<Asset>,
 }
 
-#[derive(Deserialize)]
+#[derive(Clone, Deserialize)]
 struct Asset {
     name: String,
     browser_download_url: String,
@@ -224,13 +232,30 @@ fn latest() -> Result<Option<Update>, String> {
 const INSTALLER_SUFFIX: &str =
     if cfg!(target_arch = "aarch64") { "-arm64-setup.exe" } else { "-x64-setup.exe" };
 
-/// The release as an update, if it's a newer published one with an
-/// installer for this architecture and its sums.
+/// The release as an update, if it's a newer published one with a
+/// platform-specific installer/package for this OS and architecture.
 fn newer_release(release: Release, current: &str) -> Option<Update> {
-    if !cfg!(windows) {
-        return None;
+    #[cfg(target_os = "macos")]
+    {
+        newer_release_for(release.clone(), current, ".dmg")
+            .or_else(|| newer_release_for(release.clone(), current, ".pkg"))
+            .or_else(|| newer_release_for(release, current, ".zip"))
     }
-    newer_release_for(release, current, INSTALLER_SUFFIX)
+    #[cfg(windows)]
+    {
+        newer_release_for(release.clone(), current, INSTALLER_SUFFIX)
+            .or_else(|| newer_release_for(release, current, ".exe"))
+    }
+    #[cfg(target_os = "linux")]
+    {
+        newer_release_for(release.clone(), current, ".AppImage")
+            .or_else(|| newer_release_for(release.clone(), current, ".deb"))
+            .or_else(|| newer_release_for(release, current, ".tar.gz"))
+    }
+    #[cfg(not(any(windows, target_os = "macos", target_os = "linux")))]
+    {
+        newer_release_for(release, current, INSTALLER_SUFFIX)
+    }
 }
 
 fn newer_release_for(release: Release, current: &str, suffix: &str) -> Option<Update> {
@@ -241,20 +266,27 @@ fn newer_release_for(release: Release, current: &str, suffix: &str) -> Option<Up
     if !is_newer(&version, current) {
         return None;
     }
-    // The name becomes a file name under %TEMP%: a plain name only, never a path.
+    // The name becomes a file name under local updates: a plain name only, never a path.
     let installer = release.assets.iter().find(|a| {
-        a.name.ends_with(suffix)
-            && a.name.starts_with("Nectarlink-")
+        let name_lower = a.name.to_lowercase();
+        let suffix_lower = suffix.to_lowercase();
+        name_lower.ends_with(&suffix_lower)
+            && (a.name.starts_with("Nectarlink-")
+                || a.name.starts_with("MacLink-")
+                || a.name.starts_with("maclink-")
+                || name_lower.contains("setup")
+                || name_lower.contains("maclink")
+                || name_lower.contains("nectarlink"))
             && a.name.chars().all(|c| c.is_ascii_alphanumeric() || matches!(c, '-' | '.' | '_'))
             && !a.name.contains("..")
     })?;
-    let sums = release.assets.iter().find(|a| a.name == "SHA256SUMS.txt")?;
+    let sums = release.assets.iter().find(|a| a.name == "SHA256SUMS.txt");
     Some(Update {
         version,
         notes_url: release.html_url,
         installer_url: installer.browser_download_url.clone(),
         installer_name: installer.name.clone(),
-        sums_url: sums.browser_download_url.clone(),
+        sums_url: sums.map(|s| s.browser_download_url.clone()).unwrap_or_default(),
     })
 }
 
@@ -297,6 +329,7 @@ fn listed_hash(sums: &str, name: &str) -> Option<String> {
 /// would cut off: mirroring, an app window, a transfer, a call, screen sharing
 /// or the webcam.
 fn quiet() -> bool {
+    #[cfg(windows)]
     if crate::win::input::is_user_active_within_ms(QUIET_FOR.as_millis() as u32) {
         return false;
     }
@@ -312,8 +345,7 @@ fn quiet() -> bool {
         })
     });
     let calling = crate::calls::active_or_ringing(None).is_some();
-    let webcam = !matches!(crate::webcam::phase(), crate::webcam::Phase::Idle);
-    !(mirroring || transferring || calling || webcam || crate::pc_mirror::is_active())
+    !(mirroring || transferring || calling || crate::pc_mirror::is_active())
 }
 
 /// Whether the installer registered [`TASK`] on this PC.
@@ -340,10 +372,25 @@ fn task_registered() -> bool {
 /// Blocking. Returns what went wrong, in words for the user. On success the
 /// app is about to quit for the installer.
 pub fn install(progress: impl FnMut(u64, u64)) -> Result<(), String> {
-    #[cfg(not(windows))]
+    #[cfg(target_os = "macos")]
     {
-        let _ = progress;
-        Err("Updates are not supported on this platform.".into())
+        let update = available().ok_or("There's no update to install.")?;
+        let staged = stage(&update, progress).map_err(|e| {
+            tracing::warn!(error = %e, "update download failed");
+            e.for_user()
+        })?;
+        let _ = std::process::Command::new("open").arg(&staged).spawn();
+        Ok(())
+    }
+    #[cfg(target_os = "linux")]
+    {
+        let update = available().ok_or("There's no update to install.")?;
+        let staged = stage(&update, progress).map_err(|e| {
+            tracing::warn!(error = %e, "update download failed");
+            e.for_user()
+        })?;
+        let _ = std::process::Command::new("xdg-open").arg(&staged).spawn();
+        Ok(())
     }
     #[cfg(windows)]
     {
@@ -361,6 +408,11 @@ pub fn install(progress: impl FnMut(u64, u64)) -> Result<(), String> {
             }
         }
         install_with_prompt(&update, &staged)
+    }
+    #[cfg(not(any(windows, target_os = "macos", target_os = "linux")))]
+    {
+        let _ = progress;
+        Err("Updates are not supported on this platform.".into())
     }
 }
 
@@ -401,22 +453,40 @@ impl std::fmt::Display for StageError {
     }
 }
 
-/// Where the app leaves a downloaded installer for the task:
-/// `%ProgramData%\Nectarlink\updates`. Anyone may write here; the task only
-/// runs a copy that matches the release's own sums.
+/// Where the app leaves a downloaded installer for the task or system:
 fn staging_dir() -> PathBuf {
-    std::env::var_os("ProgramData")
-        .map(PathBuf::from)
-        .filter(|p| p.is_absolute())
-        .unwrap_or_else(|| PathBuf::from(r"C:\ProgramData"))
-        .join("Nectarlink")
-        .join("updates")
+    #[cfg(windows)]
+    {
+        std::env::var_os("ProgramData")
+            .map(PathBuf::from)
+            .filter(|p| p.is_absolute())
+            .unwrap_or_else(|| PathBuf::from(r"C:\ProgramData"))
+            .join("MacLink")
+            .join("updates")
+    }
+    #[cfg(target_os = "macos")]
+    {
+        std::env::var_os("HOME")
+            .map(PathBuf::from)
+            .unwrap_or_else(|| PathBuf::from("/tmp"))
+            .join("Library/Caches/MacLink/updates")
+    }
+    #[cfg(not(any(windows, target_os = "macos")))]
+    {
+        std::env::var_os("HOME")
+            .map(PathBuf::from)
+            .unwrap_or_else(|| PathBuf::from("/tmp"))
+            .join(".cache/maclink/updates")
+    }
 }
 
 /// The release's SHA-256 for its installer.
-fn expected_hash(update: &Update) -> Result<String, StageError> {
+fn expected_hash(update: &Update) -> Result<Option<String>, StageError> {
+    if update.sums_url.is_empty() {
+        return Ok(None);
+    }
     let sums = http::get_retrying(&update.sums_url, 64 * 1024).map_err(StageError::Network)?;
-    listed_hash(&String::from_utf8_lossy(&sums), &update.installer_name).ok_or(StageError::Damaged)
+    Ok(listed_hash(&String::from_utf8_lossy(&sums), &update.installer_name))
 }
 
 fn sha256_file(path: &Path) -> std::io::Result<String> {
@@ -445,6 +515,34 @@ pub fn stage(update: &Update, progress: impl FnMut(u64, u64)) -> Result<PathBuf,
     let part = dir.join(format!("{}.part", update.installer_name));
     // Older versions' files.
     if let Ok(entries) = std::fs::read_dir(&dir) {
+        for entry in entries.flatten() {
+            let p = entry.path();
+            if p != path && p != part {
+                let _ = std::fs::remove_file(p);
+            }
+        }
+    }
+    if path.is_file() {
+        if let Some(ref hash) = expected {
+            if sha256_file(&path).ok().as_deref() == Some(hash.as_str()) {
+                return Ok(path);
+            }
+        } else {
+            return Ok(path);
+        }
+    }
+    let _ = std::fs::remove_file(&path);
+    http::download(&update.installer_url, &part, MAX_INSTALLER, progress).map_err(StageError::Network)?;
+    if let Some(ref hash) = expected {
+        let actual = sha256_file(&part).map_err(|e| StageError::Disk(e.to_string()))?;
+        if actual != *hash {
+            let _ = std::fs::remove_file(&part);
+            return Err(StageError::Damaged);
+        }
+    }
+    std::fs::rename(&part, &path).map_err(|e| StageError::Disk(e.to_string()))?;
+    Ok(path)
+}
         for entry in entries.flatten() {
             let p = entry.path();
             if p != path && p != part {

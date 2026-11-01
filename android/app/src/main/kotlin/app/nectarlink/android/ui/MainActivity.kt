@@ -138,6 +138,7 @@ class MainActivity : ComponentActivity() {
             handleRemoteIntent(intent)
             handleDeckIntent(intent)
             handleRecordIntent(intent)
+            (application as NectarlinkApplication).updater.checkAndAutoUpdateOnStart()
         }
 
         setContent {
@@ -209,7 +210,7 @@ class MainActivity : ComponentActivity() {
         if (app.updater.enabled) {
             // Back from allowing installs: the update the user started carries on.
             app.updater.onAppResumed()
-            lifecycleScope.launch { app.updater.updateIfDue() }
+            app.updater.checkAndAutoUpdateOnStart()
         }
     }
 

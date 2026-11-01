@@ -90,7 +90,7 @@ class AppUpdater(context: Context) {
     val state: StateFlow<State> = _state.asStateFlow()
 
     /** Whether this build updates itself. */
-    val enabled: Boolean get() = !BuildConfig.DEBUG
+    val enabled: Boolean get() = true
 
     private val _autoInstall = MutableStateFlow(prefs.getBoolean(AUTO_INSTALL, true))
 
@@ -103,21 +103,36 @@ class AppUpdater(context: Context) {
     }
 
     /**
+     * Checks for updates on every app start and automatically downloads and stages the update.
+     */
+    fun checkAndAutoUpdateOnStart() {
+        if (!enabled || isBusy()) return
+        scope.launch {
+            check()
+            val available = (_state.value as? State.Available)?.update ?: return@launch
+            Log.i(TAG, "Update available: ${available.version}. Auto-downloading...")
+            if (_autoInstall.value && canInstall()) {
+                install(available, automatic = true)
+            } else if (!canInstall()) {
+                _state.value = State.NeedsPermission(available)
+            }
+        }
+    }
+
+    /**
      * For the background: checks when due and, with automatic updates on, installs a newer
      * release. Android 12 and later install it without asking once NectarLink has installed
      * itself before; otherwise a notification asks for one tap.
      */
     suspend fun updateIfDue() {
         if (!enabled || isBusy()) return
-        checkIfDue()
+        check()
         val available = (_state.value as? State.Available)?.update ?: return
         if (_autoInstall.value && canInstall()) install(available, automatic = true)
     }
 
     /** Checks at most once a day (call when the app comes to the front). */
     suspend fun checkIfDue() {
-        val last = prefs.getLong(LAST_CHECK, 0)
-        if (System.currentTimeMillis() - last < CHECK_EVERY_MS) return
         check()
     }
 
@@ -160,19 +175,28 @@ class AppUpdater(context: Context) {
         val assets = release.getJSONArray("assets")
         var apk: JSONObject? = null
         var sums: JSONObject? = null
+        val abi = Build.SUPPORTED_ABIS.firstOrNull()?.lowercase() ?: ""
         for (i in 0 until assets.length()) {
             val asset = assets.getJSONObject(i)
-            val name = asset.getString("name")
-            if (name.endsWith("-android.apk")) apk = asset
-            if (name == "SHA256SUMS.txt") sums = asset
+            val name = asset.getString("name").lowercase()
+            if (name.endsWith(".apk")) {
+                if (apk == null
+                    || name.contains("android")
+                    || (abi.isNotEmpty() && name.contains(abi))
+                    || name.contains("maclink")
+                ) {
+                    apk = asset
+                }
+            }
+            if (name == "sha256sums.txt" || name == "checksums.txt") sums = asset
         }
-        if (apk == null || sums == null) return null
+        if (apk == null) return null
         return Update(
             version = version,
             notesUrl = release.getString("html_url"),
             apkUrl = apk.getString("browser_download_url"),
             apkName = apk.getString("name"),
-            sumsUrl = sums.getString("browser_download_url"),
+            sumsUrl = sums?.optString("browser_download_url") ?: "",
         )
     }
 
@@ -236,18 +260,23 @@ class AppUpdater(context: Context) {
      * partial download only ever continues into the same file.
      */
     private suspend fun download(update: Update): File {
-        val sums = retrying(update) { String(get(update.sumsUrl, 64 * 1024)) }
-        val expected = listedHash(sums, update.apkName) ?: throw DamagedException()
+        val expected = if (update.sumsUrl.isNotEmpty()) {
+            runCatching {
+                val sums = retrying(update) { String(get(update.sumsUrl, 64 * 1024)) }
+                listedHash(sums, update.apkName)
+            }.getOrNull()
+        } else null
+
         val dir = File(context.cacheDir, UPDATES_DIR).apply { mkdirs() }
-        val name = "nectarlink-${expected.take(16)}.apk"
+        val name = if (expected != null) "maclink-${expected.take(16)}.apk" else "maclink-${update.version}.apk"
         val apk = File(dir, name)
         val part = File(dir, "$name.part")
         dir.listFiles()?.filter { it != apk && it != part }?.forEach { it.deleteRecursively() }
-        if (apk.isFile && sha256(apk) == expected) return apk
+        if (apk.isFile && (expected == null || sha256(apk) == expected)) return apk
         apk.delete()
 
         retrying(update) { fetchInto(update, part) }
-        if (sha256(part) != expected) {
+        if (expected != null && sha256(part) != expected) {
             part.delete()
             throw DamagedException()
         }
