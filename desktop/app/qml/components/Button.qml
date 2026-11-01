@@ -17,6 +17,8 @@ FocusScope {
     readonly property bool small: size === "sm"
     readonly property bool interactive: enabled && !busy
     readonly property color background: {
+        if (variant === "amber")
+            return "transparent"
         if (variant === "fill")
             return Theme.graphite ? Theme.surfaceContent : Theme.primary
         if (variant === "tonal") {
@@ -30,6 +32,8 @@ FocusScope {
         return "transparent"
     }
     readonly property color foreground: {
+        if (variant === "amber")
+            return "#FFFFFF"
         if (variant === "fill")
             return Theme.graphite ? Theme.surface : Theme.primaryContent
         if (variant === "tonal")
@@ -81,14 +85,24 @@ FocusScope {
         height: parent.height
         radius: Theme.pill(height)
         color: button.background
+        gradient: button.variant === "amber" ? amberBtnGrad : null
         Behavior on color { enabled: !Theme.reduceMotion; ColorAnimation { duration: Theme.fadeFast } }
-        border.width: button.variant === "outline" || (Theme.glass && (button.variant === "tonal" || button.variant === "fill")) ? 1 : 0
-        border.color: button.variant === "outline"
-            ? (Theme.glass ? Qt.rgba(1, 1, 1, Theme.dark ? 0.14 : 0.38)
-                : (Theme.hive ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, Theme.dark ? 0.42 : 0.38) : Theme.outline))
-            : Qt.rgba(1, 1, 1, Theme.dark ? 0.10 : 0.32)
+        border.width: button.variant === "amber" ? 1 : (button.variant === "outline" || (Theme.glass && (button.variant === "tonal" || button.variant === "fill")) ? 1 : 0)
+        border.color: button.variant === "amber"
+            ? Qt.rgba(1, 0.85, 0.55, 0.65)
+            : (button.variant === "outline"
+                ? (Theme.glass ? Qt.rgba(1, 1, 1, Theme.dark ? 0.14 : 0.38)
+                    : (Theme.hive ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, Theme.dark ? 0.42 : 0.38) : Theme.outline))
+                : Qt.rgba(1, 1, 1, Theme.dark ? 0.10 : 0.32))
         scale: mouse.pressed && button.interactive ? Theme.pressScale : 1
         Behavior on scale { enabled: !Theme.reduceMotion; NumberAnimation { duration: 120; easing.type: Easing.OutCubic } }
+
+        Gradient {
+            id: amberBtnGrad
+            orientation: Gradient.Horizontal
+            GradientStop { position: 0.0; color: "#A86210" }
+            GradientStop { position: 1.0; color: "#F2A93B" }
+        }
 
         // Hive: honey catches the light along the top of a filled button.
         Rectangle {

@@ -10,7 +10,8 @@ FocusScope {
     property string text: ""
     property string label
     property bool tonal: false
-    property color iconColor: tonal ? Theme.secondaryContainerContent : Theme.surfaceContentVariant
+    property bool amberRing: false
+    property color iconColor: tonal ? Theme.secondaryContainerContent : (amberRing ? Theme.amberAccent : Theme.surfaceContentVariant)
     signal clicked
 
     readonly property bool hasText: text.length > 0
@@ -39,16 +40,20 @@ FocusScope {
         id: body
         anchors.fill: parent
         radius: Theme.pill(height)
-        color: button.tonal
-            ? (Theme.glass
-                ? Qt.tint(Qt.rgba(1, 1, 1, Theme.dark ? 0.10 : 0.54), Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, Theme.dark ? 0.18 : 0.14))
-                : Theme.secondaryContainer)
-            : "transparent"
+        color: button.amberRing
+            ? Qt.rgba(0.95, 0.66, 0.23, mouse.pressed ? 0.32 : (mouse.containsMouse ? 0.22 : 0.14))
+            : (button.tonal
+                ? (Theme.glass
+                    ? Qt.tint(Qt.rgba(1, 1, 1, Theme.dark ? 0.10 : 0.54), Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, Theme.dark ? 0.18 : 0.14))
+                    : Theme.secondaryContainer)
+                : "transparent")
         Behavior on color { enabled: !Theme.reduceMotion; ColorAnimation { duration: Theme.fadeFast } }
-        border.width: (Theme.graphite && button.hasText) || (Theme.glass && button.tonal) ? 1 : 0
-        border.color: Theme.glass
-            ? Qt.rgba(1, 1, 1, Theme.dark ? 0.12 : 0.38)
-            : (button.tonal ? Theme.surfaceContent : Theme.outlineVariant)
+        border.width: button.amberRing ? 1.5 : ((Theme.graphite && button.hasText) || (Theme.glass && button.tonal) ? 1 : 0)
+        border.color: button.amberRing
+            ? (mouse.containsMouse ? Qt.lighter(Theme.amberAccent, 1.15) : Theme.amberAccent)
+            : (Theme.glass
+                ? Qt.rgba(1, 1, 1, Theme.dark ? 0.12 : 0.38)
+                : (button.tonal ? Theme.surfaceContent : Theme.outlineVariant))
         scale: mouse.pressed ? Theme.pressScale : 1
         Behavior on scale { enabled: !Theme.reduceMotion; NumberAnimation { duration: 120; easing.type: Easing.OutCubic } }
 

@@ -15,16 +15,16 @@ Rectangle {
     signal toggled(bool on)
 
     readonly property color ink: checked
-        ? (Theme.graphite ? Theme.surface : Theme.secondaryContainerContent)
-        : Theme.surfaceContent
+        ? Theme.textPrimary
+        : Theme.textSecondary
 
-    height: 44
-    radius: Theme.radiusMd
+    height: 48
+    radius: 14
     color: checked
-        ? (Theme.graphite ? Theme.surfaceContent : Theme.secondaryContainer)
-        : (Theme.graphite ? "transparent" : Theme.surfaceContainerHigh)
-    border.width: Theme.graphite || checked ? 1 : 0
-    border.color: checked ? Theme.primary : Theme.outlineVariant
+        ? Qt.rgba(0.95, 0.66, 0.23, 0.12)
+        : Theme.cardFill
+    border.width: 1
+    border.color: checked ? Theme.amberAccent : Theme.cardBorderSubtle
 
     Row {
         anchors.left: parent.left

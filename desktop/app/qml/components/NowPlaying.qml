@@ -294,7 +294,9 @@ Card {
                             size: 10
                             weight: 600
                             color: Theme.surfaceContent
-                            text: card.isLocalPc ? qsTr("This PC") : qsTr("Phone")
+                            text: card.isLocalPc
+                                ? (card.app.length > 0 ? qsTr("This PC · %1").arg(card.app) : qsTr("This PC"))
+                                : (card.app.length > 0 ? qsTr("Phone · %1").arg(card.app) : qsTr("Phone"))
                         }
                     }
 
@@ -365,14 +367,33 @@ Card {
                     }
                 }
 
-                Txt {
+                Rectangle {
                     anchors.verticalCenter: parent.verticalCenter
-                    width: Math.max(36, parent.width - eqBars.width - sourcePill.width - 16)
-                    role: "caption"
-                    weight: 600
-                    color: card.playing ? Theme.primary : Theme.surfaceContentVariant
-                    text: card.app.length > 0 ? card.app : qsTr("Now playing")
-                    elide: Text.ElideRight
+                    height: 20
+                    width: playingChipRow.implicitWidth + 14
+                    radius: 10
+                    color: Qt.rgba(0.95, 0.66, 0.23, 0.14)
+                    border.width: 1
+                    border.color: Qt.rgba(0.95, 0.66, 0.23, 0.32)
+                    visible: card.playing
+                    Row {
+                        id: playingChipRow
+                        anchors.centerIn: parent
+                        spacing: 4
+                        Rectangle {
+                            width: 6; height: 6; radius: 3
+                            anchors.verticalCenter: parent.verticalCenter
+                            color: Theme.amberAccent
+                        }
+                        Txt {
+                            anchors.verticalCenter: parent.verticalCenter
+                            role: "caption"
+                            size: 10
+                            weight: 600
+                            color: Theme.amberAccent
+                            text: card.isLocalPc ? qsTr("Playing on Mac") : qsTr("Playing on Phone")
+                        }
+                    }
                 }
             }
 
@@ -518,9 +539,9 @@ Card {
                 }
                 IconButton {
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 34; height: 34
-                    iconSize: 16
-                    tonal: true
+                    width: 36; height: 36
+                    iconSize: 17
+                    amberRing: true
                     iconPath: card.playing ? Icons.pause : Icons.play
                     label: card.playing ? qsTr("Pause") : qsTr("Play")
                     enabled: card.playing ? card.canPause : card.canPlay
@@ -684,8 +705,9 @@ Card {
                 IconButton {
                     id: playPause
                     anchors.verticalCenter: parent.verticalCenter
-                    width: 42; height: 42
-                    tonal: true
+                    width: 44; height: 44
+                    iconSize: 20
+                    amberRing: true
                     iconPath: card.playing ? Icons.pause : Icons.play
                     label: card.playing ? qsTr("Pause") : qsTr("Play")
                     enabled: card.playing ? card.canPause : card.canPlay

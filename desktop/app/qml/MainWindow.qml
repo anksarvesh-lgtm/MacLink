@@ -1109,9 +1109,6 @@ NativeWindow {
             clip: true
             topLeftRadius: 18
             color: "transparent"
-                    : (Theme.graphite
-                        ? Theme.surfaceContainerLow
-                        : Qt.rgba(Theme.surfaceContainerLow.r, Theme.surfaceContainerLow.g, Theme.surfaceContainerLow.b, Theme.dark ? 0.56 : 0.68)))
             Behavior on color { ColorAnimation { duration: Theme.fadeNormal } }
             border.width: 0
 
