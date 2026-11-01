@@ -2037,7 +2037,8 @@ Item {
                 width: parent.width
                 readonly property var remoteInputFeature: home.feature("mirroring.control")
                 readonly property bool available: true
-                readonly property bool canStart: home.online || home.deviceId.length > 0
+                readonly property bool canStart: (home.online || home.deviceId.length > 0)
+                                               && remoteInputFeature.state !== "locked"
                 readonly property bool activeHere: Mirror.keyboardDevice === home.deviceId
                 property string lastSent: ""
 
@@ -2124,7 +2125,7 @@ Item {
 
                     LockChip {
                         id: typeLock
-                        visible: false
+                        visible: typeOnPhoneCard.remoteInputFeature.state === "locked" && label.length > 0
                         feature: typeOnPhoneCard.remoteInputFeature
                         maxWidth: parent.width
                     }
@@ -2334,7 +2335,8 @@ Item {
                             Column {
                                 anchors.left: previewIcon.right
                                 anchors.leftMargin: 10
-                                anchors.right: parent.right
+                                anchors.right: previewMoreBtn.left
+                                anchors.rightMargin: 4
                                 anchors.verticalCenter: parent.verticalCenter
                                 spacing: 1
                                 Txt {
@@ -2355,6 +2357,16 @@ Item {
                                         return sub + rel
                                     }
                                 }
+                            }
+                            IconButton {
+                                id: previewMoreBtn
+                                anchors.right: parent.right
+                                anchors.verticalCenter: parent.verticalCenter
+                                width: 24; height: 24
+                                iconSize: 13
+                                iconPath: Icons.more
+                                label: qsTr("More actions")
+                                onClicked: AppController.currentPage = "timeline"
                             }
                             HoverHandler { id: previewHover; cursorShape: Qt.PointingHandCursor }
                             TapHandler { onTapped: AppController.currentPage = "timeline" }
