@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 //! Local authenticated HTTP/JSON automation API (`127.0.0.1:<port>`, default
-//! `53320`, off by default): lets local tools (such as the NectarLink PowerToys
+//! `53320`, off by default): lets local tools (such as the MacLink PowerToys
 //! Command Palette / Run extension, Raycast scripts, AutoHotkey, or CLI scripts)
 //! list paired phones, send files/links/clipboard text, trigger Continuity
 //! Camera, ring a phone, or read recent timeline and clipboard items.
@@ -959,7 +959,7 @@ mod tests {
         .await;
         assert_eq!(code, 200);
 
-        let send_body = r#"{"url":"https://nectarlink.dev"}"#;
+        let send_body = r#"{"url":"https://maclink.dev"}"#;
         let (code, _) = raw_http_call(
             addr,
             &format!(

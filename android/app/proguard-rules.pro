@@ -30,14 +30,14 @@
 # UniFFI generated bindings & callback interfaces (Platform, EventHandler, etc.)
 -keep class uniffi.** { *; }
 -keep interface uniffi.** { *; }
--keep class app.nectarlink.core.** { *; }
--keep interface app.nectarlink.core.** { *; }
+-keep class app.maclink.core.** { *; }
+-keep interface app.maclink.core.** { *; }
 
-# InputServer is invoked via app_process from adb/root shell (`app.nectarlink.android.elevated.InputServer`)
--keep class app.nectarlink.android.elevated.InputServer {
+# InputServer is invoked via app_process from adb/root shell (`app.maclink.android.elevated.InputServer`)
+-keep class app.maclink.android.elevated.InputServer {
     public static void main(java.lang.String[]);
 }
--keep class app.nectarlink.android.elevated.SurfaceControl { *; }
+-keep class app.maclink.android.elevated.SurfaceControl { *; }
 
 # Conscrypt (used by Elevated wireless ADB TLS handshake)
 -keep class org.conscrypt.** { *; }

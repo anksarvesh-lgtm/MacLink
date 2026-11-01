@@ -3,7 +3,7 @@
 //! its microphone and plays it into an output device. Played into a virtual
 //! audio cable (VB-Audio's CABLE Input, Voicemeeter), the cable's other end
 //! is a microphone every app can pick; played to the speakers, it's for
-//! listening in. A virtual microphone of NectarLink's own needs an audio
+//! listening in. A virtual microphone of MacLink's own needs an audio
 //! driver and is a later, separate step (GitHub #7).
 
 use crate::i18n::tr;
@@ -205,7 +205,7 @@ pub fn start(phone: DeviceId) {
                 set_phase(Phase::Off);
                 show_message(match e {
                     Error::Unsupported => {
-                        tr!("PhoneMic", "Update NectarLink on %1 to use its microphone.", name)
+                        tr!("PhoneMic", "Update MacLink on %1 to use its microphone.", name)
                     }
                     Error::Denied => tr!("PhoneMic", "The microphone is turned off for this PC on %1.", name),
                     other => describe(&other),

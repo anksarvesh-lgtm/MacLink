@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import QtQuick
-import app.nectarlink
+import app.maclink
 
 // One file transfer: direction, name, progress and speed, and what can be
 // done with it (cancel while it runs; open or show what arrived).

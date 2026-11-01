@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MPL-2.0
 //! Pure-Rust client for the local ADB server (`127.0.0.1:5037`) used to detect
-//! USB-attached Android devices and set up TCP port forwarding for NectarLink's
+//! USB-attached Android devices and set up TCP port forwarding for MacLink's
 //! USB QUIC tunnel.
 
 use std::net::{Ipv4Addr, SocketAddr, SocketAddrV4};
@@ -15,13 +15,13 @@ use tokio_util::sync::CancellationToken;
 pub const DEFAULT_ADB_ADDR: SocketAddr = SocketAddr::V4(SocketAddrV4::new(Ipv4Addr::LOCALHOST, 5037));
 
 /// Returns `true` if `serial` is non-empty and permitted by the optional
-/// `NECTARLINK_ADB_ONLY_SERIAL` filter.
+/// `MACLINK_ADB_ONLY_SERIAL` filter.
 pub fn is_serial_allowed(serial: &str) -> bool {
     let trimmed = serial.trim();
     if trimmed.is_empty() {
         return false;
     }
-    if let Ok(only) = std::env::var("NECTARLINK_ADB_ONLY_SERIAL") {
+    if let Ok(only) = std::env::var("MACLINK_ADB_ONLY_SERIAL") {
         let only = only.trim();
         if !only.is_empty() && trimmed != only {
             return false;

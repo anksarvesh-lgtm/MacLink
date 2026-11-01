@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import QtQuick
 import QtQuick.Shapes
-import app.nectarlink
+import app.maclink
 
 // The installer's and the uninstaller's window (src/setup.rs). One window,
 // three moments: welcome, working, done. Its own fixed colors (honey on warm

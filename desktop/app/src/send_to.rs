@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 //! Explorer's "Send to" menu: a shortcut per paired phone, which starts
-//! NectarLink with `--send-to <device> <files…>`. The running app sends the
+//! MacLink with `--send-to <device> <files…>`. The running app sends the
 //! files and follows the transfer in a Windows notification with a progress
 //! bar, so nothing else needs to open.
 
@@ -149,8 +149,8 @@ fn reconcile(dir: &Path, desired: &[(DeviceId, String)], exe: &Path) -> io::Resu
                     .any(|(p, _)| p.file_name().is_some_and(|n| n.to_string_lossy().to_lowercase() == lower))
         };
         let candidate = std::iter::once(base.clone())
-            .chain(std::iter::once(format!("{base} (NectarLink)")))
-            .chain((2..).map(|n| format!("{base} (NectarLink {n})")))
+            .chain(std::iter::once(format!("{base} (MacLink)")))
+            .chain((2..).map(|n| format!("{base} (MacLink {n})")))
             .find(|c| !taken(c))
             .unwrap_or(base);
         planned.push((
@@ -158,7 +158,7 @@ fn reconcile(dir: &Path, desired: &[(DeviceId, String)], exe: &Path) -> io::Resu
             Shortcut {
                 target: exe.to_owned(),
                 arguments: format!("{ARG} {id}"),
-                description: tr!("SendTo", "Send to %1 with NectarLink", name),
+                description: tr!("SendTo", "Send to %1 with MacLink", name),
             },
         ));
     }
@@ -239,7 +239,7 @@ fn share(files: Vec<PathBuf>, url: Option<String>, text: Option<String>) {
             request_activation();
         }
         let Some((device_id, device_name)) = target else {
-            failed("No phone paired", "Pair your phone in NectarLink to share with it.");
+            failed("No phone paired", "Pair your phone in MacLink to share with it.");
             return;
         };
         if !files.is_empty() {
@@ -363,7 +363,7 @@ fn send(device: String, paths: Vec<PathBuf>) {
             }
             Err(Error::Denied) => failed(
                 &tr!("SendTo", "Couldn't send to %1", name),
-                "Files are turned off for this device. Turn them on in NectarLink.",
+                "Files are turned off for this device. Turn them on in MacLink.",
             ),
             Err(e) => failed(&tr!("SendTo", "Couldn't send to %1", name), &describe(&e)),
         }
@@ -562,11 +562,11 @@ mod tests {
         reconcile(dir.path(), &[(a, "Pixel".into()), (b, "Tab".into()), (c, "Pixel".into())], &exe).unwrap();
         assert_eq!(
             names(dir.path()),
-            ["Pixel (NectarLink).lnk", "Pixel.lnk", "Tab (NectarLink).lnk", "Tab.lnk"]
+            ["Pixel (MacLink).lnk", "Pixel.lnk", "Tab (MacLink).lnk", "Tab.lnk"]
         );
         assert_eq!(shortcut::arguments(&dir.path().join("Pixel.lnk")).unwrap(), format!("{ARG} {a}"));
         assert_eq!(
-            shortcut::arguments(&dir.path().join("Pixel (NectarLink).lnk")).unwrap(),
+            shortcut::arguments(&dir.path().join("Pixel (MacLink).lnk")).unwrap(),
             format!("{ARG} {c}")
         );
 

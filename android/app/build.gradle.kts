@@ -15,7 +15,7 @@ val appVersionCode: Int = appVersion.substringBefore('-').split('.').map(String:
     .let { (major, minor, patch) -> major * 1_000_000 + minor * 1_000 + patch }
 
 android {
-    namespace = "app.nectarlink.android"
+    namespace = "app.maclink.android"
     compileSdk = 37
     ndkVersion = "30.0.16248370"
 
@@ -45,18 +45,18 @@ android {
     }
 
     // Release builds are signed with the project's key when CI provides it
-    // (NECTARLINK_KEYSTORE: a .jks file; NECTARLINK_KEYSTORE_PASSWORD).
+    // (MACLINK_KEYSTORE: a .jks file; MACLINK_KEYSTORE_PASSWORD).
     // Without it, a local release build is signed with the debug key so it can be
     // installed over a debug build for testing. Never publish such a build: the
     // release workflow refuses to run without the key and verifies the signature.
-    val keystore = System.getenv("NECTARLINK_KEYSTORE")?.let(::file)?.takeIf { it.exists() }
+    val keystore = (System.getenv("MACLINK_KEYSTORE") ?: System.getenv("NECTARLINK_KEYSTORE"))?.let(::file)?.takeIf { it.exists() }
     signingConfigs {
         if (keystore != null) {
             create("release") {
                 storeFile = keystore
-                storePassword = System.getenv("NECTARLINK_KEYSTORE_PASSWORD")
-                keyAlias = "nectarlink"
-                keyPassword = System.getenv("NECTARLINK_KEYSTORE_PASSWORD")
+                storePassword = System.getenv("MACLINK_KEYSTORE_PASSWORD") ?: System.getenv("NECTARLINK_KEYSTORE_PASSWORD")
+                keyAlias = "maclink"
+                keyPassword = System.getenv("MACLINK_KEYSTORE_PASSWORD") ?: System.getenv("NECTARLINK_KEYSTORE_PASSWORD")
             }
         }
     }
@@ -86,15 +86,15 @@ composeCompiler {
     stabilityConfigurationFiles.add(project.layout.projectDirectory.file("compose_stability.conf"))
 }
 
-// ---- The Rust core (nectarlink-ffi) ----
+// ---- The Rust core (maclink-ffi) ----
 //
-// Built with cargo-ndk for the ABIs in `nectarlink.abis` (default: devices
+// Built with cargo-ndk for the ABIs in `maclink.abis` (default: devices
 // and the x86_64 emulator), then UniFFI generates the Kotlin bindings from
 // the built library. Both are registered as generated sources, so AGP runs
 // them when needed. Rust is always built in release: debug builds of the
 // core are large and slow.
 
-/** Builds the Rust core into `<outputDir>/<abi>/libnectarlink_ffi.so`. */
+/** Builds the Rust core into `<outputDir>/<abi>/libmaclink_ffi.so`. */
 abstract class CargoNdkBuild : DefaultTask() {
     @get:Inject abstract val exec: ExecOperations
     @get:Input abstract val abis: ListProperty<String>
@@ -177,7 +177,9 @@ abstract class BundleFonts : DefaultTask() {
 
 val workspaceDir: Directory = rootProject.layout.projectDirectory.dir("..")
 val rustAbis: List<String> =
-    (findProperty("nectarlink.abis") as String?)?.split(",")?.map(String::trim) ?: listOf("arm64-v8a", "x86_64")
+    (findProperty("maclink.abis") as String?
+        ?: findProperty("nectarlink.abis") as String?)?.split(",")?.map(String::trim)
+        ?: listOf("arm64-v8a", "x86_64")
 
 androidComponents {
     onVariants { variant ->

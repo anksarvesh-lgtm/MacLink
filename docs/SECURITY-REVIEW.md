@@ -42,7 +42,7 @@ MacLink follows a strict **zero-trust, local-first security architecture**:
    - When an unpaired phone is connected via USB with ADB debugging active, `usb.rs` establishes a loopback UDP-over-TCP bridge (`127.0.0.1`) and initiates a standard `start_nearby` pairing ceremony (`method: "nearby"`). Both the PC and the phone display the 6-digit SAS code and require explicit user approval (`Codes match`) on **both** devices before storing the peer in `peers`.
    - Furthermore, the USB transport tunnel simply carries encrypted QUIC (`iroh`) packets over loopback UDP; all confidentiality, integrity, and Ed25519 peer authentication remain enforced by QUIC TLS 1.3.
 4. **Hard ADB Serial Blocklist (`core/maclink-adb/src/lib.rs`):**
-   - `maclink-adb` enforces `is_serial_allowed(serial)` across `parse_devices_l`, `forward_tcp`, and `kill_forward_tcp`, hard-blocking `BLOCKED_SERIALS` and honoring `NECTARLINK_ADB_ONLY_SERIAL`.
+   - `maclink-adb` enforces `is_serial_allowed(serial)` across `parse_devices_l`, `forward_tcp`, and `kill_forward_tcp`, hard-blocking `BLOCKED_SERIALS` and honoring `MACLINK_ADB_ONLY_SERIAL`.
 5. **Pre-Allocation Frame Size Cap (`frame.rs`):**
    - `read_frame` inspects the 4-byte big-endian length prefix and rejects any frame $> 1\text{ MiB}$ (`MAX_FRAME_LEN = 1_048_576`) with `ProtocolError::FrameTooLarge` before allocating buffer memory.
 6. **Per-Device Feature Permissions (`session.rs`):**

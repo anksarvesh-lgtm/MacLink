@@ -195,7 +195,7 @@ fn send(phone: DeviceId, name: String, handoff: HandoffLink) {
                 }
             }
             Err(Error::Unsupported) => {
-                notice(&tr!("Links", "Couldn't send it"), &tr!("Links", "Update NectarLink on %1.", name))
+                notice(&tr!("Links", "Couldn't send it"), &tr!("Links", "Update MacLink on %1.", name))
             }
             Err(e) => notice(&tr!("Links", "Couldn't send it"), &describe(&e)),
         }

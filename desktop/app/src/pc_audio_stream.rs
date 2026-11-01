@@ -2,7 +2,7 @@
 //! Phone as Speaker / Headphones for PC Audio (§3.8 P2): captures Windows
 //! system audio via WASAPI loopback (`AUDCLNT_STREAMFLAGS_LOOPBACK`), converts
 //! 32-bit float stereo samples to 16-bit signed little-endian PCM, and streams
-//! them to connected phones over NectarLink's low-latency audio stream.
+//! them to connected phones over MacLink's low-latency audio stream.
 
 #[cfg(windows)]
 mod imp {
@@ -214,7 +214,7 @@ mod imp {
             return;
         }
         std::thread::Builder::new()
-            .name("nectarlink-pc-audio-loopback".into())
+            .name("maclink-pc-audio-loopback".into())
             .spawn(|| {
                 run_loopback_worker();
                 WORKER_RUNNING.store(false, Ordering::SeqCst);

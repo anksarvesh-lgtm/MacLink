@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import QtQuick
 import QtQuick.Window
-import app.nectarlink
+import app.maclink
 
 // A phone's screen, or one of its apps, in a window of its own, sized like
 // the phone. One per mirroring (`mirrorKey`); closing it ends that one.

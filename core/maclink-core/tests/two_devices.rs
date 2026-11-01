@@ -1411,7 +1411,7 @@ async fn clipboard_history_tracks_text_and_images_and_excludes_otps() {
     let (pc_id, phone_id) = (pc.node.device_id(), phone.node.device_id());
 
     // Text clip sent PC -> phone is recorded on both sides (outgoing on PC, incoming on phone).
-    with_timeout("pc to phone text", pc.node.send_clipboard(phone_id, "https://nectarlink.dev/docs".into()))
+    with_timeout("pc to phone text", pc.node.send_clipboard(phone_id, "https://maclink.app/docs".into()))
         .await
         .expect("sent");
     wait_for(&mut phone, "clipboard received", |e| match e {
@@ -1449,7 +1449,7 @@ async fn clipboard_history_tracks_text_and_images_and_excludes_otps() {
     assert_eq!(pc_hist[0].device_name, "Pixel");
     assert_eq!(pc.node.clipboard_history_image(&pc_hist[0].id), Some(("image/png".to_owned(), img.clone())));
     assert_eq!(pc_hist[1].kind, maclink_core::ClipboardItemKind::Text);
-    assert_eq!(pc_hist[1].text, "https://nectarlink.dev/docs");
+    assert_eq!(pc_hist[1].text, "https://maclink.app/docs");
     assert!(!pc_hist[1].incoming);
 
     let phone_hist = phone.node.clipboard_history(None);
@@ -1458,7 +1458,7 @@ async fn clipboard_history_tracks_text_and_images_and_excludes_otps() {
     assert!(phone_hist[1].incoming);
 
     // Search, pin, copy again, delete, and clear all.
-    assert_eq!(pc.node.clipboard_history(Some("nectarlink")).len(), 1);
+    assert_eq!(pc.node.clipboard_history(Some("maclink")).len(), 1);
     let text_id = pc_hist[1].id.clone();
     let img_id = pc_hist[0].id.clone();
     assert!(pc.node.pin_clipboard_history(&text_id, true));
@@ -1467,7 +1467,7 @@ async fn clipboard_history_tracks_text_and_images_and_excludes_otps() {
     pc.node.copy_clipboard_history(&text_id).unwrap();
     assert_eq!(
         pc.platform.clipboard.lock().unwrap().last().map(String::as_str),
-        Some("https://nectarlink.dev/docs")
+        Some("https://maclink.app/docs")
     );
 
     assert!(pc.node.delete_clipboard_history(&img_id));
@@ -2604,7 +2604,7 @@ async fn remote_input_needs_toggle_and_delivers_motion_keys_and_slides() {
         RemoteInput::Button { button: MouseButton::Left, action: ButtonAction::Down },
         RemoteInput::Button { button: MouseButton::Left, action: ButtonAction::Up },
         RemoteInput::Scroll { dx: 0.0, dy: -3.0 },
-        RemoteInput::Text { text: "Hello NectarLink 🐝".into() },
+        RemoteInput::Text { text: "Hello MacLink".into() },
         RemoteInput::Key { key: remote_keys::ENTER.into(), mods: vec![] },
         RemoteInput::Key { key: "c".into(), mods: vec![KeyMod::Ctrl] },
         RemoteInput::Key { key: remote_keys::COPY.into(), mods: vec![] },
@@ -3481,14 +3481,14 @@ async fn pc_audio_volume_mute_output_devices_and_smart_clipboard_context_chips_f
     // Smart clipboard context chips: phone sends different text clips to PC,
     // and PC classifies each into at most 1 context chip (and None for OTP).
     let cases = [
-        ("https://nectarlink.app/docs?ref=clip", Some((ClipKind::WebLink, "Open"))),
+        ("https://maclink.app/docs?ref=clip", Some((ClipKind::WebLink, "Open"))),
         (
             "1600 Amphitheatre Parkway, Mountain View, CA 94043",
             Some((ClipKind::StreetAddress, "Open in Maps")),
         ),
         ("+1 (415) 555-0199", Some((ClipKind::PhoneNumber, "Call"))),
         ("1Z999AA10123456784", Some((ClipKind::TrackingNumber, "Track"))),
-        ("hello@nectarlink.app", Some((ClipKind::Email, "Email"))),
+        ("hello@maclink.app", Some((ClipKind::Email, "Email"))),
         ("Your verification code is 482910", None),
         ("Just a regular sentence with no special action.", None),
     ];
@@ -3698,7 +3698,7 @@ async fn timeline_records_files_clips_links_photos_recordings_and_sessions_witho
     .await;
 
     // 3. Web link and map handoff opened.
-    phone.node.open_link(pc_id, "https://nectarlink.app/timeline".into()).await.unwrap();
+    phone.node.open_link(pc_id, "https://maclink.app/timeline".into()).await.unwrap();
     phone.node.open_link(pc_id, "geo:37.7749,-122.4194?q=San+Francisco".into()).await.unwrap();
 
     // 4. Photo saved from phone.
@@ -3803,8 +3803,8 @@ async fn timeline_records_files_clips_links_photos_recordings_and_sessions_witho
     assert_eq!(clip_search.entries[0].title, secret_clip);
     let clip_ref = clip_search.entries[0].ref_id.clone().expect("clip has ref_id");
 
-    let sqlite_bytes = std::fs::read(pc.dir.path().join("nectarlink.db")).unwrap();
-    let wal_bytes = std::fs::read(pc.dir.path().join("nectarlink.db-wal")).unwrap_or_default();
+    let sqlite_bytes = std::fs::read(pc.dir.path().join("maclink.db")).unwrap();
+    let wal_bytes = std::fs::read(pc.dir.path().join("maclink.db-wal")).unwrap_or_default();
     assert!(
         !sqlite_bytes.windows(secret_clip.len()).any(|w| w == secret_clip.as_bytes())
             && !wal_bytes.windows(secret_clip.len()).any(|w| w == secret_clip.as_bytes()),
@@ -4462,7 +4462,7 @@ async fn localsend_coexists_when_port_is_already_bound() {
     assert!(dev.node.localsend_enabled());
     assert!(
         !dev.node.localsend_receiving(),
-        "when port is occupied by standalone LocalSend, NectarLink must leave receiving to it without failing"
+        "when port is occupied by standalone LocalSend, MacLink must leave receiving to it without failing"
     );
 
     dev.node.shutdown().await;

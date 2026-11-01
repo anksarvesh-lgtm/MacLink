@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import QtQuick
-import app.nectarlink
+import app.maclink
 
 // The 6-character alphanumeric pairing code, one tile per character, as both screens show it.
 Row {

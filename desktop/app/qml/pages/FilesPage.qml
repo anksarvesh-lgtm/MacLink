@@ -2,7 +2,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Dialogs
-import app.nectarlink
+import app.maclink
 
 // Android File Manager: Browse, search, upload, and download files and folders
 // across internal storage on the paired Android device.

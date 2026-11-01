@@ -35,7 +35,7 @@ pub struct NodeConfig {
     /// (docs/protocol/capabilities.md), e.g. `media.control`.
     pub capabilities: Vec<String>,
     /// TCP/UDP port for LocalSend v2.1 interop (defaults to 53317, or
-    /// `NECTARLINK_LOCALSEND_PORT` when set).
+    /// `MACLINK_LOCALSEND_PORT` when set).
     pub localsend_port: u16,
     /// Loopback TCP port on a phone (`127.0.0.1:<port>`) for the USB tunnel
     /// (`adb forward tcp:0 tcp:<usb_port>`). Typically `Some(53319)` on
@@ -48,7 +48,8 @@ pub struct NodeConfig {
 
 impl NodeConfig {
     pub fn new(data_dir: impl Into<PathBuf>, device: DeviceInfo, app_version: impl Into<String>) -> Self {
-        let localsend_port = std::env::var("NECTARLINK_LOCALSEND_PORT")
+        let localsend_port = std::env::var("MACLINK_LOCALSEND_PORT")
+            .or_else(|_| std::env::var("MACLINK_LOCALSEND_PORT"))
             .ok()
             .and_then(|v| v.parse::<u16>().ok())
             .unwrap_or(crate::LOCALSEND_DEFAULT_PORT);

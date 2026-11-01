@@ -95,7 +95,7 @@ cargo install cargo-ndk
 
 # Assemble the Android APK
 cd android
-./gradlew assembleDebug -Pnectarlink.abis=arm64-v8a
+./gradlew assembleDebug -Pmaclink.abis=arm64-v8a
 ```
 
 The compiled APK will be generated at `android/app/build/outputs/apk/debug/app-debug.apk`.

@@ -124,7 +124,7 @@ mod imp {
         core_host::refresh_capabilities();
 
         std::thread::Builder::new()
-            .name("nectarlink-pc-mirror".into())
+            .name("maclink-pc-mirror".into())
             .spawn(move || run_capture_loop(peer, options, stop, force_keyframe))
             .ok();
     }
@@ -1019,13 +1019,13 @@ mod imp {
         }
 
         /// With a Chromium browser showing a video on a page whose title has
-        /// `NECTARLINK_TEST_TAB` in it, in view: captures just the video, as
+        /// `MACLINK_TEST_TAB` in it, in view: captures just the video, as
         /// Play on phone does.
         #[test]
         #[ignore]
         fn captures_a_browsers_video() {
             use crate::win::browser::{Automation, window_for};
-            let wanted = std::env::var("NECTARLINK_TEST_TAB").expect("NECTARLINK_TEST_TAB");
+            let wanted = std::env::var("MACLINK_TEST_TAB").expect("MACLINK_TEST_TAB");
             // SAFETY: COM for this test's thread.
             let _ = unsafe {
                 windows::Win32::System::Com::CoInitializeEx(

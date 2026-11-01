@@ -118,7 +118,7 @@ void qtLogMessageHandler(QtMsgType type, const QMessageLogContext &ctx, const QS
     if (type == QtDebugMsg)
         return;
     const QString dirPath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation)
-        + QStringLiteral("/Nectarlink/logs");
+        + QStringLiteral("/MacLink/logs");
     QDir().mkpath(dirPath);
     QFile file(dirPath + QStringLiteral("/qml.log"));
     if (file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
@@ -295,11 +295,11 @@ bool install_translator(rust::Str dir, rust::Str language)
             break;
     }
 
-    // NectarLink's own strings, staged beside the executable. A locale with no
-    // translation (`nectarlink_es_ES.qm` missing), or English, stays English.
+    // MacLink's own strings, staged beside the executable. A locale with no
+    // translation (`maclink_es_ES.qm` missing), or English, stays English.
     bool installed = false;
     auto *app = new QTranslator(QCoreApplication::instance());
-    if (app->load(locale, QStringLiteral("nectarlink"), QStringLiteral("_"), folder)) {
+    if (app->load(locale, QStringLiteral("maclink"), QStringLiteral("_"), folder)) {
         installed = QCoreApplication::installTranslator(app);
         appTranslator() = app;
     } else {

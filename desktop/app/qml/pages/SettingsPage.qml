@@ -2,7 +2,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Dialogs
-import app.nectarlink
+import app.maclink
 
 // Settings: two-pane categorized layout for appearance, general behavior,
 // paired devices & permissions, camera & audio, notifications, files & sync,

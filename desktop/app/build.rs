@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-//! Builds the QML module `app.nectarlink` (QML files compiled ahead of time,
+//! Builds the QML module `app.maclink` (QML files compiled ahead of time,
 //! Rust QObjects, C++ helpers), compiles in the bundled fonts, gives the
 //! executable its icon and version information, and links the Windows
 //! libraries C++ uses.
@@ -301,7 +301,7 @@ fn compile_translations() {
         let Some(stem) = ts.file_stem().and_then(|s| s.to_str()) else {
             continue;
         };
-        let Some(lang) = stem.strip_prefix("nectarlink_") else {
+        let Some(lang) = stem.strip_prefix("maclink_") else {
             continue;
         };
         if !offered.contains(lang) {
@@ -327,7 +327,7 @@ fn main() {
     for qml in QML.iter().chain(QML_SINGLETONS.iter()) {
         println!("cargo:rerun-if-changed={qml}");
     }
-    let module = QmlModule::new("app.nectarlink")
+    let module = QmlModule::new("app.maclink")
         .qml_files(QML.iter().map(|f| QmlFile::from(*f)))
         .qml_files(QML_SINGLETONS.iter().map(|f| QmlFile::from(*f).singleton(true)));
     CxxQtBuilder::new_qml_module(module)
@@ -367,6 +367,8 @@ fn main() {
 
     // macOS native frameworks linked for desktop window and system integrations.
     println!("cargo:rustc-link-lib=framework=AppKit");
+    println!("cargo:rustc-link-lib=framework=Foundation");
+    println!("cargo:rustc-link-lib=framework=UserNotifications");
     println!("cargo:rustc-link-lib=framework=CoreGraphics");
     println!("cargo:rustc-link-lib=framework=CoreAudio");
     println!("cargo:rustc-link-lib=framework=AudioToolbox");
@@ -377,4 +379,15 @@ fn main() {
     println!("cargo:rerun-if-changed=cpp/native_window.cpp");
     println!("cargo:rerun-if-changed=cpp/video_view.h");
     println!("cargo:rerun-if-changed=cpp/video_view.cpp");
+    println!("cargo:rerun-if-changed=cpp/mac_notifications.h");
+    println!("cargo:rerun-if-changed=cpp/mac_notifications.mm");
+
+    #[cfg(target_os = "macos")]
+    {
+        cc::Build::new()
+            .file("cpp/mac_notifications.mm")
+            .flag("-fobjc-arc")
+            .flag("-std=c++17")
+            .compile("mac_notifications");
+    }
 }

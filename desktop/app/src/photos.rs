@@ -4,7 +4,7 @@
 //!   to open, save, or copy it.
 //! - The Photos gallery page: albums, paged items newest-first, on-demand
 //!   batched thumbnails cached on disk, in-app viewer, Save (to a chosen
-//!   folder or `Downloads\Nectarlink`), Copy to clipboard, and Open in the
+//!   folder or `Downloads\MacLink`), Copy to clipboard, and Open in the
 //!   Windows Photos app or default video player.
 
 use crate::i18n::tr;
@@ -49,7 +49,7 @@ enum Intent {
     Copy { item_id: Option<String>, notify_ui: bool },
     /// Downloaded for the in-app viewer (moved into the gallery cache).
     View { device: DeviceId, item_id: String },
-    /// Saved from the gallery to `Downloads\Nectarlink` or a user-chosen folder.
+    /// Saved from the gallery to `Downloads\MacLink` or a user-chosen folder.
     GallerySave { ids: Vec<String>, folder: Option<PathBuf> },
 }
 
@@ -1310,14 +1310,14 @@ pub fn copy_item(id: String) {
 }
 
 /// Sets the preferred destination folder for saving gallery items (`None`
-/// resets to `Downloads\Nectarlink`).
+/// resets to `Downloads\MacLink`).
 pub fn set_save_folder(folder: Option<PathBuf>) {
     gallery_state(|s| s.save_folder = folder);
     gallery_changed();
 }
 
 /// Downloads and saves `ids` to `folder` (or the remembered `save_folder`, or
-/// default `Downloads\Nectarlink`).
+/// default `Downloads\MacLink`).
 pub fn save_items(ids: Vec<String>, folder: Option<PathBuf>) {
     let ids: Vec<String> = ids.into_iter().filter(|id| !id.is_empty()).collect();
     if ids.is_empty() {

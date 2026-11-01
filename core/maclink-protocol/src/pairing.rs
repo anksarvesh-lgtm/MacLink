@@ -62,7 +62,7 @@ impl PairingUri {
 
     pub fn parse(uri: &str) -> Result<Self, PairingUriError> {
         let url = Url::parse(uri.trim()).map_err(|_| PairingUriError::NotPairing)?;
-        if (url.scheme() != "maclink" && url.scheme() != "nectarlink") || url.host_str() != Some("pair") {
+        if url.scheme() != "maclink" || url.host_str() != Some("pair") {
             return Err(PairingUriError::NotPairing);
         }
         let get = |key: &str| url.query_pairs().find(|(k, _)| k == key).map(|(_, v)| v.into_owned());
@@ -102,7 +102,7 @@ fn proof_mac(secret: &[u8; SECRET_LEN], joining: &DeviceId, host: &DeviceId) -> 
 }
 
 /// Proof that the joining device (phone) scanned the host's (PC's) QR code:
-/// `HMAC-SHA256(S, "nectarlink-pair-v0" || joining_id || host_id)`.
+/// `HMAC-SHA256(S, "maclink-pair-v0" || joining_id || host_id)`.
 pub fn pair_proof(secret: &[u8; SECRET_LEN], joining: &DeviceId, host: &DeviceId) -> [u8; 32] {
     proof_mac(secret, joining, host).finalize().into_bytes().into()
 }

@@ -4,7 +4,7 @@
 //! When a phone is plugged into a PC over USB with USB debugging enabled:
 //! 1. The phone listens on loopback TCP `127.0.0.1:53319` ([`DEFAULT_USB_PORT`]),
 //!    or the next free port of [`USB_PORT_COUNT`] when another Android profile
-//!    with NectarLink (a work profile, a cloned app) already has it: all
+//!    with MacLink (a work profile, a cloned app) already has it: all
 //!    profiles share the phone's loopback.
 //! 2. The PC's ADB watcher forwards a local ephemeral TCP port to each of those
 //!    phone ports (`adb forward tcp:0 tcp:53319`, ...) and opens a TCP
@@ -43,7 +43,7 @@ use crate::{Error, Result, node::Shared};
 /// Default loopback TCP port the Android app listens on for the USB tunnel.
 pub const DEFAULT_USB_PORT: u16 = 53319;
 /// Loopback ports, from [`DEFAULT_USB_PORT`] on, that a phone may listen on: one per
-/// Android profile running NectarLink, since profiles share the phone's loopback.
+/// Android profile running MacLink, since profiles share the phone's loopback.
 pub const USB_PORT_COUNT: u16 = 4;
 
 pub use maclink_adb::DEFAULT_ADB_ADDR;
@@ -114,7 +114,7 @@ async fn exchange_hello(
 }
 
 /// Binds the phone's USB tunnel listener: `preferred_port`, or the next free one of
-/// [`USB_PORT_COUNT`] (another Android profile with NectarLink holds it; profiles share
+/// [`USB_PORT_COUNT`] (another Android profile with MacLink holds it; profiles share
 /// the loopback). A port outside that range would never be reached by the PC, so there
 /// is no listener then. `0` binds any free port (tests).
 fn bind_phone_listener(preferred_port: u16) -> Option<std::net::TcpListener> {
@@ -240,7 +240,7 @@ pub(crate) async fn connect_usb_tunnel(shared: &Arc<Shared>, forwarded_tcp: Sock
 
 /// Starts the PC-side ADB watcher that tracks USB-connected Android devices,
 /// sets up `adb forward tcp:0 tcp:53319` (and the other profile ports), and
-/// maintains a USB tunnel to each NectarLink profile that answers.
+/// maintains a USB tunnel to each MacLink profile that answers.
 pub(crate) fn start_adb_watcher(shared: &Arc<Shared>, adb_addr: SocketAddr) {
     let weak = Arc::downgrade(shared);
     let cancel = shared.cancel.clone();
@@ -409,7 +409,7 @@ fn auto_pairs(serial: &str) -> bool {
     !serial.trim().starts_with("emulator-")
 }
 
-/// Runs one tunnel until it ends. Returns whether a NectarLink profile answered.
+/// Runs one tunnel until it ends. Returns whether a MacLink profile answered.
 async fn run_forwarded_session(
     shared: &Arc<Shared>,
     forwarded_tcp: SocketAddr,

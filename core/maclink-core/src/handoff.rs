@@ -218,7 +218,7 @@ pub fn address_to_geo_uri(address: &str) -> String {
 ///   -> `("Demo Video · 1:30", "https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=90")`
 /// - `https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=90` without media title
 ///   -> `("YouTube · 1:30", "https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=90")`
-/// - `https://nectarlink.app/timeline` -> `("nectarlink.app/timeline", "https://nectarlink.app/timeline")`
+/// - `https://maclink.app/timeline` -> `("maclink.app/timeline", "https://maclink.app/timeline")`
 #[must_use]
 pub fn timeline_link_title_and_detail(url: &str, media_title: Option<&str>) -> (String, String) {
     let raw = url.trim().to_owned();
@@ -616,8 +616,8 @@ mod tests {
         // '—' is 3 bytes at bytes 3..6 when preceded by 3 ASCII bytes ("abc—def").
         assert!(extract_handoff_link("abc—def").is_none());
         assert!(extract_handoff_link("🚀✨🔥").is_none());
-        let link = extract_handoff_link("abc— https://nectarlink.app/docs").unwrap();
-        assert_eq!(link.url, "https://nectarlink.app/docs");
+        let link = extract_handoff_link("abc— https://maclink.app/docs").unwrap();
+        assert_eq!(link.url, "https://maclink.app/docs");
     }
 
     #[test]
@@ -679,8 +679,8 @@ mod tests {
         assert_eq!(v_site, "YouTube · 1:30");
         assert_eq!(v_site_detail, "https://www.youtube.com/watch?v=dQw4w9WgXcQ&t=90");
 
-        let (w_title, w_detail) = timeline_link_title_and_detail("https://nectarlink.app/timeline", None);
-        assert_eq!(w_title, "nectarlink.app/timeline");
-        assert_eq!(w_detail, "https://nectarlink.app/timeline");
+        let (w_title, w_detail) = timeline_link_title_and_detail("https://maclink.app/timeline", None);
+        assert_eq!(w_title, "maclink.app/timeline");
+        assert_eq!(w_detail, "https://maclink.app/timeline");
     }
 }

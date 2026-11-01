@@ -769,8 +769,8 @@ mod tests {
         // Unauthorized external applications / rogue packages
         assert!(!is_authorized_maclink_app("com.other.link"));
         assert!(!is_authorized_maclink_app("in.other.srv"));
-        assert!(!is_authorized_maclink_app("NectarLink"));
-        assert!(!is_authorized_maclink_app("NectarLink/0.1.4"));
+        assert!(!is_authorized_maclink_app("MacLink"));
+        assert!(!is_authorized_maclink_app("MacLink/0.1.4"));
         assert!(!is_authorized_maclink_app("PhoneLink/1.0"));
         assert!(!is_authorized_maclink_app("KDEConnect/2.0"));
         assert!(!is_authorized_maclink_app("LocalSend"));

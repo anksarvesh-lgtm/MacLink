@@ -1,55 +1,55 @@
 {
   "version": 1,
-  "task_id": "t-20261101-1492",
-  "goal": "Build macOS .app and DMG installer, commit changes, push to GitHub, and publish release assets",
+  "task_id": "t-20261101-7837",
+  "goal": "Build native Android release APK and macOS desktop MacLink.app and DMG, generate checksums, and update dist",
   "status": "active",
-  "created_at": "2026-11-01T16:01:34.645Z",
-  "updated_at": "2026-11-01T16:01:34.645Z",
+  "created_at": "2026-11-01T17:08:54.668Z",
+  "updated_at": "2026-11-01T17:08:54.668Z",
   "checkpoint_count": 0,
   "steps": [
     {
       "id": "s1",
-      "title": "Compile maclink-desktop and package MacLink.app and DMG",
+      "title": "Build Android release APK",
       "status": "in_progress",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T16:01:34.645Z"
+      "updated_at": "2026-11-01T17:08:54.668Z"
     },
     {
       "id": "s2",
-      "title": "Verify MacLink.app bundle and DMG mountability",
+      "title": "Build macOS release binary",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T16:01:34.645Z"
+      "updated_at": "2026-11-01T17:08:54.668Z"
     },
     {
       "id": "s3",
-      "title": "Push commits and tags to origin main",
+      "title": "Package MacLink.app and DMG",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T16:01:34.645Z"
+      "updated_at": "2026-11-01T17:08:54.668Z"
     },
     {
       "id": "s4",
-      "title": "Create GitHub release and publish DMG and app assets",
+      "title": "Verify artifacts and update dist",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T16:01:34.645Z"
+      "updated_at": "2026-11-01T17:08:54.668Z"
     }
   ]
 }

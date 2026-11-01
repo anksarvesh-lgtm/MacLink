@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-//! What another launch of NectarLink asks the running one to do: show its
+//! What another launch of MacLink asks the running one to do: show its
 //! window (Start menu, shortcuts), send files (Explorer's "Send to") or
 //! quit (the installer, before replacing or removing the app).
 //!
@@ -38,7 +38,7 @@ pub enum Request {
         #[serde(default)]
         text: Option<String>,
     },
-    /// Show or update a watched CLI task (`nectarlink notify-when`) on a paired phone.
+    /// Show or update a watched CLI task (`maclink notify-when`) on a paired phone.
     TaskNotify {
         #[serde(default)]
         device: Option<String>,

@@ -47,9 +47,9 @@ update signed with the same key as the installed app, so:
   lost, no existing install can ever be updated again; everyone would have to
   uninstall and reinstall.
 - Builds signed with the debug key (local `assembleRelease` without
-  `NECTARLINK_KEYSTORE`) can't update to or from official releases.
-- To sign locally: set `NECTARLINK_KEYSTORE` to the `.jks` path and
-  `NECTARLINK_KEYSTORE_PASSWORD`, then `./gradlew assembleRelease`.
+  `MACLINK_KEYSTORE`) can't update to or from official releases.
+- To sign locally: set `MACLINK_KEYSTORE` to the `.jks` path and
+  `MACLINK_KEYSTORE_PASSWORD`, then `./gradlew assembleRelease`.
 
 **Windows.** The installer and the app aren't Authenticode-signed yet, so
 SmartScreen warns on first download until the files build reputation. Options

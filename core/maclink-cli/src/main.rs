@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-//! `nectarlink`: a command-line client for development, testing and scripting.
+//! `maclink`: a command-line client for development, testing and scripting.
 //!
 //! It runs its own node with its own identity (separate from the desktop
 //! app), so it can pair with phones, PCs or another CLI instance.
@@ -23,7 +23,7 @@ use tokio::sync::broadcast::error::RecvError;
 #[command(name = "maclink", version, about = "MacLink command-line client")]
 struct Cli {
     /// Where this client keeps its identity and paired devices.
-    #[arg(long, global = true, env = "NECTARLINK_DATA_DIR")]
+    #[arg(long, global = true, env = "MACLINK_DATA_DIR")]
     data_dir: Option<PathBuf>,
     /// Where received files and recordings are saved.
     #[arg(long, global = true)]
@@ -764,7 +764,7 @@ enum PhotosArg {
         #[arg(long)]
         out: Option<PathBuf>,
     },
-    /// Download one or more full-size photos or videos into Downloads\Nectarlink.
+    /// Download one or more full-size photos or videos into Downloads\MacLink.
     Get {
         #[arg(required = true)]
         ids: Vec<String>,
@@ -1656,7 +1656,7 @@ fn sample_photos(total_count: usize) {
         ),
     ];
 
-    let temp_dir = std::env::temp_dir().join("nectarlink-demo-photos");
+    let temp_dir = std::env::temp_dir().join("maclink-demo-photos");
     let _ = std::fs::create_dir_all(&temp_dir);
     let mut base_items = Vec::with_capacity(specs.len());
     for (id, name, date, w, h, duration, album, top, bottom, sun) in specs {
@@ -1752,11 +1752,11 @@ fn sample_storage_tree(root: &std::path::Path) {
         ("Documents/notes.txt", b"Shopping list:\n- Coffee beans\n- Oats\n- Sparkling water\n"),
         (
             "Documents/project-plan.md",
-            b"# NectarLink Storage\n\nBrowse phone files directly in File Explorer.\n",
+            b"# MacLink Storage\n\nBrowse phone files directly in File Explorer.\n",
         ),
         (
             "Download/guide.txt",
-            b"Welcome to NectarLink Phone Storage.\nOpen any file to stream it on demand.\n",
+            b"Welcome to MacLink Phone Storage.\nOpen any file to stream it on demand.\n",
         ),
         (
             "DCIM/Camera/IMG_20260406_184210.jpg",
@@ -2412,7 +2412,7 @@ impl Platform for TerminalPlatform {
         let req_id = request.request_id.clone();
         let mode = request.mode;
         println!("A PC asked for Continuity Camera ({}, request {}).", mode.as_str(), req_id);
-        let delay_ms = std::env::var("NECTARLINK_CLI_CAMERA_DELAY_MS")
+        let delay_ms = std::env::var("MACLINK_CLI_CAMERA_DELAY_MS")
             .ok()
             .and_then(|s| s.parse::<u64>().ok())
             .unwrap_or(1200);
@@ -2517,7 +2517,7 @@ fn main() -> Result<()> {
 async fn start_node(cli: &Cli) -> Result<Node> {
     let data_dir = match &cli.data_dir {
         Some(dir) => dir.clone(),
-        None => dirs::data_local_dir().context("no local data directory")?.join("Nectarlink").join("cli"),
+        None => dirs::data_local_dir().context("no local data directory")?.join("MacLink").join("cli"),
     };
     let name = cli.name.clone().unwrap_or_else(|| {
         hostname::get().ok().and_then(|h| h.into_string().ok()).unwrap_or_else(|| "MacLink CLI".into())
@@ -2665,7 +2665,7 @@ async fn run(cli: &Cli, node: &Node) -> Result<()> {
             let devices = node.paired_devices()?;
             let localsend = node.localsend_peers();
             if devices.is_empty() && localsend.is_empty() {
-                println!("No paired devices. Run `nectarlink pair` to pair one.");
+                println!("No paired devices. Run `maclink pair` to pair one.");
             }
             for d in devices {
                 print_device(&d);
@@ -3727,7 +3727,7 @@ async fn run(cli: &Cli, node: &Node) -> Result<()> {
                 }
                 node.notification_posted(Notification {
                     key: format!("demo|{i}"),
-                    app: format!("dev.nectarlink.demo.{}", app.to_lowercase()),
+                    app: format!("in.maclink.demo.{}", app.to_lowercase()),
                     app_name: app.into(),
                     title: Some(title.into()),
                     text: Some(text.into()),
@@ -4123,7 +4123,7 @@ async fn run(cli: &Cli, node: &Node) -> Result<()> {
             }
             let base_note = Notification {
                 key: note_key.clone(),
-                app: "dev.nectarlink.cli".into(),
+                app: "in.maclink.cli".into(),
                 app_name: app.clone(),
                 title: title.clone(),
                 text: text.clone(),
@@ -4144,7 +4144,7 @@ async fn run(cli: &Cli, node: &Node) -> Result<()> {
                 };
                 node.notification_posted(Notification {
                     key: format!("cli|{now_ms}|{i}"),
-                    app: format!("dev.nectarlink.cli.{i}"),
+                    app: format!("in.maclink.cli.{i}"),
                     app_name: app.into(),
                     title: Some(title.into()),
                     text: Some(text.into()),
@@ -4211,7 +4211,7 @@ async fn pair(node: &Node) -> Result<()> {
     let uri = link.to_uri();
     print_qr(&uri);
     println!("\nScan this code in the MacLink app, or run on another machine:");
-    println!("  nectarlink join \"{uri}\"\n");
+    println!("  maclink join \"{uri}\"\n");
     println!("Waiting for a device (pairing mode ends in 5 minutes)…");
     loop {
         match events.recv().await {
@@ -4301,7 +4301,7 @@ async fn send_recording(
     let (name, path, cleanup) = match file {
         Some(p) => (maclink_core::safe_file_name(&p.to_string_lossy()), p.to_path_buf(), false),
         None => {
-            let tmp = std::env::temp_dir().join(format!("nectarlink-recording-{}.m4a", std::process::id()));
+            let tmp = std::env::temp_dir().join(format!("maclink-recording-{}.m4a", std::process::id()));
             std::fs::write(&tmp, sample_m4a(duration_secs)).context("can't write temporary M4A recording")?;
             ("Recording.m4a".to_owned(), tmp, true)
         }
@@ -4588,7 +4588,7 @@ async fn play(
         app: app.into(),
         title: Some(if track == 1 { title.to_owned() } else { format!("{title} ({track})") }),
         artist: Some(artist.into()),
-        album: Some("NectarLink Test Album".into()),
+        album: Some("MacLink Test Album".into()),
         playing,
         duration: Some(length),
         position: Some(position),
@@ -4794,17 +4794,17 @@ fn print_event(node: &Node, event: &NodeEvent) {
             println!("{}: Wake-on-LAN {}{detail}", name(device), if *can_wake { "ready" } else { "cleared" });
         }
         NodeEvent::RemoteInputRequested { device } => println!(
-            "{}: asked to control mouse and keyboard (allow with: nectarlink toggle {} remote_input on)",
+            "{}: asked to control mouse and keyboard (allow with: maclink toggle {} remote_input on)",
             name(device),
             device.short()
         ),
         NodeEvent::PcMirrorRequested { device, .. } => println!(
-            "{}: asked to view this PC's screen (allow with: nectarlink toggle {} pc_mirror on)",
+            "{}: asked to view this PC's screen (allow with: maclink toggle {} pc_mirror on)",
             name(device),
             device.short()
         ),
         NodeEvent::StorageRequested { device } => println!(
-            "{}: asked to browse phone storage (allow with: nectarlink toggle {} storage on)",
+            "{}: asked to browse phone storage (allow with: maclink toggle {} storage on)",
             name(device),
             device.short()
         ),
@@ -5069,7 +5069,7 @@ fn describe_upgrade(upgrade: &Upgrade) -> String {
         UpgradeAction::EnableAddon(addon) => format!("install the {addon} add-on"),
         UpgradeAction::EnablePath(ConnectionPath::Relay) => "turn on Away mode".into(),
         UpgradeAction::EnablePath(path) => format!("enable the {path:?} connection"),
-        UpgradeAction::EnableDeviceToggle(t) => format!("allow {t} (nectarlink toggle <device> {t} on)"),
+        UpgradeAction::EnableDeviceToggle(t) => format!("allow {t} (maclink toggle <device> {t} on)"),
         UpgradeAction::UpdateApp(Role::Phone) => "update the app on the phone".into(),
         UpgradeAction::UpdateApp(Role::Desktop) => "update the app on the PC".into(),
     };
@@ -5135,7 +5135,7 @@ fn resolve(node: &Node, query: &str) -> Result<DeviceId> {
     }
 }
 
-/// Resolves a target for `send`: a paired NectarLink device, a discovered
+/// Resolves a target for `send`: a paired MacLink device, a discovered
 /// LocalSend peer, or a `host[:port]` LocalSend address.
 async fn resolve_send_target(node: &Node, query: &str, default_port: u16) -> Result<(DeviceId, bool)> {
     if let Ok(id) = resolve(node, query)
@@ -5509,7 +5509,7 @@ async fn connect_task_transport(cli: &Cli, device_query: Option<&str>) -> Result
     {
         let desktop_dir = match &cli.data_dir {
             Some(dir) => Some(dir.clone()),
-            None => dirs::data_local_dir().map(|d| d.join("Nectarlink")),
+            None => dirs::data_local_dir().map(|d| d.join("MacLink")),
         };
         #[cfg(windows)]
         if let Some(dir) = desktop_dir
@@ -5540,7 +5540,7 @@ async fn connect_task_transport(cli: &Cli, device_query: Option<&str>) -> Result
             }
             if phones.is_empty() {
                 node.shutdown().await;
-                bail!("no paired phone; run `nectarlink pair` first");
+                bail!("no paired phone; run `maclink pair` first");
             }
             let mut events = node.events();
             let any_online = |node: &Node, ids: &[DeviceId]| {
@@ -5786,7 +5786,7 @@ mod win_watch {
         let mut hasher = DefaultHasher::new();
         data_dir.to_string_lossy().to_lowercase().hash(&mut hasher);
         let tag = format!("{:016x}", hasher.finish());
-        HSTRING::from(format!(r"Local\Nectarlink.Desktop.Activate.{tag}"))
+        HSTRING::from(format!(r"Local\MacLink.Desktop.Activate.{tag}"))
     }
 
     pub fn is_desktop_running(data_dir: &Path) -> bool {
@@ -6142,7 +6142,7 @@ mod tests {
         assert!(live.countdown);
 
         let cli = Cli::try_parse_from([
-            "nectarlink",
+            "maclink",
             "--as-phone",
             "notify",
             "Ride arriving",
@@ -6167,7 +6167,7 @@ mod tests {
 
     #[test]
     fn parses_notify_when_pid_and_command_args() {
-        let by_pid = Cli::try_parse_from(["nectarlink", "notify-when", "--title", "Backup", "4242"]).unwrap();
+        let by_pid = Cli::try_parse_from(["maclink", "notify-when", "--title", "Backup", "4242"]).unwrap();
         match by_pid.command {
             Command::NotifyWhen { title, device, target } => {
                 assert_eq!(title.as_deref(), Some("Backup"));
@@ -6178,7 +6178,7 @@ mod tests {
         }
 
         let by_cmd = Cli::try_parse_from([
-            "nectarlink",
+            "maclink",
             "notify-when",
             "--device",
             "pixel",

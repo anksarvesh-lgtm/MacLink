@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import QtQuick
 import QtQuick.Layouts
-import app.nectarlink
+import app.maclink
 
 // Streamlined First-Run Setup (3 Essential Steps):
 // 1. Connect Your Phone (Download APK / ADB / QR Pairing)

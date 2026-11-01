@@ -110,7 +110,7 @@ fn write_atomically(path: &Path, data: &[u8]) -> io::Result<()> {
 /// The install ID a device reports to its peers ([`DeviceInfo::install_id`]): a salted
 /// BLAKE3 hash of a platform ID that survives app reinstalls (Android's `ANDROID_ID`,
 /// Windows' `MachineGuid`). The raw ID never leaves the device; the salt keeps the hash
-/// specific to NectarLink, so it can't be matched against other apps' identifiers.
+/// specific to MacLink, so it can't be matched against other apps' identifiers.
 ///
 /// [`DeviceInfo::install_id`]: maclink_protocol::messages::DeviceInfo::install_id
 pub fn install_id_from(platform_id: &str) -> Option<String> {
@@ -118,7 +118,7 @@ pub fn install_id_from(platform_id: &str) -> Option<String> {
     if raw.is_empty() {
         return None;
     }
-    let mut hasher = blake3::Hasher::new_derive_key("nectarlink 2026 install id v1");
+    let mut hasher = blake3::Hasher::new_derive_key("maclink 2026 install id v1");
     hasher.update(raw.as_bytes());
     let hex = hasher.finalize().to_hex();
     Some(hex[..maclink_protocol::messages::INSTALL_ID_LEN].to_owned())

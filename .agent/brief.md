@@ -1,6 +1,6 @@
-<!-- BRIEF: COMMIT=6ccf42fc HASH=a343f83c DATE=2026-11-01T16:00:29.895Z -->
+<!-- BRIEF: COMMIT=4b59a0a3 HASH=17a29be5 DATE=2026-11-01T16:58:19.785Z -->
 # Project Brief: nectarlink
-- **Commit**: `6ccf42fc` | **Updated**: 2026-11-01T16:00:29.895Z | **Files Tracked**: 601
+- **Commit**: `4b59a0a3` | **Updated**: 2026-11-01T16:58:19.785Z | **Files Tracked**: 602
 
 ## Overview
 **Your Android phone and your Mac, working seamlessly as one.**
@@ -30,8 +30,8 @@
 │   ├── maclink-core/ (40 files)
 │   ├── maclink-ffi/ (4 files)
 │   └── maclink-protocol/ (9 files)
-├── desktop/ (190 files)
-│   ├── app/ (189 files)
+├── desktop/ (191 files)
+│   ├── app/ (190 files)
 │   └── packaging/ (1 file)
 ├── docs/ (118 files)
 │   ├── adr/ (9 files)

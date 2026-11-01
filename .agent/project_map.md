@@ -1,5 +1,5 @@
 # Project Map & Architecture: nectarlink
-Generated on: 2026-11-01T16:00:29.900Z | Total Tracked Files: 601
+Generated on: 2026-11-01T16:58:19.788Z | Total Tracked Files: 602
 
 ## Architecture Flowchart
 ```mermaid
@@ -31,8 +31,8 @@ graph TD
 │   ├── maclink-core/ (40 files)
 │   ├── maclink-ffi/ (4 files)
 │   └── maclink-protocol/ (9 files)
-├── desktop/ (190 files)
-│   ├── app/ (189 files)
+├── desktop/ (191 files)
+│   ├── app/ (190 files)
 │   └── packaging/ (1 file)
 ├── docs/ (118 files)
 │   ├── adr/ (9 files)

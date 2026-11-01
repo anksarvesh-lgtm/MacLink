@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import QtQuick
-import app.nectarlink
+import app.maclink
 
 // Timeline: searchable, paged local history of everything that moved between
 // this PC and paired devices (files, folders, clips, links, saved photos,

@@ -246,12 +246,12 @@ fn newer_release_for(release: Release, current: &str, suffix: &str) -> Option<Up
         let name_lower = a.name.to_lowercase();
         let suffix_lower = suffix.to_lowercase();
         name_lower.ends_with(&suffix_lower)
-            && (a.name.starts_with("Nectarlink-")
+            && (a.name.starts_with("MacLink-")
                 || a.name.starts_with("MacLink-")
                 || a.name.starts_with("maclink-")
                 || name_lower.contains("setup")
                 || name_lower.contains("maclink")
-                || name_lower.contains("nectarlink"))
+                || name_lower.contains("maclink"))
             && a.name.chars().all(|c| c.is_ascii_alphanumeric() || matches!(c, '-' | '.' | '_'))
             && !a.name.contains("..")
     })?;

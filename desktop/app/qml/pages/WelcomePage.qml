@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import QtQuick
-import app.nectarlink
+import app.maclink
 
 // First run: pair a phone. Also covers the moment before the core is ready
 // and the (rare) case where it failed to start.

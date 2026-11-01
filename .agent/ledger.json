@@ -1,55 +1,55 @@
 {
   "version": 1,
-  "task_id": "t-20261101-1492",
-  "goal": "Build macOS .app and DMG installer, commit changes, push to GitHub, and publish release assets",
+  "task_id": "t-20261101-7837",
+  "goal": "Build native Android release APK and macOS desktop MacLink.app and DMG, generate checksums, and update dist",
   "status": "active",
-  "created_at": "2026-11-01T16:01:34.645Z",
-  "updated_at": "2026-11-01T16:09:50.186Z",
+  "created_at": "2026-11-01T17:08:54.668Z",
+  "updated_at": "2026-11-01T17:09:34.464Z",
   "checkpoint_count": 1,
   "steps": [
     {
       "id": "s1",
-      "title": "Compile maclink-desktop and package MacLink.app and DMG",
+      "title": "Build Android release APK",
       "status": "done",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": "Compiled maclink-desktop release binary (target/release/maclink-desktop) and packaged MacLink.app, MacLink-0.0.1-macos-arm64.dmg, MacLink-0.0.1.dmg, and MacLink-0.0.1-macos-arm64.zip via build-app.sh. All artifacts placed in dist/.",
+      "note": "Successfully compiled and assembled native Android release APK (dist/MacLink-0.0.1-android.apk, 93MB) via Gradle 9.8 with NDK 30 arm64-v8a/x86_64 native libraries and UniFFI bindings.",
       "last_error": null,
-      "updated_at": "2026-11-01T16:09:50.186Z"
+      "updated_at": "2026-11-01T17:09:34.464Z"
     },
     {
       "id": "s2",
-      "title": "Verify MacLink.app bundle and DMG mountability",
+      "title": "Build macOS release binary",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T16:01:34.645Z"
+      "updated_at": "2026-11-01T17:08:54.668Z"
     },
     {
       "id": "s3",
-      "title": "Push commits and tags to origin main",
+      "title": "Package MacLink.app and DMG",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T16:01:34.645Z"
+      "updated_at": "2026-11-01T17:08:54.668Z"
     },
     {
       "id": "s4",
-      "title": "Create GitHub release and publish DMG and app assets",
+      "title": "Verify artifacts and update dist",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T16:01:34.645Z"
+      "updated_at": "2026-11-01T17:08:54.668Z"
     }
   ]
 }

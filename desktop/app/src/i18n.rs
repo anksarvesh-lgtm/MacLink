@@ -43,12 +43,12 @@ fn select_translation_dir(exe_dir: &Path) -> PathBuf {
     }
     #[cfg(target_os = "linux")]
     {
-        if let Some(rel_share) = exe_dir.parent().map(|p| p.join("share").join("nectarlink"))
+        if let Some(rel_share) = exe_dir.parent().map(|p| p.join("share").join("maclink"))
             && has_qm_files(&rel_share)
         {
             return rel_share;
         }
-        let sys_share = Path::new("/usr/share/nectarlink");
+        let sys_share = Path::new("/usr/share/maclink");
         if has_qm_files(sys_share) {
             return sys_share.to_path_buf();
         }
@@ -164,7 +164,7 @@ mod tests {
     fn every_offered_language_is_fully_translated() {
         let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("i18n");
         for (code, name) in LANGUAGES.iter().filter(|(code, _)| !code.is_empty() && *code != "en") {
-            let ts = std::fs::read_to_string(dir.join(format!("nectarlink_{code}.ts")))
+            let ts = std::fs::read_to_string(dir.join(format!("maclink_{code}.ts")))
                 .unwrap_or_else(|e| panic!("{name} is offered but has no catalogue: {e}"));
             let unfinished = ts.matches("type=\"unfinished\"").count();
             assert_eq!(unfinished, 0, "{name} is offered but has {unfinished} untranslated strings");

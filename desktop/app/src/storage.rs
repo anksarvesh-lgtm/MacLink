@@ -2,7 +2,7 @@
 //! Phone storage in File Explorer (`docs/protocol/storage.md`, `PLAN.md` §3.6).
 //!
 //! Registers a Windows Cloud Files (`cfapi`) sync root per paired phone under
-//! `%USERPROFILE%\Nectarlink\<Phone name>` when the phone's `storage` toggle is
+//! `%USERPROFILE%\MacLink\<Phone name>` when the phone's `storage` toggle is
 //! enabled. Placeholders are populated on demand when folders are opened
 //! (`CF_CALLBACK_TYPE_FETCH_PLACEHOLDERS`) and hydrated on open via ranged
 //! reads (`CF_CALLBACK_TYPE_FETCH_DATA`). Renames, deletes, and new or modified
@@ -79,7 +79,7 @@ mod imp {
         win,
     };
 
-    /// Provider prefix for sync root IDs (`NectarLink!<device_id>`).
+    /// Provider prefix for sync root IDs (`MacLink!<device_id>`).
     const PROVIDER_PREFIX: &str = "MacLink!";
 
     /// Difference between Windows FILETIME epoch (1601-01-01) and Unix epoch
@@ -215,7 +215,7 @@ mod imp {
         }
     }
 
-    /// Unregisters all `NectarLink!*` sync roots from Windows (`--uninstall`).
+    /// Unregisters all `MacLink!*` sync roots from Windows (`--uninstall`).
     pub fn unregister_all() {
         shutdown();
         win::with_com(|| {
@@ -246,7 +246,7 @@ mod imp {
         });
     }
 
-    /// Returns the local sync root path for a paired phone (`%USERPROFILE%\Nectarlink\<Phone name>`).
+    /// Returns the local sync root path for a paired phone (`%USERPROFILE%\MacLink\<Phone name>`).
     pub fn sync_root_path_for(device: DeviceId) -> Option<PathBuf> {
         if let Some(active) = get_active_root(&device) {
             return Some(active.root_path.clone());
@@ -1243,17 +1243,17 @@ mod imp {
 
         #[test]
         fn normalizes_relative_paths_and_sanitizes_folder_names() {
-            let root = Path::new(r"C:\Users\alice\Nectarlink\Pixel 9");
+            let root = Path::new(r"C:\Users\alice\MacLink\Pixel 9");
             assert_eq!(relative_path_under_root(root, root), Some(String::new()));
             assert_eq!(
                 relative_path_under_root(
                     root,
-                    Path::new(r"C:\Users\alice\Nectarlink\Pixel 9\DCIM\Camera\a.jpg")
+                    Path::new(r"C:\Users\alice\MacLink\Pixel 9\DCIM\Camera\a.jpg")
                 ),
                 Some("DCIM/Camera/a.jpg".into())
             );
             assert_eq!(
-                relative_path_under_root(root, Path::new(r"C:\Users\alice\Nectarlink\Pixel 9 Pro\DCIM")),
+                relative_path_under_root(root, Path::new(r"C:\Users\alice\MacLink\Pixel 9 Pro\DCIM")),
                 None
             );
 

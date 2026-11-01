@@ -40,7 +40,7 @@ cp "$BIN" "$APP/Contents/MacOS/maclink-desktop"
 # Translations, next to the executable where the app looks for them.
 LRELEASE="${QT_ROOT_DIR:+${QT_ROOT_DIR}/bin/}lrelease"
 command -v "$LRELEASE" >/dev/null || { echo "lrelease not found; set QT_ROOT_DIR" >&2; exit 1; }
-for ts in desktop/app/i18n/nectarlink_*.ts; do
+for ts in desktop/app/i18n/maclink_*.ts; do
     name="$(basename "$ts" .ts)"
     "$LRELEASE" -silent "$ts" -qm "$APP/Contents/MacOS/${name}.qm"
 done
@@ -74,12 +74,12 @@ cat > "$APP/Contents/Info.plist" <<PLIST
     <key>LSApplicationCategoryType</key><string>public.app-category.utilities</string>
     <key>NSHighResolutionCapable</key><true/>
     <key>NSSupportsAutomaticGraphicsSwitching</key><true/>
+    <key>NSUserNotificationAlertStyle</key><string>banner</string>
     <key>NSLocalNetworkUsageDescription</key>
     <string>MacLink finds your phone and connects to it on this network.</string>
     <key>NSBonjourServices</key>
     <array>
         <string>_maclink._udp</string>
-        <string>_nectarlink._udp</string>
     </array>
     <key>NSMicrophoneUsageDescription</key>
     <string>MacLink uses the microphone for calls you take on this Mac.</string>
@@ -94,7 +94,6 @@ cat > "$APP/Contents/Info.plist" <<PLIST
             <key>CFBundleURLSchemes</key>
             <array>
                 <string>maclink</string>
-                <string>nectarlink</string>
             </array>
         </dict>
     </array>

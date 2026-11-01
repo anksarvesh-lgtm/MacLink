@@ -7,7 +7,7 @@
 //! - Listens on UDP multicast `224.0.0.167:53317` (with `SO_REUSEADDR`) and TCP
 //!   port `53317` (configurable via `NodeConfig::localsend_port`).
 //! - If TCP port `53317` is already taken by the standalone LocalSend app on the
-//!   same PC, NectarLink logs a notice, leaves receiving to LocalSend, and still
+//!   same PC, MacLink logs a notice, leaves receiving to LocalSend, and still
 //!   discovers and sends files to LocalSend peers on the network.
 
 use std::{
@@ -92,11 +92,11 @@ pub struct LocalSendPeer {
     pub protocol: String,
 }
 
-/// Derives a deterministic NectarLink [`DeviceId`] for a LocalSend peer from its
+/// Derives a deterministic MacLink [`DeviceId`] for a LocalSend peer from its
 /// certificate fingerprint (or `ip:port` when encryption is off).
 pub fn peer_device_id(fingerprint: &str, ip: &str, port: u16) -> DeviceId {
     let mut hasher = Sha256::new();
-    hasher.update(b"nectarlink-localsend:v2:");
+    hasher.update(b"maclink-localsend:v2:");
     let trimmed = fingerprint.trim();
     if !trimmed.is_empty() && !trimmed.eq_ignore_ascii_case("random") {
         hasher.update(trimmed.as_bytes());
@@ -435,7 +435,7 @@ impl LocalSendState {
                 tracing::info!(
                     port = configured_port,
                     error = %e,
-                    "LocalSend TCP port is in use by another app; NectarLink will still discover and send to LocalSend peers"
+                    "LocalSend TCP port is in use by another app; MacLink will still discover and send to LocalSend peers"
                 );
                 None
             }
@@ -562,7 +562,7 @@ fn build_our_multicast_dto(shared: &Shared, port: u16, announce: bool) -> Multic
     MulticastDto {
         alias: device.name,
         version: LOCALSEND_PROTOCOL_VERSION.into(),
-        device_model: device.model.or_else(|| Some("NectarLink".into())),
+        device_model: device.model.or_else(|| Some("MacLink".into())),
         device_type: Some(device_kind_str(device.kind).into()),
         fingerprint: shared.localsend.identity.fingerprint.clone(),
         port,
@@ -579,7 +579,7 @@ fn build_our_info_dto(shared: &Shared) -> InfoDto {
     InfoDto {
         alias: device.name,
         version: LOCALSEND_PROTOCOL_VERSION.into(),
-        device_model: device.model.or_else(|| Some("NectarLink".into())),
+        device_model: device.model.or_else(|| Some("MacLink".into())),
         device_type: Some(device_kind_str(device.kind).into()),
         fingerprint: shared.localsend.identity.fingerprint.clone(),
         port: Some(port),
@@ -1873,7 +1873,7 @@ async fn write_http_request<S: AsyncWrite + Unpin>(
 ) -> Result<()> {
     let ct_header = content_type.map(|ct| format!("Content-Type: {ct}\r\n")).unwrap_or_default();
     let req = format!(
-        "{method} {path} HTTP/1.1\r\nHost: {host}\r\nUser-Agent: Nectarlink/0.1\r\n{ct_header}Content-Length: {}\r\nConnection: close\r\n\r\n",
+        "{method} {path} HTTP/1.1\r\nHost: {host}\r\nUser-Agent: MacLink/0.1\r\n{ct_header}Content-Length: {}\r\nConnection: close\r\n\r\n",
         body.len()
     );
     stream.write_all(req.as_bytes()).await.map_err(|_| Error::Offline)?;

@@ -1,19 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 //! The installer's and the uninstaller's windows, and the work behind them.
 //!
-//! `Nectarlink-<version>-x64-setup.exe` (NSIS, `desktop/installer`) unpacks
+//! `MacLink-<version>-x64-setup.exe` (NSIS, `desktop/installer`) unpacks
 //! the app to a temporary folder and runs it there, renamed to
-//! `Nectarlink Setup.exe`, with `--setup --installer <setup.exe>`. That
+//! `MacLink Setup.exe`, with `--setup --installer <setup.exe>`. That
 //! window asks nothing; Install runs the same setup.exe again with
 //! administrator rights and `/S /PROGRESS=<file>`, which installs into
 //! Program Files and writes each step to the file, so the window can follow.
 //!
 //! Removing (Windows Settings > Apps) runs the installed app with `--remove`.
 //! A program can't delete its own folder, so it first copies itself to a
-//! temporary folder (as `Nectarlink Uninstall.exe`) and carries on from
+//! temporary folder (as `MacLink Uninstall.exe`) and carries on from
 //! there, then runs `uninstall.exe /S /PROGRESS=<file>` with administrator
-//! rights, and finally removes this user's NectarLink data. Files received
-//! from phones (`Downloads\Nectarlink`), voice recordings and synced folders
+//! rights, and finally removes this user's MacLink data. Files received
+//! from phones (`Downloads\MacLink`), voice recordings and synced folders
 //! belong to the user and are kept.
 //!
 //! The renamed copies matter: the installer closes running copies of
@@ -37,8 +37,8 @@ pub const ANDROID_URL: &str = "https://github.com/anksarvesh-lgtm/MacLink/releas
 
 const APP_EXE: &str = if cfg!(windows) { "maclink-desktop.exe" } else { "maclink-desktop" };
 #[cfg(windows)]
-const UNINSTALL_KEY: &str = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\Nectarlink";
-const SETUP_COPY_NAME: &str = if cfg!(windows) { "Nectarlink Uninstall.exe" } else { "Nectarlink Uninstall" };
+const UNINSTALL_KEY: &str = r"Software\Microsoft\Windows\CurrentVersion\Uninstall\MacLink";
+const SETUP_COPY_NAME: &str = if cfg!(windows) { "MacLink Uninstall.exe" } else { "MacLink Uninstall" };
 
 #[cfg(windows)]
 const CREATE_NO_WINDOW: u32 = 0x0800_0000;
@@ -118,7 +118,7 @@ impl Step {
     /// What the window says while this step runs.
     pub fn label(self) -> &'static str {
         match self {
-            Step::Closing => "Closing NectarLink",
+            Step::Closing => "Closing MacLink",
             Step::Files => "Copying files",
             Step::Firewall => "Allowing through Windows Firewall",
             Step::Updates => "Setting up updates",
@@ -183,7 +183,7 @@ pub fn remove(installed: &Path, mut on_event: impl FnMut(Event)) -> Outcome {
     if !uninstaller.is_file() {
         return Outcome::Failed(tr!(
             "Setup",
-            "The uninstaller is missing. Reinstall NectarLink, then uninstall it."
+            "The uninstaller is missing. Reinstall MacLink, then uninstall it."
         ));
     }
     let progress = progress_file("remove");
@@ -205,14 +205,14 @@ pub fn remove_user_data() {
     if let Err(e) = std::fs::remove_dir_all(&data)
         && e.kind() != std::io::ErrorKind::NotFound
     {
-        tracing::warn!(error = %e, "can't remove all of NectarLink's data");
+        tracing::warn!(error = %e, "can't remove all of MacLink's data");
     }
 }
 
-/// `%LOCALAPPDATA%\Nectarlink`, the app's default data folder.
+/// `%LOCALAPPDATA%\MacLink`, the app's default data folder.
 fn user_data_dir() -> Option<PathBuf> {
     let local = std::env::var_os("LOCALAPPDATA").map(PathBuf::from)?;
-    local.is_absolute().then(|| local.join("Nectarlink"))
+    local.is_absolute().then(|| local.join("MacLink"))
 }
 
 /// Runs `program` elevated with `params` and follows `progress` until it
@@ -288,7 +288,7 @@ fn new_events(path: &Path, read: &mut usize) -> Vec<Event> {
 }
 
 fn progress_file(what: &str) -> PathBuf {
-    std::env::temp_dir().join(format!("nectarlink-{what}-{}.progress", std::process::id()))
+    std::env::temp_dir().join(format!("maclink-{what}-{}.progress", std::process::id()))
 }
 
 /// Starts the installed app as this user, not elevated. Through Explorer, so
@@ -321,11 +321,11 @@ pub fn hand_over_removal(installed: &Path) -> Result<bool, String> {
     let exe = std::env::current_exe().map_err(|e| e.to_string())?;
     let temp = std::env::temp_dir();
     if exe.starts_with(&temp)
-        || (cfg!(debug_assertions) && std::env::var_os("NECTARLINK_SETUP_PREVIEW").is_some())
+        || (cfg!(debug_assertions) && std::env::var_os("MACLINK_SETUP_PREVIEW").is_some())
     {
         return Ok(false);
     }
-    let copy = temp.join(format!("Nectarlink-uninstall-{}", std::process::id()));
+    let copy = temp.join(format!("MacLink-uninstall-{}", std::process::id()));
     copy_tree(installed, &copy).map_err(|e| format!("can't prepare removal: {e}"))?;
     let app = copy.join(APP_EXE);
     let renamed = copy.join(SETUP_COPY_NAME);
@@ -347,7 +347,7 @@ pub fn delete_own_copy_later() {
     let temp = std::env::temp_dir();
     // Only ever a folder this module made under %TEMP%.
     let ours = dir.starts_with(&temp)
-        && dir.file_name().and_then(|n| n.to_str()).is_some_and(|n| n.starts_with("Nectarlink-uninstall-"));
+        && dir.file_name().and_then(|n| n.to_str()).is_some_and(|n| n.starts_with("MacLink-uninstall-"));
     if !ours {
         return;
     }
@@ -439,7 +439,7 @@ mod tests {
 
     #[test]
     fn new_events_reads_only_what_was_added() {
-        let dir = std::env::temp_dir().join(format!("nectarlink-setup-test-{}", std::process::id()));
+        let dir = std::env::temp_dir().join(format!("maclink-setup-test-{}", std::process::id()));
         std::fs::create_dir_all(&dir).unwrap();
         let file = dir.join("p.progress");
         std::fs::write(&file, "step closing\nstep files\n").unwrap();
@@ -453,7 +453,7 @@ mod tests {
 
     #[test]
     fn copy_tree_copies_nested_files() {
-        let base = std::env::temp_dir().join(format!("nectarlink-copytree-{}", std::process::id()));
+        let base = std::env::temp_dir().join(format!("maclink-copytree-{}", std::process::id()));
         let from = base.join("from");
         std::fs::create_dir_all(from.join("qml/QtQuick")).unwrap();
         std::fs::write(from.join("a.dll"), b"a").unwrap();

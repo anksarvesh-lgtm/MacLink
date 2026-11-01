@@ -84,7 +84,7 @@ fn env_cargo() -> String {
 }
 
 /// The crates in the app's normal dependency graph, workspace crates left
-/// out (they're NectarLink's own).
+/// out (they're MacLink's own).
 fn shipped_crates(metadata: &Value) -> Result<Vec<Crate>> {
     let packages: BTreeMap<&str, &Value> = metadata["packages"]
         .as_array()

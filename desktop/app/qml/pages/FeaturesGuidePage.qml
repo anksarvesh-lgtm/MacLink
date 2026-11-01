@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import QtQuick
 import QtQuick.Layouts
-import app.nectarlink
+import app.maclink
 
 // In-app Features Guide page: searchable and filterable reference to every
-// NectarLink feature, live capability status when a phone is connected,
+// MacLink feature, live capability status when a phone is connected,
 // "Show me" navigation, and "Learn more" reader sheet with handbook tabs.
 Item {
     id: guide

@@ -319,7 +319,7 @@ pub struct Settings {
     /// reduced motion or battery saver whatever this says).
     #[serde(default = "default_true", alias = "comb_motion")]
     pub comb_motion: bool,
-    /// Closing the window keeps NectarLink running in the tray.
+    /// Closing the window keeps MacLink running in the tray.
     #[serde(default = "default_close_to_tray", alias = "close_to_tray")]
     pub close_to_tray: bool,
     /// Send what's copied on this PC to connected phones.
@@ -363,7 +363,7 @@ pub struct Settings {
     /// doesn't.
     #[serde(skip_serializing_if = "Option::is_none", alias = "start_with_windows")]
     pub start_with_windows: Option<bool>,
-    /// Where voice recordings from phones are saved (`None` = `Documents\Nectarlink Recordings`).
+    /// Where voice recordings from phones are saved (`None` = `Documents\MacLink Recordings`).
     #[serde(skip_serializing_if = "Option::is_none", alias = "recordings_folder")]
     pub recordings_folder: Option<PathBuf>,
     /// Output format for saved voice recordings (`m4a`, `mp3`, `wav`, or `flac`).
@@ -412,7 +412,7 @@ pub struct Settings {
     #[serde(default = "default_true", alias = "clipboard_auto_copy_received_files")]
     pub clipboard_auto_copy_received_files: bool,
     /// Open a single photo or document shared from the phone as soon as it
-    /// arrives. Off by default: it's saved in Downloads\Nectarlink either way.
+    /// arrives. Off by default: it's saved in Downloads\MacLink either way.
     #[serde(default, alias = "open_shared_files")]
     pub open_shared_files: bool,
     /// Send the PC's clipboard to the phone when control moves to it: the mouse

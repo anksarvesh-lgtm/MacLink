@@ -23,7 +23,8 @@ use crate::{
     },
 };
 
-const FILE_NAME: &str = "nectarlink.db";
+const FILE_NAME: &str = "maclink.db";
+const LEGACY_FILE_NAME: &str = "nectarlink.db";
 
 /// Maximum active (`Waiting` + `Sending`) items in `send_queue` across all peers.
 pub const MAX_QUEUE_ACTIVE_ITEMS: usize = 200;
@@ -599,7 +600,14 @@ pub(crate) struct Store {
 
 impl Store {
     pub fn open(dir: &Path) -> Result<Self> {
-        Self::init_with_dir(Connection::open(dir.join(FILE_NAME))?, Some(dir.to_path_buf()))
+        let db_path = dir.join(FILE_NAME);
+        let legacy_path = dir.join(LEGACY_FILE_NAME);
+        if !db_path.exists() && legacy_path.exists() {
+            let _ = std::fs::rename(&legacy_path, &db_path);
+            let _ = std::fs::rename(dir.join("nectarlink.db-wal"), dir.join("maclink.db-wal"));
+            let _ = std::fs::rename(dir.join("nectarlink.db-shm"), dir.join("maclink.db-shm"));
+        }
+        Self::init_with_dir(Connection::open(db_path)?, Some(dir.to_path_buf()))
     }
 
     #[cfg(test)]
@@ -2383,7 +2391,7 @@ fn migrate(conn: &Connection) -> Result<()> {
     let current = usize::try_from(current).unwrap_or(usize::MAX);
     if current > MIGRATIONS.len() {
         return Err(Error::Storage(format!(
-            "the database was created by a newer NectarLink (schema {current}); please update"
+            "the database was created by a newer MacLink (schema {current}); please update"
         )));
     }
     for (index, sql) in MIGRATIONS.iter().enumerate().skip(current) {
@@ -3122,9 +3130,9 @@ mod tests {
                         device_name: rec.info.name.clone(),
                         incoming: false,
                         timestamp: paired_at + 100,
-                        title: "https://nectarlink.app".into(),
+                        title: "https://maclink.app".into(),
                         detail: "Sent".into(),
-                        target: "https://nectarlink.app".into(),
+                        target: "https://maclink.app".into(),
                         size_bytes: 0,
                         duration_secs: 0,
                         ref_id: None,
@@ -3167,7 +3175,7 @@ mod tests {
                 .enqueue_send_item(
                     "q-mig-1",
                     &peer,
-                    &QueuePayload::Link { url: "https://nectarlink.dev".into(), title: None },
+                    &QueuePayload::Link { url: "https://maclink.app".into(), title: None },
                     None,
                     paired_at * 1000,
                 )
@@ -3307,7 +3315,7 @@ mod tests {
             .enqueue_send_item(
                 "link-a1",
                 &peer_a,
-                &QueuePayload::Link { url: "https://nectarlink.dev/docs".into(), title: None },
+                &QueuePayload::Link { url: "https://maclink.app/docs".into(), title: None },
                 None,
                 now_ms + 20,
             )
@@ -3461,7 +3469,7 @@ mod tests {
                 .enqueue_send_item(
                     &format!("item-{i}"),
                     &peer_b,
-                    &QueuePayload::Link { url: format!("https://nectarlink.dev/{i}"), title: None },
+                    &QueuePayload::Link { url: format!("https://maclink.app/{i}"), title: None },
                     None,
                     now_ms + i as i64,
                 )
@@ -3470,7 +3478,7 @@ mod tests {
         let over_cap = store.enqueue_send_item(
             "item-200",
             &peer_b,
-            &QueuePayload::Link { url: "https://nectarlink.dev/overflow".into(), title: None },
+            &QueuePayload::Link { url: "https://maclink.app/overflow".into(), title: None },
             None,
             now_ms + 999,
         );
@@ -3642,7 +3650,7 @@ mod tests {
             .enqueue_send_item(
                 "off-1",
                 &offline_peer,
-                &QueuePayload::Link { url: "https://nectarlink.dev/off".into(), title: None },
+                &QueuePayload::Link { url: "https://maclink.app/off".into(), title: None },
                 None,
                 now_ms,
             )

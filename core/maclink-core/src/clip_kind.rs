@@ -830,7 +830,7 @@ mod tests {
     #[test]
     fn web_links_vs_file_paths_and_text() {
         let positives = [
-            ("https://nectarlink.app/docs?tab=1#top", "https://nectarlink.app/docs?tab=1#top"),
+            ("https://maclink.app/docs?tab=1#top", "https://maclink.app/docs?tab=1#top"),
             ("  http://example.com/path/to/page  ", "http://example.com/path/to/page"),
             ("HTTPS://github.com/anksarvesh-lgtm/MacLink", "https://github.com/anksarvesh-lgtm/MacLink"),
             (
@@ -853,7 +853,7 @@ mod tests {
             r"C:\Users\Alice\Documents\report.pdf",
             "C:/Users/Alice/Documents/report.pdf",
             r"\\server\share\folder\file.txt",
-            "/usr/local/bin/nectarlink",
+            "/usr/local/bin/maclink",
             "~/Downloads/photo.jpg",
             "file:///C:/Users/Alice/test.html",
             "ftp://files.example.com/pub/archive.zip",
@@ -875,7 +875,7 @@ mod tests {
     fn emails_vs_handles_and_filenames() {
         let positives = [
             ("alex.chen+work@example.com", "alex.chen+work@example.com"),
-            ("  support@nectarlink.dev  ", "support@nectarlink.dev"),
+            ("  support@maclink.app  ", "support@maclink.app"),
             ("mailto:billing@company.co.uk?subject=Invoice", "billing@company.co.uk"),
         ];
         for (input, expected) in positives {

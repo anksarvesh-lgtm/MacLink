@@ -801,7 +801,7 @@ pub fn dial_problem(error: &Error) -> &'static str {
     match error {
         Error::Denied => "Calls are turned off for this phone.",
         Error::Unsupported => {
-            "The phone doesn't place calls for this PC. Allow it in the NectarLink app on the phone."
+            "The phone doesn't place calls for this PC. Allow it in the MacLink app on the phone."
         }
         Error::Offline | Error::NotPaired | Error::Timeout => "The phone isn't connected.",
         _ => "The phone couldn't place that call.",
