@@ -1,5 +1,5 @@
 # Project Map & Architecture: nectarlink
-Generated on: 2026-11-01T13:01:35.836Z | Total Tracked Files: 692
+Generated on: 2026-11-01T14:38:24.823Z | Total Tracked Files: 683
 
 ## Architecture Flowchart
 ```mermaid
@@ -19,8 +19,8 @@ graph TD
 │   ├── scripts/ (1 file)
 │   └── workflows/ (2 files)
 ├── LICENSES/ (5 files)
-├── android/ (191 files)
-│   ├── app/ (182 files)
+├── android/ (182 files)
+│   ├── app/ (173 files)
 │   └── gradle/ (3 files)
 ├── assets/ (16 files)
 │   ├── brand/ (8 files)

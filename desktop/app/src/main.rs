@@ -56,14 +56,11 @@ mod storage;
 mod transfers;
 mod updater;
 mod webcam;
-#[cfg(windows)]
-mod win;
-#[cfg(target_os = "linux")]
-#[path = "linux/mod.rs"]
-mod win;
 #[cfg(target_os = "macos")]
 #[path = "mac/mod.rs"]
 mod win;
+#[cfg(not(target_os = "macos"))]
+compile_error!("MacLink desktop is exclusively supported on macOS.");
 
 use std::{
     path::{Path, PathBuf},

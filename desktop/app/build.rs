@@ -207,52 +207,6 @@ fn shaders_qrc() -> PathBuf {
     qrc_path
 }
 
-/// The .exe's icon and version information (what Explorer, shortcuts and
-/// Task Manager show).
-fn windows_resources() {
-    let out = PathBuf::from(std::env::var_os("OUT_DIR").expect("OUT_DIR"));
-    let ico = out.join("nectarlink.ico");
-    write_if_changed(&ico, icon_file());
-    let version = std::env::var("CARGO_PKG_VERSION").expect("version");
-    let numbers: Vec<&str> = version.split(['.', '-', '+']).take(3).collect();
-    let numeric = format!("{},0", numbers.join(","));
-    // No #include: numeric constants keep rc.exe off the SDK headers.
-    // 0x40004 is VOS_NT_WINDOWS32, 0x1 is VFT_APP.
-    let rc = format!(
-        r#"1 ICON "{ico}"
-1 VERSIONINFO
-FILEVERSION {numeric}
-PRODUCTVERSION {numeric}
-FILEOS 0x40004
-FILETYPE 0x1
-BEGIN
-  BLOCK "StringFileInfo"
-  BEGIN
-    BLOCK "040904B0"
-    BEGIN
-      VALUE "CompanyName", "The NectarLink contributors"
-      VALUE "FileDescription", "NectarLink"
-      VALUE "FileVersion", "{version}"
-      VALUE "InternalName", "maclink-desktop"
-      VALUE "LegalCopyright", "GPL-3.0-or-later"
-      VALUE "OriginalFilename", "maclink-desktop.exe"
-      VALUE "ProductName", "NectarLink"
-      VALUE "ProductVersion", "{version}"
-    END
-  END
-  BLOCK "VarFileInfo"
-  BEGIN
-    VALUE "Translation", 0x409, 1200
-  END
-END
-"#,
-        ico = ico.display().to_string().replace('\\', "/"),
-    );
-    let rc_path = out.join("nectarlink.rc");
-    write_if_changed(&rc_path, rc);
-    embed_resource::compile(&rc_path, embed_resource::NONE).manifest_required().expect("compile resources");
-}
-
 fn find_lrelease() -> Option<PathBuf> {
     if let Ok(custom) = std::env::var("LRELEASE") {
         let p = PathBuf::from(custom);
@@ -372,12 +326,6 @@ fn main() {
     for qml in QML.iter().chain(QML_SINGLETONS.iter()) {
         println!("cargo:rerun-if-changed={qml}");
     }
-    if std::env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("windows") {
-        windows_resources();
-    }
-    if std::env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("linux") {
-        compile_translations();
-    }
     let module = QmlModule::new("app.nectarlink")
         .qml_files(QML.iter().map(|f| QmlFile::from(*f)))
         .qml_files(QML_SINGLETONS.iter().map(|f| QmlFile::from(*f).singleton(true)));
@@ -416,24 +364,12 @@ fn main() {
         ])
         .build();
 
-    // The C++ window code calls DWM, Shell property store, and user32 directly on Windows.
-    if std::env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("windows") {
-        println!("cargo:rustc-link-lib=dwmapi");
-        println!("cargo:rustc-link-lib=ole32");
-        println!("cargo:rustc-link-lib=shell32");
-        println!("cargo:rustc-link-lib=user32");
-    } else if std::env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("linux") {
-        println!("cargo:rustc-link-lib=Qt6Quick");
-        println!(
-            "cargo:rustc-link-arg=-Wl,-rpath,$ORIGIN:$ORIGIN/lib:$ORIGIN/../lib:$ORIGIN/../lib/nectarlink/lib"
-        );
-    } else if std::env::var("CARGO_CFG_TARGET_OS").as_deref() == Ok("macos") {
-        println!("cargo:rustc-link-lib=framework=AppKit");
-        println!("cargo:rustc-link-lib=framework=CoreGraphics");
-        println!("cargo:rustc-link-lib=framework=CoreAudio");
-        println!("cargo:rustc-link-lib=framework=AudioToolbox");
-        println!("cargo:rustc-link-lib=framework=IOKit");
-    }
+    // macOS native frameworks linked for desktop window and system integrations.
+    println!("cargo:rustc-link-lib=framework=AppKit");
+    println!("cargo:rustc-link-lib=framework=CoreGraphics");
+    println!("cargo:rustc-link-lib=framework=CoreAudio");
+    println!("cargo:rustc-link-lib=framework=AudioToolbox");
+    println!("cargo:rustc-link-lib=framework=IOKit");
     println!("cargo:rerun-if-changed=cpp/app_helpers.h");
     println!("cargo:rerun-if-changed=cpp/app_helpers.cpp");
     println!("cargo:rerun-if-changed=cpp/native_window.h");

@@ -1,6 +1,6 @@
-<!-- BRIEF: COMMIT=5f070e07 HASH=e6d86678 DATE=2026-11-01T13:01:35.834Z -->
+<!-- BRIEF: COMMIT=a5a6b27b HASH=268719b0 DATE=2026-11-01T14:38:24.821Z -->
 # Project Brief: nectarlink
-- **Commit**: `5f070e07` | **Updated**: 2026-11-01T13:01:35.834Z | **Files Tracked**: 692
+- **Commit**: `a5a6b27b` | **Updated**: 2026-11-01T14:38:24.821Z | **Files Tracked**: 683
 
 ## Overview
 **Your Android phone and your Mac, working seamlessly as one.**
@@ -18,8 +18,8 @@
 │   ├── scripts/ (1 file)
 │   └── workflows/ (2 files)
 ├── LICENSES/ (5 files)
-├── android/ (191 files)
-│   ├── app/ (182 files)
+├── android/ (182 files)
+│   ├── app/ (173 files)
 │   └── gradle/ (3 files)
 ├── assets/ (16 files)
 │   ├── brand/ (8 files)

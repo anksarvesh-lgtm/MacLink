@@ -1,55 +1,55 @@
 {
   "version": 1,
-  "task_id": "t-20261101-9387",
-  "goal": "Remove webcam/camera continuity completely, add startup GitHub update check and auto-download with platform-specific asset delivery, and set monochrome notification icon",
+  "task_id": "t-20261101-3658",
+  "goal": "Remove Windows and Linux desktop components, restricting the platform exclusively to macOS and Android, and remove old push/update workflows and legacy trademark references",
   "status": "active",
-  "created_at": "2026-11-01T13:01:42.666Z",
-  "updated_at": "2026-11-01T13:20:22.016Z",
-  "checkpoint_count": 1,
+  "created_at": "2026-11-01T14:38:32.352Z",
+  "updated_at": "2026-11-01T14:38:32.352Z",
+  "checkpoint_count": 0,
   "steps": [
     {
       "id": "s1",
-      "title": "Remove phone camera webcam and camera continuity completely from desktop and Android apps",
-      "status": "done",
+      "title": "Audit Windows, Linux, and trademark artifacts",
+      "status": "in_progress",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": "Removed phone camera webcam and camera continuity completely across Android (deleted WebcamService, GlSurfacePipe, CameraEncoder, ContinuityCameraActivity, UI routes, tests) and Desktop (removed QML cards/tiles, settings section, shortcuts, tray items, capabilities). All core tests passed (113 maclink-core, 62 maclink-protocol). Git commit f46499e.",
+      "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T13:20:22.016Z"
+      "updated_at": "2026-11-01T14:38:32.352Z"
     },
     {
       "id": "s2",
-      "title": "Add GitHub auto-update check on every app start with platform-specific asset download",
+      "title": "Remove Windows and Linux packaging and scripts",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T13:01:42.666Z"
+      "updated_at": "2026-11-01T14:38:32.352Z"
     },
     {
       "id": "s3",
-      "title": "Create and configure monochrome notification icon of app icon for notifications",
+      "title": "Purge legacy trademark files",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T13:01:42.666Z"
+      "updated_at": "2026-11-01T14:38:32.352Z"
     },
     {
       "id": "s4",
-      "title": "Verify changes with unit tests and ensure clean references",
+      "title": "Verify test suite and build integrity",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T13:01:42.666Z"
+      "updated_at": "2026-11-01T14:38:32.352Z"
     }
   ]
 }

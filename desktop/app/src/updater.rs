@@ -229,33 +229,12 @@ fn latest() -> Result<Option<Update>, String> {
     Ok(newer_release(release, env!("CARGO_PKG_VERSION")))
 }
 
-const INSTALLER_SUFFIX: &str =
-    if cfg!(target_arch = "aarch64") { "-arm64-setup.exe" } else { "-x64-setup.exe" };
-
 /// The release as an update, if it's a newer published one with a
-/// platform-specific installer/package for this OS and architecture.
+/// macOS package (.dmg, .pkg, or .zip).
 fn newer_release(release: Release, current: &str) -> Option<Update> {
-    #[cfg(target_os = "macos")]
-    {
-        newer_release_for(release.clone(), current, ".dmg")
-            .or_else(|| newer_release_for(release.clone(), current, ".pkg"))
-            .or_else(|| newer_release_for(release, current, ".zip"))
-    }
-    #[cfg(windows)]
-    {
-        newer_release_for(release.clone(), current, INSTALLER_SUFFIX)
-            .or_else(|| newer_release_for(release, current, ".exe"))
-    }
-    #[cfg(target_os = "linux")]
-    {
-        newer_release_for(release.clone(), current, ".AppImage")
-            .or_else(|| newer_release_for(release.clone(), current, ".deb"))
-            .or_else(|| newer_release_for(release, current, ".tar.gz"))
-    }
-    #[cfg(not(any(windows, target_os = "macos", target_os = "linux")))]
-    {
-        newer_release_for(release, current, INSTALLER_SUFFIX)
-    }
+    newer_release_for(release.clone(), current, ".dmg")
+        .or_else(|| newer_release_for(release.clone(), current, ".pkg"))
+        .or_else(|| newer_release_for(release, current, ".zip"))
 }
 
 fn newer_release_for(release: Release, current: &str, suffix: &str) -> Option<Update> {
@@ -348,72 +327,16 @@ fn quiet() -> bool {
     !(mirroring || transferring || calling || crate::pc_mirror::is_active())
 }
 
-/// Whether the installer registered [`TASK`] on this PC.
-fn task_registered() -> bool {
-    #[cfg(windows)]
-    {
-        std::process::Command::new("schtasks.exe")
-            .args(["/Query", "/TN", TASK])
-            .creation_flags(CREATE_NO_WINDOW)
-            .stdout(std::process::Stdio::null())
-            .stderr(std::process::Stdio::null())
-            .status()
-            .is_ok_and(|s| s.success())
-    }
-    #[cfg(not(windows))]
-    {
-        false
-    }
-}
-
 /// Installs the update found: downloads it (reporting `progress(done,
-/// total)`), then installs with [`TASK`] when it's there (no prompt),
-/// otherwise by running the installer, which asks for administrator rights.
-/// Blocking. Returns what went wrong, in words for the user. On success the
-/// app is about to quit for the installer.
+/// total)`), checks SHA-256 integrity, and opens the macOS installer package.
 pub fn install(progress: impl FnMut(u64, u64)) -> Result<(), String> {
-    #[cfg(target_os = "macos")]
-    {
-        let update = available().ok_or("There's no update to install.")?;
-        let staged = stage(&update, progress).map_err(|e| {
-            tracing::warn!(error = %e, "update download failed");
-            e.for_user()
-        })?;
-        let _ = std::process::Command::new("open").arg(&staged).spawn();
-        Ok(())
-    }
-    #[cfg(target_os = "linux")]
-    {
-        let update = available().ok_or("There's no update to install.")?;
-        let staged = stage(&update, progress).map_err(|e| {
-            tracing::warn!(error = %e, "update download failed");
-            e.for_user()
-        })?;
-        let _ = std::process::Command::new("xdg-open").arg(&staged).spawn();
-        Ok(())
-    }
-    #[cfg(windows)]
-    {
-        let update = available().ok_or("There's no update to install.")?;
-        let staged = stage(&update, progress).map_err(|e| {
-            tracing::warn!(error = %e, "update download failed");
-            e.for_user()
-        })?;
-        if task_registered() {
-            match install_with_task(true) {
-                Ok(()) => return Ok(()),
-                Err(e) => {
-                    tracing::warn!(error = e, "the update task didn't start; asking for permission instead")
-                }
-            }
-        }
-        install_with_prompt(&update, &staged)
-    }
-    #[cfg(not(any(windows, target_os = "macos", target_os = "linux")))]
-    {
-        let _ = progress;
-        Err("Updates are not supported on this platform.".into())
-    }
+    let update = available().ok_or("There's no update to install.")?;
+    let staged = stage(&update, progress).map_err(|e| {
+        tracing::warn!(error = %e, "update download failed");
+        e.for_user()
+    })?;
+    let _ = std::process::Command::new("open").arg(&staged).spawn();
+    Ok(())
 }
 
 /// Why a download didn't produce a checked installer.
@@ -543,272 +466,12 @@ pub fn stage(update: &Update, progress: impl FnMut(u64, u64)) -> Result<PathBuf,
     std::fs::rename(&part, &path).map_err(|e| StageError::Disk(e.to_string()))?;
     Ok(path)
 }
-        for entry in entries.flatten() {
-            let p = entry.path();
-            if p != path && p != part {
-                let _ = std::fs::remove_file(p);
-            }
-        }
-    }
-    if sha256_file(&path).is_ok_and(|h| h == expected) {
-        return Ok(path);
-    }
-    let _ = std::fs::remove_file(&path);
-    http::download(&update.installer_url, &part, MAX_INSTALLER, progress).map_err(StageError::Network)?;
-    match sha256_file(&part) {
-        Ok(actual) if actual == expected => {}
-        Ok(_) => {
-            let _ = std::fs::remove_file(&part);
-            return Err(StageError::Damaged);
-        }
-        Err(e) => return Err(StageError::Disk(e.to_string())),
-    }
-    std::fs::rename(&part, &path).map_err(|e| StageError::Disk(e.to_string()))?;
-    Ok(path)
-}
 
-/// Starts [`TASK`], and quits so the installer can replace this copy; a
-/// hidden relauncher opens the new version afterwards. `shown`: open its
-/// window again (the user asked for the update) rather than start in the tray.
-fn install_with_task(shown: bool) -> Result<(), String> {
-    #[cfg(windows)]
-    {
-        let update = available().ok_or("no update")?;
-        let exe = std::env::current_exe().map_err(|e| e.to_string())?;
-        spawn_relauncher(&exe, &update.version, shown)?;
-        let started = std::process::Command::new("schtasks.exe")
-            .args(["/Run", "/TN", TASK])
-            .creation_flags(CREATE_NO_WINDOW)
-            .stdout(std::process::Stdio::null())
-            .stderr(std::process::Stdio::null())
-            .status()
-            .map_err(|e| e.to_string())?;
-        if !started.success() {
-            return Err(format!("schtasks /Run: {started}"));
-        }
-        tracing::info!(version = update.version, "updating; quitting for the installer");
-        crate::bridge::app::request_quit();
-        Ok(())
-    }
-    #[cfg(not(windows))]
-    {
-        let _ = shown;
-        Err("scheduled update task is only supported on Windows".into())
-    }
-}
-
-/// A hidden PowerShell that waits (up to ten minutes) until `version` is
-/// installed and the installer has finished, then opens the app again.
-#[allow(dead_code)]
-fn spawn_relauncher(exe: &Path, version: &str, shown: bool) -> Result<(), String> {
-    #[cfg(windows)]
-    {
-        // Both come from this program (its own path, and a version the release
-        // check already parsed); checked again so they can't break out of the
-        // script's quotes.
-        let exe =
-            exe.to_str().filter(|e| !e.contains('\'') && !e.contains('\n')).ok_or("unusual install path")?;
-        if !version.chars().all(|c| c.is_ascii_alphanumeric() || matches!(c, '.' | '-')) {
-            return Err("unusual version".into());
-        }
-        let arguments = if shown { UPDATED_ARG.to_owned() } else { format!("--minimized {UPDATED_ARG}") };
-        let script = relauncher_script(exe, version, &arguments);
-        let encoded: Vec<u8> = script.encode_utf16().flat_map(u16::to_le_bytes).collect();
-        std::process::Command::new("powershell.exe")
-            .args(["-NoProfile", "-NonInteractive", "-WindowStyle", "Hidden", "-EncodedCommand"])
-            .arg(data_encoding::BASE64.encode(&encoded))
-            .creation_flags(CREATE_NO_WINDOW | DETACHED_PROCESS)
-            .stdin(std::process::Stdio::null())
-            .stdout(std::process::Stdio::null())
-            .stderr(std::process::Stdio::null())
-            .spawn()
-            .map(|_| ())
-            .map_err(|e| format!("relauncher: {e}"))
-    }
-    #[cfg(not(windows))]
-    {
-        let _ = (exe, version, shown);
-        Err("relauncher is not supported on non-Windows".into())
-    }
-}
-
-#[allow(dead_code)]
-fn relauncher_script(exe: &str, version: &str, arguments: &str) -> String {
-    let start = if arguments.is_empty() {
-        format!("Start-Process -FilePath '{exe}'")
-    } else {
-        format!("Start-Process -FilePath '{exe}' -ArgumentList '{arguments}'")
-    };
-    format!(
-        "$key = 'HKLM:\\Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Nectarlink'\n\
-         $log = Join-Path (Split-Path -Parent '{exe}') 'update.log'\n\
-         $since = Get-Date\n\
-         $deadline = $since.AddMinutes(10)\n\
-         Start-Sleep -Seconds 3\n\
-         while ((Get-Date) -lt $deadline) {{\n\
-           $installed = (Get-ItemProperty -Path $key -Name DisplayVersion -ErrorAction SilentlyContinue).DisplayVersion\n\
-           $running = Get-Process -ErrorAction SilentlyContinue | Where-Object {{ $_.Name -like 'Nectarlink-*-setup' }}\n\
-           if ($installed -eq '{version}' -and -not $running) {{ break }}\n\
-           $logged = Get-Item -LiteralPath $log -ErrorAction SilentlyContinue\n\
-           if ($logged -and $logged.LastWriteTime -gt $since -and -not $running) {{\n\
-             $last = Get-Content -LiteralPath $log -Tail 1 -ErrorAction SilentlyContinue\n\
-             if ($last -and $last -notmatch 'installing') {{ break }}\n\
-           }}\n\
-           Start-Sleep -Seconds 2\n\
-         }}\n\
-         {start}\n"
-    )
-}
-
-/// The task's job (as SYSTEM, from [`SERVICE_ARG`]): installs the latest
-/// release if it's newer than this copy. Writes what it did to `update.log`
-/// beside the program, where only administrators can write.
 pub fn run_service() -> ExitCode {
-    let log_path =
-        std::env::current_exe().ok().and_then(|exe| exe.parent().map(|dir| dir.join("update.log")));
-    let log = |message: &str| {
-        tracing::info!("{message}");
-        if let Some(path) = &log_path {
-            let line = format!("{} {message}\n", unix_seconds_now());
-            let _ = std::fs::OpenOptions::new()
-                .create(true)
-                .append(true)
-                .open(path)
-                .and_then(|mut f| std::io::Write::write_all(&mut f, line.as_bytes()));
-        }
-    };
-    let update = match latest() {
-        Ok(Some(update)) => update,
-        Ok(None) => {
-            log("up to date");
-            return ExitCode::SUCCESS;
-        }
-        Err(e) => {
-            log(&format!("couldn't check: {e}"));
-            return ExitCode::FAILURE;
-        }
-    };
-    let dir = match service_dir() {
-        Ok(dir) => dir,
-        Err(e) => {
-            log(&format!("no folder for the download: {e}"));
-            return ExitCode::FAILURE;
-        }
-    };
-    let path = match download_verified(&update, &dir) {
-        Ok(path) => path,
-        Err(e) => {
-            log(&format!("{} not installed: {e}", update.version));
-            return ExitCode::FAILURE;
-        }
-    };
-    // Not waited for: the installer replaces this program, which must not be running.
-    #[cfg(windows)]
-    let mut cmd = std::process::Command::new(&path);
-    #[cfg(windows)]
-    cmd.arg("/S").creation_flags(CREATE_NO_WINDOW | DETACHED_PROCESS);
-    #[cfg(not(windows))]
-    let mut cmd = std::process::Command::new(&path);
-    match cmd.spawn() {
-        Ok(_) => {
-            log(&format!("installing {}", update.version));
-            ExitCode::SUCCESS
-        }
-        Err(e) => {
-            log(&format!("couldn't start the installer: {e}"));
-            ExitCode::FAILURE
-        }
-    }
+    ExitCode::SUCCESS
 }
 
-/// Seconds since 1970, for the log (no calendar needed).
-fn unix_seconds_now() -> String {
-    let secs = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map_or(0, |d| d.as_secs());
-    format!("[{secs}]")
-}
-
-/// A new, empty folder for the download that only SYSTEM and administrators
-/// can change: Windows' `SystemTemp` (older Windows: the SYSTEM account's
-/// temp folder, whose new subfolders users can't write to). Earlier ones are
-/// removed first (in `SystemTemp` only, where nobody else can create them).
-fn service_dir() -> std::io::Result<PathBuf> {
-    let windows =
-        std::env::var_os("SystemRoot").map(PathBuf::from).unwrap_or_else(|| PathBuf::from(r"C:\Windows"));
-    let system_temp = windows.join("SystemTemp");
-    let parent = if system_temp.is_dir() {
-        if let Ok(entries) = std::fs::read_dir(&system_temp) {
-            for entry in entries.flatten() {
-                if entry.file_name().to_string_lossy().starts_with("nectarlink-update-") {
-                    let _ = std::fs::remove_dir_all(entry.path());
-                }
-            }
-        }
-        system_temp
-    } else {
-        std::env::temp_dir()
-    };
-    let mut random = [0u8; 8];
-    if !crate::win::secure_random(&mut random) {
-        return Err(std::io::Error::other("no secure random source"));
-    }
-    let name = format!("nectarlink-update-{}", random.iter().map(|b| format!("{b:02x}")).collect::<String>());
-    let dir = parent.join(name);
-    std::fs::create_dir(&dir)?;
-    Ok(dir)
-}
-
-/// The installer in `dir` (only SYSTEM can write there), checked against
-/// the release's sums: copied from the app's download when that matches,
-/// downloaded otherwise. Errors are for the log.
-fn download_verified(update: &Update, dir: &Path) -> Result<PathBuf, String> {
-    let expected = expected_hash(update).map_err(|e| e.to_string())?;
-    let path = dir.join(&update.installer_name);
-    // Copied first and checked after, so what's checked is what runs.
-    let staged = staging_dir().join(&update.installer_name);
-    if staged.is_file() && std::fs::copy(&staged, &path).is_ok() {
-        if sha256_file(&path).is_ok_and(|h| h == expected) {
-            return Ok(path);
-        }
-        let _ = std::fs::remove_file(&path);
-    }
-    http::download(&update.installer_url, &path, MAX_INSTALLER, |_, _| {})?;
-    if sha256_file(&path).map_err(|e| e.to_string())? != expected {
-        let _ = std::fs::remove_file(&path);
-        return Err("checksum mismatch".into());
-    }
-    Ok(path)
-}
-
-/// The installer with Windows' administrator prompt (no update task): a
-/// fresh copy of the download in this user's temp folder, checked again, so
-/// what runs is what was checked.
-#[allow(dead_code)]
-fn install_with_prompt(update: &Update, staged: &Path) -> Result<(), String> {
-    let failed = |e: String| {
-        tracing::warn!(error = e, "update failed");
-        tr!("Updater", "The update couldn't be started. Try again.")
-    };
-    let expected = expected_hash(update).map_err(|e| e.for_user())?;
-    let dir = std::env::temp_dir().join("Nectarlink update");
-    let path: PathBuf = dir.join(&update.installer_name);
-    std::fs::create_dir_all(&dir)
-        .and_then(|()| match std::fs::remove_file(&path) {
-            Err(e) if e.kind() != std::io::ErrorKind::NotFound => Err(e),
-            _ => Ok(()),
-        })
-        .and_then(|()| std::fs::copy(staged, &path).map(|_| ()))
-        .map_err(|e| failed(e.to_string()))?;
-    if sha256_file(&path).map_err(|e| failed(e.to_string()))? != expected {
-        let _ = std::fs::remove_file(&path);
-        return Err(StageError::Damaged.for_user());
-    }
-    // Silent, then opens the new version (/RUN); Windows asks for
-    // permission first. The installer closes this copy itself.
-    crate::win::shell::run(&path, "/S /RUN").map_err(failed)?;
-    Ok(())
-}
-
-/// The flag the relauncher passes to the new version.
+/// The flag passed to the new version.
 pub const UPDATED_ARG: &str = "--updated";
 
 /// The file that remembers which version last ran, to notice an update
@@ -837,7 +500,7 @@ pub fn announce_update(previous: String, shown: bool) {
     tracing::info!(from = previous, to = current, "updated");
     after_start(
         shown,
-        tr!("Updater", "NectarLink is updated to %1", current),
+        tr!("Updater", "MacLink is updated to %1", current),
         tr!("Updater", "Your phone reconnects on its own."),
     );
 }
@@ -849,7 +512,7 @@ pub fn announce_update_failed(shown: bool) {
     after_start(
         shown,
         tr!("Updater", "The update didn't install"),
-        tr!("Updater", "NectarLink is still on the version you had. Try again from Settings."),
+        tr!("Updater", "MacLink is still on the version you had. Try again from Settings."),
     );
 }
 
@@ -900,32 +563,16 @@ mod tests {
             prerelease: false,
             assets: vec![
                 Asset {
-                    name: "Nectarlink-9.0.0-x64-setup.exe".into(),
-                    browser_download_url: "https://x/setup".into(),
+                    name: "MacLink-9.0.0-macos-arm64.zip".into(),
+                    browser_download_url: "https://x/maclink-zip".into(),
                 },
                 Asset {
-                    name: "Nectarlink-9.0.0-arm64-setup.exe".into(),
-                    browser_download_url: "https://x/setup-arm64".into(),
+                    name: "MacLink-9.0.0.dmg".into(),
+                    browser_download_url: "https://x/maclink-dmg".into(),
                 },
                 Asset { name: "SHA256SUMS.txt".into(), browser_download_url: "https://x/sums".into() },
             ],
         }
-    }
-
-    #[test]
-    fn the_relauncher_waits_for_the_version_then_opens_the_app() {
-        let script = relauncher_script(
-            r"C:\Program Files\Nectarlink\maclink-desktop.exe",
-            "0.2.0",
-            "--minimized --updated",
-        );
-        assert!(script.contains("$installed -eq '0.2.0'"));
-        assert!(script.contains("Nectarlink-*-setup"));
-        assert!(script.contains(
-            r"Start-Process -FilePath 'C:\Program Files\Nectarlink\maclink-desktop.exe' -ArgumentList '--minimized --updated'"
-        ));
-        let shown = relauncher_script(r"C:\Program Files\Nectarlink\maclink-desktop.exe", "0.2.0", "");
-        assert!(!shown.contains("-ArgumentList"));
     }
 
     #[test]
@@ -946,30 +593,22 @@ mod tests {
     }
 
     #[test]
-    fn the_relauncher_refuses_paths_and_versions_that_could_break_its_quotes() {
-        let odd = Path::new(r"C:\Program Files\it's\maclink-desktop.exe");
-        assert!(spawn_relauncher(odd, "0.2.0", false).is_err());
-        let fine = Path::new(r"C:\Program Files\Nectarlink\maclink-desktop.exe");
-        assert!(spawn_relauncher(fine, "0.2.0'; Remove-Item x; '", false).is_err());
-    }
-
-    #[test]
     fn installer_names_that_are_not_plain_file_names_are_refused() {
-        for name in [r"..\..\evil-x64-setup.exe", "Nectarlink-9/../x-x64-setup.exe", "evil-x64-setup.exe"] {
+        for name in [r"..\..\evil.dmg", "MacLink-9/../x.dmg", "evil.dmg"] {
             let mut r = release("v9.0.0");
             r.assets[0].name = name.into();
-            assert!(newer_release_for(r, "0.0.1", "-x64-setup.exe").is_none(), "{name}");
+            assert!(newer_release_for(r, "0.0.1", ".dmg").is_none(), "{name}");
         }
     }
 
     #[test]
     fn releases_become_updates_when_newer_and_complete() {
-        let x64 = newer_release_for(release("v9.0.0"), "0.0.1", "-x64-setup.exe").unwrap();
-        assert_eq!((x64.version.as_str(), x64.installer_url.as_str()), ("9.0.0", "https://x/setup"));
-        let arm64 = newer_release_for(release("v9.0.0"), "0.0.1", "-arm64-setup.exe").unwrap();
+        let zip = newer_release_for(release("v9.0.0"), "0.0.1", ".zip").unwrap();
+        assert_eq!((zip.version.as_str(), zip.installer_url.as_str()), ("9.0.0", "https://x/maclink-zip"));
+        let dmg = newer_release_for(release("v9.0.0"), "0.0.1", ".dmg").unwrap();
         assert_eq!(
-            (arm64.installer_name.as_str(), arm64.installer_url.as_str()),
-            ("Nectarlink-9.0.0-arm64-setup.exe", "https://x/setup-arm64")
+            (dmg.installer_name.as_str(), dmg.installer_url.as_str()),
+            ("MacLink-9.0.0.dmg", "https://x/maclink-dmg")
         );
         assert!(newer_release(release("v0.0.1"), "0.0.1").is_none());
         let mut draft = release("v9.0.0");
@@ -983,9 +622,9 @@ mod tests {
     #[test]
     fn finds_the_installer_hash() {
         let hash = "a".repeat(64);
-        let sums = format!("{hash}  Nectarlink-9.0.0-x64-setup.exe\n{}  other.txt\n", "b".repeat(64));
-        assert_eq!(listed_hash(&sums, "Nectarlink-9.0.0-x64-setup.exe"), Some(hash));
-        assert_eq!(listed_hash(&sums, "missing.exe"), None);
-        assert_eq!(listed_hash(&format!("{}  *x.exe", "C".repeat(64)), "x.exe"), Some("c".repeat(64)));
+        let sums = format!("{hash}  MacLink-9.0.0.dmg\n{}  other.txt\n", "b".repeat(64));
+        assert_eq!(listed_hash(&sums, "MacLink-9.0.0.dmg"), Some(hash));
+        assert_eq!(listed_hash(&sums, "missing.dmg"), None);
+        assert_eq!(listed_hash(&format!("{}  *x.dmg", "C".repeat(64)), "x.dmg"), Some("c".repeat(64)));
     }
 }
