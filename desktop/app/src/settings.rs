@@ -211,13 +211,13 @@ pub fn set_flow_follow_clipboard(on: bool) {
 
 #[allow(dead_code)]
 pub fn away_mode() -> bool {
-    AWAY_MODE.load(std::sync::atomic::Ordering::Relaxed)
+    false
 }
 
-pub fn set_away_mode(on: bool) {
-    AWAY_MODE.store(on, std::sync::atomic::Ordering::Relaxed);
+pub fn set_away_mode(_on: bool) {
+    AWAY_MODE.store(false, std::sync::atomic::Ordering::Relaxed);
     if let Some(node) = crate::core_host::node() {
-        node.set_away_mode(on);
+        node.set_away_mode(false);
     }
 }
 

@@ -4,8 +4,8 @@
   "goal": "Remove mobile network away_mode for stayconnected and make pairing codes alphanumeric",
   "status": "active",
   "created_at": "2026-11-01T11:55:57.679Z",
-  "updated_at": "2026-11-01T12:01:53.715Z",
-  "checkpoint_count": 1,
+  "updated_at": "2026-11-01T12:04:23.114Z",
+  "checkpoint_count": 2,
   "steps": [
     {
       "id": "s1",
@@ -21,13 +21,13 @@
     {
       "id": "s2",
       "title": "Remove mobile network stay-connected toggles in desktop and Android UI & settings",
-      "status": "pending",
+      "status": "done",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": null,
+      "note": "Removed mobile network awayMode toggle row from SettingsPage.qml, set away_mode to always return false in desktop settings.rs, removed mobile data switch in Android SettingsScreen.kt, and locked awayMode to false in Core.kt. Desktop check passed cleanly.",
       "last_error": null,
-      "updated_at": "2026-11-01T11:55:57.679Z"
+      "updated_at": "2026-11-01T12:04:23.114Z"
     },
     {
       "id": "s3",

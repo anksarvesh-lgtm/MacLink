@@ -403,7 +403,7 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
                 device = deviceInfo(context),
                 appVersion = BuildConfig.VERSION_NAME,
                 power = PowerLevel.BASIC,
-                awayMode = initialAwayMode,
+                awayMode = false,
                 downloadsDir = context.cacheDir.resolve("received").absolutePath,
                 usbPort = 53319u.toUShort(),
             )
@@ -452,7 +452,7 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
                     timelineHasMore = tlPage?.hasMore ?: false,
                     timelineRetentionDays = retention?.maxDays ?: 90u,
                     localsendEnabled = lsEnabled,
-                    awayMode = initialAwayMode,
+                    awayMode = false,
                     localsendPeers = lsPeers,
                 )
             }
@@ -1358,12 +1358,12 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
 
     // ---- LocalSend interop & Mobile Data (Away mode) ----
 
-    fun setAwayMode(enabled: Boolean) {
-        app.nectarlink.android.ui.Preferences.setAwayModeEnabled(context, enabled)
-        _state.update { it.copy(awayMode = enabled) }
+    fun setAwayMode(@Suppress("UNUSED_PARAMETER") enabled: Boolean) {
+        app.nectarlink.android.ui.Preferences.setAwayModeEnabled(context, false)
+        _state.update { it.copy(awayMode = false) }
         scope.launch(Dispatchers.IO) {
             startJob?.join()
-            runCatching { node?.setAwayMode(enabled) }
+            runCatching { node?.setAwayMode(false) }
         }
     }
 

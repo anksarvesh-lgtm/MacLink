@@ -3106,17 +3106,7 @@ Item {
                                 onClicked: AppController.runDoctor()
                             }
                         }
-                        Divider { width: parent.width }
-                        ListRow {
-                            width: parent.width
-                            iconPath: Icons.signal
-                            title: qsTr("Connect over mobile data")
-                            description: qsTr("Stay connected over LTE/5G or relay when away from Wi-Fi.")
-                            Toggle {
-                                checked: Preferences.awayMode
-                                onToggled: function(v) { Preferences.awayMode = v }
-                            }
-                        }
+
                         Divider { width: parent.width }
                         ListRow {
                             width: parent.width
