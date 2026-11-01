@@ -130,8 +130,11 @@ pub fn verify_commitment(commitment_bytes: &[u8], n_a: &[u8]) -> bool {
         && commitment_bytes.iter().zip(expected).fold(0u8, |acc, (a, b)| acc | (a ^ b)) == 0
 }
 
-/// The 6-digit short authentication string both screens show:
-/// `uint32(HMAC-SHA256(nA || nB, "nectarlink-sas-v0" || idA || idB)[0..4]) mod 1,000,000`,
+/// The 32-character unambiguous alphanumeric charset for SAS pairing codes (digits 2-9, letters A-Z excluding 0, 1, I, O).
+pub const SAS_ALPHANUMERIC_CHARS: &[u8; 32] = b"23456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+
+/// The 6-character alphanumeric short authentication string both screens show:
+/// `HMAC-SHA256(nA || nB, "maclink-sas-v0" || idA || idB)`,
 /// where A is the initiator and B the responder.
 pub fn sas_code(n_a: &[u8], n_b: &[u8], id_a: &DeviceId, id_b: &DeviceId) -> String {
     let mut key = Vec::with_capacity(n_a.len() + n_b.len());
@@ -142,8 +145,14 @@ pub fn sas_code(n_a: &[u8], n_b: &[u8], id_a: &DeviceId, id_b: &DeviceId) -> Str
     mac.update(id_a.as_bytes());
     mac.update(id_b.as_bytes());
     let digest = mac.finalize().into_bytes();
-    let value = u32::from_be_bytes([digest[0], digest[1], digest[2], digest[3]]) % 1_000_000;
-    format!("{value:06}")
+    let bits = u32::from_be_bytes([digest[0], digest[1], digest[2], digest[3]]);
+    let mut code = String::with_capacity(6);
+    let mut current = bits;
+    for _ in 0..6 {
+        code.push(SAS_ALPHANUMERIC_CHARS[(current & 0x1F) as usize] as char);
+        current >>= 5;
+    }
+    code
 }
 
 #[cfg(test)]
@@ -211,11 +220,11 @@ mod tests {
     }
 
     #[test]
-    fn sas_is_six_digits_and_order_sensitive() {
+    fn sas_is_six_alphanumeric_chars_and_order_sensitive() {
         let (n_a, n_b) = ([1u8; NONCE_LEN], [2u8; NONCE_LEN]);
         let code = sas_code(&n_a, &n_b, &id(1), &id(2));
         assert_eq!(code.len(), 6);
-        assert!(code.chars().all(|c| c.is_ascii_digit()));
+        assert!(code.chars().all(|c| c.is_ascii_alphanumeric()));
         assert_eq!(code, sas_code(&n_a, &n_b, &id(1), &id(2)), "deterministic");
         // A man in the middle presents a different identity on one side.
         assert_ne!(code, sas_code(&n_a, &n_b, &id(1), &id(3)));
