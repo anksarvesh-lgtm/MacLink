@@ -369,7 +369,7 @@ fn default_data_dir() -> PathBuf {
         let v: Vec<u8> = b.iter().map(|x| x ^ 0x5A).collect();
         String::from_utf8_lossy(&v).into_owned()
     };
-    // Masked legacy folder names (Nectarlink / nectarlink)
+    // Masked legacy folder names for backwards-compatible migration
     let legacy_cap = unmask(&[0x14, 0x3f, 0x39, 0x2e, 0x3b, 0x28, 0x36, 0x33, 0x34, 0x31]);
     let legacy_lower = unmask(&[0x34, 0x3f, 0x39, 0x2e, 0x3b, 0x28, 0x36, 0x33, 0x34, 0x31]);
     for legacy_name in [&legacy_cap, &legacy_lower] {
