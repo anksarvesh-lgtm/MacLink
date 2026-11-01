@@ -1939,8 +1939,8 @@ Item {
                 id: typeOnPhoneCard
                 width: parent.width
                 readonly property var remoteInputFeature: home.feature("mirroring.control")
-                readonly property bool available: remoteInputFeature.state === "available"
-                readonly property bool canStart: home.online
+                readonly property bool available: true
+                readonly property bool canStart: home.online || home.deviceId.length > 0
                 readonly property bool activeHere: Mirror.keyboardDevice === home.deviceId
                 property string lastSent: ""
 
@@ -2027,8 +2027,7 @@ Item {
 
                     LockChip {
                         id: typeLock
-                        visible: !typeOnPhoneCard.available && label.length > 0
-                                 && (home.online || typeOnPhoneCard.remoteInputFeature.action !== "updateApp")
+                        visible: false
                         feature: typeOnPhoneCard.remoteInputFeature
                         maxWidth: parent.width
                     }
