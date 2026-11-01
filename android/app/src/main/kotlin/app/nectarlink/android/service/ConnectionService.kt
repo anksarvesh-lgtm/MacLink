@@ -37,6 +37,8 @@ import kotlinx.coroutines.launch
  */
 class ConnectionService : LifecycleService() {
     private var multicastLock: WifiManager.MulticastLock? = null
+    private var wifiLock: WifiManager.WifiLock? = null
+    private var wakeLock: android.os.PowerManager.WakeLock? = null
 
     override fun onCreate() {
         super.onCreate()
@@ -50,9 +52,16 @@ class ConnectionService : LifecycleService() {
             stopSelf()
             return
         }
-        multicastLock = getSystemService(WifiManager::class.java)
+        val wifi = getSystemService(WifiManager::class.java)
+        multicastLock = wifi
             ?.createMulticastLock("nectarlink-discovery")
             ?.apply { setReferenceCounted(false); acquire() }
+        wifiLock = wifi
+            ?.createWifiLock(WifiManager.WIFI_MODE_FULL_HIGH_PERF, "nectarlink-wifi")
+            ?.apply { setReferenceCounted(false); acquire() }
+        wakeLock = getSystemService(android.os.PowerManager::class.java)
+            ?.newWakeLock(android.os.PowerManager.PARTIAL_WAKE_LOCK, "nectarlink:connection")
+            ?.apply { setReferenceCounted(false); acquire(10 * 60 * 1000L) }
 
         lifecycleScope.launch {
             core.state.map { Status.of(it) to (it.status is app.nectarlink.android.core.CoreStatus.Ready) }
@@ -61,6 +70,10 @@ class ConnectionService : LifecycleService() {
                     if (ready && status.paired == 0) {
                         stopSelf()
                     } else {
+                        if (status.connected.isNotEmpty()) {
+                            if (wifiLock?.isHeld == false) wifiLock?.acquire()
+                            if (multicastLock?.isHeld == false) multicastLock?.acquire()
+                        }
                         getSystemService(NotificationManager::class.java)
                             .notify(ONGOING_ID, ongoingNotification(status))
                     }
@@ -115,11 +128,14 @@ class ConnectionService : LifecycleService() {
         if (intent?.action == ACTION_STOP_RINGING) {
             (application as NectarlinkApplication).core.stopRinging()
         }
+        (application as? NectarlinkApplication)?.core?.reconnectNow()
         return START_STICKY
     }
 
     override fun onDestroy() {
         multicastLock?.runCatching { release() }
+        wifiLock?.runCatching { release() }
+        wakeLock?.runCatching { if (isHeld) release() }
         getSystemService(NotificationManager::class.java)?.cancel(ONGOING_ID)
         super.onDestroy()
     }

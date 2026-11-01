@@ -200,12 +200,23 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        val app = application as NectarlinkApplication
+        app.core.start()
+        app.core.reconnectNow()
+        if (app.core.state.value.devices.isNotEmpty()) {
+            ConnectionService.start(this)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         // Back from Settings, maybe with notification access changed.
         val app = application as NectarlinkApplication
         if (app.core.state.value.status is CoreStatus.Ready) {
             app.core.refreshNotificationAccess()
+            app.core.reconnectNow()
         }
         if (app.updater.enabled) {
             // Back from allowing installs: the update the user started carries on.

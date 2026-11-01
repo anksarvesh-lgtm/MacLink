@@ -64,11 +64,15 @@ class NectarlinkApplication : Application(), DefaultLifecycleObserver {
 
         if (Preferences.isBackgroundServiceEnabled(this)) {
             android.view.Choreographer.getInstance().postFrameCallback {
-                scope.launch { core.start() }
+                scope.launch {
+                    core.start()
+                    core.reconnectNow()
+                }
             }
             scope.launch {
                 delay(120)
                 core.start()
+                core.reconnectNow()
             }
         }
     }
@@ -77,6 +81,7 @@ class NectarlinkApplication : Application(), DefaultLifecycleObserver {
         pendingStopJob?.cancel()
         pendingStopJob = null
         core.start()
+        core.reconnectNow()
     }
 
     override fun onStop(owner: LifecycleOwner) {

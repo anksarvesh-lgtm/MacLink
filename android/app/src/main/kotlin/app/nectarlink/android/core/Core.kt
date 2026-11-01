@@ -3,6 +3,8 @@ package app.nectarlink.android.core
 
 import android.content.Context
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.net.wifi.WifiManager
 import android.os.Build
 import android.service.notification.NotificationListenerService
@@ -276,16 +278,25 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
     private val accent = AccentMonitor(this.context) { seed ->
         node?.let { scope.launch { runCatching { it.updateAccent(seed) } } }
     }
+    private fun isWifiConnected(): Boolean = runCatching {
+        val cm = this.context.getSystemService(ConnectivityManager::class.java) ?: return false
+        val active = cm.activeNetwork ?: return false
+        val caps = cm.getNetworkCapabilities(active) ?: return false
+        caps.hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+            caps.hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)
+    }.getOrDefault(false)
+
     private val network = NetworkMonitor(this.context) {
         // Network callbacks come in bursts; tell the core once they settle.
         networkChange?.cancel()
         networkChange = scope.launch {
             delay(150)
-            if (lastSignal.wifiBars != null || _state.value.awayMode) {
+            val onWifi = isWifiConnected()
+            if (onWifi || _state.value.awayMode) {
                 node?.networkChanged()
             }
             // A new Wi-Fi network turns wireless debugging off; Elevated turns it back on.
-            if (!Elevated.running && lastSignal.wifiBars != null) Elevated.onNetworkChanged()
+            if (!Elevated.running && onWifi) Elevated.onNetworkChanged()
         }
     }
 
