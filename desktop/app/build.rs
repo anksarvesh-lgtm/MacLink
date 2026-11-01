@@ -123,10 +123,12 @@ fn brand_qrc() -> PathBuf {
 
 /// Icon sizes in the .exe: what Explorer, the taskbar and Start ask for at
 /// 100–200% scale.
+#[allow(dead_code)]
 const ICON_SIZES: &[u32] = &[16, 20, 24, 32, 40, 48, 64, 256];
 
 /// An .ico file with the mark at every size, as 32-bit bitmaps (alpha used,
 /// AND mask empty).
+#[allow(dead_code)]
 fn icon_file() -> Vec<u8> {
     let images: Vec<Vec<u8>> = ICON_SIZES
         .iter()
@@ -323,6 +325,7 @@ fn compile_translations() {
 }
 
 fn main() {
+    compile_translations();
     println!("cargo:rerun-if-changed=src/mark.rs");
     for qml in QML.iter().chain(QML_SINGLETONS.iter()) {
         println!("cargo:rerun-if-changed={qml}");

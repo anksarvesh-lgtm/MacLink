@@ -1,66 +1,66 @@
 {
   "version": 1,
-  "task_id": "t-20261101-9981",
-  "goal": "Complete total rename of nectarlink to MacLink across all code, QML, Android, data folders, installer, scripts, and documentation",
+  "task_id": "t-20261101-9009",
+  "goal": "Execute full MacLink development plan: Task 0 toolchain inspection, Task 1 Android release APK, Task 2 macOS release bundle/DMG, Task 3 build-all.sh automation, Task 4 test suites and clippy",
   "status": "active",
-  "created_at": "2026-11-01T18:04:20.616Z",
-  "updated_at": "2026-11-01T18:19:39.012Z",
-  "checkpoint_count": 3,
+  "created_at": "2026-11-01T19:42:32.226Z",
+  "updated_at": "2026-11-01T19:56:43.132Z",
+  "checkpoint_count": 4,
   "steps": [
     {
       "id": "s1",
-      "title": "Step A: Search and inventory all nectarlink occurrences across code, crates, scripts, docs, and files",
+      "title": "Task 0: Toolchain Inspection",
       "status": "done",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": "Step A completed: Inventoried all 202 occurrences across 27 source files and presented full category table to user. User approved proceeding to Step B.",
+      "note": "Task 0 Toolchain Inspection complete: rustc 1.98.1, Apple clang 21.0.0, OpenJDK 21.0.12.1, NDK 30.0.16248370, cargo-ndk 4.1.2, Qt 6.8.2. All doubts verified.",
       "last_error": null,
-      "updated_at": "2026-11-01T18:06:43.392Z"
+      "updated_at": "2026-11-01T19:43:53.253Z"
     },
     {
       "id": "s2",
-      "title": "Step B: Replace all remaining occurrences and rename files/folders using git mv",
+      "title": "Task 1: Android Release APK Build",
       "status": "done",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": "Step B completed: Replaced all remaining nectar occurrences across Rust settings, CXX-Qt prefs, QML IslandWindow/Settings/FeaturesGuide/App, translations (de, zh_CN, template, rust_strings.h), Android Gradle/Kotlin switch colors, LICENSE, and documentation. Workspace cargo check compiles cleanly with 0 errors.",
+      "note": "Task 1 Android release APK built: MacLink-0.0.1-android.apk (93 MB), dual-arch libmaclink_ffi.so (arm64-v8a + x86_64), 16KB page-aligned (0x4000), aapt package name in.maclink.srv, signed with v2 scheme verified.",
       "last_error": null,
-      "updated_at": "2026-11-01T18:18:42.636Z"
+      "updated_at": "2026-11-01T19:45:25.348Z"
     },
     {
       "id": "s3",
-      "title": "Step C: Update data folders, preferences, and one-time migration paths",
+      "title": "Task 2: macOS Release App and DMG Build",
       "status": "done",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": "Step C completed: Verified all data and preference paths use MacLink. Added automatic one-time migration for ~/Library/Application Support/Nectarlink -> MacLink. Identified existing leftovers on host Mac: /Users/sarvesh/Library/Application Support/Nectarlink (will request user confirmation before deletion per Rule 7).",
+      "note": "Task 2 verified: maclink-desktop compiled in release mode, MacLink.app bundled with Qt 6.8.2 frameworks via macdeployqt, ad-hoc signed, codesign --verify --deep --strict passed, otool -L confirmed @rpath references, hdiutil verify confirmed valid DMG, and test launch verified process runs cleanly.",
       "last_error": null,
-      "updated_at": "2026-11-01T18:19:39.012Z"
+      "updated_at": "2026-11-01T19:53:36.015Z"
     },
     {
       "id": "s4",
-      "title": "Step D: Update online installer, removal of legacy app/agents, and docs",
-      "status": "pending",
+      "title": "Task 3: Unified Build Automation Script",
+      "status": "done",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": null,
+      "note": "Task 3 verified: scripts/build-all.sh all executed cleanly, produced all target artifacts (MacLink.app, MacLink-0.0.1-macos-arm64.dmg, MacLink-0.0.1-macos-arm64.zip, MacLink-0.0.1-android.apk), generated SHA256SUMS.txt, and shasum -a 256 -c SHA256SUMS.txt verified OK for all files.",
       "last_error": null,
-      "updated_at": "2026-11-01T18:04:20.616Z"
+      "updated_at": "2026-11-01T19:56:43.132Z"
     },
     {
       "id": "s5",
-      "title": "Step E: Verification - zero nectar occurrences, cargo check, assembleDebug, strings check",
+      "title": "Task 4: Tests and Clippy Verification",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T18:04:20.616Z"
+      "updated_at": "2026-11-01T19:42:32.226Z"
     }
   ]
 }

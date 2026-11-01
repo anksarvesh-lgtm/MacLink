@@ -19,15 +19,21 @@ use maclink_core::{CameraCaptureMode, DeviceId, NodeEvent};
 
 use crate::{core_host, state::Changes};
 
+#[allow(dead_code)] // Continuity camera request sequence counter
 static REQUEST_SEQ: AtomicU64 = AtomicU64::new(1);
 
+#[allow(dead_code)] // Continuity camera active request descriptor
 #[derive(Debug, Clone)]
 struct ActiveRequest {
+    #[allow(dead_code)]
     request_id: String,
+    #[allow(dead_code)]
     device: DeviceId,
     device_name: String,
     mode: CameraCaptureMode,
+    #[allow(dead_code)]
     target_hwnd: Option<isize>,
+    #[allow(dead_code)]
     target_title: String,
     queued_offline: bool,
 }
@@ -60,6 +66,7 @@ pub struct ContinuityView {
 }
 
 /// Pure decision for what to do after placing a captured image on the clipboard.
+#[allow(dead_code)] // Continuity camera paste decision
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum DeliveryDecision {
     /// The remembered target window is still alive and visible: focus it and paste.
@@ -72,6 +79,7 @@ enum DeliveryDecision {
     ClipboardOnly { toast: String },
 }
 
+#[allow(dead_code)] // Continuity camera delivery strategy decider
 fn decide_delivery_action(
     mode: CameraCaptureMode,
     device_name: &str,
@@ -105,12 +113,14 @@ fn decide_delivery_action(
     DeliveryDecision::ClipboardOnly { toast: format!("{item_cap} from {device_name} copied to clipboard") }
 }
 
+#[allow(dead_code)] // Continuity camera request ID generator
 fn next_request_id() -> String {
     let ms = SystemTime::now().duration_since(UNIX_EPOCH).map(|d| d.as_millis() as u64).unwrap_or(0);
     let seq = REQUEST_SEQ.fetch_add(1, Ordering::Relaxed);
     format!("cc-{ms}-{seq}")
 }
 
+#[allow(dead_code)] // Continuity camera UI notifier
 fn notify_continuity() {
     core_host::host().hub.update(|_| Changes::CONTINUITY);
 }

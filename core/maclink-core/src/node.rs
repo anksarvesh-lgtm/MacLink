@@ -621,12 +621,12 @@ impl Shared {
                 .filter(|a| self.away_mode() || crate::session::is_lan_ip(a.ip()))
                 .collect();
             if addrs.iter().any(|a| !a.ip().is_loopback()) || tokio::time::Instant::now() >= deadline {
-                if cfg!(test) {
-                    if let Some(sock) = self.endpoint.bound_sockets().into_iter().find(|a| a.is_ipv4() && a.port() != 0) {
-                        let loopback = SocketAddr::from(([127, 0, 0, 1], sock.port()));
-                        if !addrs.contains(&loopback) {
-                            addrs.push(loopback);
-                        }
+                if cfg!(test)
+                    && let Some(sock) = self.endpoint.bound_sockets().into_iter().find(|a| a.is_ipv4() && a.port() != 0)
+                {
+                    let loopback = SocketAddr::from(([127, 0, 0, 1], sock.port()));
+                    if !addrs.contains(&loopback) {
+                        addrs.push(loopback);
                     }
                 }
                 if !addrs.is_empty() {

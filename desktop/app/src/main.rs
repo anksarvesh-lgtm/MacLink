@@ -374,11 +374,11 @@ fn default_data_dir() -> PathBuf {
     let legacy_lower = unmask(&[0x34, 0x3f, 0x39, 0x2e, 0x3b, 0x28, 0x36, 0x33, 0x34, 0x31]);
     for legacy_name in [&legacy_cap, &legacy_lower] {
         let legacy = base.join(&**legacy_name);
-        if !maclink.exists() && legacy.exists() {
-            if std::fs::rename(&legacy, &maclink).is_ok() {
-                tracing::info!("Migrated legacy data folder to MacLink: {}", maclink.display());
-                break;
-            }
+        if !maclink.exists() && legacy.exists()
+            && std::fs::rename(&legacy, &maclink).is_ok()
+        {
+            tracing::info!("Migrated legacy data folder to MacLink: {}", maclink.display());
+            break;
         }
     }
     maclink

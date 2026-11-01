@@ -8,6 +8,7 @@ use std::{
     sync::{Mutex, OnceLock},
 };
 
+#[allow(dead_code)] // Application User Model ID for system notifications
 pub const AUMID: &str = "in.maclink.srv";
 pub const CALL_ANSWER: &str = "answer";
 pub const CALL_DECLINE: &str = "decline";
@@ -128,10 +129,10 @@ extern "C" fn notification_callback(
         _ => return,
     };
 
-    if let Some(guard) = ON_EVENT.get().and_then(|m| m.lock().ok()) {
-        if let Some(ref cb) = *guard {
-            cb(event);
-        }
+    if let Some(guard) = ON_EVENT.get().and_then(|m| m.lock().ok())
+        && let Some(ref cb) = *guard
+    {
+        cb(event);
     }
 }
 

@@ -77,6 +77,7 @@ pub const TASK: &str = "MacLink Update";
 /// What the task runs: `maclink-desktop.exe --update-service`.
 pub const SERVICE_ARG: &str = "--update-service";
 /// How long nobody may have used the PC before an update installs by itself.
+#[allow(dead_code)] // Auto-update idle quiet interval
 const QUIET_FOR: Duration = Duration::from_secs(10 * 60);
 /// While an update waits for a quiet moment, how often to look for one.
 const LOOK_FOR_QUIET: Duration = Duration::from_secs(5 * 60);

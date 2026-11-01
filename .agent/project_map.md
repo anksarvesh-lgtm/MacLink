@@ -1,5 +1,5 @@
-# Project Map & Architecture: nectarlink
-Generated on: 2026-11-01T18:00:41.364Z | Total Tracked Files: 604
+# Project Map & Architecture: maclink
+Generated on: 2026-11-01T19:42:16.738Z | Total Tracked Files: 607
 
 ## Architecture Flowchart
 ```mermaid
@@ -12,7 +12,8 @@ graph TD
 ## Directory Structure Map
 ```text
 .
-├── .agent/ (6 files)
+├── .agent/ (7 files)
+│   └── history/ (1 file)
 ├── .cargo/ (1 file)
 ├── .github/ (9 files)
 │   ├── ISSUE_TEMPLATE/ (3 files)
@@ -44,6 +45,7 @@ graph TD
 │   ├── research/ (1 file)
 │   ├── screenshots/ (14 files)
 │   └── technical/ (9 files)
+├── scripts/ (2 files)
 ├── tools/ (4 files)
 │   └── xtask/ (4 files)
 ├── .editorconfig

@@ -1,6 +1,6 @@
-<!-- BRIEF: COMMIT=90754ef2 HASH=b32fdbe7 DATE=2026-11-01T18:00:41.361Z -->
-# Project Brief: nectarlink
-- **Commit**: `90754ef2` | **Updated**: 2026-11-01T18:00:41.361Z | **Files Tracked**: 604
+<!-- BRIEF: COMMIT=25a9a050 HASH=021a27f1 DATE=2026-11-01T19:42:16.733Z -->
+# Project Brief: maclink
+- **Commit**: `25a9a050` | **Updated**: 2026-11-01T19:42:16.733Z | **Files Tracked**: 607
 
 ## Overview
 **Your Android phone and your Mac, working seamlessly as one.**
@@ -11,7 +11,8 @@
 ## Project Map (Directory Tree)
 ```text
 .
-├── .agent/ (6 files)
+├── .agent/ (7 files)
+│   └── history/ (1 file)
 ├── .cargo/ (1 file)
 ├── .github/ (9 files)
 │   ├── ISSUE_TEMPLATE/ (3 files)
@@ -43,6 +44,7 @@
 │   ├── research/ (1 file)
 │   ├── screenshots/ (14 files)
 │   └── technical/ (9 files)
+├── scripts/ (2 files)
 ├── tools/ (4 files)
 │   └── xtask/ (4 files)
 ├── .editorconfig

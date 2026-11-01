@@ -3,17 +3,27 @@
 //! Provides pre-rendered, high-fidelity liquid glass icon RGBA pixels
 //! for window icons, system tray, and platform resources.
 
+#[allow(dead_code)]
 const RAW_16: &[u8] = include_bytes!("icons_raw/icon_16.raw");
+#[allow(dead_code)]
 const RAW_20: &[u8] = include_bytes!("icons_raw/icon_20.raw");
+#[allow(dead_code)]
 const RAW_24: &[u8] = include_bytes!("icons_raw/icon_24.raw");
+#[allow(dead_code)]
 const RAW_32: &[u8] = include_bytes!("icons_raw/icon_32.raw");
+#[allow(dead_code)]
 const RAW_40: &[u8] = include_bytes!("icons_raw/icon_40.raw");
+#[allow(dead_code)]
 const RAW_48: &[u8] = include_bytes!("icons_raw/icon_48.raw");
+#[allow(dead_code)]
 const RAW_64: &[u8] = include_bytes!("icons_raw/icon_64.raw");
+#[allow(dead_code)]
 const RAW_128: &[u8] = include_bytes!("icons_raw/icon_128.raw");
+#[allow(dead_code)]
 const RAW_256: &[u8] = include_bytes!("icons_raw/icon_256.raw");
 
 /// Renders the MacLink liquid glass icon as straight-alpha RGBA, `size`×`size`.
+#[allow(dead_code)]
 pub fn render(size: usize) -> Vec<u8> {
     match size {
         16 => RAW_16.to_vec(),
