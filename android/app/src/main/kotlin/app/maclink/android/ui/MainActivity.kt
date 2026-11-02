@@ -91,6 +91,29 @@ import app.maclink.android.ui.theme.MacLinkTheme
 import app.maclink.android.ui.theme.glassBackdropSource
 import app.maclink.android.ui.theme.liquidGlass
 import app.maclink.android.ui.theme.liquidGlassCard
+import app.maclink.android.ui.theme.AmberTokens
+import app.maclink.android.ui.theme.HomeTabIcon
+import app.maclink.android.ui.theme.SettingsGearIcon
+import app.maclink.android.ui.theme.BookGuideIcon
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
 import app.maclink.android.ui.walkthrough.WalkthroughScreen
 import app.maclink.android.ui.walkthrough.WalkthroughStep
 import app.maclink.android.ui.walkthrough.resolveStartupWalkthrough
@@ -711,6 +734,7 @@ private fun App(
                         FloatingBottomPillDock(
                             selectedTab = tab,
                             onSelectTab = { tab = it },
+                            onOpenGuide = { featuresGuideOpen = true },
                             onlineCount = onlineCount,
                             pairedCount = pairedCount,
                             isGlass = isGlass,
@@ -925,77 +949,67 @@ private fun App(
 private fun FloatingBottomPillDock(
     selectedTab: Tab,
     onSelectTab: (Tab) -> Unit,
+    onOpenGuide: () -> Unit,
     onlineCount: Int,
     pairedCount: Int,
     isGlass: Boolean,
     reducedMotion: Boolean,
     backdrop: GlassBackdrop? = null,
 ) {
-    val scheme = MaterialTheme.colorScheme
-    val dark = scheme.surface.luminance() < 0.5f
-    val baseFill = if (isGlass) {
-        scheme.surfaceContainerHighest.copy(alpha = 0.92f)
-    } else {
-        // Solid: the list scrolls under it, and text showed through.
-        scheme.surfaceContainerHigh
-    }
-    val rimColor = if (isGlass) scheme.outlineVariant else scheme.outlineVariant.copy(alpha = 0.45f)
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .windowInsetsPadding(androidx.compose.foundation.layout.WindowInsets.navigationBars)
-            .padding(horizontal = 24.dp, vertical = 8.dp),
+            .padding(horizontal = 24.dp, vertical = 10.dp),
         contentAlignment = Alignment.Center,
     ) {
-        androidx.compose.foundation.layout.Row(
+        // Floating liquid glass dock container
+        Row(
             modifier = Modifier
-                .selectableGroup()
-                .then(
-                    if (isGlass) {
-                        // Content scrolling beneath bends at the rim (Android 13+); a light
-                        // tint keeps the labels readable over anything.
-                        Modifier.liquidGlass(
-                            backdrop = backdrop,
-                            enabled = true,
-                            cornerRadius = 30.dp,
-                            tint = scheme.surface.copy(alpha = if (dark) 0.42f else 0.50f),
-                            fallbackColor = baseFill,
-                            rimColor = androidx.compose.ui.graphics.Color.White,
-                            dark = dark,
+                .fillMaxWidth()
+                .clip(RoundedCornerShape(32.dp))
+                .background(AmberTokens.GlassBackgroundSubtle, RoundedCornerShape(32.dp))
+                .drawWithCache {
+                    val stroke = 1.dp.toPx()
+                    val rim = Brush.linearGradient(
+                        0f to AmberTokens.GlassBorder,
+                        1f to AmberTokens.GlassBorderSubtle,
+                    )
+                    onDrawWithContent {
+                        drawContent()
+                        drawRoundRect(
+                            brush = rim,
+                            topLeft = Offset(stroke * 0.5f, stroke * 0.5f),
+                            size = Size(size.width - stroke, size.height - stroke),
+                            cornerRadius = CornerRadius(32.dp.toPx(), 32.dp.toPx()),
+                            style = Stroke(width = stroke),
                         )
-                    } else {
-                        Modifier.liquidGlassCard(
-                            cornerRadius = 30.dp,
-                            isGlass = false,
-                            baseColor = baseFill,
-                            tintColor = scheme.primary,
-                            outlineColor = rimColor,
-                        )
-                    },
-                )
-                .padding(horizontal = 6.dp, vertical = 5.dp),
-            horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(6.dp),
+                    }
+                }
+                .padding(horizontal = 6.dp, vertical = 6.dp),
+            horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically,
         ) {
             FloatingDockTabPill(
                 selected = selectedTab == Tab.Home,
                 onClick = { onSelectTab(Tab.Home) },
-                iconRes = R.drawable.ic_home,
+                icon = HomeTabIcon,
                 label = stringResource(R.string.home_title),
-                statusDotColor = when {
-                    onlineCount > 0 -> scheme.primary
-                    pairedCount > 0 -> scheme.outline
-                    else -> null
-                },
-                reducedMotion = reducedMotion,
+                modifier = Modifier.weight(1f),
             )
             FloatingDockTabPill(
                 selected = selectedTab == Tab.Settings,
                 onClick = { onSelectTab(Tab.Settings) },
-                iconRes = R.drawable.ic_settings,
+                icon = SettingsGearIcon,
                 label = stringResource(R.string.settings_title),
-                statusDotColor = null,
-                reducedMotion = reducedMotion,
+                modifier = Modifier.weight(1f),
+            )
+            FloatingDockTabPill(
+                selected = false,
+                onClick = onOpenGuide,
+                icon = BookGuideIcon,
+                label = "Guide",
+                modifier = Modifier.weight(1f),
             )
         }
     }
@@ -1005,84 +1019,77 @@ private fun FloatingBottomPillDock(
 private fun FloatingDockTabPill(
     selected: Boolean,
     onClick: () -> Unit,
-    iconRes: Int,
+    icon: ImageVector,
     label: String,
-    statusDotColor: androidx.compose.ui.graphics.Color?,
-    reducedMotion: Boolean,
+    modifier: Modifier = Modifier,
 ) {
-    val scheme = MaterialTheme.colorScheme
-    val scaleState = androidx.compose.animation.core.animateFloatAsState(
-        targetValue = if (selected) 1f else 0.95f,
-        animationSpec = if (reducedMotion) {
-            androidx.compose.animation.core.snap()
-        } else {
-            androidx.compose.animation.core.spring(
-                dampingRatio = 0.72f,
-                stiffness = androidx.compose.animation.core.Spring.StiffnessMedium,
-                visibilityThreshold = 0.005f,
+    val interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val scale = if (isPressed) 0.94f else 1.0f
+
+    Box(
+        modifier = modifier
+            .scale(scale)
+            .then(
+                if (selected) {
+                    Modifier
+                        .drawBehind {
+                            drawRoundRect(
+                                color = Color(0x66F49D04),
+                                cornerRadius = CornerRadius(22.dp.toPx(), 22.dp.toPx()),
+                                size = Size(size.width + 6f, size.height + 6f),
+                                topLeft = Offset(-3f, -3f),
+                            )
+                        }
+                        .clip(RoundedCornerShape(22.dp))
+                        .background(
+                            brush = AmberTokens.PillActiveGradient,
+                            shape = RoundedCornerShape(22.dp),
+                        )
+                        .drawWithCache {
+                            val stroke = 1.dp.toPx()
+                            val rim = Brush.linearGradient(
+                                0f to AmberTokens.Highlight,
+                                1f to AmberTokens.GlassBorderBright,
+                            )
+                            onDrawWithContent {
+                                drawContent()
+                                drawRoundRect(
+                                    brush = rim,
+                                    topLeft = Offset(stroke * 0.5f, stroke * 0.5f),
+                                    size = Size(size.width - stroke, size.height - stroke),
+                                    cornerRadius = CornerRadius(22.dp.toPx(), 22.dp.toPx()),
+                                    style = Stroke(width = stroke),
+                                )
+                            }
+                        }
+                } else Modifier
             )
-        },
-        visibilityThreshold = 0.005f,
-        label = "pill_scale",
-    )
-    val bgColorState = androidx.compose.animation.animateColorAsState(
-        targetValue = if (selected) scheme.primaryContainer else androidx.compose.ui.graphics.Color.Transparent,
-        animationSpec = if (reducedMotion) {
-            androidx.compose.animation.core.snap()
-        } else {
-            tween(200, easing = FastOutSlowInEasing)
-        },
-        label = "pill_bg",
-    )
-    val contentColor = if (selected) scheme.onPrimaryContainer else scheme.onSurfaceVariant
-    androidx.compose.foundation.layout.Row(
-        modifier = Modifier
-            .semantics {
-                role = Role.Tab
-                this.selected = selected
-            }
-            .graphicsLayer {
-                val s = scaleState.value
-                scaleX = s
-                scaleY = s
-            }
-            .drawWithCache {
-                val r = 24.dp.toPx()
-                val cr = androidx.compose.ui.geometry.CornerRadius(r, r)
-                onDrawBehind {
-                    val bg = bgColorState.value
-                    if (bg.alpha > 0f) {
-                        drawRoundRect(color = bg, cornerRadius = cr)
-                    }
-                }
-            }
             .clickable(
-                interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
+                interactionSource = interactionSource,
                 indication = null,
                 onClick = onClick,
             )
-            .padding(horizontal = 18.dp, vertical = 9.dp),
-        horizontalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
+            .padding(vertical = 8.dp, horizontal = 12.dp),
+        contentAlignment = Alignment.Center,
     ) {
-        Icon(
-            painter = painterResource(iconRes),
-            contentDescription = null,
-            tint = contentColor,
-            modifier = Modifier.size(18.dp),
-        )
-        Text(
-            text = label,
-            color = contentColor,
-            style = MaterialTheme.typography.labelLarge,
-        )
-        if (statusDotColor != null) {
-            androidx.compose.foundation.layout.Spacer(
-                modifier = Modifier
-                    .size(6.dp)
-                    .drawBehind {
-                        drawCircle(color = statusDotColor)
-                    },
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                tint = if (selected) Color.White else AmberTokens.SecondaryText,
+                modifier = Modifier.size(20.dp),
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = label,
+                color = if (selected) Color.White else AmberTokens.SecondaryText,
+                fontSize = 11.sp,
+                fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
+                maxLines = 1,
             )
         }
     }

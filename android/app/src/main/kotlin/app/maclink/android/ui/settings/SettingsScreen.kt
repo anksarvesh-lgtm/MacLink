@@ -93,6 +93,10 @@ import app.maclink.android.ui.guide.GuideHighlightTarget
 import app.maclink.android.ui.theme.Appearance
 import app.maclink.android.ui.theme.LocalGlassTheme
 import app.maclink.android.ui.theme.Tokens
+import app.maclink.android.ui.theme.AmberTokens
+import app.maclink.android.ui.theme.LiquidGlassCard
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
 import app.maclink.android.ui.theme.glassModalBlur
 import app.maclink.android.ui.theme.glassModalContainerColor
 import app.maclink.android.ui.theme.liquidGlassCard
@@ -1350,13 +1354,9 @@ private fun StorageAccess(
 
 @Composable
 private fun SettingRowDivider() {
-    val isGlass = LocalGlassTheme.current
     HorizontalDivider(
-        color = if (isGlass) {
-            MaterialTheme.colorScheme.outlineVariant
-        } else {
-            MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.45f)
-        },
+        color = AmberTokens.GlassBorderSubtle,
+        modifier = Modifier.padding(vertical = 4.dp),
     )
 }
 
@@ -1366,42 +1366,40 @@ private fun Section(
     highlighted: Boolean = false,
     content: @Composable () -> Unit,
 ) {
-    val isGlass = LocalGlassTheme.current
-    val scheme = MaterialTheme.colorScheme
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text(
             title,
             style = MaterialTheme.typography.labelLarge,
-            color = if (highlighted) scheme.primary else scheme.onSurfaceVariant,
+            color = if (highlighted) AmberTokens.PrimaryAccent else AmberTokens.SecondaryText,
             modifier = Modifier.padding(start = 4.dp),
         )
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .liquidGlassCard(
-                    cornerRadius = if (isGlass) 24.dp else 16.dp,
-                    isGlass = isGlass,
-                    baseColor = if (highlighted) scheme.secondaryContainer else scheme.surfaceContainer,
-                    tintColor = scheme.primary,
-                    outlineColor = when {
-                        highlighted -> scheme.primary
-                        isGlass -> scheme.outlineVariant
-                        else -> androidx.compose.ui.graphics.Color.Transparent
-                    },
-                )
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
+        LiquidGlassCard(
+            cornerRadius = 20.dp,
+            modifier = Modifier.fillMaxWidth(),
+            borderColor = if (highlighted) AmberTokens.Highlight else AmberTokens.GlassBorder,
         ) {
-            content()
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                content()
+            }
         }
     }
 }
 
 @Composable
 private fun Label(text: String) {
-    Text(text, style = MaterialTheme.typography.titleSmall)
+    Text(
+        text = text,
+        color = AmberTokens.PrimaryText,
+        fontSize = 14.sp,
+        fontWeight = FontWeight.SemiBold,
+    )
 }
 
 /** The third language choice when it isn't a picked language: opens the list. */
