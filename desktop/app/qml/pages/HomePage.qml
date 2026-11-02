@@ -1215,8 +1215,9 @@ Item {
                     feature: home.feature("files.send")
                     onClicked: filePicker.open()
                     sideIcon: Icons.folder
-                    sideLabel: qsTr("Send a folder")
-                    onSideClicked: folderPicker.open()
+                    sideLabel: qsTr("Browse phone files")
+                    sideAlwaysAvailable: true
+                    onSideClicked: window.page = "files"
                 }
                 ActionTile {
                     width: actions.tileWidth
@@ -1490,6 +1491,12 @@ Item {
                             anchors.right: parent.right
                             anchors.verticalCenter: parent.verticalCenter
                             spacing: 6
+                            Button {
+                                variant: "text"
+                                size: "sm"
+                                text: qsTr("Browse files")
+                                onClicked: window.page = "files"
+                            }
                             Button {
                                 variant: "text"
                                 size: "sm"
