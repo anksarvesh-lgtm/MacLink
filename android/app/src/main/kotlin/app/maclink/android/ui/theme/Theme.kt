@@ -226,16 +226,25 @@ private fun ColorScheme.toGlassScheme(dark: Boolean): ColorScheme {
     }
     return if (dark) {
         copy(
-            surfaceContainerLowest = surface.copy(alpha = 0.52f),
-            surfaceContainerLow = blendWithTint(surfaceContainerLow, 0.08f, 0.62f),
-            surfaceContainer = blendWithTint(surfaceContainer, 0.10f, 0.72f),
-            surfaceContainerHigh = blendWithTint(surfaceContainerHigh, 0.12f, 0.88f),
-            surfaceContainerHighest = blendWithTint(surfaceContainerHighest, 0.14f, 0.94f),
-            surfaceVariant = blendWithTint(surfaceVariant, 0.10f, 0.78f),
-            primaryContainer = primaryContainer.copy(alpha = 0.82f),
-            secondaryContainer = secondaryContainer.copy(alpha = 0.78f),
-            tertiaryContainer = tertiaryContainer.copy(alpha = 0.80f),
-            outlineVariant = Color(0xFF38BDF8).copy(alpha = 0.28f), // Glowing cyan liquid glass edge
+            background = AmberTokens.Background,
+            surface = AmberTokens.Background,
+            surfaceContainerLowest = AmberTokens.DeepBackground.copy(alpha = 0.85f),
+            surfaceContainerLow = AmberTokens.DarkAmber.copy(alpha = 0.35f),
+            surfaceContainer = AmberTokens.BrownSurface.copy(alpha = 0.40f),
+            surfaceContainerHigh = AmberTokens.BurntOrange.copy(alpha = 0.45f),
+            surfaceContainerHighest = AmberTokens.BrownSurface.copy(alpha = 0.65f),
+            surfaceVariant = AmberTokens.DarkAmber.copy(alpha = 0.50f),
+            primary = AmberTokens.PrimaryAccent,
+            onPrimary = AmberTokens.DeepBackground,
+            primaryContainer = AmberTokens.BurntOrange.copy(alpha = 0.85f),
+            onPrimaryContainer = AmberTokens.PrimaryText,
+            secondary = AmberTokens.SecondaryAccent,
+            secondaryContainer = AmberTokens.DarkAmber.copy(alpha = 0.70f),
+            tertiary = AmberTokens.Highlight,
+            onSurface = AmberTokens.PrimaryText,
+            onSurfaceVariant = AmberTokens.SecondaryText,
+            outline = AmberTokens.MutedText,
+            outlineVariant = AmberTokens.GlassBorder, // Warm translucent reflective glass edge
         )
     } else {
         copy(
@@ -248,7 +257,7 @@ private fun ColorScheme.toGlassScheme(dark: Boolean): ColorScheme {
             primaryContainer = primaryContainer.copy(alpha = 0.86f),
             secondaryContainer = secondaryContainer.copy(alpha = 0.84f),
             tertiaryContainer = tertiaryContainer.copy(alpha = 0.86f),
-            outlineVariant = Color(0xFF0284C7).copy(alpha = 0.22f), // Crystal specular edge
+            outlineVariant = Color(0x35FFFFFF), // Crystal specular edge
         )
     }
 }
@@ -535,7 +544,7 @@ fun glassModalContainerColor(): Color {
     val scheme = MaterialTheme.colorScheme
     if (!isGlass) return scheme.surfaceContainerHigh
     val luma = scheme.surface.red * 0.299f + scheme.surface.green * 0.587f + scheme.surface.blue * 0.114f
-    val base = if (luma < 0.5f) Color(0xFF141720) else Color(0xFFF7F8FC)
+    val base = if (luma < 0.5f) AmberTokens.DeepBackground else Color(0xFFF7F8FC)
     val tinted = Color(
         ColorUtils.blendARGB(
             android.graphics.Color.argb(255, (base.red * 255).toInt(), (base.green * 255).toInt(), (base.blue * 255).toInt()),
