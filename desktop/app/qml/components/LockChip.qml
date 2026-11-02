@@ -12,7 +12,7 @@ Rectangle {
     readonly property string shortLabel: {
         const s = feature || {}
         switch (s.action) {
-        case "raisePower": return s.target === "elevated" ? qsTr("Elevated") : qsTr("Assist")
+        case "raisePower": return s.target === "elevated" ? qsTr("Elevated") : qsTr("Enable on phone")
         case "grantPermission":
             return s.target === "notification_access" ? qsTr("Notification access")
                  : s.target === "dnd_access" ? qsTr("DND access")
@@ -21,7 +21,10 @@ Rectangle {
         case "enableAddon": return qsTr("Add-on")
         case "enablePath": return qsTr("Connect over mobile data")
         case "enableToggle": return qsTr("Off")
-        case "updateApp": return qsTr("Update app")
+        case "updateApp":
+            return s.target === "desktop" ? qsTr("Update Mac")
+                 : s.target === "phone" ? qsTr("Update phone")
+                 : qsTr("Update app")
         default: return s.state === "unsupported" ? qsTr("Unavailable") : ""
         }
     }
@@ -62,6 +65,12 @@ Rectangle {
             return qsTr("Open Settings › Connection & About and turn on Connect over mobile data.")
         case "enableToggle":
             return qsTr("This feature is turned off for this phone in Settings › Devices.")
+        case "updateApp":
+            if (s.target === "desktop")
+                return qsTr("Update MacLink on your Mac to use this feature.")
+            if (s.target === "phone")
+                return qsTr("Update MacLink on your phone to use this feature.")
+            return qsTr("Update the MacLink app to use this feature.")
         default:
             return label
         }
