@@ -200,6 +200,15 @@ Item {
                         Accessible.name: qsTr("Open local MacLink Downloads folder in Finder")
                         onClicked: AppController.open_local_downloads()
                     }
+
+                    Button {
+                        text: page.width < 620 ? qsTr("FTP") : qsTr("Connect via FTP")
+                        iconPath: Icons.globe
+                        variant: "tonal"
+                        size: "sm"
+                        Accessible.name: qsTr("Connect to phone FTP server in Finder")
+                        onClicked: ftpSheet.open()
+                    }
                 }
             }
         }
@@ -630,6 +639,156 @@ Item {
                 text: qsTr("This folder is empty or no matching files found.")
                 role: "body"
                 muted: true
+            }
+        }
+    }
+
+    // FTP Connection Sheet
+    Sheet {
+        id: ftpSheet
+        cardWidth: 500
+
+        ColumnLayout {
+            width: parent.width
+            spacing: 16
+
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 10
+
+                Rectangle {
+                    width: 36; height: 36
+                    radius: 18
+                    color: Qt.rgba(0.95, 0.66, 0.23, 0.15)
+                    border.width: 1
+                    border.color: Qt.rgba(0.95, 0.66, 0.23, 0.28)
+
+                    Icon {
+                        anchors.centerIn: parent
+                        width: 18; height: 18
+                        path: Icons.globe
+                        color: Theme.amberAccent
+                    }
+                }
+
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 2
+                    Txt {
+                        text: qsTr("Connect via FTP")
+                        role: "title"
+                        size: 16
+                    }
+                    Txt {
+                        text: qsTr("MinimalFTP on Android · macOS Finder Mount")
+                        role: "caption"
+                        color: Theme.textSecondary
+                    }
+                }
+
+                IconButton {
+                    iconPath: Icons.close
+                    label: qsTr("Close")
+                    onClicked: ftpSheet.close()
+                }
+            }
+
+            Txt {
+                Layout.fillWidth: true
+                wrapMode: Text.WordWrap
+                text: qsTr("Mount your Android phone directly in macOS Finder as an external volume or browse files using FileZilla, Cyberduck, or one-ftpserver.")
+                role: "bodySmall"
+                color: Theme.textSecondary
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                implicitHeight: ftpRow.implicitHeight + 16
+                radius: 12
+                color: Qt.rgba(Theme.cardFill.r, Theme.cardFill.g, Theme.cardFill.b, 0.7)
+                border.width: 1
+                border.color: Theme.cardBorderSubtle
+
+                RowLayout {
+                    id: ftpRow
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 10
+
+                    TextInput {
+                        id: ftpUrlInput
+                        Layout.fillWidth: true
+                        text: "ftp://192.168.1.100:2121"
+                        color: Theme.amberAccent
+                        font.family: Theme.fontFamilyMono
+                        font.pixelSize: 13
+                        selectByMouse: true
+                    }
+
+                    Button {
+                        text: qsTr("Copy")
+                        iconPath: Icons.copy
+                        variant: "ghost"
+                        size: "sm"
+                        onClicked: {
+                            AppController.copyToClipboard(ftpUrlInput.text)
+                        }
+                    }
+                }
+            }
+
+            Rectangle {
+                Layout.fillWidth: true
+                implicitHeight: stepCol.implicitHeight + 16
+                radius: 10
+                color: Qt.rgba(0, 0, 0, 0.2)
+
+                ColumnLayout {
+                    id: stepCol
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    spacing: 6
+
+                    Txt {
+                        Layout.fillWidth: true
+                        text: qsTr("1. On your phone: Open MacLink › Settings › Data & Storage › Turn on 'FTP file server'.")
+                        role: "caption"
+                        color: Theme.textSecondary
+                        wrapMode: Text.WordWrap
+                    }
+                    Txt {
+                        Layout.fillWidth: true
+                        text: qsTr("2. Enter the phone's FTP URL above, then click 'Open in Finder' or press Cmd+K in Finder.")
+                        role: "caption"
+                        color: Theme.textSecondary
+                        wrapMode: Text.WordWrap
+                    }
+                }
+            }
+
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 10
+
+                Item { Layout.fillWidth: true }
+
+                Button {
+                    text: qsTr("Cancel")
+                    variant: "ghost"
+                    size: "sm"
+                    onClicked: ftpSheet.close()
+                }
+
+                Button {
+                    text: qsTr("Open in Finder")
+                    iconPath: Icons.laptop
+                    variant: "primary"
+                    size: "sm"
+                    onClicked: {
+                        Qt.openUrlExternally(ftpUrlInput.text)
+                        ftpSheet.close()
+                    }
+                }
             }
         }
     }

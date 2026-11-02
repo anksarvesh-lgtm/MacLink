@@ -51,6 +51,7 @@ Notifications, messages, phone calls, bidirectional clipboard, gigabit file tran
 - **Gigabit Drag-and-Drop File Transfers**: Transfer folders and multi-gigabyte files over local Wi-Fi or USB with BLAKE3 integrity verification and automatic transfer resume.
 - **Phone Screen Mirroring & PC Control**: Hardware-accelerated 60 FPS H.264 display streaming with sub-frame input latency, keyboard navigation, and touch simulation.
 - **Audio Routing & Media Handoff**: Control music playback across Spotify, YouTube Music, and local media; toggle playback, adjust volume, or route audio output.
+- **Zero-Dependency FTP File Server & macOS Finder Mount**: Powered by embedded MinimalFTP on Android and one-ftpserver compatibility. Mount your Android phone storage directly in macOS Finder (`Go › Connect to Server › ftp://...`) as a native volume, or browse and transfer files with FileZilla, Cyberduck, or terminal clients over Wi-Fi.
 - **Device Management & Power Controls**: Ring phone to find it, trigger DND, flashlight, battery health monitoring, lock PC, and trigger sleep mode remotely.
 
 ---
@@ -183,6 +184,7 @@ flowchart LR
 | **High-Speed File Transfer** | `files.transfer` | Drag-and-Drop Hub | SAF File System | BLAKE3 + TLS |
 | **60 FPS Screen Mirror** | `mirror.capture`, `mirror.view` | Hardware Decode Window | MediaProjection H.264 | TLS 1.3 |
 | **Remote Touch & Type** | `mirror.input` | Trackpad & Keyboard | Accessibility Dispatcher | TLS 1.3 |
+| **Zero-Config FTP Server** | `files.ftp`, `storage.read` | macOS Finder Mount | Embedded MinimalFTP | TLS / WPA3 |
 | **Remote System Toggles** | `toggles.*` (DND/Torch/BT/Wi-Fi)| Controls Palette | Device Settings Provider | TLS 1.3 |
 
 ---

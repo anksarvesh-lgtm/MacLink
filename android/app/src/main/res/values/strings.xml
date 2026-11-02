@@ -555,6 +555,12 @@
     <string name="data_clear_everything_confirm">Clear everything</string>
     <string name="data_cleared_everything_toast">Cleared all local data on this phone.</string>
 
+    <!-- FTP File Server -->
+    <string name="data_ftp_server_title">FTP file server</string>
+    <string name="data_ftp_server_subtitle">Browse and edit phone files directly in macOS Finder (Go › Connect to Server), Windows File Explorer, or any FTP client over Wi-Fi.</string>
+    <string name="data_ftp_server_copy">Copy URL</string>
+    <string name="data_ftp_server_copied">FTP URL copied to clipboard</string>
+
     <!-- LocalSend -->
     <string name="settings_localsend_title">LocalSend</string>
     <string name="settings_localsend_subtitle">Send and receive files with nearby LocalSend devices. Off by default. Incoming files always ask first.</string>

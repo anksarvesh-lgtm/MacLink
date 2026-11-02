@@ -45,6 +45,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.rememberCoroutineScope
 import kotlinx.coroutines.launch
@@ -750,6 +751,54 @@ fun SettingsScreen(
                             OutlinedButton(onClick = onClearReceivedFileHistory) {
                                 Text(stringResource(R.string.data_action_clear))
                             }
+                        }
+                    }
+                    SettingRowDivider()
+
+                    // FTP File Server (MinimalFTP)
+                    val ftpContext = LocalContext.current
+                    val ftpManager = remember { app.maclink.android.storage.ftp.FtpServerManager.getInstance(ftpContext) }
+                    val ftpState by ftpManager.state.collectAsState()
+                    val ftpTitle = stringResource(R.string.data_ftp_server_title)
+                    val clipboard = androidx.compose.ui.platform.LocalClipboardManager.current
+                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
+                        Column(Modifier.weight(1f).padding(end = 12.dp)) {
+                            Text(ftpTitle, style = MaterialTheme.typography.titleSmall)
+                            Text(
+                                stringResource(R.string.data_ftp_server_subtitle),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                            if (ftpState.isRunning) {
+                                Text(
+                                    ftpState.url,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.padding(top = 4.dp),
+                                )
+                            }
+                        }
+                        Switch(
+                            checked = ftpState.isRunning,
+                            onCheckedChange = { enable ->
+                                if (enable) {
+                                    ftpManager.start()
+                                } else {
+                                    ftpManager.stop()
+                                }
+                            },
+                            colors = app.maclink.android.ui.theme.maclinkSwitchColors(),
+                            modifier = Modifier.semantics { contentDescription = ftpTitle },
+                        )
+                    }
+                    if (ftpState.isRunning) {
+                        OutlinedButton(
+                            onClick = {
+                                clipboard.setText(androidx.compose.ui.text.AnnotatedString(ftpState.url))
+                                android.widget.Toast.makeText(ftpContext, ftpContext.getString(R.string.data_ftp_server_copied), android.widget.Toast.LENGTH_SHORT).show()
+                            }
+                        ) {
+                            Text(stringResource(R.string.data_ftp_server_copy))
                         }
                     }
                     SettingRowDivider()
