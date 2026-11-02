@@ -25,13 +25,20 @@ Rectangle {
     radius: Theme.graphite ? Theme.radiusSm : Theme.pill(height)
     color: Theme.graphite
         ? "transparent"
-        : (Theme.glass ? Qt.rgba(1, 1, 1, Theme.dark ? 0.08 : 0.44) : Theme.surfaceContainerHigh)
+        : (Theme.glass ? Theme.cardFill : Theme.surfaceContainerHigh)
     border.width: Theme.graphite || Theme.glass ? 1 : 0
     border.color: Theme.glass
-        ? Qt.rgba(1, 1, 1, Theme.dark ? 0.18 : 0.65)
+        ? Theme.cardBorderSubtle
         : Theme.outlineVariant
 
     Accessible.role: Accessible.PageTabList
+
+    Gradient {
+        id: amberPillGrad
+        orientation: Gradient.Horizontal
+        GradientStop { position: 0.0; color: Theme.amberAccentDeep }
+        GradientStop { position: 1.0; color: Theme.amberAccent }
+    }
 
     // Sliding selection pill behind the segments.
     Rectangle {
@@ -42,13 +49,14 @@ Rectangle {
         width: segmented.selectedItem ? segmented.selectedItem.width : 0
         height: segmented.height - 6
         radius: Theme.graphite ? Math.max(2, Theme.radiusSm - 2) : Theme.pill(height)
+        gradient: Theme.glass ? amberPillGrad : null
         color: Theme.graphite
             ? Theme.surfaceContent
             : (Theme.glass
-                ? Qt.tint(Qt.rgba(1, 1, 1, Theme.dark ? 0.16 : 0.78), Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, Theme.dark ? 0.24 : 0.14))
+                ? Theme.amberAccentDeep
                 : (Theme.hive ? Theme.primaryContainer : Theme.surface))
         border.width: Theme.glass ? 1 : 0
-        border.color: Qt.rgba(1, 1, 1, Theme.dark ? 0.28 : 0.85)
+        border.color: Theme.glass ? Theme.amberBorder : Qt.rgba(1, 1, 1, Theme.dark ? 0.28 : 0.85)
         Behavior on x {
             enabled: !Theme.reduceMotion && slideIndicator.width > 0
             SpringAnimation { spring: Theme.springSnappy; damping: Theme.dampingSnappy }
@@ -109,7 +117,7 @@ Rectangle {
                     text: option.modelData.label
                     role: "label"
                     color: option.selected
-                        ? (Theme.graphite ? Theme.surface : (Theme.hive ? Theme.primaryContainerContent : Theme.surfaceContent))
+                        ? (Theme.graphite ? Theme.surface : (Theme.hive ? Theme.primaryContainerContent : (Theme.glass ? "#FFFFFF" : Theme.surfaceContent)))
                         : (segMouse.containsMouse ? Theme.surfaceContent : Theme.surfaceContentVariant)
                     Behavior on color { enabled: !Theme.reduceMotion; ColorAnimation { duration: Theme.fadeFast } }
                 }

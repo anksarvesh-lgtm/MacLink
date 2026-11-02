@@ -236,10 +236,11 @@ Item {
             anchors.leftMargin: 16
             anchors.rightMargin: 16
             height: 38
-            radius: Theme.graphite ? Theme.radiusSm : height / 2
-            color: Theme.graphite ? "transparent" : (Theme.glass ? Theme.tileColor : Theme.surfaceContainerHighest)
-            border.width: search.activeFocus ? 2 : (Theme.graphite || Theme.glass ? 1 : 0)
-            border.color: search.activeFocus ? Theme.primary : (Theme.glass ? Theme.cardBorder : Theme.outlineVariant)
+            radius: height / 2
+            color: Theme.graphite ? "transparent" : (Theme.glass ? Theme.cardFill : Theme.surfaceContainerHighest)
+            border.width: 1
+            border.color: search.activeFocus ? Theme.amberAccent : (Theme.glass ? Theme.cardBorderSubtle : Theme.outlineVariant)
+            Behavior on border.color { ColorAnimation { duration: 120 } }
             Icon {
                 id: searchIcon
                 anchors.left: parent.left
@@ -622,9 +623,10 @@ Item {
                         width: parent.width
                         height: dialMatch.visible ? 64 : 52
                         radius: Theme.graphite ? Theme.radiusSm : Theme.radiusLg
-                        color: Theme.graphite ? "transparent" : (Theme.glass ? Theme.tileColor : Theme.surfaceContainerHighest)
-                        border.width: dialInput.activeFocus ? 2 : (Theme.graphite || Theme.glass ? 1 : 0)
-                        border.color: dialInput.activeFocus ? Theme.primary : (Theme.glass ? Theme.cardBorder : Theme.outlineVariant)
+                        color: Theme.graphite ? "transparent" : (Theme.glass ? Theme.cardFill : Theme.surfaceContainerHighest)
+                        border.width: 1
+                        border.color: dialInput.activeFocus ? Theme.amberAccent : (Theme.glass ? Theme.cardBorderSubtle : Theme.outlineVariant)
+                        Behavior on border.color { ColorAnimation { duration: 120 } }
 
                         Column {
                             anchors.left: parent.left
@@ -790,7 +792,7 @@ Item {
 
                         Button {
                             anchors.verticalCenter: parent.verticalCenter
-                            variant: "fill"
+                            variant: Theme.glass ? "amber" : "fill"
                             iconPath: Icons.call
                             text: PhoneCall.dialing ? qsTr("Calling…") : qsTr("Call")
                             enabled: dialInput.text.trim().length > 0 && PhoneCall.canDial && !PhoneCall.dialing
@@ -917,12 +919,13 @@ Item {
                 anchors.fill: parent
                 anchors.leftMargin: 8
                 anchors.rightMargin: 8
-                radius: Theme.radiusLg
+                radius: 14
                 color: callHover.hovered
-                    ? Qt.rgba(Theme.surfaceContent.r, Theme.surfaceContent.g, Theme.surfaceContent.b, 0.06)
+                    ? Qt.rgba(1, 1, 1, 0.05)
                     : "transparent"
-                border.width: Theme.focusVisible(row) ? 2 : 0
-                border.color: Theme.primary
+                border.width: 1
+                border.color: callHover.hovered ? Theme.cardBorderHover : "transparent"
+                Behavior on border.color { ColorAnimation { duration: 120 } }
             }
 
             Item {
@@ -1085,12 +1088,22 @@ Item {
                 anchors.fill: parent
                 anchors.leftMargin: 8
                 anchors.rightMargin: 8
-                radius: Theme.radiusLg
-                color: crow.selected ? Theme.secondaryContainer
-                    : contactHover.hovered ? Qt.rgba(Theme.surfaceContent.r, Theme.surfaceContent.g, Theme.surfaceContent.b, 0.06)
-                    : "transparent"
-                border.width: Theme.focusVisible(crow) ? 2 : 0
-                border.color: Theme.primary
+                radius: 14
+                gradient: crow.selected && Theme.glass ? amberContactGrad : null
+                color: crow.selected
+                    ? (Theme.glass ? Theme.amberAccentDeep : Theme.secondaryContainer)
+                    : (contactHover.hovered ? Qt.rgba(1, 1, 1, 0.05) : "transparent")
+                border.width: 1
+                border.color: crow.selected
+                    ? (Theme.glass ? Theme.amberBorder : Theme.primary)
+                    : (contactHover.hovered ? Theme.cardBorderHover : "transparent")
+                Behavior on border.color { ColorAnimation { duration: 120 } }
+            }
+            Gradient {
+                id: amberContactGrad
+                orientation: Gradient.Horizontal
+                GradientStop { position: 0.0; color: Qt.rgba(0.72, 0.45, 0.10, 0.35) }
+                GradientStop { position: 1.0; color: Qt.rgba(0.95, 0.66, 0.23, 0.20) }
             }
 
             Item {

@@ -291,10 +291,11 @@ Item {
             anchors.leftMargin: 16
             anchors.rightMargin: 16
             height: 38
-            radius: Theme.graphite ? Theme.radiusSm : height / 2
-            color: Theme.graphite ? "transparent" : (Theme.glass ? Theme.tileColor : Theme.surfaceContainerHighest)
-            border.width: search.activeFocus ? 2 : (Theme.graphite || Theme.glass ? 1 : 0)
-            border.color: search.activeFocus ? Theme.primary : (Theme.glass ? Theme.cardBorder : Theme.outlineVariant)
+            radius: height / 2
+            color: Theme.graphite ? "transparent" : (Theme.glass ? Theme.cardFill : Theme.surfaceContainerHighest)
+            border.width: 1
+            border.color: search.activeFocus ? Theme.amberAccent : (Theme.glass ? Theme.cardBorderSubtle : Theme.outlineVariant)
+            Behavior on border.color { ColorAnimation { duration: 120 } }
             Icon {
                 id: searchIcon
                 anchors.left: parent.left
@@ -846,9 +847,10 @@ Item {
             anchors.margins: 16
             height: Math.min(Math.max(input.contentHeight + 22, 48), 160)
             radius: Theme.graphite ? Theme.radiusSm : 24
-            color: Theme.graphite ? "transparent" : Theme.surfaceContainerHighest
-            border.width: input.activeFocus ? 2 : 1
-            border.color: input.activeFocus ? Theme.primary : Theme.outlineVariant
+            color: Theme.graphite ? "transparent" : (Theme.glass ? Theme.cardFill : Theme.surfaceContainerHighest)
+            border.width: 1
+            border.color: input.activeFocus ? Theme.amberAccent : (Theme.glass ? Theme.cardBorderSubtle : Theme.outlineVariant)
+            Behavior on border.color { ColorAnimation { duration: 120 } }
 
             IconButton {
                 id: attachButton
@@ -943,7 +945,8 @@ Item {
                 anchors.bottomMargin: 6
                 iconPath: Icons.send
                 label: qsTr("Send")
-                tonal: composer.canSend
+                tonal: composer.canSend && !Theme.glass
+                amberRing: composer.canSend && Theme.glass
                 enabled: composer.canSend
                 onClicked: composer.send()
             }
@@ -994,12 +997,22 @@ Item {
             anchors.fill: parent
             anchors.leftMargin: 8
             anchors.rightMargin: 8
-            radius: Theme.radiusLg
-            color: row.selected ? Theme.secondaryContainer
-                 : rowHover.hovered ? Qt.rgba(Theme.surfaceContent.r, Theme.surfaceContent.g, Theme.surfaceContent.b, 0.06)
-                 : "transparent"
-            border.width: Theme.focusVisible(row) ? 2 : 0
-            border.color: Theme.primary
+            radius: 14
+            gradient: row.selected && Theme.glass ? amberRowGrad : null
+            color: row.selected
+                 ? (Theme.glass ? Theme.amberAccentDeep : Theme.secondaryContainer)
+                 : (rowHover.hovered ? Qt.rgba(1, 1, 1, 0.05) : "transparent")
+            border.width: 1
+            border.color: row.selected
+                 ? (Theme.glass ? Theme.amberBorder : Theme.primary)
+                 : (rowHover.hovered ? Theme.cardBorderHover : "transparent")
+            Behavior on border.color { ColorAnimation { duration: 120 } }
+        }
+        Gradient {
+            id: amberRowGrad
+            orientation: Gradient.Horizontal
+            GradientStop { position: 0.0; color: Qt.rgba(0.72, 0.45, 0.10, 0.35) }
+            GradientStop { position: 1.0; color: Qt.rgba(0.95, 0.66, 0.23, 0.20) }
         }
         Item {
             id: face
@@ -1192,9 +1205,21 @@ Item {
             width: Math.max(pictures.width, audiosCol.width, Math.min(text.implicitWidth, bubble.maxWidth - 28) + 28)
             height: pictures.height + audiosCol.height + (text.visible ? text.height + 18 : 0)
             radius: 18
-            color: bubble.mine ? Theme.primaryContainer : Theme.surfaceContainerHigh
-            border.width: Theme.graphite ? 1 : 0
-            border.color: Theme.outlineVariant
+            gradient: bubble.mine && Theme.glass ? amberBubbleMineGrad : null
+            color: bubble.mine
+                ? (Theme.glass ? Theme.amberAccentDeep : Theme.primaryContainer)
+                : (Theme.glass ? Theme.cardFill : Theme.surfaceContainerHigh)
+            border.width: Theme.glass ? 1 : (Theme.graphite ? 1 : 0)
+            border.color: bubble.mine
+                ? (Theme.glass ? Theme.amberBorder : Theme.outlineVariant)
+                : (Theme.glass ? Theme.cardBorderSubtle : Theme.outlineVariant)
+
+            Gradient {
+                id: amberBubbleMineGrad
+                orientation: Gradient.Horizontal
+                GradientStop { position: 0.0; color: Qt.rgba(0.72, 0.45, 0.10, 0.90) }
+                GradientStop { position: 1.0; color: Qt.rgba(0.95, 0.66, 0.23, 0.90) }
+            }
             Column {
                 id: pictures
                 width: bubble.message.images.length > 0 ? Math.min(260, bubble.maxWidth) : 0
