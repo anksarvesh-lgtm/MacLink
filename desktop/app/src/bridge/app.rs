@@ -549,6 +549,20 @@ pub fn toggle_shelf_from_anywhere() {
     }
 }
 
+/// Opens the slide-out Shelf panel when triggered by cursor edge proximity.
+pub fn open_shelf_from_edge() {
+    if is_shelf_open() {
+        return;
+    }
+    if let Some(qt) = controller() {
+        let _ = qt.queue(|object| {
+            if !object.shelf_open {
+                object.toggle_shelf();
+            }
+        });
+    }
+}
+
 /// Downloads and starts the update (from the app or its notification),
 /// showing how far the download is. The app quits for the installer only
 /// once the download is checked; until then it keeps working.
@@ -2211,6 +2225,7 @@ impl qobject::AppController {
             self.as_mut().set_shelf_items(QString::from(&json));
             self.as_mut().set_shelf_open(true);
             win::tray::apply_no_activate_style_by_title("MacLink Shelf");
+            win::shelf_edge::set_shelf_open(true);
         }
     }
 
@@ -2218,6 +2233,7 @@ impl qobject::AppController {
         SHELF_OPEN.store(false, Ordering::Relaxed);
         self.as_mut().set_shelf_open(false);
         self.as_mut().set_shelf_items(QString::default());
+        win::shelf_edge::set_shelf_open(false);
     }
 
     pub fn refresh_shelf(mut self: Pin<&mut Self>) {

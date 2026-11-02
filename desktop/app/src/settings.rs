@@ -130,6 +130,38 @@ fn normalize_webcam_camera(cam: &str) -> String {
     if cam.trim().eq_ignore_ascii_case("front") { "front".to_owned() } else { "back".to_owned() }
 }
 
+fn default_shelf_edge_size() -> String {
+    "medium".to_owned()
+}
+
+static SHELF_EDGE_TRIGGER: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(true);
+static SHELF_EDGE_SIZE: std::sync::Mutex<String> = std::sync::Mutex::new(String::new());
+
+pub fn shelf_edge_trigger() -> bool {
+    SHELF_EDGE_TRIGGER.load(std::sync::atomic::Ordering::Relaxed)
+}
+
+pub fn set_shelf_edge_trigger(on: bool) {
+    SHELF_EDGE_TRIGGER.store(on, std::sync::atomic::Ordering::Relaxed);
+}
+
+pub fn shelf_edge_size() -> String {
+    let s = SHELF_EDGE_SIZE.lock().unwrap_or_else(|e| e.into_inner()).clone();
+    if s.is_empty() {
+        "medium".to_owned()
+    } else {
+        s
+    }
+}
+
+pub fn set_shelf_edge_size(size: &str) {
+    let mut lock = SHELF_EDGE_SIZE.lock().unwrap_or_else(|e| e.into_inner());
+    *lock = match size.trim().to_ascii_lowercase().as_str() {
+        "small" | "large" => size.trim().to_ascii_lowercase(),
+        _ => "medium".to_owned(),
+    };
+}
+
 static CLIPBOARD_AUTO_COPY_FILES: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(true);
 static MACLINK_ISLAND: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 static STREAM_PC_AUDIO: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
@@ -402,6 +434,12 @@ pub struct Settings {
     /// Global hotkey to slide out the Shelf panel at the screen edge (e.g. `"Ctrl+Alt+S"`, or `""` to disable).
     #[serde(alias = "shelf_hotkey")]
     pub shelf_hotkey: String,
+    /// Whether hovering the left edge of the screen slides out the Shelf.
+    #[serde(default = "default_true", alias = "shelf_edge_trigger")]
+    pub shelf_edge_trigger: bool,
+    /// Screen edge area size for opening Shelf ("small", "medium", "large").
+    #[serde(default = "default_shelf_edge_size", alias = "shelf_edge_size")]
+    pub shelf_edge_size: String,
     /// Whether the localhost HTTP/JSON automation API (`127.0.0.1:<local_api_port>`) is enabled (off by default).
     #[serde(default, alias = "local_api_enabled")]
     pub local_api_enabled: bool,
@@ -524,6 +562,8 @@ impl Default for Settings {
             continuity_scan_hotkey: "Ctrl+Alt+D".into(),
             command_palette_hotkey: "Ctrl+Alt+Space".into(),
             shelf_hotkey: "Ctrl+Alt+S".into(),
+            shelf_edge_trigger: true,
+            shelf_edge_size: default_shelf_edge_size(),
             local_api_enabled: false,
             local_api_port: default_local_api_port(),
             clipboard_auto_copy_received_files: true,
@@ -567,6 +607,9 @@ impl Settings {
         self.window_screen = self.window_screen.map(|s| s.trim().to_owned()).filter(|s| !s.is_empty());
         self.window_width = self.window_width.clamp(MIN_WINDOW_WIDTH, MAX_WINDOW_WIDTH);
         self.window_height = self.window_height.clamp(MIN_WINDOW_HEIGHT, MAX_WINDOW_HEIGHT);
+        if !matches!(self.shelf_edge_size.trim().to_ascii_lowercase().as_str(), "small" | "medium" | "large") {
+            self.shelf_edge_size = default_shelf_edge_size();
+        }
         if self.window_x.is_none() || self.window_y.is_none() {
             self.window_x = None;
             self.window_y = None;
@@ -605,6 +648,8 @@ impl Settings {
         set_share_pc_storage(self.share_pc_storage);
         set_forward_pc_notifications_to_phone(self.forward_pc_notifications_to_phone);
         set_away_mode(self.away_mode);
+        set_shelf_edge_trigger(self.shelf_edge_trigger);
+        set_shelf_edge_size(&self.shelf_edge_size);
         set_window_geometry(
             self.window_screen.clone(),
             self.window_x,
@@ -702,6 +747,8 @@ mod tests {
             continuity_scan_hotkey: "Ctrl+Alt+S".into(),
             command_palette_hotkey: "Ctrl+Shift+Space".into(),
             shelf_hotkey: "Ctrl+Alt+E".into(),
+            shelf_edge_trigger: false,
+            shelf_edge_size: "large".into(),
             local_api_enabled: true,
             local_api_port: 54321,
             clipboard_auto_copy_received_files: false,

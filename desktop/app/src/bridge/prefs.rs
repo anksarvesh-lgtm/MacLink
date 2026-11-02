@@ -91,6 +91,10 @@ pub mod qobject {
         #[qproperty(QString, command_palette_hotkey)]
         /// Global hotkey for the Shelf panel (e.g. `"Ctrl+Alt+S"`).
         #[qproperty(QString, shelf_hotkey)]
+        /// Open Shelf by hovering cursor at left screen edge.
+        #[qproperty(bool, shelf_edge_trigger)]
+        /// Screen edge area size for opening Shelf ("small", "medium", "large").
+        #[qproperty(QString, shelf_edge_size)]
         /// Opt-in localhost HTTP/JSON + SSE automation API (`127.0.0.1`).
         #[qproperty(bool, local_api_enabled)]
         /// TCP port for the localhost automation API (default `53320`).
@@ -310,6 +314,8 @@ pub struct PreferencesRust {
     continuity_scan_hotkey: QString,
     command_palette_hotkey: QString,
     shelf_hotkey: QString,
+    shelf_edge_trigger: bool,
+    shelf_edge_size: QString,
     local_api_enabled: bool,
     local_api_port: i32,
     local_api_token_path: QString,
@@ -399,6 +405,10 @@ impl cxx_qt::Initialize for qobject::Preferences {
         self.as_mut().set_continuity_scan_hotkey(QString::from(&settings.continuity_scan_hotkey));
         self.as_mut().set_command_palette_hotkey(QString::from(&settings.command_palette_hotkey));
         self.as_mut().set_shelf_hotkey(QString::from(&settings.shelf_hotkey));
+        self.as_mut().set_shelf_edge_trigger(settings.shelf_edge_trigger);
+        self.as_mut().set_shelf_edge_size(QString::from(&settings.shelf_edge_size));
+        crate::win::shelf_edge::set_enabled(settings.shelf_edge_trigger);
+        crate::win::shelf_edge::set_size(&settings.shelf_edge_size);
         self.as_mut().set_local_api_enabled(settings.local_api_enabled);
         self.as_mut().set_local_api_port(i32::from(settings.local_api_port));
         let token_path = crate::local_api::token_file_path();
@@ -611,6 +621,22 @@ impl cxx_qt::Initialize for qobject::Preferences {
                     &String::from(&p.command_palette_hotkey),
                     &String::from(&p.shelf_hotkey),
                 );
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_shelf_edge_trigger_changed(|p| {
+                let on = p.shelf_edge_trigger;
+                crate::settings::set_shelf_edge_trigger(on);
+                crate::win::shelf_edge::set_enabled(on);
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_shelf_edge_size_changed(|p| {
+                let size = String::from(&p.shelf_edge_size);
+                crate::settings::set_shelf_edge_size(&size);
+                crate::win::shelf_edge::set_size(&size);
                 p.save();
             })
             .release();
@@ -1015,6 +1041,8 @@ impl qobject::Preferences {
             continuity_scan_hotkey: String::from(&p.continuity_scan_hotkey),
             command_palette_hotkey: String::from(&p.command_palette_hotkey),
             shelf_hotkey: String::from(&p.shelf_hotkey),
+            shelf_edge_trigger: p.shelf_edge_trigger,
+            shelf_edge_size: String::from(&p.shelf_edge_size),
             local_api_enabled: p.local_api_enabled,
             local_api_port: u16::try_from(p.local_api_port)
                 .ok()

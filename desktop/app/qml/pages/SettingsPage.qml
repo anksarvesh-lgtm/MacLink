@@ -1968,6 +1968,43 @@ Item {
                                 }
                             }
                         }
+
+                        Divider { width: parent.width }
+
+                        ListRow {
+                            width: parent.width
+                            iconPath: Icons.desktop
+                            title: qsTr("Open Shelf from screen edge")
+                            description: qsTr("Slide out Shelf when moving cursor to the left edge of the screen.")
+                            Toggle {
+                                anchors.verticalCenter: parent.verticalCenter
+                                checked: Preferences.shelfEdgeTrigger
+                                onToggled: (on) => Preferences.shelfEdgeTrigger = on
+                            }
+                        }
+
+                        Divider {
+                            width: parent.width
+                            visible: Preferences.shelfEdgeTrigger
+                        }
+
+                        ListRow {
+                            width: parent.width
+                            visible: Preferences.shelfEdgeTrigger
+                            iconPath: Icons.folder
+                            title: qsTr("Edge area size")
+                            description: qsTr("Vertical active trigger area on the left edge.")
+                            Segmented {
+                                anchors.verticalCenter: parent.verticalCenter
+                                options: [
+                                    { value: "small", label: qsTr("Small (25%)") },
+                                    { value: "medium", label: qsTr("Medium (40%)") },
+                                    { value: "large", label: qsTr("Large (60%)") }
+                                ]
+                                value: Preferences.shelfEdgeSize
+                                onPicked: (val) => Preferences.shelfEdgeSize = val
+                            }
+                        }
                     }
                 }
 

@@ -373,6 +373,7 @@ fn main() {
     println!("cargo:rustc-link-lib=framework=Foundation");
     println!("cargo:rustc-link-lib=framework=UserNotifications");
     println!("cargo:rustc-link-lib=framework=CoreGraphics");
+    println!("cargo:rustc-link-lib=framework=QuartzCore");
     println!("cargo:rustc-link-lib=framework=CoreAudio");
     println!("cargo:rustc-link-lib=framework=AudioToolbox");
     println!("cargo:rustc-link-lib=framework=IOKit");
@@ -384,13 +385,16 @@ fn main() {
     println!("cargo:rerun-if-changed=cpp/video_view.cpp");
     println!("cargo:rerun-if-changed=cpp/mac_notifications.h");
     println!("cargo:rerun-if-changed=cpp/mac_notifications.mm");
+    println!("cargo:rerun-if-changed=cpp/shelf_edge.h");
+    println!("cargo:rerun-if-changed=cpp/shelf_edge.mm");
 
     #[cfg(target_os = "macos")]
     {
         cc::Build::new()
             .file("cpp/mac_notifications.mm")
+            .file("cpp/shelf_edge.mm")
             .flag("-fobjc-arc")
             .flag("-std=c++17")
-            .compile("mac_notifications");
+            .compile("mac_native");
     }
 }

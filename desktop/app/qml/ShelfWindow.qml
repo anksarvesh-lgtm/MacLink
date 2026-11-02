@@ -34,7 +34,7 @@ Window {
 
     width: 348
     height: Math.min(620, Math.max(420, availH - 48))
-    x: areaX + areaW - width - 12
+    x: areaX + 12
     y: areaY + Math.round((areaH - height) / 2)
 
     property bool justDropped: false
@@ -193,6 +193,28 @@ Window {
         }
     }
 
+    HoverHandler {
+        id: windowHover
+        onHoveredChanged: {
+            if (!hovered) {
+                leaveTimer.restart()
+            } else {
+                leaveTimer.stop()
+            }
+        }
+    }
+
+    Timer {
+        id: leaveTimer
+        interval: 300
+        repeat: false
+        onTriggered: {
+            if (!windowHover.hovered && !shelfWin.undoPending && !shelfDropArea.containsDrag) {
+                AppController.closeShelf()
+            }
+        }
+    }
+
     Item {
         id: rootItem
         anchors.fill: parent
@@ -206,9 +228,9 @@ Window {
             id: slideAnim
             target: slideTransform
             property: "x"
-            from: 24
+            from: -width - 24
             to: 0
-            duration: Theme.reduceMotion ? 0 : 180
+            duration: Theme.reduceMotion ? 0 : 220
             easing.type: Easing.OutCubic
         }
 
@@ -1236,6 +1258,7 @@ Window {
                         Txt {
                             width: parent.width
                             horizontalAlignment: Text.AlignHCenter
+                            wrapMode: Text.WordWrap
                             role: "caption"
                             size: 11
                             muted: true

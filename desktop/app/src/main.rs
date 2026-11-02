@@ -602,6 +602,7 @@ fn main() -> ExitCode {
         &settings.command_palette_hotkey,
         &settings.shelf_hotkey,
     );
+    win::shelf_edge::init();
     // A test instance (own data folder) leaves the user's menu and sign-in
     // alone.
     if options.data_dir.is_none() {

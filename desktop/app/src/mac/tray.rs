@@ -50,7 +50,9 @@ pub fn update_hotkeys(_photo_spec: &str, _scan_spec: &str, _palette_spec: &str, 
 #[allow(dead_code)]
 pub fn record_foreground_window() {}
 
-pub fn apply_no_activate_style_by_title(_title: &str) {}
+pub fn apply_no_activate_style_by_title(title: &str) {
+    crate::mac::shelf_edge::style_shelf_window(title);
+}
 
 #[allow(dead_code)] // Multiplatform tray window focus
 pub fn focus_window(_hwnd: isize) -> bool {

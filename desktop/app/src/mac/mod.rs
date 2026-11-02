@@ -20,6 +20,7 @@ pub mod media_sessions;
 pub mod mp4;
 pub mod net;
 pub mod share_target;
+pub mod shelf_edge;
 pub mod shell;
 pub mod shortcut;
 pub mod single_instance;
