@@ -229,6 +229,14 @@
     <string name="unpair_title">取消与 %1$s 的配对？</string>
     <string name="unpair_text">两台设备将互相忘记。你随时可以重新配对。</string>
     <string name="core_failed">MacLink 无法启动：%1$s</string>
+    <string name="key_recovery_title">无法解锁安全密钥</string>
+    <string name="key_recovery_description">手机上保存的密钥不再匹配。您需要重新与 Mac 配对。</string>
+    <string name="key_recovery_reset_button">重置并重新配对</string>
+    <string name="key_recovery_copy_button">复制详细信息</string>
+    <string name="key_recovery_confirm_title">重置安全密钥？</string>
+    <string name="key_recovery_confirm_message">这将归档无法读取的密钥并清除手机上的现有配对。将生成新的设备身份。您需要在 Mac 上移除此手机并重新配对。</string>
+    <string name="key_recovery_confirm_action">重置并配对</string>
+    <string name="key_recovery_copied_toast">错误详情已复制到剪贴板</string>
     <string name="action_pair">配对</string>
     <string name="action_pair_nearby">改为与附近设备配对</string>
     <string name="action_scan_instead">改为扫描二维码</string>

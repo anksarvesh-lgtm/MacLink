@@ -235,6 +235,14 @@
     <string name="unpair_title">Unpair %1$s?</string>
     <string name="unpair_text">Both devices forget each other. You can pair them again any time.</string>
     <string name="core_failed">MacLink couldn\'t start: %1$s</string>
+    <string name="key_recovery_title">Secure key could not be unlocked</string>
+    <string name="key_recovery_description">Your phone\'s saved key no longer matches. You need to pair with your Mac again.</string>
+    <string name="key_recovery_reset_button">Reset and pair again</string>
+    <string name="key_recovery_copy_button">Copy details</string>
+    <string name="key_recovery_confirm_title">Reset secure key?</string>
+    <string name="key_recovery_confirm_message">This will archive the unreadable key and clear existing pairings on your phone. A new device identity will be generated. You will need to remove this phone from your Mac and pair again.</string>
+    <string name="key_recovery_confirm_action">Reset and pair</string>
+    <string name="key_recovery_copied_toast">Error details copied to clipboard</string>
 
     <!-- Actions -->
     <string name="action_pair">Pair</string>

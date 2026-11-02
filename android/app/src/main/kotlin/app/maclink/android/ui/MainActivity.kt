@@ -79,6 +79,7 @@ import app.maclink.android.ui.guide.GuideHighlightTarget
 import app.maclink.android.ui.home.HomeScreen
 import app.maclink.android.ui.pairing.PairingActions
 import app.maclink.android.ui.pairing.PairingScreen
+import app.maclink.android.ui.recovery.KeyRecoveryScreen
 import app.maclink.android.ui.recorder.RecorderScreen
 import app.maclink.android.ui.remote.RemoteMode
 import app.maclink.android.ui.remote.RemoteScreen
@@ -307,6 +308,7 @@ private enum class Tab { Home, Settings }
 private sealed interface ScreenRoute {
     data object Starting : ScreenRoute
     data class Failed(val message: String) : ScreenRoute
+    data class KeyRecovery(val message: String, val causeChain: String) : ScreenRoute
     data object Walkthrough : ScreenRoute
     data object FeaturesGuide : ScreenRoute
     data object Pairing : ScreenRoute
@@ -448,6 +450,14 @@ private fun App(
 
     val currentRoute: ScreenRoute = when {
         state.status is CoreStatus.Starting -> ScreenRoute.Starting
+        state.status is CoreStatus.KeyUnlockFailed -> ScreenRoute.KeyRecovery(
+            message = state.status.message,
+            causeChain = state.status.causeChain,
+        )
+        state.status is CoreStatus.Failed && state.status.message.contains("cannot unlock device key") -> ScreenRoute.KeyRecovery(
+            message = state.status.message,
+            causeChain = state.status.message,
+        )
         state.status is CoreStatus.Failed -> ScreenRoute.Failed(state.status.message)
         showWalkthrough -> ScreenRoute.Walkthrough
         featuresGuideOpen -> ScreenRoute.FeaturesGuide
@@ -509,6 +519,15 @@ private fun App(
                     CircularProgressIndicator()
                 }
             }
+            is ScreenRoute.KeyRecovery -> KeyRecoveryScreen(
+                message = route.message,
+                causeChain = route.causeChain,
+                onResetAndPair = {
+                    core.recoverFromKeyUnlockFailure {
+                        pairing = true
+                    }
+                },
+            )
             is ScreenRoute.Failed -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                 Text(stringResource(R.string.core_failed, route.message))
             }

@@ -235,6 +235,14 @@
     <string name="unpair_title">%1$s entkoppeln?</string>
     <string name="unpair_text">Beide Geräte vergessen einander. Du kannst sie jederzeit erneut koppeln.</string>
     <string name="core_failed">MacLink konnte nicht starten: %1$s</string>
+    <string name="key_recovery_title">Sicherheitsschlüssel konnte nicht entsperrt werden</string>
+    <string name="key_recovery_description">Der gespeicherte Schlüssel Ihres Telefons stimmt nicht mehr überein. Sie müssen erneut mit Ihrem Mac koppeln.</string>
+    <string name="key_recovery_reset_button">Zurücksetzen und erneut koppeln</string>
+    <string name="key_recovery_copy_button">Details kopieren</string>
+    <string name="key_recovery_confirm_title">Sicherheitsschlüssel zurücksetzen?</string>
+    <string name="key_recovery_confirm_message">Dadurch wird der unlesbare Schlüssel archiviert und bestehende Kopplungen auf Ihrem Telefon werden gelöscht. Eine neue Geräteidentität wird erstellt. Sie müssen dieses Telefon auf Ihrem Mac entfernen und erneut koppeln.</string>
+    <string name="key_recovery_confirm_action">Zurücksetzen &amp; koppeln</string>
+    <string name="key_recovery_copied_toast">Fehlerdetails in Zwischenablage kopiert</string>
 
     <!-- Actions -->
     <string name="action_pair">Koppeln</string>
