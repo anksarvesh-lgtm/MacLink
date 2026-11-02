@@ -30,6 +30,10 @@ android {
         }
     }
 
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
+
     // Only the languages the app offers (res/xml/locales_config.xml) go into the APK: a
     // translation still in progress stays out, so a phone in that language never shows
     // it half done (docs/translating.md).

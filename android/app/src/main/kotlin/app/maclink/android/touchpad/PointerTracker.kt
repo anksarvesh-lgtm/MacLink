@@ -96,3 +96,4 @@ class PointerTracker {
         return atan2(p2.currentY - p1.currentY, p2.currentX - p1.currentX)
     }
 }
+

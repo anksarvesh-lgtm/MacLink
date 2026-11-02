@@ -150,3 +150,4 @@ class GestureClassifier(
         multiFingerSwipeRecognized = false
     }
 }
+

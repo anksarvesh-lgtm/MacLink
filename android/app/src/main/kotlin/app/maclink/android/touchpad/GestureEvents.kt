@@ -24,3 +24,4 @@ enum class HapticGestureTrigger {
     GESTURE_COMPLETE,
     SCROLL_TICK
 }
+

@@ -37,3 +37,4 @@ class CoordinateProcessor(
         return sx to sy
     }
 }
+

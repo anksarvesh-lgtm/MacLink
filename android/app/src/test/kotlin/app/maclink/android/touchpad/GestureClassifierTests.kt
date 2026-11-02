@@ -113,3 +113,4 @@ class GestureClassifierTests {
         assertEquals(3, swipe?.fingers)
     }
 }
+
