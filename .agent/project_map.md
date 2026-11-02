@@ -1,5 +1,5 @@
 # Project Map & Architecture: nectarlink
-Generated on: 2026-11-02T03:56:33.165Z | Total Tracked Files: 607
+Generated on: 2026-11-02T11:00:39.278Z | Total Tracked Files: 621
 
 ## Architecture Flowchart
 ```mermaid
@@ -20,8 +20,8 @@ graph TD
 │   ├── scripts/ (1 file)
 │   └── workflows/ (2 files)
 ├── LICENSES/ (5 files)
-├── android/ (182 files)
-│   ├── app/ (173 files)
+├── android/ (186 files)
+│   ├── app/ (177 files)
 │   └── gradle/ (3 files)
 ├── assets/ (16 files)
 │   ├── brand/ (8 files)
@@ -32,8 +32,8 @@ graph TD
 │   ├── maclink-core/ (40 files)
 │   ├── maclink-ffi/ (4 files)
 │   └── maclink-protocol/ (9 files)
-├── desktop/ (193 files)
-│   ├── app/ (192 files)
+├── desktop/ (202 files)
+│   ├── app/ (201 files)
 │   └── packaging/ (1 file)
 ├── docs/ (118 files)
 │   ├── adr/ (9 files)
@@ -51,6 +51,7 @@ graph TD
 ├── .editorconfig
 ├── .gitattributes
 ├── .gitignore
+├── AGENTS.md
 ├── CHANGELOG.md
 ├── Cargo.lock
 ├── Cargo.toml

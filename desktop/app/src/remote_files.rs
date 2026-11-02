@@ -168,7 +168,7 @@ pub async fn download_file(
     if clean_path.is_empty() {
         return Err("invalid empty file path".to_string());
     }
-    let file_name = clean_path.split('/').last().unwrap_or("file");
+    let file_name = clean_path.split('/').next_back().unwrap_or("file");
 
     std::fs::create_dir_all(save_dir).map_err(|e| format!("cannot create directory: {e}"))?;
     let target_file = save_dir.join(file_name);

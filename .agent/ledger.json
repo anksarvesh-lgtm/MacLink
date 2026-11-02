@@ -1,74 +1,66 @@
 {
   "version": 1,
-  "task_id": "t-20261102-5349",
-  "goal": "Replace wide sidebar with narrow Liquid Glass icon rail from Image 1, matching macOS 26 style with floating glass panel, backdrop sampling, specular rim, sliding active capsule, and zero Rust changes.",
+  "task_id": "t-20261102-7890",
+  "goal": "Fix GitHub Actions CI failures: Clippy warnings, cargo fmt, and missing keystore in release workflow",
   "status": "active",
-  "created_at": "2026-11-02T03:56:42.014Z",
-  "updated_at": "2026-11-02T04:09:02.665Z",
-  "checkpoint_count": 3,
+  "created_at": "2026-11-02T11:01:27.605Z",
+  "updated_at": "2026-11-02T11:01:27.605Z",
+  "checkpoint_count": 0,
   "steps": [
     {
       "id": "s1",
-      "title": "Inspect current sidebar, git history for old rail code, QtQuick.Effects deployment, and page existence",
-      "status": "done",
+      "title": "Fix Clippy double-ended-iterator-last warnings in bridge/app.rs and remote_files.rs",
+      "status": "in_progress",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": "Completed Step 0 inspection: 1) Sidebar, device chip and router located in MainWindow.qml. 2) Old narrow rail code from before d2ce411 reviewed in git log. 3) Real pages confirmed: Home, Messages, Calls, Photos, Apps, Deck, Guide, Settings. 4) Files exists (FilesPage.qml), Mirror Screen is a floating window/action, Help Center is Guide. 5) Background identified in MainWindow.qml lines 424-439 ready to encapsulate in windowBackdrop. 6) QtQuick.Effects confirmed deployed in MacLink.app.",
+      "note": null,
       "last_error": null,
-      "updated_at": "2026-11-02T03:57:53.172Z"
+      "updated_at": "2026-11-02T11:01:27.605Z"
     },
     {
       "id": "s2",
-      "title": "Add Theme tokens (railInset, reduceGlass) and implement reusable GlassPanel component",
-      "status": "done",
+      "title": "Format codebase with cargo fmt and verify cargo fmt --all --check passes",
+      "status": "pending",
       "tries": 0,
       "max_tries": 3,
-      "depends_on": [
-        "s1"
-      ],
-      "note": "Added Theme.railInset: 8 and Theme.reduceGlass tokens in Theme.qml, and implemented reusable GlassPanel component in desktop/app/qml/components/GlassPanel.qml with blurred backdrop ShaderEffectSource, MultiEffect blur, tint, top light, specular rim cutout, and shadow. Verified with cargo check (0 Rust diffs) and committed to git (commit 0532cf0).",
+      "depends_on": [],
+      "note": null,
       "last_error": null,
-      "updated_at": "2026-11-02T04:02:35.761Z"
+      "updated_at": "2026-11-02T11:01:27.605Z"
     },
     {
       "id": "s3",
-      "title": "Implement 74pt narrow Liquid Glass rail with logo, 8 items, sliding capsule, and glass plus button",
-      "status": "done",
+      "title": "Update .github/workflows/release.yml to gracefully handle missing ANDROID_KEYSTORE secret",
+      "status": "pending",
       "tries": 0,
       "max_tries": 3,
-      "depends_on": [
-        "s2"
-      ],
-      "note": "Implemented 74pt floating Liquid Glass rail with logo, 8 items, sliding capsule, and glass plus button in MainWindow.qml. cargo check passed cleanly.",
+      "depends_on": [],
+      "note": null,
       "last_error": null,
-      "updated_at": "2026-11-02T04:09:02.665Z"
+      "updated_at": "2026-11-02T11:01:27.605Z"
     },
     {
       "id": "s4",
-      "title": "Extend backdrop amber glow behind rail and reflow content area cleanly",
+      "title": "Verify cargo clippy and checks pass locally with Qt toolchain",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
-      "depends_on": [
-        "s3"
-      ],
+      "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-02T03:56:42.014Z"
+      "updated_at": "2026-11-02T11:01:27.605Z"
     },
     {
       "id": "s5",
-      "title": "Verify build, test running app and idle CPU, confirm zero Rust changes, capture screenshots, and generate report",
+      "title": "Commit and push fixes to GitHub repository",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
-      "depends_on": [
-        "s4"
-      ],
+      "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-02T03:56:42.014Z"
+      "updated_at": "2026-11-02T11:01:27.605Z"
     }
   ]
 }

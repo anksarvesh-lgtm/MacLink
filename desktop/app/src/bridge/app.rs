@@ -1954,7 +1954,7 @@ impl qobject::AppController {
 
         let downloads = core_host::downloads_dir();
         let qt = self.qt_thread();
-        let file_name = clean_path.split('/').last().unwrap_or("file").to_string();
+        let file_name = clean_path.split('/').next_back().unwrap_or("file").to_string();
 
         self.as_mut().toast(QString::from(&format!("Downloading {file_name}...")));
 
@@ -2107,7 +2107,7 @@ impl qobject::AppController {
             return;
         };
 
-        let file_name = path_str.split('/').last().unwrap_or("item").to_string();
+        let file_name = path_str.split('/').next_back().unwrap_or("item").to_string();
         let qt = self.qt_thread();
         core_host::spawn(async move {
             match crate::remote_files::delete_item(&node, dev, &path_str).await {

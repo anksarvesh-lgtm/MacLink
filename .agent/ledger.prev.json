@@ -1,74 +1,55 @@
 {
   "version": 1,
-  "task_id": "t-20261102-5349",
-  "goal": "Replace wide sidebar with narrow Liquid Glass icon rail from Image 1, matching macOS 26 style with floating glass panel, backdrop sampling, specular rim, sliding active capsule, and zero Rust changes.",
-  "status": "active",
-  "created_at": "2026-11-02T03:56:42.014Z",
-  "updated_at": "2026-11-02T04:02:35.761Z",
-  "checkpoint_count": 2,
+  "task_id": "t-20261102-1429",
+  "goal": "Build next version v0.0.4 of Android and macOS apps and push all codes and releases to GitHub",
+  "status": "done",
+  "created_at": "2026-11-02T10:36:01.172Z",
+  "updated_at": "2026-11-02T10:59:54.491Z",
+  "checkpoint_count": 4,
   "steps": [
     {
       "id": "s1",
-      "title": "Inspect current sidebar, git history for old rail code, QtQuick.Effects deployment, and page existence",
+      "title": "Bump version to 0.0.4 and update CHANGELOG",
       "status": "done",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": "Completed Step 0 inspection: 1) Sidebar, device chip and router located in MainWindow.qml. 2) Old narrow rail code from before d2ce411 reviewed in git log. 3) Real pages confirmed: Home, Messages, Calls, Photos, Apps, Deck, Guide, Settings. 4) Files exists (FilesPage.qml), Mirror Screen is a floating window/action, Help Center is Guide. 5) Background identified in MainWindow.qml lines 424-439 ready to encapsulate in windowBackdrop. 6) QtQuick.Effects confirmed deployed in MacLink.app.",
+      "note": "Bumped project version to 0.0.4 across Cargo.toml, synchronized Cargo.lock with Qt environment, and added release notes to CHANGELOG.md. Committed to git.",
       "last_error": null,
-      "updated_at": "2026-11-02T03:57:53.172Z"
+      "updated_at": "2026-11-02T10:38:54.441Z"
     },
     {
       "id": "s2",
-      "title": "Add Theme tokens (railInset, reduceGlass) and implement reusable GlassPanel component",
+      "title": "Build release apps for Android and macOS",
       "status": "done",
       "tries": 0,
       "max_tries": 3,
-      "depends_on": [
-        "s1"
-      ],
-      "note": "Added Theme.railInset: 8 and Theme.reduceGlass tokens in Theme.qml, and implemented reusable GlassPanel component in desktop/app/qml/components/GlassPanel.qml with blurred backdrop ShaderEffectSource, MultiEffect blur, tint, top light, specular rim cutout, and shadow. Verified with cargo check (0 Rust diffs) and committed to git (commit 0532cf0).",
+      "depends_on": [],
+      "note": "Successfully built MacLink v0.0.4 release artifacts for Android and macOS arm64.\nAndroid APK: MacLink-0.0.4-android.apk (93M, SHA-256: 1046ef8fa60e05e515d80a65e8ea8ba18f6f6f6ff5d7b40f356723e33b92d84e)\nmacOS DMG: MacLink-0.0.4-macos-arm64.dmg (74M, SHA-256: 84170209e87dcffd3cee1358b91d30653e8d7ade92818ddc96f310230c0aae6c)\nmacOS ZIP: MacLink-0.0.4-macos-arm64.zip (63M, SHA-256: 8c922132e50bcc2b3d63d53e2c95f75151cf21a84fe622c010b97187daf53207)\nmacOS Universal DMG: MacLink-0.0.4.dmg\nAll artifac[cut]",
       "last_error": null,
-      "updated_at": "2026-11-02T04:02:35.761Z"
+      "updated_at": "2026-11-02T10:55:52.498Z"
     },
     {
       "id": "s3",
-      "title": "Implement 74pt narrow Liquid Glass rail with logo, 8 items, sliding capsule, and glass plus button",
-      "status": "pending",
+      "title": "Commit and tag v0.0.4",
+      "status": "done",
       "tries": 0,
       "max_tries": 3,
-      "depends_on": [
-        "s2"
-      ],
-      "note": null,
+      "depends_on": [],
+      "note": "Created git annotated tag v0.0.4 on commit 9d1794c: 'Release v0.0.4: Amber Liquid Glass Mobile Edition, Shelf auto-hide, and stability improvements'.",
       "last_error": null,
-      "updated_at": "2026-11-02T03:56:42.014Z"
+      "updated_at": "2026-11-02T10:56:32.584Z"
     },
     {
       "id": "s4",
-      "title": "Extend backdrop amber glow behind rail and reflow content area cleanly",
-      "status": "pending",
+      "title": "Push all code and publish release to GitHub",
+      "status": "done",
       "tries": 0,
       "max_tries": 3,
-      "depends_on": [
-        "s3"
-      ],
-      "note": null,
+      "depends_on": [],
+      "note": "Pushed all commits and tag v0.0.4 to origin/main on GitHub. Published release v0.0.4 with release assets: MacLink-0.0.4-android.apk, MacLink-0.0.4-macos-arm64.dmg, MacLink-0.0.4-macos-arm64.zip, MacLink-0.0.4.dmg, and SHA256SUMS.txt. Release URL: https://github.com/anksarvesh-lgtm/MacLink/releases/tag/v0.0.4",
       "last_error": null,
-      "updated_at": "2026-11-02T03:56:42.014Z"
-    },
-    {
-      "id": "s5",
-      "title": "Verify build, test running app and idle CPU, confirm zero Rust changes, capture screenshots, and generate report",
-      "status": "pending",
-      "tries": 0,
-      "max_tries": 3,
-      "depends_on": [
-        "s4"
-      ],
-      "note": null,
-      "last_error": null,
-      "updated_at": "2026-11-02T03:56:42.014Z"
+      "updated_at": "2026-11-02T10:59:54.491Z"
     }
   ]
 }
