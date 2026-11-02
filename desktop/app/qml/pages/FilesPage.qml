@@ -12,63 +12,102 @@ Item {
     property string deviceId: ""
     property string deviceName: ""
 
-    property string currentPath: "/sdcard/Download"
+    property string currentPath: "Download"
     property string searchQuery: ""
     property string selectedFolderCategory: "Download"
+    property bool showNewFolderRow: false
+    property string newFolderName: ""
 
     FileDialog {
         id: uploadDialog
-        title: qsTr("Choose files to send to %1").arg(page.deviceName || qsTr("Phone"))
+        title: qsTr("Choose files to upload to %1 (%2)").arg(page.deviceName || qsTr("Phone")).arg(page.currentPath.length > 0 ? page.currentPath : qsTr("Root"))
         fileMode: FileDialog.OpenFiles
         onAccepted: {
             if (page.deviceId.length > 0 && selectedFiles.length > 0) {
-                TransferList.send(page.deviceId, selectedFiles.map(url => url.toString()))
+                let urls = []
+                for (let i = 0; i < selectedFiles.length; i++) {
+                    urls.push(selectedFiles[i].toString())
+                }
+                AppController.upload_files_to_remote(page.deviceId, page.currentPath, JSON.stringify(urls))
             }
         }
     }
 
-    // Quick access categories mapped to standard Android folders
+    // Quick access categories mapped to standard Android storage directories
     readonly property var quickFolders: [
-        { name: "Download", path: "/sdcard/Download", icon: Icons.download, count: "Recent files" },
-        { name: "Documents", path: "/sdcard/Documents", icon: Icons.text, count: "Work & PDFs" },
-        { name: "DCIM", path: "/sdcard/DCIM/Camera", icon: Icons.camera, count: "Camera photos" },
-        { name: "Pictures", path: "/sdcard/Pictures", icon: Icons.photo, count: "Screenshots & Images" },
-        { name: "Music", path: "/sdcard/Music", icon: Icons.sound, count: "Audio files" },
-        { name: "Movies", path: "/sdcard/Movies", icon: Icons.video, count: "Videos & Recordings" }
+        { name: qsTr("Download"), path: "Download", icon: Icons.download, count: qsTr("Recent downloads") },
+        { name: qsTr("Documents"), path: "Documents", icon: Icons.text, count: qsTr("Work & PDFs") },
+        { name: qsTr("DCIM"), path: "DCIM/Camera", icon: Icons.camera, count: qsTr("Camera photos") },
+        { name: qsTr("Pictures"), path: "Pictures", icon: Icons.photo, count: qsTr("Screenshots & Images") },
+        { name: qsTr("Music"), path: "Music", icon: Icons.sound, count: qsTr("Audio files") },
+        { name: qsTr("Movies"), path: "Movies", icon: Icons.video, count: qsTr("Videos & Recordings") },
+        { name: qsTr("Root"), path: "", icon: Icons.folder, count: qsTr("Internal storage root") }
     ]
 
-    // Sample file items for standard folders (dynamically filtered by path & search query)
-    readonly property var mockFiles: [
-        { name: "MacLink-0.0.1-android.apk", folder: "/sdcard/Download", size: "38.4 MB", date: "Today, 14:20", isDir: false, icon: Icons.sparkle, type: "apk" },
-        { name: "Invoice_November_2026.pdf", folder: "/sdcard/Download", size: "1.2 MB", date: "Yesterday, 11:05", isDir: false, icon: Icons.text, type: "doc" },
-        { name: "Project_Proposal.docx", folder: "/sdcard/Documents", size: "840 KB", date: "Oct 30, 2026", isDir: false, icon: Icons.text, type: "doc" },
-        { name: "Financial_Report.xlsx", folder: "/sdcard/Documents", size: "2.4 MB", date: "Oct 28, 2026", isDir: false, icon: Icons.text, type: "doc" },
-        { name: "Camera", folder: "/sdcard/DCIM", size: "128 items", date: "Today", isDir: true, icon: Icons.folder, type: "dir" },
-        { name: "Screenshots", folder: "/sdcard/Pictures", size: "42 items", date: "Yesterday", isDir: true, icon: Icons.folder, type: "dir" },
-        { name: "Voice_Recording_001.m4a", folder: "/sdcard/Music", size: "4.8 MB", date: "Oct 29, 2026", isDir: false, icon: Icons.sound, type: "audio" },
-        { name: "Screen_Recording_2026.mp4", folder: "/sdcard/Movies", size: "142.0 MB", date: "Oct 27, 2026", isDir: false, icon: Icons.video, type: "video" }
-    ]
+    // Real remote files loaded from device via AppController
+    readonly property var remoteItems: {
+        try {
+            let json = AppController.remote_storage_entries_json
+            if (!json || json.length === 0) return []
+            return JSON.parse(json)
+        } catch (e) {
+            return []
+        }
+    }
 
     readonly property var displayedItems: {
         let q = searchQuery.trim().toLowerCase()
-        return mockFiles.filter(item => {
-            let matchPath = item.folder === currentPath || (item.isDir && item.folder.indexOf(currentPath) === 0)
-            if (q.length === 0) return matchPath
-            return item.name.toLowerCase().indexOf(q) >= 0
-        })
+        if (q.length === 0) return remoteItems
+        return remoteItems.filter(item => item.name.toLowerCase().indexOf(q) >= 0)
     }
 
     function navigateTo(folderPath, categoryName) {
-        currentPath = folderPath
+        currentPath = folderPath || ""
         if (categoryName)
             selectedFolderCategory = categoryName
+        showNewFolderRow = false
+        AppController.browse_remote_storage(page.deviceId, currentPath)
     }
 
     function navigateUp() {
-        if (currentPath === "/sdcard") return
-        let parts = currentPath.split("/")
+        if (!currentPath || currentPath.length === 0) return
+        let parts = currentPath.split("/").filter(p => p.length > 0)
         parts.pop()
-        currentPath = parts.join("/") || "/sdcard"
+        currentPath = parts.join("/")
+        showNewFolderRow = false
+        AppController.browse_remote_storage(page.deviceId, currentPath)
+    }
+
+    function refresh() {
+        showNewFolderRow = false
+        AppController.browse_remote_storage(page.deviceId, currentPath)
+    }
+
+    function submitNewFolder() {
+        let name = newFolderName.trim()
+        if (name.length > 0) {
+            AppController.create_remote_folder(page.deviceId, currentPath, name)
+            newFolderName = ""
+            showNewFolderRow = false
+        }
+    }
+
+    Component.onCompleted: {
+        if (page.deviceId.length > 0) {
+            AppController.browse_remote_storage(page.deviceId, page.currentPath)
+        }
+    }
+
+    onActiveChanged: {
+        if (active && page.deviceId.length > 0) {
+            AppController.browse_remote_storage(page.deviceId, page.currentPath)
+        }
+    }
+
+    onDeviceIdChanged: {
+        if (page.deviceId.length > 0) {
+            AppController.browse_remote_storage(page.deviceId, page.currentPath)
+        }
     }
 
     // No phone connected banner
@@ -141,49 +180,20 @@ Item {
                     Item { Layout.fillWidth: true }
 
                     Txt {
-                        text: qsTr("48.6 GB free of 128 GB")
+                        text: AppController.remote_storage_summary || qsTr("%1 items").arg(page.remoteItems.length)
                         role: "code"
                         size: 11
                         color: Theme.surfaceContentVariant
                     }
-                }
 
-                // Visual Storage Bar (System, Apps, Media, Free)
-                Rectangle {
-                    Layout.fillWidth: true
-                    Layout.preferredHeight: 8
-                    radius: 4
-                    color: Theme.surfaceContainerHighest
-                    clip: true
-
-                    Row {
-                        anchors.fill: parent
-                        Rectangle { width: parent.width * 0.22; height: parent.height; color: Theme.primary }
-                        Rectangle { width: parent.width * 0.26; height: parent.height; color: "#38bdf8" }
-                        Rectangle { width: parent.width * 0.14; height: parent.height; color: "#a855f7" }
+                    Button {
+                        text: qsTr("Downloads Folder")
+                        iconPath: Icons.folder
+                        variant: "ghost"
+                        size: "sm"
+                        Accessible.name: qsTr("Open local MacLink Downloads folder in Finder")
+                        onClicked: AppController.open_local_downloads()
                     }
-                }
-
-                RowLayout {
-                    Layout.fillWidth: true
-                    spacing: 16
-
-                    RowLayout {
-                        spacing: 6
-                        Rectangle { width: 8; height: 8; radius: 4; color: Theme.primary }
-                        Txt { text: qsTr("System (28 GB)"); role: "caption"; size: 10; color: Theme.surfaceContentVariant }
-                    }
-                    RowLayout {
-                        spacing: 6
-                        Rectangle { width: 8; height: 8; radius: 4; color: "#38bdf8" }
-                        Txt { text: qsTr("Media & Files (33 GB)"); role: "caption"; size: 10; color: Theme.surfaceContentVariant }
-                    }
-                    RowLayout {
-                        spacing: 6
-                        Rectangle { width: 8; height: 8; radius: 4; color: "#a855f7" }
-                        Txt { text: qsTr("Apps (18 GB)"); role: "caption"; size: 10; color: Theme.surfaceContentVariant }
-                    }
-                    Item { Layout.fillWidth: true }
                 }
             }
         }
@@ -197,8 +207,15 @@ Item {
             IconButton {
                 iconPath: Icons.back
                 label: qsTr("Go up one folder")
-                enabled: page.currentPath !== "/sdcard"
+                enabled: page.currentPath.length > 0
                 onClicked: page.navigateUp()
+            }
+
+            // Refresh button
+            IconButton {
+                iconPath: Icons.sparkle
+                label: qsTr("Refresh folder contents")
+                onClicked: page.refresh()
             }
 
             // Path Breadcrumbs
@@ -224,7 +241,7 @@ Item {
 
                     Txt {
                         Layout.fillWidth: true
-                        text: page.currentPath
+                        text: page.currentPath.length > 0 ? ("/storage/emulated/0/" + page.currentPath) : "/storage/emulated/0"
                         role: "code"
                         size: 12
                         elide: Text.ElideMiddle
@@ -232,9 +249,21 @@ Item {
                 }
             }
 
+            // New Folder Toggle Button
+            IconButton {
+                iconPath: Icons.folder
+                label: qsTr("New Folder")
+                onClicked: {
+                    page.showNewFolderRow = !page.showNewFolderRow
+                    if (page.showNewFolderRow) {
+                        newFolderInput.forceActiveFocus()
+                    }
+                }
+            }
+
             // Search Bar
             Rectangle {
-                implicitWidth: 200
+                implicitWidth: 180
                 implicitHeight: 36
                 radius: height / 2
                 color: Theme.cardFill
@@ -280,6 +309,67 @@ Item {
                 size: "sm"
                 Accessible.name: qsTr("Upload files from Mac to Android phone")
                 onClicked: uploadDialog.open()
+            }
+        }
+
+        // New Folder Inline Bar
+        Rectangle {
+            Layout.fillWidth: true
+            implicitHeight: 40
+            visible: page.showNewFolderRow
+            radius: Theme.tileCornerRadius
+            color: Theme.cardFill
+            border.width: 1
+            border.color: Theme.amberAccent
+
+            RowLayout {
+                anchors.fill: parent
+                anchors.margins: 6
+                spacing: 8
+
+                Icon {
+                    path: Icons.folder
+                    width: 16; height: 16
+                    color: Theme.amberAccent
+                }
+
+                TextInput {
+                    id: newFolderInput
+                    Layout.fillWidth: true
+                    color: Theme.surfaceContent
+                    font.family: Theme.fontUi
+                    font.pixelSize: 12
+                    selectByMouse: true
+                    clip: true
+                    text: page.newFolderName
+                    onTextChanged: page.newFolderName = text
+                    onAccepted: page.submitNewFolder()
+
+                    Txt {
+                        anchors.verticalCenter: parent.verticalCenter
+                        text: qsTr("Enter new folder name...")
+                        role: "caption"
+                        muted: true
+                        visible: newFolderInput.text.length === 0
+                    }
+                }
+
+                Button {
+                    text: qsTr("Create")
+                    variant: "amber"
+                    size: "sm"
+                    onClicked: page.submitNewFolder()
+                }
+
+                Button {
+                    text: qsTr("Cancel")
+                    variant: "ghost"
+                    size: "sm"
+                    onClicked: {
+                        page.showNewFolderRow = false
+                        page.newFolderName = ""
+                    }
+                }
             }
         }
 
@@ -345,105 +435,192 @@ Item {
             }
         }
 
-        // 4. File and Folder List View
-        ListView {
-            id: fileListView
+        // Permission Warning Card
+        Rectangle {
             Layout.fillWidth: true
-            Layout.fillHeight: true
-            clip: true
-            spacing: 6
-            boundsBehavior: Flickable.StopAtBounds
-            model: page.displayedItems
+            implicitHeight: permCol.implicitHeight + 24
+            visible: AppController.remote_storage_permission_needed
+            radius: Theme.cardCornerRadius
+            color: Qt.rgba(Theme.error.r, Theme.error.g, Theme.error.b, 0.12)
+            border.width: 1
+            border.color: Theme.error
 
-            delegate: Rectangle {
-                required property var modelData
-                width: fileListView.width
-                implicitHeight: 52
-                radius: Theme.tileCornerRadius
-                color: itemHover.hovered ? Qt.rgba(1, 1, 1, 0.06) : Theme.cardFill
-                border.width: 1
-                border.color: itemHover.hovered ? Theme.cardBorderHover : Theme.cardBorderSubtle
-                Behavior on border.color { ColorAnimation { duration: 120 } }
+            ColumnLayout {
+                id: permCol
+                anchors.fill: parent
+                anchors.margins: 14
+                spacing: 8
 
-                HoverHandler {
-                    id: itemHover
-                    cursorShape: Qt.PointingHandCursor
+                RowLayout {
+                    spacing: 8
+                    Icon { path: Icons.sparkle; width: 18; height: 18; color: Theme.error }
+                    Txt {
+                        text: qsTr("Storage Permission Required on Phone")
+                        role: "title"
+                        size: 14
+                        color: Theme.error
+                    }
                 }
 
-                TapHandler {
-                    onTapped: {
-                        if (modelData.isDir) {
-                            page.navigateTo(modelData.folder + "/" + modelData.name)
-                        }
-                    }
+                Txt {
+                    Layout.fillWidth: true
+                    text: qsTr("To view files and folders on your Android device, open MacLink on your phone and toggle on 'Storage' permissions, or grant 'All files access' in Android Settings.")
+                    role: "body"
+                    wrapMode: Text.WordWrap
                 }
 
                 RowLayout {
-                    anchors.fill: parent
-                    anchors.leftMargin: 14
-                    anchors.rightMargin: 14
-                    spacing: 14
+                    spacing: 8
+                    Button {
+                        text: qsTr("Retry Connection")
+                        variant: "fill"
+                        size: "sm"
+                        onClicked: page.refresh()
+                    }
+                }
+            }
+        }
 
-                    // File / Folder Type Icon
-                    Rectangle {
-                        width: 32; height: 32
-                        radius: Theme.radiusSm
-                        color: modelData.isDir ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.14) : Theme.surfaceContainer
-                        Icon {
-                            anchors.centerIn: parent
-                            path: modelData.icon
-                            width: 16; height: 16
-                            color: modelData.isDir ? Theme.primary : Theme.surfaceContent
+        // 4. File and Folder List View
+        Item {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+
+            ListView {
+                id: fileListView
+                anchors.fill: parent
+                clip: true
+                spacing: 6
+                boundsBehavior: Flickable.StopAtBounds
+                model: page.displayedItems
+
+                delegate: Rectangle {
+                    required property var modelData
+                    width: fileListView.width
+                    implicitHeight: 52
+                    radius: Theme.tileCornerRadius
+                    color: itemHover.hovered ? Qt.rgba(1, 1, 1, 0.06) : Theme.cardFill
+                    border.width: 1
+                    border.color: itemHover.hovered ? Theme.cardBorderHover : Theme.cardBorderSubtle
+                    Behavior on border.color { ColorAnimation { duration: 120 } }
+
+                    HoverHandler {
+                        id: itemHover
+                        cursorShape: Qt.PointingHandCursor
+                    }
+
+                    TapHandler {
+                        onTapped: {
+                            if (modelData.isDir) {
+                                let target = modelData.folder ? (modelData.folder + "/" + modelData.name) : modelData.name
+                                page.navigateTo(target)
+                            }
                         }
                     }
 
-                    // File Information
-                    ColumnLayout {
-                        Layout.fillWidth: true
-                        spacing: 2
-
-                        Txt {
-                            Layout.fillWidth: true
-                            text: modelData.name
-                            role: "body"
-                            weight: modelData.isDir ? 600 : 400
-                            elide: Text.ElideRight
-                        }
-
-                        RowLayout {
-                            spacing: 12
-                            Txt { text: modelData.size; role: "caption"; size: 10; color: Theme.surfaceContentVariant }
-                            Txt { text: "•"; role: "caption"; size: 10; color: Theme.surfaceContentVariant }
-                            Txt { text: modelData.date; role: "caption"; size: 10; color: Theme.surfaceContentVariant }
-                        }
-                    }
-
-                    // Action Buttons for File
                     RowLayout {
-                        spacing: 8
-                        visible: !modelData.isDir
+                        anchors.fill: parent
+                        anchors.leftMargin: 14
+                        anchors.rightMargin: 14
+                        spacing: 14
 
-                        IconButton {
-                            iconPath: Icons.download
-                            iconSize: 14
-                            label: qsTr("Download to Mac")
-                            onClicked: AppController.copyText(modelData.name)
+                        // File / Folder Type Icon
+                        Rectangle {
+                            width: 32; height: 32
+                            radius: Theme.radiusSm
+                            color: modelData.isDir ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, 0.14) : Theme.surfaceContainer
+                            Icon {
+                                anchors.centerIn: parent
+                                path: modelData.icon ? Icons[modelData.icon] || Icons.file : (modelData.isDir ? Icons.folder : Icons.file)
+                                width: 16; height: 16
+                                color: modelData.isDir ? Theme.primary : Theme.surfaceContent
+                            }
                         }
 
-                        IconButton {
-                            iconPath: Icons.copy
-                            iconSize: 14
-                            label: qsTr("Copy path")
-                            onClicked: AppController.copyText(modelData.folder + "/" + modelData.name)
+                        // File Information
+                        ColumnLayout {
+                            Layout.fillWidth: true
+                            spacing: 2
+
+                            Txt {
+                                Layout.fillWidth: true
+                                text: modelData.name
+                                role: "body"
+                                weight: modelData.isDir ? 600 : 400
+                                elide: Text.ElideRight
+                            }
+
+                            RowLayout {
+                                spacing: 12
+                                Txt { text: modelData.size; role: "caption"; size: 10; color: Theme.surfaceContentVariant }
+                                Txt { text: "•"; role: "caption"; size: 10; color: Theme.surfaceContentVariant }
+                                Txt { text: modelData.date; role: "caption"; size: 10; color: Theme.surfaceContentVariant }
+                            }
+                        }
+
+                        // Action Buttons for File / Folder
+                        RowLayout {
+                            spacing: 6
+
+                            IconButton {
+                                visible: !modelData.isDir
+                                iconPath: Icons.download
+                                iconSize: 14
+                                label: qsTr("Download to Mac")
+                                onClicked: {
+                                    let fullPath = modelData.folder ? (modelData.folder + "/" + modelData.name) : modelData.name
+                                    AppController.download_remote_file(page.deviceId, fullPath)
+                                }
+                            }
+
+                            IconButton {
+                                iconPath: Icons.copy
+                                iconSize: 14
+                                label: qsTr("Copy path")
+                                onClicked: {
+                                    let fullPath = modelData.folder ? (modelData.folder + "/" + modelData.name) : modelData.name
+                                    AppController.copy_text(fullPath)
+                                }
+                            }
+
+                            IconButton {
+                                iconPath: Icons.trash
+                                iconSize: 14
+                                label: qsTr("Delete from phone")
+                                onClicked: {
+                                    let fullPath = modelData.folder ? (modelData.folder + "/" + modelData.name) : modelData.name
+                                    AppController.delete_remote_item(page.deviceId, fullPath)
+                                }
+                            }
                         }
                     }
+                }
+            }
+
+            // Loading indicator
+            Column {
+                anchors.centerIn: parent
+                spacing: 12
+                visible: AppController.remote_storage_loading
+
+                Icon {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    width: 32; height: 32
+                    path: Icons.sparkle
+                    color: Theme.amberAccent
+                }
+                Txt {
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    text: qsTr("Fetching files from %1...").arg(page.deviceName || qsTr("Phone"))
+                    role: "body"
+                    muted: true
                 }
             }
 
             // Empty folder indicator
             Txt {
                 anchors.centerIn: parent
-                visible: page.displayedItems.length === 0
+                visible: page.displayedItems.length === 0 && !AppController.remote_storage_loading && !AppController.remote_storage_permission_needed
                 text: qsTr("This folder is empty or no matching files found.")
                 role: "body"
                 muted: true
@@ -451,4 +628,3 @@ Item {
         }
     }
 }
-
