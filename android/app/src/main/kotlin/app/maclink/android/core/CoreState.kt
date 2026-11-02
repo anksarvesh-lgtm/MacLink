@@ -97,6 +97,7 @@ sealed interface CoreStatus {
     data object Starting : CoreStatus
     data class Ready(val deviceId: String) : CoreStatus
     data class Failed(val message: String) : CoreStatus
+    data class KeyUnlockFailed(val message: String, val causeChain: String) : CoreStatus
 }
 
 /** The pairing screen's state. */

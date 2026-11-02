@@ -404,11 +404,18 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
                 downloadsDir = context.cacheDir.resolve("received").absolutePath,
                 usbPort = 53319u.toUShort(),
             )
+            val keyFile = context.noBackupFilesDir.resolve("core").resolve("identity.key")
             val started = try {
-                MacLinkNode.start(options, platform, KeystoreKeyProtector(), this@Core)
+                MacLinkNode.start(options, platform, KeystoreKeyProtector(keyFile = keyFile), this@Core)
             } catch (e: MacLinkException) {
                 Log.e(TAG, "core failed to start", e)
-                _state.update { it.copy(status = CoreStatus.Failed(e.message ?: e.javaClass.simpleName)) }
+                val msg = e.message ?: e.javaClass.simpleName
+                val causeChain = KeystoreKeyProtector.formatCauseChain(e)
+                if (msg.contains("cannot unlock device key") || causeChain.contains("AEADBadTagException")) {
+                    _state.update { it.copy(status = CoreStatus.KeyUnlockFailed(msg, causeChain)) }
+                } else {
+                    _state.update { it.copy(status = CoreStatus.Failed(msg)) }
+                }
                 return@launch
             }
             if (!currentRun.isActive || startGuard.isCancelled(token)) {
@@ -1863,6 +1870,81 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
     fun resetPairing() {
         _state.update { it.copy(pairing = PairingState.Idle) }
         scope.launch(Dispatchers.IO) { runCatching { node?.pairingCancel() } }
+    }
+
+    /**
+     * Recovers from unrecoverable identity key unlock failures by moving the unreadable key aside,
+     * resetting pairing databases, and restarting the core node to generate a brand new device identity.
+     *
+     * IMPORTANT: Generating a new device key creates a NEW DEVICE IDENTITY.
+     * The paired Mac must forget this phone entry and pair again from scratch.
+     */
+    fun recoverFromKeyUnlockFailure(onComplete: (() -> Unit)? = null) {
+        scope.launch(Dispatchers.IO) {
+            val coreDir = context.noBackupFilesDir.resolve("core")
+            val keyFile = coreDir.resolve("identity.key")
+            val timestamp = System.currentTimeMillis()
+
+            // 1. Move unreadable key file aside without deleting it
+            if (keyFile.exists()) {
+                val archivedFile = coreDir.resolve("device_key.unreadable-$timestamp")
+                runCatching {
+                    java.nio.file.Files.move(
+                        keyFile.toPath(),
+                        archivedFile.toPath(),
+                        java.nio.file.StandardCopyOption.REPLACE_EXISTING,
+                    )
+                    Log.i(TAG, "archived unreadable identity key to ${archivedFile.name}")
+                }.onFailure { e ->
+                    Log.e(TAG, "failed to archive unreadable key file", e)
+                }
+            }
+
+            // Also check alternate filesDir path for safety
+            val altKeyFile = context.filesDir.resolve("core").resolve("identity.key")
+            if (altKeyFile.exists()) {
+                runCatching {
+                    val altArchived = altKeyFile.parentFile?.resolve("device_key.unreadable-$timestamp")
+                    if (altArchived != null) {
+                        java.nio.file.Files.move(
+                            altKeyFile.toPath(),
+                            altArchived.toPath(),
+                            java.nio.file.StandardCopyOption.REPLACE_EXISTING,
+                        )
+                    }
+                }
+            }
+
+            // 2. Clear pairing database files that were keyed to the old identity
+            listOf(
+                "maclink.db", "maclink.db-wal", "maclink.db-shm",
+                "nectarlink.db", "nectarlink.db-wal", "nectarlink.db-shm",
+            ).forEach { dbName ->
+                val dbFile = coreDir.resolve(dbName)
+                if (dbFile.exists()) {
+                    runCatching { dbFile.delete() }
+                }
+            }
+
+            // 3. Clear legacy Keystore key if still hanging around
+            runCatching {
+                val store = java.security.KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+                if (store.containsAlias(LegacyNames.KEYSTORE_ALIAS_V0)) {
+                    store.deleteEntry(LegacyNames.KEYSTORE_ALIAS_V0)
+                }
+            }
+
+            // 4. Update status back to Starting and restart the node
+            _state.update { it.copy(status = CoreStatus.Starting, pairing = PairingState.Idle) }
+            lifecycleMutex.withLock {
+                node = null
+                isRunning = false
+            }
+            start()
+            withContext(Dispatchers.Main) {
+                onComplete?.invoke()
+            }
+        }
     }
 
     // ---- Devices ----

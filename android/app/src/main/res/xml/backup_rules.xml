@@ -4,4 +4,7 @@
      restored copy on another phone would impersonate this one. -->
 <full-backup-content>
     <include domain="sharedpref" path="appearance.xml" />
+    <exclude domain="root" path="." />
+    <exclude domain="file" path="." />
+    <exclude domain="database" path="." />
 </full-backup-content>
