@@ -460,6 +460,8 @@ Item {
         let out = []
         for (let i = 0; i < allFeatures.length; i++) {
             let item = allFeatures[i]
+            if (!Theme.showCommands && item.id === "command_palette")
+                continue
             if (area !== "all" && item.area !== area)
                 continue
             if (q !== "") {

@@ -1047,7 +1047,7 @@ NativeWindow {
                 color: Qt.rgba(1, 1, 1, 0.05)
                 border.width: 1
                 border.color: topSearchMouse.containsMouse ? Theme.cardBorderHover : Theme.cardBorderSubtle
-                visible: (topBarActions.x - x) > 180
+                visible: Theme.showCommands && (topBarActions.x - x) > 180
 
                 MouseArea {
                     id: topSearchMouse
@@ -1101,7 +1101,7 @@ NativeWindow {
                         color: Theme.textSecondary
                     }
                 }
-                Component.onCompleted: window.addCaptionHole(topSearchPill)
+                Component.onCompleted: if (Theme.showCommands) window.addCaptionHole(topSearchPill)
             }
 
             Txt {
@@ -1216,6 +1216,7 @@ NativeWindow {
                 IconButton {
                     id: paletteTopBtn
                     anchors.verticalCenter: parent.verticalCenter
+                    visible: Theme.showCommands
                     iconPath: Icons.search
                     iconSize: 16
                     text: qsTr("Commands")
@@ -1223,7 +1224,7 @@ NativeWindow {
                         ? qsTr("Command palette (%1)").arg(Preferences.commandPaletteHotkey)
                         : qsTr("Command palette (Ctrl+K)")
                     onClicked: AppController.openCommandPalette()
-                    Component.onCompleted: window.addCaptionHole(paletteTopBtn)
+                    Component.onCompleted: if (Theme.showCommands) window.addCaptionHole(paletteTopBtn)
                 }
                 IconButton {
                     id: timelineTopBtn
@@ -1582,7 +1583,9 @@ NativeWindow {
 
     Shortcut {
         sequences: ["Ctrl+K", "Ctrl+P"]
+        enabled: Theme.showCommands
         onActivated: {
+            if (!Theme.showCommands) return
             if (AppController.commandPaletteOpen)
                 AppController.closeCommandPalette()
             else
@@ -1593,7 +1596,7 @@ NativeWindow {
     Loader {
         id: commandPaletteLoader
         anchors.fill: parent
-        active: AppController.commandPaletteOpen
+        active: Theme.showCommands && AppController.commandPaletteOpen
         source: active ? "qrc:/qt/qml/app/maclink/qml/components/CommandPalette.qml" : ""
     }
 

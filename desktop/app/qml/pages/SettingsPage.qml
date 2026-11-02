@@ -1829,14 +1829,15 @@ Item {
                         Item {
                             id: shortcutsPairRow1
                             width: parent.width
-                            readonly property bool splitCols: width >= 540
+                            readonly property bool splitCols: Theme.showCommands && width >= 540
                             readonly property real colWidth: splitCols ? Math.floor((width - 37) / 2) : width
                             implicitHeight: splitCols
                                 ? Math.max(paletteShortcutRow.implicitHeight, shelfShortcutRow.implicitHeight)
-                                : (paletteShortcutRow.implicitHeight + 1 + shelfShortcutRow.implicitHeight)
+                                : (Theme.showCommands ? (paletteShortcutRow.implicitHeight + 1 + shelfShortcutRow.implicitHeight) : shelfShortcutRow.implicitHeight)
 
                             ListRow {
                                 id: paletteShortcutRow
+                                visible: Theme.showCommands
                                 x: 0
                                 y: shortcutsPairRow1.splitCols ? Math.round((parent.height - height) / 2) : 0
                                 width: shortcutsPairRow1.colWidth
@@ -1903,7 +1904,7 @@ Item {
                             }
 
                             Divider {
-                                visible: !shortcutsPairRow1.splitCols
+                                visible: Theme.showCommands && !shortcutsPairRow1.splitCols
                                 y: paletteShortcutRow.implicitHeight
                                 width: parent.width
                             }
@@ -1913,7 +1914,7 @@ Item {
                                 x: shortcutsPairRow1.splitCols ? (parent.width - width) : 0
                                 y: shortcutsPairRow1.splitCols
                                     ? Math.round((parent.height - height) / 2)
-                                    : (paletteShortcutRow.implicitHeight + 1)
+                                    : (Theme.showCommands ? (paletteShortcutRow.implicitHeight + 1) : 0)
                                 width: shortcutsPairRow1.colWidth
                                 iconPath: Icons.folder
                                 title: qsTr("File shelf")

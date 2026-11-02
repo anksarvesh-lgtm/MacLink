@@ -18,6 +18,10 @@ QtObject {
     readonly property bool amoled: false
     readonly property bool reduceMotion: AppController.reduceMotion
 
+    // Feature switch: whether the Commands section and Command Palette are enabled.
+    // Default is false to hide all Commands entry points from the macOS UI.
+    readonly property bool showCommands: false
+
     // ---- Hive's comb ----
     readonly property var comb: Tokens.data.themes.hive.comb
     // Breathes and pulses: the user's setting, never with reduced motion or

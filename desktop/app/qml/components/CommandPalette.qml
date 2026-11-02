@@ -9,6 +9,7 @@ Item {
     id: palette
     anchors.fill: parent
     z: 150
+    visible: Theme.showCommands
 
     property int selectedIndex: 0
     readonly property var items: {
@@ -65,7 +66,7 @@ Item {
 
     Shortcut {
         sequence: "Esc"
-        enabled: palette.visible
+        enabled: Theme.showCommands && palette.visible
         onActivated: AppController.closeCommandPalette()
     }
 
