@@ -2705,6 +2705,7 @@ Item {
 
                 // About Agrigence & App Info Card
                 Card {
+                    id: aboutCard
                     width: parent.width
 
                     property bool showWhatsNew: false

@@ -28,7 +28,7 @@ Item {
                 for (let i = 0; i < selectedFiles.length; i++) {
                     urls.push(selectedFiles[i].toString())
                 }
-                AppController.upload_files_to_remote(page.deviceId, page.currentPath, JSON.stringify(urls))
+                AppController.uploadFilesToRemote(page.deviceId, page.currentPath, JSON.stringify(urls))
             }
         }
     }
@@ -47,7 +47,7 @@ Item {
     // Real remote files loaded from device via AppController
     readonly property var remoteItems: {
         try {
-            let json = AppController.remote_storage_entries_json
+            let json = AppController.remoteStorageEntriesJson
             if (!json || json.length === 0) return []
             return JSON.parse(json)
         } catch (e) {
@@ -66,7 +66,7 @@ Item {
         if (categoryName)
             selectedFolderCategory = categoryName
         showNewFolderRow = false
-        AppController.browse_remote_storage(page.deviceId, currentPath)
+        AppController.browseRemoteStorage(page.deviceId, currentPath)
     }
 
     function navigateUp() {
@@ -75,18 +75,18 @@ Item {
         parts.pop()
         currentPath = parts.join("/")
         showNewFolderRow = false
-        AppController.browse_remote_storage(page.deviceId, currentPath)
+        AppController.browseRemoteStorage(page.deviceId, currentPath)
     }
 
     function refresh() {
         showNewFolderRow = false
-        AppController.browse_remote_storage(page.deviceId, currentPath)
+        AppController.browseRemoteStorage(page.deviceId, currentPath)
     }
 
     function submitNewFolder() {
         let name = newFolderName.trim()
         if (name.length > 0) {
-            AppController.create_remote_folder(page.deviceId, currentPath, name)
+            AppController.createRemoteFolder(page.deviceId, currentPath, name)
             newFolderName = ""
             showNewFolderRow = false
         }
@@ -96,7 +96,7 @@ Item {
         let dev = page.deviceId.length > 0 ? page.deviceId : (typeof window !== "undefined" && window.currentDeviceId ? window.currentDeviceId : "")
         if (dev.length > 0) {
             if (page.deviceId !== dev) page.deviceId = dev
-            AppController.browse_remote_storage(dev, page.currentPath)
+            AppController.browseRemoteStorage(dev, page.currentPath)
         }
     }
 
@@ -105,14 +105,14 @@ Item {
             let dev = page.deviceId.length > 0 ? page.deviceId : (typeof window !== "undefined" && window.currentDeviceId ? window.currentDeviceId : "")
             if (dev.length > 0) {
                 if (page.deviceId !== dev) page.deviceId = dev
-                AppController.browse_remote_storage(dev, page.currentPath)
+                AppController.browseRemoteStorage(dev, page.currentPath)
             }
         }
     }
 
     onDeviceIdChanged: {
         if (page.deviceId.length > 0 && active) {
-            AppController.browse_remote_storage(page.deviceId, page.currentPath)
+            AppController.browseRemoteStorage(page.deviceId, page.currentPath)
         }
     }
 
@@ -186,7 +186,7 @@ Item {
                     Item { Layout.fillWidth: true }
 
                     Txt {
-                        text: AppController.remote_storage_summary || qsTr("%1 items").arg(page.remoteItems.length)
+                        text: AppController.remoteStorageSummary || qsTr("%1 items").arg(page.remoteItems.length)
                         role: "code"
                         size: 11
                         color: Theme.surfaceContentVariant
@@ -198,7 +198,7 @@ Item {
                         variant: "ghost"
                         size: "sm"
                         Accessible.name: qsTr("Open local MacLink Downloads folder in Finder")
-                        onClicked: AppController.open_local_downloads()
+                        onClicked: AppController.openLocalDownloads()
                     }
 
                     Button {
@@ -454,7 +454,7 @@ Item {
         Rectangle {
             Layout.fillWidth: true
             implicitHeight: permCol.implicitHeight + 24
-            visible: AppController.remote_storage_permission_needed
+            visible: AppController.remoteStoragePermissionNeeded
             radius: Theme.cardCornerRadius
             color: Qt.rgba(Theme.error.r, Theme.error.g, Theme.error.b, 0.12)
             border.width: 1
@@ -584,7 +584,7 @@ Item {
                                 label: qsTr("Download to Mac")
                                 onClicked: {
                                     let fullPath = modelData.folder ? (modelData.folder + "/" + modelData.name) : modelData.name
-                                    AppController.download_remote_file(page.deviceId, fullPath)
+                                    AppController.downloadRemoteFile(page.deviceId, fullPath)
                                 }
                             }
 
@@ -594,7 +594,7 @@ Item {
                                 label: qsTr("Copy path")
                                 onClicked: {
                                     let fullPath = modelData.folder ? (modelData.folder + "/" + modelData.name) : modelData.name
-                                    AppController.copy_text(fullPath)
+                                    AppController.copyText(fullPath)
                                 }
                             }
 
@@ -604,7 +604,7 @@ Item {
                                 label: qsTr("Delete from phone")
                                 onClicked: {
                                     let fullPath = modelData.folder ? (modelData.folder + "/" + modelData.name) : modelData.name
-                                    AppController.delete_remote_item(page.deviceId, fullPath)
+                                    AppController.deleteRemoteItem(page.deviceId, fullPath)
                                 }
                             }
                         }
@@ -616,7 +616,7 @@ Item {
             Column {
                 anchors.centerIn: parent
                 spacing: 12
-                visible: AppController.remote_storage_loading
+                visible: AppController.remoteStorageLoading
 
                 Icon {
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -635,7 +635,7 @@ Item {
             // Empty folder indicator
             Txt {
                 anchors.centerIn: parent
-                visible: page.displayedItems.length === 0 && !AppController.remote_storage_loading && !AppController.remote_storage_permission_needed
+                visible: page.displayedItems.length === 0 && !AppController.remoteStorageLoading && !AppController.remoteStoragePermissionNeeded
                 text: qsTr("This folder is empty or no matching files found.")
                 role: "body"
                 muted: true
@@ -718,7 +718,7 @@ Item {
                     TextInput {
                         id: ftpUrlInput
                         Layout.fillWidth: true
-                        text: "ftp://192.168.1.100:2121"
+                        text: AppController.remoteStorageFtpUrl.length > 0 ? AppController.remoteStorageFtpUrl : "ftp://192.168.1.100:2121"
                         color: Theme.amberAccent
                         font.family: Theme.fontFamilyMono
                         font.pixelSize: 13
@@ -731,7 +731,7 @@ Item {
                         variant: "ghost"
                         size: "sm"
                         onClicked: {
-                            AppController.copyToClipboard(ftpUrlInput.text)
+                            AppController.copyText(ftpUrlInput.text)
                         }
                     }
                 }

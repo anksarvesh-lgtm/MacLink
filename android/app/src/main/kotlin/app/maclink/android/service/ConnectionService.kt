@@ -73,6 +73,11 @@ class ConnectionService : LifecycleService() {
                         if (status.connected.isNotEmpty()) {
                             if (wifiLock?.isHeld == false) wifiLock?.acquire()
                             if (multicastLock?.isHeld == false) multicastLock?.acquire()
+                            if (app.maclink.android.storage.PhoneStorage.hasAnyAccess(this@ConnectionService)) {
+                                runCatching {
+                                    app.maclink.android.storage.ftp.FtpServerManager.getInstance(this@ConnectionService).start()
+                                }
+                            }
                         }
                         getSystemService(NotificationManager::class.java)
                             .notify(ONGOING_ID, ongoingNotification(status))
@@ -137,6 +142,7 @@ class ConnectionService : LifecycleService() {
         wifiLock?.runCatching { release() }
         wakeLock?.runCatching { if (isHeld) release() }
         getSystemService(NotificationManager::class.java)?.cancel(ONGOING_ID)
+        runCatching { app.maclink.android.storage.ftp.FtpServerManager.getInstance(this).stop() }
         super.onDestroy()
     }
 

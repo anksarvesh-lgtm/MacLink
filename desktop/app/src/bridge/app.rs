@@ -164,6 +164,8 @@ pub mod qobject {
         #[qproperty(bool, remote_storage_permission_needed)]
         /// Storage telemetry summary text
         #[qproperty(QString, remote_storage_summary)]
+        /// Discovered or live FTP URL for phone storage (`ftp://<ip>:2121`)
+        #[qproperty(QString, remote_storage_ftp_url)]
         type AppController = super::AppControllerRust;
 
         /// Enables or disables LocalSend LAN discovery and file sharing.
@@ -433,6 +435,9 @@ pub mod qobject {
         /// Opens the local MacLink Downloads folder in Finder / file manager
         #[qinvokable]
         fn open_local_downloads(self: &AppController);
+        /// Mounts or opens the phone's live FTP server in macOS Finder
+        #[qinvokable]
+        fn open_ftp_in_finder(self: &AppController);
 
         /// A short message for the user (e.g. a command failed).
         #[qsignal]
@@ -534,6 +539,7 @@ pub struct AppControllerRust {
     remote_storage_error: QString,
     remote_storage_permission_needed: bool,
     remote_storage_summary: QString,
+    remote_storage_ftp_url: QString,
     last_online_count: usize,
     last_tray_tooltip: String,
     tray: Option<tray::Tray>,
@@ -1244,6 +1250,7 @@ impl qobject::AppController {
             wake_adapter,
             wake_state,
             wake_wired,
+            connected_peer,
             waiting_count,
         ) = hub.read(|s| {
             let ringing = s.ringing_from.and_then(|id| s.name_of(&id)).unwrap_or_default();
@@ -1259,6 +1266,7 @@ impl qobject::AppController {
                 crate::pc_mirror::active_peer().map(|id| s.name_of(&id).unwrap_or_else(|| id.short()));
             let connected: Vec<_> =
                 s.devices.iter().filter(|d| matches!(d.link, LinkState::Online { .. })).collect();
+            let connected_peer = connected.first().map(|d| d.id);
             let current_is_online = usize::try_from(current_idx)
                 .ok()
                 .and_then(|i| s.devices.get(i))
@@ -1299,6 +1307,7 @@ impl qobject::AppController {
                 wake_adapter,
                 wake_state,
                 wake_wired,
+                connected_peer,
                 waiting_count,
             )
         });
@@ -1322,6 +1331,17 @@ impl qobject::AppController {
         self.as_mut().set_status(QString::from(status_text));
         self.as_mut().set_error(QString::from(&error));
         self.as_mut().set_has_devices(devices > 0);
+        if let Some(node) = core_host::node() {
+            if let Some(peer_id) = connected_peer {
+                let diag = node.peer_diagnostics(&peer_id);
+                if let Some(addr) = diag.mdns_addrs.iter().find(|a| a.is_ipv4()) {
+                    let url = format!("ftp://{}:2121", addr.ip());
+                    if self.remote_storage_ftp_url().to_string() != url {
+                        self.as_mut().set_remote_storage_ftp_url(QString::from(&url));
+                    }
+                }
+            }
+        }
         let phone_colors_q = QString::from(&phone_colors);
         if *self.phone_colors() != phone_colors_q {
             self.as_mut().set_phone_colors(phone_colors_q);
@@ -1904,6 +1924,14 @@ impl qobject::AppController {
         self.as_mut().set_remote_storage_error(QString::from(""));
         self.as_mut().set_remote_storage_permission_needed(false);
 
+        if let Some(node) = core_host::node() {
+            let diag = node.peer_diagnostics(&dev);
+            if let Some(addr) = diag.mdns_addrs.iter().find(|a| a.is_ipv4()) {
+                let url = format!("ftp://{}:2121", addr.ip());
+                self.as_mut().set_remote_storage_ftp_url(QString::from(&url));
+            }
+        }
+
         let Some(node) = core_host::node() else {
             self.as_mut().set_remote_storage_loading(false);
             self.as_mut().set_remote_storage_error(QString::from("Core service not ready"));
@@ -2143,6 +2171,16 @@ impl qobject::AppController {
         let dir = core_host::downloads_dir();
         let _ = std::fs::create_dir_all(&dir);
         crate::transfers::open(&dir);
+    }
+
+    pub fn open_ftp_in_finder(&self) {
+        let url = self.remote_storage_ftp_url().to_string();
+        if !url.is_empty() {
+            #[cfg(target_os = "macos")]
+            {
+                let _ = std::process::Command::new("open").arg(&url).spawn();
+            }
+        }
     }
 }
 
