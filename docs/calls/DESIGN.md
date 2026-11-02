@@ -109,4 +109,3 @@ The feature is split into two distinct tiers:
 5. **Two-Way User Consent**: Android settings enforce two distinct switches (both defaulting to OFF):
    - *"Let my paired Mac answer and place calls"*
    - *"Share call history with Mac"*
-

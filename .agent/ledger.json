@@ -1,66 +1,44 @@
 {
   "version": 1,
-  "task_id": "t-20261102-4138",
-  "goal": "Build next version (v0.0.5) of Android and macOS apps, and publish release to GitHub",
+  "task_id": "t-20261102-5264",
+  "goal": "Upload all source code (MacCompanion, AndroidCompanion, shared), rules (AGENTS.md, .agent), design documentation and diagrams, and brain artifacts to GitHub repository.",
   "status": "active",
-  "created_at": "2026-11-02T14:52:41.499Z",
-  "updated_at": "2026-11-02T14:52:41.499Z",
-  "checkpoint_count": 0,
+  "created_at": "2026-11-02T19:19:40.791Z",
+  "updated_at": "2026-11-02T19:19:57.255Z",
+  "checkpoint_count": 1,
   "steps": [
     {
       "id": "s1",
-      "title": "Build Android release APK",
-      "status": "in_progress",
+      "title": "Sync MacCompanion, AndroidCompanion, shared, and docs into repository",
+      "status": "done",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": null,
+      "note": "Synced MacCompanion (Swift AppKit / SwiftUI), AndroidCompanion (Kotlin Jetpack Compose), shared protocol definitions, and all architecture docs and diagrams into nectarlink repository cleanly.",
       "last_error": null,
-      "updated_at": "2026-11-02T14:52:41.499Z"
+      "updated_at": "2026-11-02T19:19:57.255Z"
     },
     {
       "id": "s2",
-      "title": "Generate release checksums",
+      "title": "Package rules (AGENTS.md, .agent) and copy all brain artifacts into repository brain directory",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-02T14:52:41.499Z"
+      "updated_at": "2026-11-02T19:19:40.791Z"
     },
     {
       "id": "s3",
-      "title": "Commit version bump and create git tag",
+      "title": "Commit and push all changes to GitHub origin main, verifying clean sync",
       "status": "pending",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
       "note": null,
       "last_error": null,
-      "updated_at": "2026-11-02T14:52:41.499Z"
-    },
-    {
-      "id": "s4",
-      "title": "Push git commits and tags",
-      "status": "pending",
-      "tries": 0,
-      "max_tries": 3,
-      "depends_on": [],
-      "note": null,
-      "last_error": null,
-      "updated_at": "2026-11-02T14:52:41.499Z"
-    },
-    {
-      "id": "s5",
-      "title": "Publish GitHub release with app assets",
-      "status": "pending",
-      "tries": 0,
-      "max_tries": 3,
-      "depends_on": [],
-      "note": null,
-      "last_error": null,
-      "updated_at": "2026-11-02T14:52:41.499Z"
+      "updated_at": "2026-11-02T19:19:40.791Z"
     }
   ]
 }

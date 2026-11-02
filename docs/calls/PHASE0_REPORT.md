@@ -38,4 +38,3 @@ The feasibility spike tool `bt-hfp-spike` was executed to verify whether a Mac c
 
 - **Phases 1–4, 6, 7 (Call Control & Management)**: **PROCEED**. Implement complete call control over Wi-Fi QUIC (native notifications, Answer/Reject, dialer, call history, responsive UI).
 - **Phase 5 (Mac Audio over Bluetooth)**: **STOPPED / GATED**. In accordance with the prompt guidelines, Phase 5 will remain disabled unless explicit approval or future Apple API support is provided.
-

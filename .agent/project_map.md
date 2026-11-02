@@ -1,5 +1,5 @@
-# Project Map & Architecture: nectarlink
-Generated on: 2026-11-02T14:40:43.430Z | Total Tracked Files: 621
+# Project Map & Architecture: MacLink
+Generated on: 2026-11-02T19:19:18.265Z | Total Tracked Files: 91
 
 ## Architecture Flowchart
 ```mermaid
@@ -12,54 +12,25 @@ graph TD
 ## Directory Structure Map
 ```text
 .
-├── .agent/ (7 files)
-│   └── history/ (1 file)
-├── .cargo/ (1 file)
-├── .github/ (9 files)
-│   ├── ISSUE_TEMPLATE/ (3 files)
-│   ├── scripts/ (1 file)
-│   └── workflows/ (2 files)
-├── LICENSES/ (5 files)
-├── android/ (186 files)
-│   ├── app/ (177 files)
-│   └── gradle/ (3 files)
-├── assets/ (16 files)
+├── .agent/ (5 files)
+├── AndroidCompanion/ (16 files)
+│   └── app/ (16 files)
+├── MacCompanion/ (19 files)
+│   ├── Sources/ (14 files)
+│   └── Tests/ (3 files)
+├── assets/ (18 files)
 │   ├── brand/ (8 files)
-│   └── fonts/ (8 files)
-├── core/ (57 files)
-│   ├── maclink-adb/ (2 files)
-│   ├── maclink-cli/ (2 files)
-│   ├── maclink-core/ (40 files)
-│   ├── maclink-ffi/ (4 files)
-│   └── maclink-protocol/ (9 files)
-├── desktop/ (202 files)
-│   ├── app/ (201 files)
-│   └── packaging/ (1 file)
-├── docs/ (118 files)
-│   ├── adr/ (9 files)
-│   ├── architecture/ (2 files)
-│   ├── design/ (6 files)
-│   ├── foundations/ (1 file)
-│   ├── guide/ (52 files)
-│   ├── protocol/ (19 files)
-│   ├── research/ (1 file)
-│   ├── screenshots/ (14 files)
-│   └── technical/ (9 files)
-├── scripts/ (2 files)
-├── tools/ (4 files)
-│   └── xtask/ (4 files)
-├── .editorconfig
-├── .gitattributes
-├── .gitignore
+│   ├── fonts/ (8 files)
+│   └── screenshots/ (2 files)
+├── docs/ (26 files)
+│   ├── calls/ (4 files)
+│   └── diagrams/ (9 files)
+├── shared/ (1 file)
+│   └── protocol/ (1 file)
+├── .DS_Store
 ├── AGENTS.md
-├── CHANGELOG.md
-├── Cargo.lock
-├── Cargo.toml
-├── LICENSE
 ├── README.md
-├── SECURITY.md
-├── TRADEMARKS.md
-├── deny.toml
-├── rust-toolchain.toml
-└── rustfmt.toml
+├── aqtinstall.log
+├── install.sh
+└── nectarlink
 ```
