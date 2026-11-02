@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.0.4] - 2026-11-02
+
+### Added & Changed - Amber Liquid Glass Mobile Experience & Desktop Polish
+
+#### Android UI & Amber Liquid Glass Edition
+- **Complete Visual Redesign:** Implemented the full Apple-inspired Amber Liquid Glass interface with centralized amber tokens, warm translucent glass surfaces, specular rims, and dark obsidian backdrops.
+- **LinkDesk Top Bar:** Integrated a frosted glass app identity container with crown shortcut, help walk-through, and QR pairing buttons.
+- **Illuminated Device Card:** Realistic 3D angled MacBook illustration with golden illuminated wallpaper and reflective chassis alongside connection latency indicators and hardware badge chips.
+- **Quick Action & Bento Controls:** Radiant amber quick action tiles (`Control PC`, `Deck`, `Desk Clock`), transfer action cards (`Send Files`, `Send Folder`, `Send Clipboard`, `Browse Files`), and circular system power buttons (`Record`, `Ring PC`, `Lock PC`, `Sleep`).
+- **Amber Light Wave Ribbon:** Flowing ambient amber sine-wave ribbon with glowing golden Apple emblem.
+- **Enhanced Auxiliary Cards:** Liquid glass styling for permissions setup, preview-chipped clipboard history, and 12-bar equalizer waveform timeline.
+- **Tri-Tab Liquid Floating Dock:** 3-tab floating glass dock (`Home`, `Settings`, `Guide`) featuring active radiant amber gradient pill and golden glow highlights.
+
+#### macOS Desktop & Cross-Platform
+- **Shelf Auto-Hide:** Proactive auto-hide behavior when the mouse cursor departs the Shelf activation zone.
+- **Unified Release Packaging:** Automated multi-architecture release distribution with SHA-256 checksums.
+
 ## [0.0.1] - 2026-11-01
 
 ### Added - Initial Beta Release

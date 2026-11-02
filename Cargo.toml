@@ -11,7 +11,7 @@ members = [
 ]
 
 [workspace.package]
-version = "0.0.3"
+version = "0.0.4"
 edition = "2024"
 rust-version = "1.97"
 authors = ["MacLink"]
@@ -23,9 +23,9 @@ repository = "https://github.com/anksarvesh-lgtm/MacLink"
 name = "Beta"
 
 [workspace.dependencies]
-maclink-adb = { path = "core/maclink-adb", version = "0.0.3" }
-maclink-protocol = { path = "core/maclink-protocol", version = "0.0.3" }
-maclink-core = { path = "core/maclink-core", version = "0.0.3" }
+maclink-adb = { path = "core/maclink-adb", version = "0.0.4" }
+maclink-protocol = { path = "core/maclink-protocol", version = "0.0.4" }
+maclink-core = { path = "core/maclink-core", version = "0.0.4" }
 
 anyhow = "1"
 ciborium = "0.2"

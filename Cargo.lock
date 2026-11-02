@@ -2152,7 +2152,7 @@ checksum = "d3d25b0e0b648a86960ac23b7ad4abb9717601dec6f66c165f5b037f3f03065f"
 
 [[package]]
 name = "maclink-adb"
-version = "0.0.3"
+version = "0.0.4"
 dependencies = [
  "thiserror 2.0.21",
  "tokio",
@@ -2162,7 +2162,7 @@ dependencies = [
 
 [[package]]
 name = "maclink-cli"
-version = "0.0.3"
+version = "0.0.4"
 dependencies = [
  "anyhow",
  "clap",
@@ -2180,7 +2180,7 @@ dependencies = [
 
 [[package]]
 name = "maclink-core"
-version = "0.0.3"
+version = "0.0.4"
 dependencies = [
  "blake3",
  "bytes",
@@ -2212,7 +2212,7 @@ dependencies = [
 
 [[package]]
 name = "maclink-desktop"
-version = "0.0.3"
+version = "0.0.4"
 dependencies = [
  "anyhow",
  "blake3",
@@ -2238,7 +2238,7 @@ dependencies = [
 
 [[package]]
 name = "maclink-ffi"
-version = "0.0.3"
+version = "0.0.4"
 dependencies = [
  "jni-sys 0.4.1",
  "maclink-core",
@@ -2252,7 +2252,7 @@ dependencies = [
 
 [[package]]
 name = "maclink-protocol"
-version = "0.0.3"
+version = "0.0.4"
 dependencies = [
  "ciborium",
  "data-encoding",
@@ -4955,7 +4955,7 @@ dependencies = [
 
 [[package]]
 name = "xtask"
-version = "0.0.3"
+version = "0.0.4"
 dependencies = [
  "anyhow",
  "serde_json",
