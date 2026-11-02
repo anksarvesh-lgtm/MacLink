@@ -464,6 +464,7 @@ Item {
         y: page.wideLayout ? 0 : (compactCategoryBar.y + compactCategoryBar.height + 8)
         width: parent.width - x
         height: parent.height - y
+        contentWidth: width
         contentHeight: column.height + Theme.contentPadding * 2
         boundsBehavior: Flickable.StopAtBounds
         clip: true

@@ -13,6 +13,8 @@ Item {
     property string deviceName
     // "recent" (call log) or "contacts".
     property string tab: "recent"
+    readonly property bool isCompactCalls: page.width < 640
+    onIsCompactCallsChanged: if (!isCompactCalls && tab === "keypad") tab = "recent"
     // Contact shown above the keypad when picked from the list.
     property var selectedContact: null
 
@@ -197,8 +199,8 @@ Item {
     // ---- Left pane: Recent calls and Contacts ----
     Item {
         id: list
-        visible: !page.phoneOffline
-        width: Math.min(370, Math.max(280, page.width * 0.36))
+        visible: !page.phoneOffline && (!page.isCompactCalls || page.tab !== "keypad")
+        width: page.isCompactCalls ? parent.width : Math.min(370, Math.max(280, page.width * 0.36))
         height: parent.height
 
         Item {
@@ -209,7 +211,11 @@ Item {
                 anchors.left: parent.left
                 anchors.leftMargin: 16
                 anchors.verticalCenter: parent.verticalCenter
-                options: [
+                options: page.isCompactCalls ? [
+                    { value: "recent", label: qsTr("Recent") },
+                    { value: "contacts", label: qsTr("Contacts") },
+                    { value: "keypad", label: qsTr("Keypad") }
+                ] : [
                     { value: "recent", label: qsTr("Recent") },
                     { value: "contacts", label: qsTr("Contacts") }
                 ]
@@ -454,25 +460,47 @@ Item {
             }
         }
 
-        Divider { anchors.right: parent.right; width: 1; height: parent.height }
+        Divider { anchors.right: parent.right; width: 1; height: parent.height; visible: !page.isCompactCalls }
     }
 
     // ---- Right pane: Active call, selected contact, and keypad dialer ----
     Flickable {
         id: rightPane
-        visible: !page.phoneOffline
-        anchors.left: list.right
+        visible: !page.phoneOffline && (!page.isCompactCalls || page.tab === "keypad")
+        anchors.left: (!page.isCompactCalls && list.visible) ? list.right : parent.left
         anchors.right: parent.right
         height: parent.height
-        contentHeight: Math.max(height, rightColumn.height + Theme.contentPadding * 2)
+        contentWidth: width
+        contentHeight: Math.max(height, rightColumn.height + (page.isCompactCalls ? 80 : Theme.contentPadding * 2))
         boundsBehavior: Flickable.StopAtBounds
         clip: true
+
+        // On compact mode, provide a top segmented tab bar so the user can switch tabs from keypad back to Recent/Contacts
+        Item {
+            id: compactRightHeader
+            visible: page.isCompactCalls
+            width: parent.width
+            height: 56
+            z: 2
+            Segmented {
+                anchors.left: parent.left
+                anchors.leftMargin: 16
+                anchors.verticalCenter: parent.verticalCenter
+                options: [
+                    { value: "recent", label: qsTr("Recent") },
+                    { value: "contacts", label: qsTr("Contacts") },
+                    { value: "keypad", label: qsTr("Keypad") }
+                ]
+                value: page.tab
+                onPicked: (v) => page.tab = v
+            }
+        }
 
         Column {
             id: rightColumn
             width: Math.min(380, rightPane.width - Theme.contentPadding * 2)
             x: Math.max(Theme.contentPadding, (rightPane.width - width) / 2)
-            y: Math.max(Theme.contentPadding, (rightPane.height - height) / 2)
+            y: page.isCompactCalls ? 60 : Math.max(Theme.contentPadding, (rightPane.height - height) / 2)
             spacing: 16
 
             // Active call on the phone (reuses CallCard).

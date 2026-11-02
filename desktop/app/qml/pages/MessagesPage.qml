@@ -14,6 +14,7 @@ Item {
     property string deviceName
     // Writing to someone new (no conversation open).
     property bool composing: false
+    readonly property bool isCompactChat: page.width < 560
 
     readonly property var threads: { try { return JSON.parse(Messages.threads) } catch (e) { return [] } }
     readonly property var messages: { try { return JSON.parse(Messages.messages) } catch (e) { return [] } }
@@ -246,8 +247,8 @@ Item {
     // ---- Conversations ----
     Item {
         id: list
-        visible: page.threads.length > 0 || Messages.hasChatThreads || (page.ready && page.deviceId.length > 0)
-        width: Math.min(340, Math.max(260, page.width * 0.34))
+        visible: (page.threads.length > 0 || Messages.hasChatThreads || (page.ready && page.deviceId.length > 0)) && (!page.isCompactChat || (!page.openThread && !page.composing))
+        width: page.isCompactChat ? parent.width : Math.min(340, Math.max(260, page.width * 0.34))
         height: parent.height
 
         Item {
@@ -257,9 +258,12 @@ Item {
             Txt {
                 anchors.left: parent.left
                 anchors.leftMargin: 20
+                anchors.right: refreshListBtn.left
+                anchors.rightMargin: 8
                 anchors.verticalCenter: parent.verticalCenter
                 text: qsTr("Conversations")
                 role: "title"
+                elide: Text.ElideRight
             }
             IconButton {
                 id: newButton
@@ -273,6 +277,7 @@ Item {
                 onClicked: page.startNew()
             }
             IconButton {
+                id: refreshListBtn
                 anchors.right: newButton.left
                 anchors.verticalCenter: parent.verticalCenter
                 iconPath: Icons.refresh
@@ -395,16 +400,16 @@ Item {
                 text: page.query.length > 0 ? qsTr("No conversations match.") : qsTr("No conversations yet.")
             }
         }
-        Divider { anchors.right: parent.right; width: 1; height: parent.height }
+        Divider { anchors.right: parent.right; width: 1; height: parent.height; visible: !page.isCompactChat }
     }
 
     // ---- The open conversation, or a new one ----
     Item {
         id: chat
-        anchors.left: list.right
+        anchors.left: (!page.isCompactChat && list.visible) ? list.right : parent.left
         anchors.right: parent.right
         height: parent.height
-        visible: list.visible
+        visible: !page.isCompactChat ? list.visible : (Boolean(page.openThread) || page.composing)
 
         // Drag-and-drop image onto an open SMS conversation or new SMS.
         DropArea {
@@ -474,11 +479,12 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 iconPath: Icons.back
                 label: qsTr("Back to conversations (Esc)")
+                visible: page.isCompactChat
                 onClicked: page.closeChat()
             }
             Column {
-                anchors.left: backButton.right
-                anchors.leftMargin: 8
+                anchors.left: backButton.visible ? backButton.right : parent.left
+                anchors.leftMargin: backButton.visible ? 8 : 20
                 anchors.right: callThreadButton.visible ? callThreadButton.left
                     : deleteChatButton.visible ? deleteChatButton.left : parent.right
                 anchors.rightMargin: (callThreadButton.visible || deleteChatButton.visible) ? 8 : 24
@@ -546,18 +552,18 @@ Item {
             }
             // New message: who to.
             Row {
-                anchors.left: backButton.right
-                anchors.leftMargin: 8
+                anchors.left: backButton.visible ? backButton.right : parent.left
+                anchors.leftMargin: backButton.visible ? 8 : 20
                 anchors.right: parent.right
                 anchors.rightMargin: 24
                 anchors.verticalCenter: parent.verticalCenter
                 spacing: 12
                 visible: page.composing
-                Txt { anchors.verticalCenter: parent.verticalCenter; text: qsTr("To"); role: "title" }
+                Txt { id: toLabel; anchors.verticalCenter: parent.verticalCenter; text: qsTr("To"); role: "title" }
                 TextInput {
                     id: toField
                     anchors.verticalCenter: parent.verticalCenter
-                    width: parent.width - 40
+                    width: Math.max(80, parent.width - toLabel.implicitWidth - 24)
                     font.family: Theme.fontUi
                     font.pixelSize: 15
                     color: Theme.surfaceContent

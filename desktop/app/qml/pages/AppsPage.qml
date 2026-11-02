@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import QtQuick
+import QtQuick.Layouts
 import app.maclink
 
 // Apps: every app on the phone, to open one in a window of its own on this PC
@@ -97,15 +98,16 @@ Item {
         anchors.rightMargin: Theme.contentPadding
         anchors.topMargin: 8
 
-        Row {
+        RowLayout {
             id: toolbar
             width: parent.width
             height: 40
             spacing: 8
 
             Rectangle {
-                width: parent.width - refresh.width - mirrorBtn.width - parent.spacing * 2
-                height: parent.height
+                Layout.fillWidth: true
+                Layout.minimumWidth: 140
+                height: 38
                 radius: height / 2
                 color: Theme.graphite ? "transparent" : (Theme.glass ? Theme.cardFill : Theme.surfaceContainerHighest)
                 border.width: 1
@@ -142,13 +144,14 @@ Item {
                         visible: search.text.length === 0
                         role: "body"
                         muted: true
+                        elide: Text.ElideRight
+                        width: parent.width
                         text: qsTr("Search %1's apps").arg(page.deviceName)
                     }
                 }
             }
             IconButton {
                 id: refresh
-                anchors.verticalCenter: parent.verticalCenter
                 iconPath: Icons.refresh
                 label: qsTr("Refresh")
                 enabled: page.loadState !== "loading"
@@ -156,8 +159,7 @@ Item {
             }
             Button {
                 id: mirrorBtn
-                anchors.verticalCenter: parent.verticalCenter
-                text: qsTr("Mirror Phone")
+                text: page.width < 560 ? "" : qsTr("Mirror Phone")
                 iconPath: Icons.window
                 variant: Theme.glass ? "amber" : "tonal"
                 size: "sm"

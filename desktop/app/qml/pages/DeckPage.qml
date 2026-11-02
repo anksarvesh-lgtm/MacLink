@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import QtQuick
+import QtQuick.Layouts
 import QtQuick.Dialogs
 import app.maclink
 
@@ -182,30 +183,31 @@ Item {
                     width: parent.width
                     spacing: 14
 
-                    Row {
+                    RowLayout {
                         width: parent.width
                         spacing: 12
-                        Column {
-                            width: parent.width - headerActions.width - 12
+
+                        ColumnLayout {
+                            Layout.fillWidth: true
                             spacing: 4
                             Txt { text: qsTr("Control Deck"); role: "title" }
                             Txt {
-                                width: parent.width
+                                Layout.fillWidth: true
                                 wrapMode: Text.WordWrap
                                 role: "bodySmall"
                                 muted: true
                                 text: qsTr("Drag to reorder · click to edit.")
                             }
                         }
-                        Row {
+                        Flow {
                             id: headerActions
-                            anchors.verticalCenter: parent.verticalCenter
                             spacing: 8
                             Button {
                                 variant: "outline"
                                 size: "sm"
                                 iconPath: Icons.refresh
-                                text: qsTr("Reset defaults")
+                                text: page.width < 560 ? "" : qsTr("Reset defaults")
+                                Accessible.name: qsTr("Reset defaults")
                                 onClicked: resetConfirmSheet.open()
                             }
                             Button {
@@ -213,6 +215,7 @@ Item {
                                 size: "sm"
                                 iconPath: Icons.plus
                                 text: qsTr("Add tile")
+                                Accessible.name: qsTr("Add tile")
                                 onClicked: page.openAddTile()
                             }
                         }
@@ -279,52 +282,59 @@ Item {
             }
 
             // ---- Page Tabs & Page Management ----
-            Item {
+            RowLayout {
                 width: parent.width
-                height: 38
+                spacing: 8
 
-                Row {
-                    id: pageTabsRow
-                    anchors.left: parent.left
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 8
+                Flickable {
+                    id: pageTabsFlickable
+                    Layout.fillWidth: true
+                    height: 38
+                    contentWidth: pageTabsRow.implicitWidth
+                    clip: true
+                    boundsBehavior: Flickable.StopAtBounds
 
-                    Repeater {
-                        model: page.pagesList
-                        delegate: Chip {
-                            required property var modelData
-                            required property int index
-                            interactive: true
-                            selected: index === page.currentPageIndex
-                            text: "%1 (%2)".arg(modelData.name).arg((modelData.tiles || []).length)
-                            onClicked: page.currentPageIndex = index
+                    Row {
+                        id: pageTabsRow
+                        height: parent.height
+                        spacing: 8
+
+                        Repeater {
+                            model: page.pagesList
+                            delegate: Chip {
+                                required property var modelData
+                                required property int index
+                                interactive: true
+                                selected: index === page.currentPageIndex
+                                text: "%1 (%2)".arg(modelData.name).arg((modelData.tiles || []).length)
+                                onClicked: page.currentPageIndex = index
+                            }
                         }
-                    }
 
-                    Button {
-                        visible: page.pagesList.length < 8
-                        variant: "tonal"
-                        size: "sm"
-                        iconPath: Icons.plus
-                        text: qsTr("New page")
-                        onClicked: {
-                            pageNameSheet.isNew = true
-                            pageNameInput.text = qsTr("Page %1").arg(page.pagesList.length + 1)
-                            pageNameSheet.open()
+                        Button {
+                            visible: page.pagesList.length < 8
+                            variant: "tonal"
+                            size: "sm"
+                            iconPath: Icons.plus
+                            text: qsTr("New page")
+                            onClicked: {
+                                pageNameSheet.isNew = true
+                                pageNameInput.text = qsTr("Page %1").arg(page.pagesList.length + 1)
+                                pageNameSheet.open()
+                            }
                         }
                     }
                 }
 
                 Row {
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 8
+                    spacing: 6
 
                     Button {
                         variant: "text"
                         size: "sm"
                         iconPath: Icons.edit
-                        text: qsTr("Rename page")
+                        text: page.width < 600 ? "" : qsTr("Rename page")
+                        Accessible.name: qsTr("Rename page")
                         onClicked: {
                             pageNameSheet.isNew = false
                             pageNameInput.text = page.currentPage.name
@@ -336,7 +346,8 @@ Item {
                         variant: "text"
                         size: "sm"
                         iconPath: Icons.trash
-                        text: qsTr("Delete page")
+                        text: page.width < 600 ? "" : qsTr("Delete page")
+                        Accessible.name: qsTr("Delete page")
                         onClicked: DeckController.removePage(page.currentPage.id)
                     }
                 }
@@ -346,7 +357,7 @@ Item {
             Grid {
                 id: tileGrid
                 width: parent.width
-                columns: width >= 760 ? 4 : 3
+                columns: width >= 760 ? 4 : (width >= 460 ? 3 : 2)
                 spacing: 12
 
                 readonly property real cellWidth: (width - spacing * (columns - 1)) / columns

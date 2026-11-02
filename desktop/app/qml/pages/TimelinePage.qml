@@ -218,25 +218,35 @@ Item {
         Item {
             id: filterBar
             width: parent.width
-            height: 30
+            height: 32
 
-            Row {
-                id: kindRow
+            Flickable {
                 anchors.left: parent.left
+                anchors.right: deviceDropdownBtn.visible ? deviceDropdownBtn.left : parent.right
+                anchors.rightMargin: deviceDropdownBtn.visible ? 8 : 0
                 anchors.verticalCenter: parent.verticalCenter
-                spacing: 6
+                height: 32
+                contentWidth: kindRow.implicitWidth
+                clip: true
+                boundsBehavior: Flickable.StopAtBounds
 
-                Repeater {
-                    model: page.kindOptions
-                    delegate: Chip {
-                        required property var modelData
-                        interactive: true
-                        text: modelData.label
-                        iconPath: modelData.icon
-                        selected: TimelineModel.kindFilter === modelData.key
-                        onClicked: {
-                            page.deviceMenuOpen = false
-                            TimelineModel.kindFilter = modelData.key
+                Row {
+                    id: kindRow
+                    height: parent.height
+                    spacing: 6
+
+                    Repeater {
+                        model: page.kindOptions
+                        delegate: Chip {
+                            required property var modelData
+                            interactive: true
+                            text: modelData.label
+                            iconPath: modelData.icon
+                            selected: TimelineModel.kindFilter === modelData.key
+                            onClicked: {
+                                page.deviceMenuOpen = false
+                                TimelineModel.kindFilter = modelData.key
+                            }
                         }
                     }
                 }
@@ -248,8 +258,7 @@ Item {
                 anchors.right: parent.right
                 anchors.verticalCenter: parent.verticalCenter
                 height: 30
-                readonly property real maxAllowedWidth: Math.max(110, filterBar.width - kindRow.width - 12)
-                width: Math.min(maxAllowedWidth, deviceBtnRow.implicitWidth + 22)
+                width: Math.min(160, deviceBtnRow.implicitWidth + 22)
                 radius: Theme.pill(height)
                 activeFocusOnTab: true
                 readonly property bool filtered: TimelineModel.deviceFilter.length > 0

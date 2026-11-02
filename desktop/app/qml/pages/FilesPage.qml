@@ -193,7 +193,7 @@ Item {
                     }
 
                     Button {
-                        text: qsTr("Downloads Folder")
+                        text: page.width < 560 ? qsTr("Downloads") : qsTr("Downloads Folder")
                         iconPath: Icons.folder
                         variant: "ghost"
                         size: "sm"
@@ -309,7 +309,7 @@ Item {
 
             // Upload File Button
             Button {
-                text: qsTr("Upload to Phone")
+                text: page.width < 620 ? qsTr("Upload") : qsTr("Upload to Phone")
                 iconPath: Icons.download
                 variant: Theme.glass ? "amber" : "fill"
                 size: "sm"

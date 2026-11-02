@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import QtQuick
+import QtQuick.Layouts
 import QtQuick.Dialogs
 import app.maclink
 
@@ -378,152 +379,124 @@ Item {
             height: 56
 
             // Normal mode header (no selection active).
-            Row {
-                id: normalLeftRow
-                anchors.left: parent.left
+            RowLayout {
+                anchors.fill: parent
                 anchors.leftMargin: 20
-                anchors.right: normalRightRow.visible ? normalRightRow.left : parent.right
-                anchors.rightMargin: 12
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: 10
+                anchors.rightMargin: 16
                 visible: page.selectedCount === 0 && !page.selectMode
-                clip: true
+                spacing: 10
 
                 Txt {
-                    anchors.verticalCenter: parent.verticalCenter
+                    Layout.fillWidth: true
                     role: "title"
                     size: 16
                     elide: Text.ElideRight
                     text: page.currentAlbumName
                 }
                 Txt {
-                    anchors.verticalCenter: parent.verticalCenter
-                    visible: Photos.count > 0
+                    visible: Photos.count > 0 && !gridPane.compactBar
                     role: "caption"
                     muted: true
                     text: Photos.more
                         ? qsTr("%1+ items").arg(Photos.count)
                         : (Photos.count === 1 ? qsTr("1 item") : qsTr("%1 items").arg(Photos.count))
                 }
-            }
-
-            Row {
-                id: normalRightRow
-                anchors.right: parent.right
-                anchors.rightMargin: 16
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: 8
-                visible: page.selectedCount === 0 && !page.selectMode
-
                 Chip {
-                    anchors.verticalCenter: parent.verticalCenter
                     visible: Photos.count > 0
                     iconPath: Icons.folder
                     interactive: true
                     text: {
                         const f = Photos.saveFolder || ""
+                        if (gridPane.width < 420) return ""
                         if (!gridPane.compactBar) return f
                         const parts = f.split(/[\\/]/)
                         return parts.length > 0 && parts[parts.length - 1].length > 0
                             ? parts[parts.length - 1] : f
                     }
+                    Accessible.name: qsTr("Save folder: %1").arg(Photos.saveFolder)
                     onClicked: defaultFolderPicker.open()
                 }
-
                 Button {
-                    anchors.verticalCenter: parent.verticalCenter
                     visible: Photos.count > 0
                     variant: "tonal"
                     size: "sm"
                     iconPath: Icons.check
-                    text: qsTr("Select")
+                    text: gridPane.compactBar ? "" : qsTr("Select")
+                    Accessible.name: qsTr("Select items")
                     onClicked: page.selectMode = true
                 }
             }
 
             // Selection mode toolbar.
-            Row {
-                anchors.left: parent.left
+            RowLayout {
+                anchors.fill: parent
                 anchors.leftMargin: 12
-                anchors.verticalCenter: parent.verticalCenter
+                anchors.rightMargin: 16
                 spacing: 8
                 visible: page.selectedCount > 0 || page.selectMode
 
                 IconButton {
-                    anchors.verticalCenter: parent.verticalCenter
                     iconPath: Icons.close
                     label: qsTr("Cancel selection")
                     onClicked: page.clearSelection()
                 }
                 Txt {
-                    anchors.verticalCenter: parent.verticalCenter
+                    Layout.fillWidth: true
                     role: "title"
                     size: 15
+                    elide: Text.ElideRight
                     text: page.selectedCount > 0
                         ? qsTr("%1 selected").arg(page.selectedCount)
                         : (gridPane.compactBar ? qsTr("Select items") : qsTr("Click items to select"))
                 }
                 Button {
-                    anchors.verticalCenter: parent.verticalCenter
                     visible: !gridPane.compactBar || page.selectedCount === 0
                     variant: "text"
                     size: "sm"
                     text: qsTr("Select all")
                     onClicked: page.selectAllLoaded()
                 }
-            }
-
-            Row {
-                anchors.right: parent.right
-                anchors.rightMargin: 16
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: 8
-                visible: page.selectedCount > 0 || page.selectMode
-
                 Button {
-                    anchors.verticalCenter: parent.verticalCenter
                     visible: page.selectedCount === 1 && !page.singleSelectedIsVideo
                     variant: "tonal"
                     size: "sm"
                     iconPath: Icons.copy
-                    text: qsTr("Copy")
+                    text: gridPane.compactBar ? "" : qsTr("Copy")
+                    Accessible.name: qsTr("Copy")
                     enabled: !Photos.saving
                     onClicked: Photos.copyItem(page.selectedIds[0])
                 }
-
                 Button {
-                    anchors.verticalCenter: parent.verticalCenter
                     visible: page.selectedCount === 1
                     variant: "tonal"
                     size: "sm"
                     iconPath: Icons.openExternal
-                    text: qsTr("Open")
+                    text: gridPane.compactBar ? "" : qsTr("Open")
+                    Accessible.name: qsTr("Open")
                     enabled: !Photos.saving
                     onClicked: Photos.openItem(page.selectedIds[0])
                 }
-
                 Button {
-                    anchors.verticalCenter: parent.verticalCenter
                     variant: Theme.glass ? "amber" : "fill"
                     size: "sm"
                     iconPath: Icons.download
                     busy: Photos.saving
                     enabled: page.selectedCount > 0 && !Photos.saving
                     text: page.selectedCount > 1
-                        ? qsTr("Save (%1)").arg(page.selectedCount)
-                        : qsTr("Save")
+                        ? (gridPane.compactBar ? qsTr("(%1)").arg(page.selectedCount) : qsTr("Save (%1)").arg(page.selectedCount))
+                        : (gridPane.compactBar ? "" : qsTr("Save"))
+                    Accessible.name: qsTr("Save selected photos")
                     onClicked: {
                         Photos.saveItems(page.selectedIds, "")
                         page.clearSelection()
                     }
                 }
-
                 IconButton {
-                    anchors.verticalCenter: parent.verticalCenter
+                    visible: page.selectedCount > 0
                     tonal: true
                     iconPath: Icons.folder
                     label: qsTr("Save to folder…")
-                    enabled: page.selectedCount > 0 && !Photos.saving
+                    enabled: !Photos.saving
                     onClicked: {
                         saveToFolderPicker.pendingIds = page.selectedIds.slice()
                         saveToFolderPicker.open()

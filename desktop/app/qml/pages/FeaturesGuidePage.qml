@@ -607,7 +607,7 @@ Item {
                 }
 
                 Accessible.role: Accessible.Button
-                Accessible.name: "Read the full guide"
+                Accessible.name: qsTr("Read the full guide")
 
                 RowLayout {
                     id: fullGuideRow
@@ -630,11 +630,11 @@ Item {
             }
 
             Button {
-                text: qsTr("Setup walkthrough")
+                text: guide.width < 620 ? "" : qsTr("Setup walkthrough")
                 iconPath: Icons.compass
                 variant: "tonal"
                 size: "sm"
-                Accessible.name: "Open the 7-step setup walkthrough"
+                Accessible.name: qsTr("Open the 7-step setup walkthrough")
                 onClicked: guide.restartWalkthroughRequested()
             }
         }
