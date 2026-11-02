@@ -738,6 +738,7 @@ mod tests {
             install_updates: false,
             battery_alerts: false,
             start_with_windows: Some(true),
+            start_hidden: false,
             recordings_folder: Some(PathBuf::from(r"C:\Recordings")),
             recordings_format: RecordingFormat::Flac,
             webcam_phone: Some("0101".repeat(16)),
