@@ -204,62 +204,34 @@ private fun Palette.toScheme(dark: Boolean, error: Color): ColorScheme {
 
 /**
  * Applies adaptive surface translucency in Glass mode with a subtle uniform
- * hairline border and high-legibility modal containers.
+ * hairline border and high-legibility deep dark obsidian containers.
+ * Ensures white text is easily and crisply visible with high contrast.
  */
 private fun ColorScheme.toGlassScheme(dark: Boolean): ColorScheme {
-    val tintArgb = primary.let {
-        android.graphics.Color.argb(
-            (it.alpha * 255).toInt(),
-            (it.red * 255).toInt(),
-            (it.green * 255).toInt(),
-            (it.blue * 255).toInt(),
-        )
-    }
-    fun blendWithTint(c: Color, ratio: Float, alpha: Float): Color {
-        val cArgb = android.graphics.Color.argb(
-            255,
-            (c.red * 255).toInt(),
-            (c.green * 255).toInt(),
-            (c.blue * 255).toInt(),
-        )
-        return Color(ColorUtils.blendARGB(cArgb, tintArgb, ratio)).copy(alpha = alpha)
-    }
-    return if (dark) {
-        copy(
-            background = AmberTokens.Background,
-            surface = AmberTokens.Background,
-            surfaceContainerLowest = AmberTokens.DeepBackground.copy(alpha = 0.85f),
-            surfaceContainerLow = AmberTokens.DarkAmber.copy(alpha = 0.35f),
-            surfaceContainer = AmberTokens.BrownSurface.copy(alpha = 0.40f),
-            surfaceContainerHigh = AmberTokens.BurntOrange.copy(alpha = 0.45f),
-            surfaceContainerHighest = AmberTokens.BrownSurface.copy(alpha = 0.65f),
-            surfaceVariant = AmberTokens.DarkAmber.copy(alpha = 0.50f),
-            primary = AmberTokens.PrimaryAccent,
-            onPrimary = AmberTokens.DeepBackground,
-            primaryContainer = AmberTokens.BurntOrange.copy(alpha = 0.85f),
-            onPrimaryContainer = AmberTokens.PrimaryText,
-            secondary = AmberTokens.SecondaryAccent,
-            secondaryContainer = AmberTokens.DarkAmber.copy(alpha = 0.70f),
-            tertiary = AmberTokens.Highlight,
-            onSurface = AmberTokens.PrimaryText,
-            onSurfaceVariant = AmberTokens.SecondaryText,
-            outline = AmberTokens.MutedText,
-            outlineVariant = AmberTokens.GlassBorder, // Warm translucent reflective glass edge
-        )
-    } else {
-        copy(
-            surfaceContainerLowest = Color.White.copy(alpha = 0.64f),
-            surfaceContainerLow = blendWithTint(Color.White, 0.04f, 0.74f),
-            surfaceContainer = blendWithTint(Color.White, 0.06f, 0.82f),
-            surfaceContainerHigh = blendWithTint(surfaceContainerHigh, 0.10f, 0.92f),
-            surfaceContainerHighest = blendWithTint(surfaceContainerHighest, 0.12f, 0.96f),
-            surfaceVariant = blendWithTint(surfaceVariant, 0.08f, 0.84f),
-            primaryContainer = primaryContainer.copy(alpha = 0.86f),
-            secondaryContainer = secondaryContainer.copy(alpha = 0.84f),
-            tertiaryContainer = tertiaryContainer.copy(alpha = 0.86f),
-            outlineVariant = Color(0x35FFFFFF), // Crystal specular edge
-        )
-    }
+    return copy(
+        background = AmberTokens.Background,
+        surface = AmberTokens.Background,
+        surfaceContainerLowest = AmberTokens.DeepBackground.copy(alpha = 0.95f),
+        surfaceContainerLow = AmberTokens.DarkAmber.copy(alpha = 0.40f),
+        surfaceContainer = AmberTokens.BrownSurface.copy(alpha = 0.50f),
+        surfaceContainerHigh = AmberTokens.BurntOrange.copy(alpha = 0.55f),
+        surfaceContainerHighest = AmberTokens.BrownSurface.copy(alpha = 0.75f),
+        surfaceVariant = AmberTokens.DarkAmber.copy(alpha = 0.60f),
+        primary = AmberTokens.PrimaryAccent,
+        onPrimary = AmberTokens.DeepBackground,
+        primaryContainer = AmberTokens.BurntOrange.copy(alpha = 0.85f),
+        onPrimaryContainer = AmberTokens.PrimaryText,
+        secondary = AmberTokens.SecondaryAccent,
+        secondaryContainer = AmberTokens.DarkAmber.copy(alpha = 0.70f),
+        onSecondaryContainer = AmberTokens.PrimaryText,
+        tertiary = AmberTokens.Highlight,
+        onTertiary = AmberTokens.DeepBackground,
+        onBackground = AmberTokens.PrimaryText,
+        onSurface = AmberTokens.PrimaryText,
+        onSurfaceVariant = AmberTokens.SecondaryText,
+        outline = AmberTokens.MutedText,
+        outlineVariant = AmberTokens.GlassBorder, // Crisp translucent reflective glass edge
+    )
 }
 
 /**
@@ -397,14 +369,14 @@ fun MacLinkTheme(
     backdrop: Boolean = false,
     content: @Composable () -> Unit,
 ) {
-    val dark = isSystemInDarkTheme()
+    val dark = true // Deep dark theme ensures white text is always easily visible with high contrast
     val graphite = false
     val glass = true // Apple Liquid Glass UI is the exclusive design language
     val hive = false
     val amoledActive = false
     val error = when {
-        hive -> if (dark) Tokens.hiveCombError else Tokens.hiveWaxError
-        else -> if (dark) Tokens.errorDark else Tokens.errorLight
+        hive -> Tokens.hiveCombError
+        else -> Tokens.errorDark
     }
     val context = LocalContext.current
     // The settings alone pick the color source. Artwork applies only when the user turned
@@ -440,14 +412,14 @@ fun MacLinkTheme(
     val reducedMotion = rememberReducedMotion()
     val powerSaver = rememberPowerSaver()
 
-    // System bar icons follow the app's theme, which can differ from the system's.
+    // System bar icons follow dark background
     val view = LocalView.current
     if (!view.isInEditMode) {
-        androidx.compose.runtime.LaunchedEffect(view, dark) {
+        androidx.compose.runtime.LaunchedEffect(view) {
             val window = (view.context as? Activity)?.window ?: return@LaunchedEffect
             WindowCompat.getInsetsController(window, view).apply {
-                isAppearanceLightStatusBars = !dark
-                isAppearanceLightNavigationBars = !dark
+                isAppearanceLightStatusBars = false
+                isAppearanceLightNavigationBars = false
             }
         }
     }

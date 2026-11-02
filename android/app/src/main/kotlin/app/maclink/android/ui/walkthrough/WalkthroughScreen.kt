@@ -132,7 +132,7 @@ fun WalkthroughScreen(
     onStepChange: (WalkthroughStep) -> Unit,
     onSkip: () -> Unit,
     onFinishToHome: () -> Unit,
-    onOpenFeaturesGuide: () -> Unit,
+    onOpenFeaturesGuide: () -> Unit = {},
     onAccessChanged: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -364,22 +364,7 @@ private fun WalkthroughFooterBar(
             }
         }
         if (step == WalkthroughStep.Done) {
-            Box(
-                modifier = Modifier.weight(1f),
-                contentAlignment = Alignment.CenterEnd,
-            ) {
-                FilledTonalButton(
-                    onClick = onOpenFeaturesGuide,
-                    modifier = Modifier.heightIn(min = 46.dp),
-                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 10.dp),
-                ) {
-                    Text(
-                        text = stringResource(R.string.walkthrough_action_open_guide),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
-            }
+            Spacer(Modifier.weight(1f))
             Button(
                 onClick = onFinish,
                 modifier = Modifier.heightIn(min = 46.dp),

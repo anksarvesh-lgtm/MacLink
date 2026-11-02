@@ -74,7 +74,6 @@ import app.maclink.android.mirror.MirrorService
 import app.maclink.android.recorder.RecorderService
 import app.maclink.android.service.ConnectionService
 import app.maclink.android.ui.deck.DeckScreen
-import app.maclink.android.ui.guide.FeaturesGuideScreen
 import app.maclink.android.ui.guide.GuideHighlightTarget
 import app.maclink.android.ui.home.HomeScreen
 import app.maclink.android.ui.pairing.PairingActions
@@ -333,7 +332,6 @@ private sealed interface ScreenRoute {
     data class Failed(val message: String) : ScreenRoute
     data class KeyRecovery(val message: String, val causeChain: String) : ScreenRoute
     data object Walkthrough : ScreenRoute
-    data object FeaturesGuide : ScreenRoute
     data object Pairing : ScreenRoute
     data class Recorder(val pcId: String) : ScreenRoute
     data class Deck(val pcId: String) : ScreenRoute
@@ -360,7 +358,6 @@ private fun App(
     var tab by rememberSaveable { mutableStateOf(Tab.Home) }
     var pairing by rememberSaveable { mutableStateOf(false) }
     var manualWalkthroughOpen by rememberSaveable { mutableStateOf(false) }
-    var featuresGuideOpen by rememberSaveable { mutableStateOf(false) }
     var pendingHighlightTarget by rememberSaveable { mutableStateOf<GuideHighlightTarget?>(null) }
     var remotePcId by rememberSaveable { mutableStateOf<String?>(null) }
     var remoteInitialMode by rememberSaveable { mutableStateOf(RemoteMode.Touchpad) }
@@ -483,7 +480,6 @@ private fun App(
         )
         state.status is CoreStatus.Failed -> ScreenRoute.Failed(state.status.message)
         showWalkthrough -> ScreenRoute.Walkthrough
-        featuresGuideOpen -> ScreenRoute.FeaturesGuide
         pairing || state.pairing != PairingState.Idle -> ScreenRoute.Pairing
         recordDevice != null -> ScreenRoute.Recorder(recordDevice.id)
         deckDevice != null -> ScreenRoute.Deck(deckDevice.id)
@@ -585,64 +581,6 @@ private fun App(
                                 it.copy(completed = true, currentStepIndex = WalkthroughStep.Done.index)
                             }
                         },
-                        onOpenFeaturesGuide = {
-                            core.resetPairing()
-                            pairing = false
-                            manualWalkthroughOpen = false
-                            featuresGuideOpen = true
-                            preferences.updateWalkthrough {
-                                it.copy(completed = true, currentStepIndex = WalkthroughStep.Done.index)
-                            }
-                        },
-                        onAccessChanged = core::refreshNotificationAccess,
-                        modifier = Modifier.fillMaxSize().padding(padding),
-                    )
-                }
-            }
-            ScreenRoute.FeaturesGuide -> {
-                BackHandler { featuresGuideOpen = false }
-                Scaffold(
-                    snackbarHost = { SnackbarHost(snackbar) },
-                ) { padding ->
-                    FeaturesGuideScreen(
-                        state = state,
-                        onBack = { featuresGuideOpen = false },
-                        onShowMe = { target ->
-                            core.resetPairing()
-                            pairing = false
-                            featuresGuideOpen = false
-                            pendingHighlightTarget = target
-                            tab = when (target) {
-                                GuideHighlightTarget.HOME_PAIR_PC,
-                                GuideHighlightTarget.HOME_PC_CARD,
-                                GuideHighlightTarget.HOME_PC_AUDIO,
-                                GuideHighlightTarget.HOME_CLIPBOARD_HISTORY,
-                                GuideHighlightTarget.HOME_TIMELINE,
-                                GuideHighlightTarget.HOME_SEND_QUEUE,
-                                GuideHighlightTarget.HOME_SETUP_PERMISSIONS,
-                                GuideHighlightTarget.HOME_LOCALSEND -> Tab.Home
-                                GuideHighlightTarget.SETTINGS_DEVICES,
-                                GuideHighlightTarget.SETTINGS_NOTIFICATIONS,
-                                GuideHighlightTarget.SETTINGS_CONTROL,
-                                GuideHighlightTarget.SETTINGS_BACKGROUND,
-                                GuideHighlightTarget.SETTINGS_CALLS_CONTACTS,
-                                GuideHighlightTarget.SETTINGS_PHOTOS_STORAGE,
-                                GuideHighlightTarget.SETTINGS_CLIPBOARD,
-                                GuideHighlightTarget.SETTINGS_LOCALSEND,
-                                GuideHighlightTarget.SETTINGS_DATA_STORAGE -> Tab.Settings
-                            }
-                        },
-                        onOpenWalkthrough = {
-                            core.resetPairing()
-                            pairing = false
-                            featuresGuideOpen = false
-                            preferences.updateWalkthrough { it.goToStep(WalkthroughStep.Welcome) }
-                            manualWalkthroughOpen = true
-                        },
-                        onPairNew = {
-                            featuresGuideOpen = false
-                            pairing = true
-                        },
                         onAccessChanged = core::refreshNotificationAccess,
                         modifier = Modifier.fillMaxSize().padding(padding),
                     )
@@ -734,7 +672,6 @@ private fun App(
                         FloatingBottomPillDock(
                             selectedTab = tab,
                             onSelectTab = { tab = it },
-                            onOpenGuide = { featuresGuideOpen = true },
                             onlineCount = onlineCount,
                             pairedCount = pairedCount,
                             isGlass = isGlass,
@@ -875,10 +812,6 @@ private fun App(
                                     onDismissWhatsNewGuide = {
                                         preferences.updateWalkthrough { it.dismissWhatsNewGuide() }
                                     },
-                                    onOpenFeaturesGuide = {
-                                        preferences.updateWalkthrough { it.dismissWhatsNewGuide() }
-                                        featuresGuideOpen = true
-                                    },
                                     onOpenWalkthrough = {
                                         preferences.updateWalkthrough { it.goToStep(WalkthroughStep.Welcome) }
                                         manualWalkthroughOpen = true
@@ -929,9 +862,6 @@ private fun App(
                                         preferences.updateWalkthrough { it.goToStep(WalkthroughStep.Welcome) }
                                         manualWalkthroughOpen = true
                                     },
-                                    onOpenFeaturesGuide = {
-                                        featuresGuideOpen = true
-                                    },
                                     highlightTarget = pendingHighlightTarget,
                                     onHighlightConsumed = { pendingHighlightTarget = null },
                                     modifier = Modifier.fillMaxSize(),
@@ -949,7 +879,6 @@ private fun App(
 private fun FloatingBottomPillDock(
     selectedTab: Tab,
     onSelectTab: (Tab) -> Unit,
-    onOpenGuide: () -> Unit,
     onlineCount: Int,
     pairedCount: Int,
     isGlass: Boolean,
@@ -1002,13 +931,6 @@ private fun FloatingBottomPillDock(
                 onClick = { onSelectTab(Tab.Settings) },
                 icon = SettingsGearIcon,
                 label = stringResource(R.string.settings_title),
-                modifier = Modifier.weight(1f),
-            )
-            FloatingDockTabPill(
-                selected = false,
-                onClick = onOpenGuide,
-                icon = BookGuideIcon,
-                label = "Guide",
                 modifier = Modifier.weight(1f),
             )
         }

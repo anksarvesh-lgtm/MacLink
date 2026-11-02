@@ -391,18 +391,11 @@ fun HomeScreen(
                     )
                 }
 
-                // Top Actions: Crown (Features guide), Help (Walkthrough), QR / Pair
+                // Top Actions: Help (Walkthrough), QR / Pair
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    LiquidGlassIconButton(
-                        icon = CrownIcon,
-                        contentDescription = "Guide",
-                        onClick = onOpenFeaturesGuide,
-                        size = 38.dp,
-                        tint = AmberTokens.Highlight,
-                    )
                     LiquidGlassIconButton(
                         icon = HelpCircleIcon,
                         contentDescription = "Help",
@@ -420,19 +413,7 @@ fun HomeScreen(
                 }
             }
         }
-        if (showWhatsNewGuideBanner) {
-            item(key = "whats_new_guide_banner", contentType = "banner") {
-                WhatsNewFeaturesGuideCard(
-                    onOpenGuide = {
-                        onDismissWhatsNewGuide()
-                        onOpenFeaturesGuide()
-                    },
-                    onDismiss = onDismissWhatsNewGuide,
-                )
-            }
-        }
-        // After the What's new card, one at a time.
-        if (showHiveInvite && !showWhatsNewGuideBanner) {
+        if (showHiveInvite) {
             item(key = "hive_invite", contentType = "banner") {
                 HiveInviteCard(onTry = onTryHive, onDismiss = onDismissHiveInvite)
             }
@@ -628,7 +609,6 @@ fun HomeScreen(
                 NoPairedPcCard(
                     onPairNew = onPairNew,
                     onOpenWalkthrough = onOpenWalkthrough,
-                    onOpenFeaturesGuide = onOpenFeaturesGuide,
                     highlighted = pulsingTarget == GuideHighlightTarget.HOME_PAIR_PC ||
                         pulsingTarget == GuideHighlightTarget.HOME_PC_CARD,
                 )
@@ -817,50 +797,6 @@ private fun Modifier.guideHighlightRing(highlighted: Boolean): Modifier {
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun WhatsNewFeaturesGuideCard(
-    onOpenGuide: () -> Unit,
-    onDismiss: () -> Unit,
-) {
-    val isGlass = LocalGlassTheme.current
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .liquidGlassCard(
-                cornerRadius = 24.dp,
-                isGlass = isGlass,
-                baseColor = MaterialTheme.colorScheme.secondaryContainer,
-                tintColor = MaterialTheme.colorScheme.primary,
-                outlineColor = if (isGlass) MaterialTheme.colorScheme.outlineVariant else Color.Transparent,
-            )
-            .padding(18.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        Text(
-            text = stringResource(R.string.home_whats_new_guide),
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
-        )
-        Text(
-            text = stringResource(R.string.home_guide_card_body),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
-        )
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            Button(onClick = onOpenGuide) {
-                Text(stringResource(R.string.walkthrough_action_open_guide))
-            }
-            OutlinedButton(onClick = onDismiss) {
-                Text(stringResource(R.string.action_dismiss))
-            }
-        }
-    }
-}
-
 /** "Try Hive, the new theme", with a small window onto the comb in Hive's own colors. */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -923,7 +859,6 @@ private fun HiveInviteCard(onTry: () -> Unit, onDismiss: () -> Unit) {
 private fun NoPairedPcCard(
     onPairNew: () -> Unit,
     onOpenWalkthrough: () -> Unit,
-    onOpenFeaturesGuide: () -> Unit,
     highlighted: Boolean = false,
 ) {
     val isGlass = LocalGlassTheme.current
@@ -961,9 +896,6 @@ private fun NoPairedPcCard(
             }
             FilledTonalButton(onClick = onOpenWalkthrough) {
                 Text(stringResource(R.string.guide_open_walkthrough))
-            }
-            OutlinedButton(onClick = onOpenFeaturesGuide) {
-                Text(stringResource(R.string.guide_title))
             }
         }
     }

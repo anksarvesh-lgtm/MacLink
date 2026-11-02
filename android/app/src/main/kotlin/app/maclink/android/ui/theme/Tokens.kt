@@ -11,28 +11,28 @@ import androidx.compose.ui.graphics.Color
  * Reference: MacLink Amber Liquid Glass Edition
  */
 object AmberTokens {
-    // Primary Color System
-    val Background = Color(0xFF221A0F)
-    val DeepBackground = Color(0xFF1A1008)
-    val DarkAmber = Color(0xFF603606)
-    val BurntOrange = Color(0xFF894F03)
-    val BrownSurface = Color(0xFF6D4510)
+    // Primary Color System - Deep obsidian dark surfaces for crisp white text visibility
+    val Background = Color(0xFF0E0C09)
+    val DeepBackground = Color(0xFF080604)
+    val DarkAmber = Color(0xFF2C1905)
+    val BurntOrange = Color(0xFF422808)
+    val BrownSurface = Color(0xFF33200A)
     val PrimaryAccent = Color(0xFFF49D04)
     val SecondaryAccent = Color(0xFFCB7501)
     val Highlight = Color(0xFFFFB52E)
     // High-contrast clean black & white text scale
     val PrimaryText = Color(0xFFFFFFFF)
-    val SecondaryText = Color(0xCCFFFFFF)
-    val MutedText = Color(0x99FFFFFF)
+    val SecondaryText = Color(0xEEFFFFFF)
+    val MutedText = Color(0xB3FFFFFF)
 
     // Glass Styling Tokens
-    val GlassBorder = Color(0x35FFFFFF)
+    val GlassBorder = Color(0x33FFFFFF)
     val GlassBorderBright = Color(0x75FFB52E)
-    val GlassBorderSubtle = Color(0x18FFFFFF)
-    val GlassBackground = Color(0x3D603606)
-    val GlassBackgroundSubtle = Color(0x286D4510)
-    val GlassBackgroundDark = Color(0x601A1008)
-    val GlassInnerHighlight = Color(0x24FFFFFF)
+    val GlassBorderSubtle = Color(0x1AFFFFFF)
+    val GlassBackground = Color(0x66181109)
+    val GlassBackgroundSubtle = Color(0x4D1A130A)
+    val GlassBackgroundDark = Color(0x990A0806)
+    val GlassInnerHighlight = Color(0x1EFFFFFF)
     val GlassShadowAmber = Color(0x40F49D04)
     val GlowGreen = Color(0xFF4ADE80)
     val GlowRed = Color(0xFFEF4444)
@@ -48,14 +48,14 @@ object AmberTokens {
     )
     val CardGradient = Brush.verticalGradient(
         listOf(
-            Color(0x4D6D4510),
-            Color(0x35351E04)
+            Color(0x80241A0E),
+            Color(0x99140E07)
         )
     )
     val SurfaceGradient = Brush.verticalGradient(
         listOf(
-            Color(0x55603606),
-            Color(0x3D221A0F)
+            Color(0x802C1E10),
+            Color(0x99100C08)
         )
     )
     val PillActiveGradient = Brush.horizontalGradient(

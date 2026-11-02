@@ -205,19 +205,11 @@ fun SettingsScreen(
     ) {
         item(key = "header", contentType = "header") {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-                Row(
+                Text(
+                    stringResource(R.string.settings_title),
+                    style = MaterialTheme.typography.headlineMedium,
                     modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    Text(
-                        stringResource(R.string.settings_title),
-                        style = MaterialTheme.typography.headlineMedium,
-                    )
-                    FilledTonalButton(onClick = onOpenFeaturesGuide) {
-                        Text(stringResource(R.string.guide_title))
-                    }
-                }
+                )
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -819,20 +811,6 @@ fun SettingsScreen(
         if (showFeatures) {
             item(key = "about", contentType = "section") {
                 Section(stringResource(R.string.settings_about)) {
-                    Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-                        Column(Modifier.weight(1f).padding(end = 12.dp)) {
-                            Text(stringResource(R.string.guide_title), style = MaterialTheme.typography.titleSmall)
-                            Text(
-                                stringResource(R.string.settings_guide_card_body),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
-                        }
-                        FilledTonalButton(onClick = onOpenFeaturesGuide) {
-                            Text(stringResource(R.string.clip_action_open))
-                        }
-                    }
-                    SettingRowDivider()
                     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                         Column(Modifier.weight(1f).padding(end = 12.dp)) {
                             Text(stringResource(R.string.guide_open_walkthrough), style = MaterialTheme.typography.titleSmall)
