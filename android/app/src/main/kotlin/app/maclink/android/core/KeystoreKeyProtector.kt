@@ -30,6 +30,21 @@ class KeystoreKeyProtector(
     private val backend: KeyStoreBackend = AndroidKeyStoreBackend,
 ) : KeyProtector {
 
+    private fun logI(msg: String) {
+        runCatching { Log.i(TAG, msg) }.onFailure { println("[$TAG] $msg") }
+    }
+
+    private fun logW(msg: String) {
+        runCatching { Log.w(TAG, msg) }.onFailure { println("[$TAG] WARN: $msg") }
+    }
+
+    private fun logE(msg: String, tr: Throwable? = null) {
+        runCatching { Log.e(TAG, msg, tr) }.onFailure {
+            println("[$TAG] ERROR: $msg")
+            tr?.printStackTrace()
+        }
+    }
+
     override fun protect(plaintext: ByteArray): ByteArray = guard {
         val cipher = Cipher.getInstance(TRANSFORMATION)
         cipher.init(Cipher.ENCRYPT_MODE, backend.getOrCreateKey(LegacyNames.KEYSTORE_ALIAS_CURRENT))
@@ -49,7 +64,7 @@ class KeystoreKeyProtector(
                 return@guard decryptWith(currentKey, ciphertext)
             } catch (e: Exception) {
                 currentError = e
-                Log.w(TAG, "Decryption with current alias '${LegacyNames.KEYSTORE_ALIAS_CURRENT}' failed: ${e.javaClass.simpleName}: ${e.message}")
+                logW("Decryption with current alias '${LegacyNames.KEYSTORE_ALIAS_CURRENT}' failed: ${e.javaClass.simpleName}: ${e.message}")
             }
         }
 
@@ -58,12 +73,12 @@ class KeystoreKeyProtector(
         if (legacyKey != null) {
             try {
                 val plaintext = decryptWith(legacyKey, ciphertext)
-                Log.i(TAG, "Decrypted identity key using legacy alias '${LegacyNames.KEYSTORE_ALIAS_V0}'. Starting migration...")
+                logI("Decrypted identity key using legacy alias '${LegacyNames.KEYSTORE_ALIAS_V0}'. Starting migration...")
                 migrateKey(plaintext)
                 return@guard plaintext
             } catch (e: Exception) {
                 legacyError = e
-                Log.w(TAG, "Decryption with legacy alias '${LegacyNames.KEYSTORE_ALIAS_V0}' failed: ${e.javaClass.simpleName}: ${e.message}")
+                logW("Decryption with legacy alias '${LegacyNames.KEYSTORE_ALIAS_V0}' failed: ${e.javaClass.simpleName}: ${e.message}")
             }
         }
 
@@ -128,12 +143,12 @@ class KeystoreKeyProtector(
 
                 // Delete the legacy Keystore key
                 backend.deleteKey(LegacyNames.KEYSTORE_ALIAS_V0)
-                Log.i(TAG, "device key migrated")
+                logI("device key migrated")
             } else {
-                Log.i(TAG, "device key migrated (in-memory; on-disk file will be saved by core)")
+                logI("device key migrated (in-memory; on-disk file will be saved by core)")
             }
         }.onFailure { e ->
-            Log.e(TAG, "failed to migrate legacy device key to current alias", e)
+            logE("failed to migrate legacy device key to current alias", e)
         }
     }
 
@@ -142,7 +157,7 @@ class KeystoreKeyProtector(
         block()
     } catch (e: Exception) {
         val chain = formatCauseChain(e)
-        Log.e(TAG, "keystore: $chain", e)
+        logE("keystore: $chain", e)
         throw MacLinkException.Internal("keystore: $chain")
     }
 
