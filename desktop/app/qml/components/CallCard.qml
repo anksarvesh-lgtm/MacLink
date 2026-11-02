@@ -120,8 +120,9 @@ Card {
         }
 
         // ---- What the phone does on the call ----
+        // Gated: Without default dialer role on Android, hold/mute/swap do not work reliably.
         Row {
-            visible: PhoneCall.controls
+            visible: false
             anchors.horizontalCenter: parent.horizontalCenter
             spacing: 6
             Control {
@@ -153,7 +154,7 @@ Card {
 
         Grid {
             id: keys
-            visible: PhoneCall.controls && card.keypad
+            visible: false
             anchors.horizontalCenter: parent.horizontalCenter
             columns: 3
             columnSpacing: 10
@@ -200,41 +201,23 @@ Card {
             }
         }
 
-        Txt {
-            width: parent.width
-            visible: !PhoneCall.controls && PhoneCall.canEnd
-            role: "caption"
-            muted: true
-            wrapMode: Text.WordWrap
-            text: qsTr("Mute, speaker and keypad need Elevated on the phone (Android 12 or later).")
-        }
-
-        // ---- Bluetooth HFP / PC call audio ----
+        // ---- Call audio transparency note ----
         Row {
             width: parent.width
-            spacing: 10
+            spacing: 8
+            Icon {
+                anchors.verticalCenter: parent.verticalCenter
+                width: 14; height: 14
+                path: Icons.info
+                color: Theme.amberAccent
+            }
             Txt {
                 anchors.verticalCenter: parent.verticalCenter
-                width: parent.width - (hfpAction.visible ? hfpAction.width + parent.spacing : 0)
+                width: parent.width - 22
                 role: "caption"
-                muted: !PhoneCall.hfpConnected
-                color: PhoneCall.hfpConnected ? Theme.primary : Theme.surfaceContentVariant
+                muted: true
                 wrapMode: Text.WordWrap
-                text: PhoneCall.hfpDetail
-            }
-            Button {
-                id: hfpAction
-                anchors.verticalCenter: parent.verticalCenter
-                visible: !PhoneCall.hfpConnected
-                variant: "tonal"
-                size: "sm"
-                text: PhoneCall.hfpAvailable ? qsTr("Connect PC audio") : qsTr("Bluetooth settings")
-                onClicked: {
-                    if (PhoneCall.hfpAvailable)
-                        PhoneCall.connectPcAudio()
-                    else
-                        PhoneCall.openBluetoothSettings()
-                }
+                text: qsTr("Call audio plays on your phone. Talk using your phone or connected headset.")
             }
         }
 

@@ -106,7 +106,7 @@ Item {
 
     function placeCall(number) {
         const n = (number || "").trim()
-        if (n.length === 0 || !PhoneCall.canDial || PhoneCall.dialing)
+        if (n.length === 0 || !PhoneCall.canDial || PhoneCall.dialing || n.indexOf('*') >= 0 || n.indexOf('#') >= 0)
             return
         PhoneCall.dial(n)
     }
@@ -641,6 +641,7 @@ Item {
 
                 readonly property var dialFeature: AppController.capsRevision >= 0 && page.deviceId.length > 0
                     ? AppController.featureState(page.deviceId, "calls.dial") : ({})
+                readonly property bool hasUssdChars: dialInput.text.indexOf('*') >= 0 || dialInput.text.indexOf('#') >= 0
 
                 Column {
                     width: parent.width
@@ -649,7 +650,7 @@ Item {
                     // Number entry box + backspace.
                     Rectangle {
                         width: parent.width
-                        height: dialMatch.visible ? 64 : 52
+                        height: (dialMatch.visible || dialerCard.hasUssdChars) ? 64 : 52
                         radius: Theme.graphite ? Theme.radiusSm : Theme.radiusLg
                         color: Theme.graphite ? "transparent" : (Theme.glass ? Theme.cardFill : Theme.surfaceContainerHighest)
                         border.width: 1
@@ -688,10 +689,19 @@ Item {
                                 }
                             }
                             Txt {
+                                id: ussdWarning
+                                width: parent.width
+                                horizontalAlignment: Text.AlignHCenter
+                                visible: dialerCard.hasUssdChars
+                                role: "caption"
+                                color: Theme.error
+                                text: qsTr("USSD codes (*, #) cannot be dialed")
+                            }
+                            Txt {
                                 id: dialMatch
                                 width: parent.width
                                 horizontalAlignment: Text.AlignHCenter
-                                visible: page.dialMatchedContact !== null
+                                visible: !dialerCard.hasUssdChars && page.dialMatchedContact !== null
                                 role: "caption"
                                 color: Theme.primary
                                 elide: Text.ElideRight
@@ -823,7 +833,7 @@ Item {
                             variant: Theme.glass ? "amber" : "fill"
                             iconPath: Icons.call
                             text: PhoneCall.dialing ? qsTr("Calling…") : qsTr("Call")
-                            enabled: dialInput.text.trim().length > 0 && PhoneCall.canDial && !PhoneCall.dialing
+                            enabled: dialInput.text.trim().length > 0 && PhoneCall.canDial && !PhoneCall.dialing && !dialerCard.hasUssdChars
                             onClicked: page.placeCall(dialInput.text)
                         }
 
@@ -844,11 +854,44 @@ Item {
                 }
             }
 
-            // ---- Bluetooth HFP / PC call audio status banner ----
+            // ---- Call Audio Notice Card ----
             Card {
-                id: hfpBannerCard
+                id: callAudioNoticeCard
                 width: parent.width
-                visible: !PhoneCall.active && PhoneCall.hfpDetail.length > 0
+                visible: !PhoneCall.active
+                Row {
+                    width: parent.width
+                    spacing: 12
+                    Icon {
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 20; height: 20
+                        path: Icons.speaker
+                        color: Theme.surfaceContentVariant
+                    }
+                    Column {
+                        width: parent.width - 36
+                        spacing: 2
+                        Txt {
+                            width: parent.width
+                            role: "label"
+                            text: qsTr("Call audio plays on your phone")
+                        }
+                        Txt {
+                            width: parent.width
+                            role: "caption"
+                            muted: true
+                            wrapMode: Text.WordWrap
+                            text: qsTr("Talk using your phone or a Bluetooth headset connected to your phone.")
+                        }
+                    }
+                }
+            }
+
+            // ---- Phone Call Control Unlock Card ----
+            Card {
+                id: callUnlockCard
+                width: parent.width
+                visible: !PhoneCall.canDial && page.deviceId.length > 0 && !page.phoneOffline
                 Column {
                     width: parent.width
                     spacing: 8
@@ -857,16 +900,14 @@ Item {
                         spacing: 8
                         Icon {
                             anchors.verticalCenter: parent.verticalCenter
-                            width: 16; height: 16
-                            path: Icons.speaker
-                            color: PhoneCall.hfpConnected ? Theme.primary : Theme.surfaceContentVariant
+                            width: 18; height: 18
+                            path: Icons.info
+                            color: Theme.amberAccent
                         }
                         Txt {
                             anchors.verticalCenter: parent.verticalCenter
                             role: "label"
-                            text: PhoneCall.hfpConnected ? qsTr("PC call audio connected")
-                                : PhoneCall.hfpAvailable ? qsTr("PC call audio ready")
-                                : qsTr("PC call audio (Bluetooth)")
+                            text: qsTr("Enable call control on your phone")
                         }
                     }
                     Txt {
@@ -874,19 +915,7 @@ Item {
                         role: "caption"
                         muted: true
                         wrapMode: Text.WordWrap
-                        text: PhoneCall.hfpDetail
-                    }
-                    Button {
-                        visible: !PhoneCall.hfpConnected
-                        variant: "tonal"
-                        size: "sm"
-                        text: PhoneCall.hfpAvailable ? qsTr("Connect PC audio") : qsTr("Open Bluetooth settings")
-                        onClicked: {
-                            if (PhoneCall.hfpAvailable)
-                                PhoneCall.connectPcAudio()
-                            else
-                                PhoneCall.openBluetoothSettings()
-                        }
+                        text: qsTr("To answer or place calls from your Mac, turn on \"Let my paired Mac answer and place calls\" in MacLink settings on your phone.")
                     }
                 }
             }
