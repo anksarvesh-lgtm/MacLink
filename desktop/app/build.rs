@@ -377,6 +377,7 @@ fn main() {
     println!("cargo:rustc-link-lib=framework=CoreAudio");
     println!("cargo:rustc-link-lib=framework=AudioToolbox");
     println!("cargo:rustc-link-lib=framework=IOKit");
+    println!("cargo:rustc-link-lib=framework=ServiceManagement");
     println!("cargo:rerun-if-changed=cpp/app_helpers.h");
     println!("cargo:rerun-if-changed=cpp/app_helpers.cpp");
     println!("cargo:rerun-if-changed=cpp/native_window.h");
@@ -387,12 +388,15 @@ fn main() {
     println!("cargo:rerun-if-changed=cpp/mac_notifications.mm");
     println!("cargo:rerun-if-changed=cpp/shelf_edge.h");
     println!("cargo:rerun-if-changed=cpp/shelf_edge.mm");
+    println!("cargo:rerun-if-changed=cpp/mac_lifecycle.h");
+    println!("cargo:rerun-if-changed=cpp/mac_lifecycle.mm");
 
     #[cfg(target_os = "macos")]
     {
         cc::Build::new()
             .file("cpp/mac_notifications.mm")
             .file("cpp/shelf_edge.mm")
+            .file("cpp/mac_lifecycle.mm")
             .flag("-fobjc-arc")
             .flag("-std=c++17")
             .compile("mac_native");

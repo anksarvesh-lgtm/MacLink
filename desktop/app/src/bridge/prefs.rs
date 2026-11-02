@@ -127,6 +127,10 @@ pub mod qobject {
         #[qproperty(bool, away_mode)]
         /// Alias for `start_with_windows` used by the walkthrough and settings bindings.
         #[qproperty(bool, start_at_login)]
+        /// When started at login, start hidden in menu bar without opening window.
+        #[qproperty(bool, start_hidden)]
+        /// Live macOS SMAppService login item status (0: NotRegistered, 1: Enabled, 2: RequiresApproval, 3: NotFound).
+        #[qproperty(i32, login_item_status)]
         /// Whether the first-run setup walkthrough has been completed or skipped.
         #[qproperty(bool, walkthrough_completed)]
         /// Current step index (`0..=6`) in the first-run setup walkthrough.
@@ -186,6 +190,15 @@ pub mod qobject {
         /// Connects to OBS with the saved settings and shows the result as a message.
         #[qinvokable]
         fn test_obs(self: &Preferences);
+        /// Toggles or requests registration of the SMAppService login item.
+        #[qinvokable]
+        fn toggle_login_item(self: Pin<&mut Preferences>);
+        /// Refreshes login_item_status from the system.
+        #[qinvokable]
+        fn refresh_login_item_status(self: Pin<&mut Preferences>);
+        /// Opens System Settings -> General -> Login Items.
+        #[qinvokable]
+        fn open_login_item_settings(self: &Preferences);
 
         /// Sets the folder where voice recordings are saved (from a `file:` URL or path).
         #[qinvokable]
@@ -303,6 +316,8 @@ pub struct PreferencesRust {
     sync_dnd: bool,
     send_to_menu: bool,
     start_with_windows: bool,
+    start_hidden: bool,
+    login_item_status: i32,
     auto_update: bool,
     install_updates: bool,
     battery_alerts: bool,
@@ -370,7 +385,7 @@ impl cxx_qt::Initialize for qobject::Preferences {
         self.as_mut().set_amoled(settings.amoled);
         self.as_mut().set_backdrop(settings.backdrop);
         self.as_mut().set_comb_motion(settings.comb_motion);
-        let close_to_tray = if cfg!(target_os = "macos") { false } else { settings.close_to_tray };
+        let close_to_tray = if cfg!(target_os = "macos") { true } else { settings.close_to_tray };
         self.as_mut().set_close_to_tray(close_to_tray);
         self.as_mut().set_auto_clipboard(settings.auto_clipboard);
         crate::clipboard::set_auto_send(settings.auto_clipboard);
@@ -395,6 +410,10 @@ impl cxx_qt::Initialize for qobject::Preferences {
         self.as_mut().set_start_with_windows(start_effective);
         self.as_mut().set_start_at_login(start_effective);
         self.as_mut().rust_mut().start_choice = settings.start_with_windows;
+        self.as_mut().set_start_hidden(settings.start_hidden);
+        let login_status = crate::mac::autostart::status();
+        self.as_mut().set_login_item_status(login_status);
+        self.as_mut().set_start_at_login(login_status == crate::mac::autostart::STATUS_ENABLED);
         let effective_folder = crate::recordings::effective_folder(settings.recordings_folder.as_deref());
         self.as_mut().set_recordings_folder(QString::from(&effective_folder.to_string_lossy().into_owned()));
         self.as_mut().set_recordings_folder_is_default(settings.recordings_folder.is_none());
@@ -539,6 +558,11 @@ impl cxx_qt::Initialize for qobject::Preferences {
         self.as_mut()
             .on_battery_alerts_changed(|p| {
                 crate::battery::set_enabled(p.battery_alerts);
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_start_hidden_changed(|p| {
                 p.save();
             })
             .release();
@@ -773,6 +797,30 @@ impl qobject::Preferences {
         self.as_mut().set_walkthrough_step(0);
         self.as_mut().set_walkthrough_completed(false);
         self.save();
+    }
+
+    pub fn toggle_login_item(mut self: Pin<&mut Self>) {
+        let current_status = crate::mac::autostart::status();
+        if current_status == crate::mac::autostart::STATUS_ENABLED {
+            let _ = crate::mac::autostart::set_enabled(false);
+        } else if current_status == crate::mac::autostart::STATUS_REQUIRES_APPROVAL {
+            crate::mac::autostart::open_settings();
+        } else {
+            let _ = crate::mac::autostart::set_enabled(true);
+        }
+        let new_status = crate::mac::autostart::status();
+        self.as_mut().set_login_item_status(new_status);
+        self.as_mut().set_start_at_login(new_status == crate::mac::autostart::STATUS_ENABLED);
+    }
+
+    pub fn refresh_login_item_status(mut self: Pin<&mut Self>) {
+        let status = crate::mac::autostart::status();
+        self.as_mut().set_login_item_status(status);
+        self.as_mut().set_start_at_login(status == crate::mac::autostart::STATUS_ENABLED);
+    }
+
+    pub fn open_login_item_settings(&self) {
+        crate::mac::autostart::open_settings();
     }
 
     pub fn languages(&self) -> QString {
@@ -1014,7 +1062,7 @@ impl qobject::Preferences {
             amoled: p.amoled,
             backdrop: p.backdrop,
             comb_motion: p.comb_motion,
-            close_to_tray: if cfg!(target_os = "macos") { false } else { p.close_to_tray },
+            close_to_tray: if cfg!(target_os = "macos") { true } else { p.close_to_tray },
             auto_clipboard: p.auto_clipboard,
             clipboard_history: p.clipboard_history,
             suggest_clipboard_actions: p.suggest_clipboard_actions,
@@ -1028,6 +1076,7 @@ impl qobject::Preferences {
             install_updates: p.install_updates,
             battery_alerts: p.battery_alerts,
             start_with_windows: p.start_choice,
+            start_hidden: p.start_hidden,
             recordings_folder: p.custom_recordings_folder.clone(),
             recordings_format: RecordingFormat::from_str_lossy(&String::from(&p.recordings_format)),
             webcam_phone: crate::webcam::selected_phone().map(|d| d.to_string()),

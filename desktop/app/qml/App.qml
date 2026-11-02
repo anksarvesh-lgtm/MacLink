@@ -105,13 +105,14 @@ QtObject {
         if (!app.mainWindow && Object.keys(current).length === 0 && !AppController.shelfOpen)
             trayTrimTimer.restart()
     }
-    readonly property bool startMinimized: Qt.application.arguments.indexOf("--minimized") >= 0
+    readonly property bool startMinimized: AppController.startMinimized
+        || Qt.application.arguments.indexOf("--minimized") >= 0
         || Qt.application.arguments.indexOf("--send-to") >= 0
 
     readonly property Timer trayTrimTimer: Timer {
-        interval: 350
+        interval: 60000
         onTriggered: {
-            if (!app.mainWindow && Object.keys(app.openMirrors).length === 0 && !AppController.shelfOpen) {
+            if ((!mainLoader.item || !mainLoader.item.visible) && Object.keys(app.openMirrors).length === 0 && !AppController.shelfOpen) {
                 gc()
                 AppController.trimWorkingSet()
             }
@@ -121,27 +122,21 @@ QtObject {
     function showMain() {
         trayTrimTimer.stop()
         if (!mainLoader.active || !mainLoader.item) {
-            mainLoader.active = false
             mainLoader.active = true
         } else {
-            mainLoader.item.bringToFront()
+            mainLoader.item.visible = true
+            mainLoader.item.restoreAndBringToFront()
         }
+        AppController.onWindowShown()
     }
 
     function onMainClosed() {
-        if (mainLoader.active && mainLoader.item)
+        if (mainLoader.active && mainLoader.item) {
             mainLoader.item.saveWindowState()
-        if (Qt.platform.os === "osx" || !Preferences.closeToTray) {
-            Qt.quit()
-            return
+            mainLoader.item.visible = false
         }
-        // Unload after the close event has finished.
-        Qt.callLater(() => {
-            if (mainLoader.item)
-                mainLoader.item.releaseAndTeardown()
-            mainLoader.active = false
-            trayTrimTimer.restart()
-        })
+        AppController.onWindowHidden()
+        trayTrimTimer.restart()
     }
 
     Component.onCompleted: {

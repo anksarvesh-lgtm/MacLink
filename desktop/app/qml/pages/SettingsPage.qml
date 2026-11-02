@@ -113,6 +113,7 @@ Item {
         }
     }
     Component.onCompleted: {
+        Preferences.refreshLoginItemStatus()
         if (active)
             syncSectionSideEffects()
     }
@@ -633,12 +634,23 @@ Item {
                                 y: startupPairRow.splitCols ? Math.round((parent.height - height) / 2) : 0
                                 width: startupPairRow.colWidth
                                 iconPath: Icons.power
-                                title: qsTr("Start with Windows")
-                                description: qsTr("Launch in the tray when you sign in.")
+                                title: qsTr("Start MacLink at login")
+                                description: Preferences.loginItemStatus === 2
+                                    ? qsTr("Requires approval in System Settings → Login Items.")
+                                    : qsTr("Launch in the menu bar when you log in.")
+                                Loader {
+                                    active: Preferences.loginItemStatus === 2
+                                    visible: active
+                                    sourceComponent: Button {
+                                        text: qsTr("Open Settings")
+                                        onClicked: Preferences.openLoginItemSettings()
+                                    }
+                                }
                                 Toggle {
-                                    label: qsTr("Start with Windows")
-                                    checked: Preferences.startWithWindows
-                                    onToggled: (on) => Preferences.startWithWindows = on
+                                    visible: Preferences.loginItemStatus !== 2
+                                    label: qsTr("Start MacLink at login")
+                                    checked: Preferences.loginItemStatus === 1
+                                    onToggled: (on) => Preferences.toggleLoginItem()
                                 }
                             }
 
@@ -664,18 +676,13 @@ Item {
                                     ? Math.round((parent.height - height) / 2)
                                     : (startWinRow.implicitHeight + 1)
                                 width: startupPairRow.colWidth
-                                opacity: Qt.platform.os === "osx" ? 0.5 : 1.0
                                 iconPath: Icons.window
-                                title: qsTr("Stay in system tray")
-                                description: qsTr("Keep running when the window is closed.")
+                                title: qsTr("Start hidden")
+                                description: qsTr("When started at login, start in the menu bar only.")
                                 Toggle {
-                                    label: qsTr("Stay in system tray")
-                                    checked: Preferences.closeToTray
-                                    enabled: Qt.platform.os !== "osx"
-                                    onToggled: (on) => {
-                                        if (Qt.platform.os !== "osx")
-                                            Preferences.closeToTray = on
-                                    }
+                                    label: qsTr("Start hidden")
+                                    checked: Preferences.startHidden
+                                    onToggled: (on) => Preferences.startHidden = on
                                 }
                             }
                         }

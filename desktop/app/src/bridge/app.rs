@@ -148,6 +148,8 @@ pub mod qobject {
         #[qproperty(bool, guide_doc_open)]
         #[qproperty(QString, guide_doc_title)]
         #[qproperty(QString, guide_doc_body)]
+        /// Whether the app was started minimized/hidden.
+        #[qproperty(bool, start_minimized)]
         /// Control target ID highlighted by `"Show me"` in the Features guide (`""` when none).
         #[qproperty(QString, highlight_target)]
         /// Current remote path being browsed on the phone ("" for root, "Download", "Documents", etc.)
@@ -359,6 +361,12 @@ pub mod qobject {
         /// Releases idle UI caches and trims the working set when closed to tray.
         #[qinvokable]
         fn trim_working_set(self: &AppController);
+        /// Called when the main window is shown to update dock icon policy.
+        #[qinvokable]
+        fn on_window_shown(self: &AppController);
+        /// Called when the main window is hidden to switch to accessory policy.
+        #[qinvokable]
+        fn on_window_hidden(self: &AppController);
 
         /// Recomputes `data_retention_summary` from local stores and disk caches.
         #[qinvokable]
@@ -508,6 +516,7 @@ pub struct AppControllerRust {
     guide_doc_open: bool,
     guide_doc_title: QString,
     guide_doc_body: QString,
+    start_minimized: bool,
     highlight_target: QString,
     remote_storage_path: QString,
     remote_storage_entries_json: QString,
@@ -662,6 +671,13 @@ pub fn request_quit() {
 pub fn request_activation() {
     if let Some(qt) = controller() {
         let _ = qt.queue(|object| object.activate_requested());
+    }
+}
+
+/// Sets whether the app starts minimized.
+pub fn set_start_minimized(minimized: bool) {
+    if let Some(qt) = controller() {
+        let _ = qt.queue(move |mut object| object.as_mut().set_start_minimized(minimized));
     }
 }
 
@@ -2149,6 +2165,24 @@ impl qobject::AppController {
         crate::messages::release_idle_resources();
         crate::calls::release_idle_resources();
         super::native::ffi::trim_memory_caches();
+    }
+
+    pub fn on_window_shown(&self) {
+        unsafe extern "C" {
+            fn mac_on_window_shown();
+        }
+        unsafe {
+            mac_on_window_shown();
+        }
+    }
+
+    pub fn on_window_hidden(&self) {
+        unsafe extern "C" {
+            fn mac_on_window_hidden();
+        }
+        unsafe {
+            mac_on_window_hidden();
+        }
     }
 
     pub fn refresh_data_retention(self: Pin<&mut Self>) {

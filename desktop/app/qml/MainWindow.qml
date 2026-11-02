@@ -1582,6 +1582,11 @@ NativeWindow {
     }
 
     Shortcut {
+        sequence: StandardKey.Close
+        onActivated: window.close()
+    }
+
+    Shortcut {
         sequences: ["Ctrl+K", "Ctrl+P"]
         enabled: Theme.showCommands
         onActivated: {

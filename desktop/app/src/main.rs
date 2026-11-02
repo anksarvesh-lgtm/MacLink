@@ -471,7 +471,7 @@ fn run_setup_window(mode: setup::Mode) -> ExitCode {
 }
 
 fn main() -> ExitCode {
-    let options = parse_options();
+    let mut options = parse_options();
     if let Some(installer) = options.setup.clone().filter(|p| !p.as_os_str().is_empty()) {
         return run_setup_window(setup::Mode::Install { installer });
     }
@@ -579,6 +579,10 @@ fn main() -> ExitCode {
     deck::init(&data_dir);
     let settings = settings::Settings::load(&data_dir);
     settings.apply_runtime();
+    let launched_as_login = win::tray::was_launched_as_login_item();
+    if launched_as_login && settings.start_hidden {
+        options.minimized = true;
+    }
     clipboard::set_auto_send(settings.auto_clipboard);
     clipboard::set_history_enabled(settings.clipboard_history);
     clipboard::set_suggest_actions(settings.suggest_clipboard_actions);
@@ -654,6 +658,10 @@ fn main() -> ExitCode {
     // Before any QML loads, so every string is right on the first pass.
     i18n::install(&settings::Settings::load(&data_dir).language);
     bridge::native::ffi::keep_running_without_windows();
+    win::tray::init_lifecycle();
+    if options.minimized {
+        bridge::app::set_start_minimized(true);
+    }
     // Text falls back to system fonts if these are missing, so it's not fatal.
     let fonts = bridge::native::ffi::load_bundled_fonts();
     if fonts < BUNDLED_FONTS {
@@ -699,6 +707,7 @@ fn main() -> ExitCode {
     storage::shutdown();
     win::net::stop();
     core_host::shutdown();
+    win::tray::cleanup_lifecycle();
     drop(app);
     if options.ui_check {
         let problems = bridge::native::ffi::qml_problem_count();

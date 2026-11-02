@@ -395,6 +395,9 @@ pub struct Settings {
     /// doesn't.
     #[serde(skip_serializing_if = "Option::is_none", alias = "start_with_windows")]
     pub start_with_windows: Option<bool>,
+    /// When started at login, start hidden (menu bar only, without opening the window). Default true.
+    #[serde(default = "default_true", alias = "start_hidden")]
+    pub start_hidden: bool,
     /// Where voice recordings from phones are saved (`None` = `Documents\MacLink Recordings`).
     #[serde(skip_serializing_if = "Option::is_none", alias = "recordings_folder")]
     pub recordings_folder: Option<PathBuf>,
@@ -549,6 +552,7 @@ impl Default for Settings {
             install_updates: true,
             battery_alerts: true,
             start_with_windows: None,
+            start_hidden: true,
             recordings_folder: None,
             recordings_format: RecordingFormat::default(),
             webcam_phone: None,
