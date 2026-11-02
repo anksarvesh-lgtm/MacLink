@@ -21,9 +21,13 @@ typedef struct {
 } ShelfEdgeConfig;
 
 typedef void (*ShelfTriggerCallback)(void);
+typedef void (*ShelfCloseCallback)(void);
 
 /// Initializes the native macOS edge trigger and cursor glow monitor
 void shelf_edge_init(ShelfTriggerCallback on_trigger);
+
+/// Sets callback to automatically close shelf when cursor leaves shelf area
+void shelf_edge_set_close_callback(ShelfCloseCallback on_close);
 
 /// Sets whether the edge trigger is enabled
 void shelf_edge_set_enabled(bool enabled);

@@ -6,6 +6,7 @@ use std::ffi::CString;
 
 unsafe extern "C" {
     fn shelf_edge_init(callback: extern "C" fn());
+    fn shelf_edge_set_close_callback(callback: extern "C" fn());
     fn shelf_edge_set_enabled(enabled: bool);
     fn shelf_edge_set_ratio(ratio: f32);
     fn shelf_edge_set_shelf_open(is_open: bool);
@@ -18,14 +19,20 @@ extern "C" fn on_shelf_edge_trigger() {
     crate::bridge::app::open_shelf_from_edge();
 }
 
+extern "C" fn on_shelf_edge_close() {
+    crate::bridge::app::close_shelf_from_edge();
+}
+
 /// Initializes the native mouse monitor and glow window with current settings.
 pub fn init() {
     unsafe {
         shelf_edge_init(on_shelf_edge_trigger);
+        shelf_edge_set_close_callback(on_shelf_edge_close);
     }
     set_enabled(crate::settings::shelf_edge_trigger());
     set_size(&crate::settings::shelf_edge_size());
 }
+
 
 /// Toggles whether the edge trigger and cursor monitor are active.
 pub fn set_enabled(enabled: bool) {

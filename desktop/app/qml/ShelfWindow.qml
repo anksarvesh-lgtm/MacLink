@@ -193,20 +193,9 @@ Window {
         }
     }
 
-    HoverHandler {
-        id: windowHover
-        onHoveredChanged: {
-            if (!hovered) {
-                leaveTimer.restart()
-            } else {
-                leaveTimer.stop()
-            }
-        }
-    }
-
     Timer {
         id: leaveTimer
-        interval: 300
+        interval: 400
         repeat: false
         onTriggered: {
             if (!windowHover.hovered && !shelfWin.undoPending && !shelfDropArea.containsDrag) {
@@ -218,6 +207,17 @@ Window {
     Item {
         id: rootItem
         anchors.fill: parent
+
+        HoverHandler {
+            id: windowHover
+            onHoveredChanged: {
+                if (!hovered) {
+                    leaveTimer.restart()
+                } else {
+                    leaveTimer.stop()
+                }
+            }
+        }
 
         transform: Translate {
             id: slideTransform

@@ -213,7 +213,63 @@ void mac_on_window_hidden(void) {
 // ---------------------------------------------------------------------------
 // Menu Bar Icon & Status Item
 // ---------------------------------------------------------------------------
-static NSImage *createTemplateBrandIcon(CGFloat alpha) {
+static NSImage *loadBrandImage(void) {
+    // 1. App Bundle resources
+    NSString *resPath = [[NSBundle mainBundle] pathForResource:@"maclink-liquid-logo" ofType:@"png"];
+    if (resPath && [[NSFileManager defaultManager] fileExistsAtPath:resPath]) {
+        NSImage *img = [[NSImage alloc] initWithContentsOfFile:resPath];
+        if (img && img.isValid) return img;
+    }
+
+    // 2. Resources folder relative to bundle
+    NSString *bundleRes = [[[[NSBundle mainBundle] bundlePath] stringByAppendingPathComponent:@"Contents/Resources"]
+                           stringByAppendingPathComponent:@"maclink-liquid-logo.png"];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:bundleRes]) {
+        NSImage *img = [[NSImage alloc] initWithContentsOfFile:bundleRes];
+        if (img && img.isValid) return img;
+    }
+
+    // 3. Next to executable
+    NSString *exeDir = [[[NSBundle mainBundle] executablePath] stringByDeletingLastPathComponent];
+    if (exeDir) {
+        NSString *exeNeighbor = [exeDir stringByAppendingPathComponent:@"maclink-liquid-logo.png"];
+        if ([[NSFileManager defaultManager] fileExistsAtPath:exeNeighbor]) {
+            NSImage *img = [[NSImage alloc] initWithContentsOfFile:exeNeighbor];
+            if (img && img.isValid) return img;
+        }
+    }
+
+    // 4. File-system relative paths (development & test runs)
+    NSArray<NSString *> *candidates = @[
+        @"assets/brand/maclink-liquid-logo.png",
+        @"../assets/brand/maclink-liquid-logo.png",
+        @"../../assets/brand/maclink-liquid-logo.png",
+        @"../../../assets/brand/maclink-liquid-logo.png",
+        @"/Users/sarvesh/Documents/MacLink/nectarlink/assets/brand/maclink-liquid-logo.png"
+    ];
+    for (NSString *candidate in candidates) {
+        if ([[NSFileManager defaultManager] fileExistsAtPath:candidate]) {
+            NSImage *img = [[NSImage alloc] initWithContentsOfFile:candidate];
+            if (img && img.isValid) return img;
+        }
+    }
+
+    // 5. Look for MacLink.icns in bundle
+    NSString *icnsPath = [[NSBundle mainBundle] pathForResource:@"MacLink" ofType:@"icns"];
+    if (icnsPath && [[NSFileManager defaultManager] fileExistsAtPath:icnsPath]) {
+        NSImage *img = [[NSImage alloc] initWithContentsOfFile:icnsPath];
+        if (img && img.isValid) return img;
+    }
+
+    // 6. Application icon image fallback
+    NSImage *appIcon = [NSApp applicationIconImage];
+    if (appIcon && appIcon.isValid) return appIcon;
+
+    return nil;
+}
+
+static NSImage *createBrandStatusBarIcon(CGFloat alpha) {
+    NSImage *baseImage = loadBrandImage();
     NSSize size = NSMakeSize(18.0, 18.0);
     NSImage *image = [NSImage imageWithSize:size flipped:NO drawingHandler:^BOOL(NSRect dstRect) {
         CGContextRef ctx = [[NSGraphicsContext currentContext] CGContext];
@@ -222,49 +278,22 @@ static NSImage *createTemplateBrandIcon(CGFloat alpha) {
         CGContextSaveGState(ctx);
         CGContextSetAlpha(ctx, alpha);
 
-        // Center and scale 100x100 viewBox into 18x18 dstRect with 1.5pt padding
-        CGFloat scale = (dstRect.size.width - 3.0) / 100.0;
-        CGContextTranslateCTM(ctx, dstRect.size.width / 2.0, dstRect.size.height / 2.0);
-        CGContextRotateCTM(ctx, -25.0 * M_PI / 180.0);
-        CGContextScaleCTM(ctx, scale, scale);
-        CGContextTranslateCTM(ctx, -50.0, -50.0);
-
-        // Draw left loop
-        CGMutablePathRef pathLeft = CGPathCreateMutable();
-        CGPathMoveToPoint(pathLeft, NULL, 41.5, 42.5);
-        CGPathAddCurveToPoint(pathLeft, NULL, 26.0, 24.0, 13.5, 31.0, 13.5, 50.0);
-        CGPathAddCurveToPoint(pathLeft, NULL, 13.5, 69.0, 26.0, 76.0, 41.5, 57.5);
-
-        // Draw right loop
-        CGMutablePathRef pathRight = CGPathCreateMutable();
-        CGPathMoveToPoint(pathRight, NULL, 58.5, 42.5);
-        CGPathAddCurveToPoint(pathRight, NULL, 74.0, 24.0, 86.5, 31.0, 86.5, 50.0);
-        CGPathAddCurveToPoint(pathRight, NULL, 86.5, 69.0, 74.0, 76.0, 58.5, 57.5);
-
-        CGContextSetRGBStrokeColor(ctx, 0.0, 0.0, 0.0, 1.0);
-        CGContextSetLineWidth(ctx, 11.4);
-        CGContextSetLineCap(ctx, kCGLineCapRound);
-
-        CGContextAddPath(ctx, pathLeft);
-        CGContextStrokePath(ctx);
-
-        CGContextAddPath(ctx, pathRight);
-        CGContextStrokePath(ctx);
-
-        CGPathRelease(pathLeft);
-        CGPathRelease(pathRight);
-
-        // Draw center dot
-        CGContextSetRGBFillColor(ctx, 0.0, 0.0, 0.0, 1.0);
-        CGContextFillEllipseInRect(ctx, CGRectMake(50.0 - 8.8, 50.0 - 8.8, 17.6, 17.6));
+        if (baseImage) {
+            CGContextSetInterpolationQuality(ctx, kCGInterpolationHigh);
+            NSRect targetRect = NSInsetRect(dstRect, 0.5, 0.5);
+            [baseImage drawInRect:targetRect
+                         fromRect:NSZeroRect
+                        operation:NSCompositingOperationSourceOver
+                         fraction:alpha];
+        }
 
         CGContextRestoreGState(ctx);
         return YES;
     }];
 
-    [image setTemplate:YES];
     return image;
 }
+
 
 void mac_status_item_init(MacLifecycleCallback on_open,
                           MacLifecycleCallback on_shelf,
@@ -281,8 +310,8 @@ void mac_status_item_init(MacLifecycleCallback on_open,
         if (g_statusItem) return;
 
         g_menuTarget = [[MacLifecycleMenuTarget alloc] init];
-        g_iconConnected = createTemplateBrandIcon(1.0f);
-        g_iconDisconnected = createTemplateBrandIcon(0.40f);
+        g_iconConnected = createBrandStatusBarIcon(1.0f);
+        g_iconDisconnected = createBrandStatusBarIcon(0.40f);
 
         g_statusItem = [[NSStatusBar systemStatusBar] statusItemWithLength:NSSquareStatusItemLength];
         if (g_statusItem.button) {

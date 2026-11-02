@@ -57,6 +57,8 @@ for size in 16 32 128 256 512; do
     sips -z "$double" "$double" "$SOURCE_ICON" --out "$ICONSET/icon_${size}x${size}@2x.png" >/dev/null
 done
 iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/MacLink.icns"
+cp -f "assets/brand/maclink-liquid-logo.png" "$APP/Contents/Resources/maclink-liquid-logo.png"
+cp -f "assets/brand/maclink-liquid-logo.png" "$APP/Contents/MacOS/maclink-liquid-logo.png"
 
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>

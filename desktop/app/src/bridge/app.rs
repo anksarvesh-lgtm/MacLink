@@ -572,6 +572,20 @@ pub fn open_shelf_from_edge() {
     }
 }
 
+/// Closes the slide-out Shelf panel when the cursor moves away from the Shelf area.
+pub fn close_shelf_from_edge() {
+    if !is_shelf_open() {
+        return;
+    }
+    if let Some(qt) = controller() {
+        let _ = qt.queue(|mut object| {
+            if object.shelf_open {
+                object.as_mut().close_shelf();
+            }
+        });
+    }
+}
+
 /// Downloads and starts the update (from the app or its notification),
 /// showing how far the download is. The app quits for the installer only
 /// once the download is checked; until then it keeps working.

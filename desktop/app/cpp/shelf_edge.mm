@@ -100,6 +100,7 @@ static void shelf_edge_log(const char *event_name) {
 @property (nonatomic, assign) BOOL enabled;
 @property (nonatomic, assign) BOOL isShelfOpen;
 @property (nonatomic, assign) ShelfTriggerCallback onTrigger;
+@property (nonatomic, assign) ShelfCloseCallback onClose;
 
 - (void)start;
 - (void)stop;
@@ -118,10 +119,12 @@ static void shelf_edge_log(const char *event_name) {
 
     dispatch_source_t _dwellTimer;
     dispatch_source_t _fadeTimer;
+    dispatch_source_t _shelfLeaveTimer;
 
     BOOL _inTriggerArea;
     BOOL _dwellActive;
     BOOL _dockWarningLogged;
+    BOOL _shelfHoveredOnce;
 
     NSInteger _lastMouseDownDragChangeCount;
     CGFloat _targetOpacity;
@@ -131,6 +134,7 @@ static void shelf_edge_log(const char *event_name) {
 }
 
 static ShelfEdgeController *s_instance = nil;
+static __weak NSWindow *s_shelfWindow = nil;
 
 - (instancetype)init {
     self = [super init];
@@ -140,6 +144,7 @@ static ShelfEdgeController *s_instance = nil;
         _inTriggerArea = NO;
         _dwellActive = NO;
         _dockWarningLogged = NO;
+        _shelfHoveredOnce = NO;
         _lastMouseDownDragChangeCount = 0;
         _targetOpacity = 0.0f;
         _currentOpacity = 0.0f;
@@ -250,6 +255,7 @@ static ShelfEdgeController *s_instance = nil;
     }
 
     [self cancelDwellTimer];
+    [self cancelShelfLeaveTimer];
     [self stopFadeTimer];
     [self hideGlowImmediately];
 }
@@ -265,6 +271,9 @@ static ShelfEdgeController *s_instance = nil;
     if (isOpen) {
         [self cancelDwellTimer];
         [self fadeGlowOut];
+    } else {
+        [self cancelShelfLeaveTimer];
+        _shelfHoveredOnce = NO;
     }
 }
 
@@ -277,12 +286,50 @@ static ShelfEdgeController *s_instance = nil;
 
 - (void)handleMouseEvent:(NSEvent *)event {
     (void)event;
-    if (!self.enabled || _isShelfOpen) {
+    if (!self.enabled) {
         if (_targetOpacity > 0.0f) [self fadeGlowOut];
         return;
     }
 
     NSPoint mouseLocation = [NSEvent mouseLocation];
+
+    if (_isShelfOpen) {
+        if (_targetOpacity > 0.0f) [self fadeGlowOut];
+
+        NSRect shelfFrame = NSZeroRect;
+        if (s_shelfWindow && [s_shelfWindow isVisible]) {
+            shelfFrame = s_shelfWindow.frame;
+        } else {
+            NSScreen *scr = [NSScreen mainScreen];
+            for (NSScreen *s in [NSScreen screens]) {
+                if (NSPointInRect(mouseLocation, s.frame)) {
+                    scr = s;
+                    break;
+                }
+            }
+            NSRect sf = scr ? scr.frame : NSMakeRect(0, 0, 1920, 1080);
+            CGFloat availH = scr ? scr.visibleFrame.size.height : 1080;
+            CGFloat h = fminf(620.0f, fmaxf(420.0f, availH - 48.0f));
+            CGFloat y_center = sf.origin.y + (sf.size.height / 2.0f);
+            shelfFrame = NSMakeRect(sf.origin.x, y_center - (h / 2.0f), 360.0f, h);
+        }
+
+        // Active area: shelf rect with 40 pt margin on top/bottom/right, and flush to screen left edge
+        NSRect activeArea = NSInsetRect(shelfFrame, -40.0f, -40.0f);
+        if (activeArea.origin.x > 0) activeArea.origin.x = 0;
+        activeArea.size.width += 40.0f;
+
+        if (NSPointInRect(mouseLocation, activeArea)) {
+            _shelfHoveredOnce = YES;
+            [self cancelShelfLeaveTimer];
+        } else {
+            // Mouse has moved away from the shelf area
+            if (_shelfHoveredOnce && [NSEvent pressedMouseButtons] == 0) {
+                [self startShelfLeaveTimer];
+            }
+        }
+        return;
+    }
 
     // Find screen containing cursor
     NSScreen *screen = nil;
@@ -466,8 +513,41 @@ static ShelfEdgeController *s_instance = nil;
 - (void)triggerShelf {
     [self cancelDwellTimer];
     [self fadeGlowOut];
+    _shelfHoveredOnce = YES;
     if (self.onTrigger) {
         self.onTrigger();
+    }
+}
+
+- (void)startShelfLeaveTimer {
+    if (_shelfLeaveTimer) return;
+
+    dispatch_queue_t queue = dispatch_get_main_queue();
+    _shelfLeaveTimer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue);
+    uint64_t nsec = 400 * NSEC_PER_MSEC;
+    dispatch_source_set_timer(_shelfLeaveTimer, dispatch_time(DISPATCH_TIME_NOW, nsec), DISPATCH_TIME_FOREVER, 10 * NSEC_PER_MSEC);
+
+    __weak ShelfEdgeController *weakSelf = self;
+    dispatch_source_set_event_handler(_shelfLeaveTimer, ^{
+        [weakSelf shelfLeaveTimerFired];
+    });
+    dispatch_resume(_shelfLeaveTimer);
+}
+
+- (void)cancelShelfLeaveTimer {
+    if (_shelfLeaveTimer) {
+        dispatch_source_cancel(_shelfLeaveTimer);
+        _shelfLeaveTimer = nil;
+    }
+}
+
+- (void)shelfLeaveTimerFired {
+    [self cancelShelfLeaveTimer];
+    if (!_isShelfOpen) return;
+
+    shelf_edge_log("shelf-auto-hide(mouse-leave)");
+    if (self.onClose) {
+        self.onClose();
     }
 }
 
@@ -555,6 +635,14 @@ void shelf_edge_init(ShelfTriggerCallback on_trigger) {
     });
 }
 
+void shelf_edge_set_close_callback(ShelfCloseCallback on_close) {
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (s_instance) {
+            s_instance.onClose = on_close;
+        }
+    });
+}
+
 void shelf_edge_set_enabled(bool enabled) {
     dispatch_async(dispatch_get_main_queue(), ^{
         if (s_instance) {
@@ -590,6 +678,7 @@ void shelf_edge_style_shelf_window(const char *window_title) {
     dispatch_async(dispatch_get_main_queue(), ^{
         for (NSWindow *win in [NSApp windows]) {
             if ([win.title isEqualToString:title]) {
+                s_shelfWindow = win;
                 [win setCollectionBehavior:(NSWindowCollectionBehaviorCanJoinAllSpaces |
                                             NSWindowCollectionBehaviorFullScreenAuxiliary |
                                             NSWindowCollectionBehaviorStationary)];
