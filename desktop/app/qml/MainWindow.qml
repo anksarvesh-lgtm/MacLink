@@ -1328,6 +1328,11 @@ NativeWindow {
                 anchors.fill: parent
                 active: !window.welcome && AppController.status === "ready"
                 property bool firstLoadDone: false
+                onStatusChanged: {
+                    if (status === Loader.Error) {
+                        console.error("[MacLink PageLoader Error]", source, sourceComponent ? sourceComponent.errorString() : "unknown error")
+                    }
+                }
                 transform: [
                     Translate { id: pageSlide; y: 0 },
                     Scale {
@@ -1622,7 +1627,7 @@ NativeWindow {
     }
 
     Shortcut {
-        sequence: StandardKey.Close
+        sequences: [StandardKey.Close]
         onActivated: window.close()
     }
 

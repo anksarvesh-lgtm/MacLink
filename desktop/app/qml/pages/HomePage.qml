@@ -703,7 +703,6 @@ Item {
             return localMediaRow
         }
 
-        spacing: Theme.gutter
         readonly property bool isTwoZone: Theme.isTwoColumn(home.width)
         readonly property real gutter: Theme.gutter
         readonly property real sideWidth: isTwoZone
@@ -1653,6 +1652,7 @@ Item {
                 width: parent.width
                 readonly property var state: home.feature("notifications.mirror")
                 readonly property int count: NotificationList.count >= 0 ? NotificationList.countFor(home.deviceId) : 0
+                readonly property bool compactBtns: feed.width < 460
 
                 Column {
                     width: parent.width
@@ -1695,10 +1695,9 @@ Item {
                         }
 
                         RowLayout {
+                            id: notifHeaderBtns
                             Layout.alignment: Qt.AlignVCenter
                             spacing: 6
-
-                            readonly property bool compactBtns: feed.width < 460
 
                             Button {
                                 visible: feed.count > 0
@@ -1711,7 +1710,7 @@ Item {
                             IconButton {
                                 visible: NotificationList.historyEnabled && NotificationHistory.count > 0
                                 iconPath: Icons.history
-                                text: compactBtns ? "" : qsTr("History")
+                                text: feed.compactBtns ? "" : qsTr("History")
                                 label: qsTr("Notification history (last 24 hours)")
                                 Accessible.name: qsTr("Notification history")
                                 onClicked: {
@@ -1726,7 +1725,7 @@ Item {
                                 variant: "tonal"
                                 size: "sm"
                                 iconPath: Icons.close
-                                text: compactBtns ? "" : qsTr("Clear all")
+                                text: feed.compactBtns ? "" : qsTr("Clear all")
                                 Accessible.name: qsTr("Clear all notifications")
                                 onClicked: NotificationList.dismissAll(home.deviceId)
                             }
@@ -2384,7 +2383,7 @@ Item {
                             Icon {
                                 Layout.alignment: Qt.AlignVCenter
                                 width: 15; height: 15
-                                path: Icons.clock
+                                path: Icons.history
                                 color: Theme.amberAccent
                             }
                             Txt {

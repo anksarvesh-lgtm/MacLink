@@ -1,6 +1,6 @@
-<!-- BRIEF: COMMIT=9d1794ce HASH=37098b0a DATE=2026-11-02T11:00:39.275Z -->
+<!-- BRIEF: COMMIT=95621f01 HASH=37098b0a DATE=2026-11-02T14:40:43.426Z -->
 # Project Brief: nectarlink
-- **Commit**: `9d1794ce` | **Updated**: 2026-11-02T11:00:39.275Z | **Files Tracked**: 621
+- **Commit**: `95621f01` | **Updated**: 2026-11-02T14:40:43.426Z | **Files Tracked**: 621
 
 ## Overview
 **Your Android phone and your Mac, working seamlessly as one.**

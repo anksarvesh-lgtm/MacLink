@@ -383,7 +383,6 @@ FocusScope {
                                 anchors.fill: parent
                                 anchors.margins: 6
                                 spacing: 3
-                                alignment: Qt.AlignCenter
 
                                 RowLayout {
                                     Layout.alignment: Qt.AlignHCenter
