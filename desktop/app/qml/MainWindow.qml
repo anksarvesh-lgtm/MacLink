@@ -785,11 +785,14 @@ NativeWindow {
             { id: "messages", label: qsTr("Messages"), icon: Icons.messages },
             { id: "calls", label: qsTr("Calls"), icon: Icons.call },
             { id: "photos", label: qsTr("Photos"), icon: Icons.photo },
+            { id: "files", label: qsTr("Files"), icon: Icons.folder },
             { id: "apps", label: qsTr("Apps"), icon: Icons.apps },
             { id: "deck", label: qsTr("Deck"), icon: Icons.deck },
             { id: "guide", label: qsTr("Guide"), icon: Icons.info },
             { id: "settings", label: qsTr("Settings"), icon: Icons.settings }
         ]
+
+        readonly property real itemPitch: Math.min(54, Math.max(48, Math.floor((railContainer.height - 116) / navItems.length)))
 
         readonly property int activeNavIndex: {
             switch (window.page) {
@@ -798,11 +801,12 @@ NativeWindow {
             case "messages": return 1
             case "calls": return 2
             case "photos": return 3
-            case "apps": return 4
-            case "deck": return 5
+            case "files": return 4
+            case "apps": return 5
+            case "deck": return 6
             case "help_center":
-            case "guide": return 6
-            case "settings": return 7
+            case "guide": return 7
+            case "settings": return 8
             default: return 0
             }
         }
@@ -823,7 +827,7 @@ NativeWindow {
         GlassPanel {
             id: activeCapsule
             x: Math.round((railContainer.width - width) / 2)
-            y: navColumn.y + railContainer.activeNavIndex * 55 + 2
+            y: navColumn.y + railContainer.activeNavIndex * railContainer.itemPitch + 2
             width: 46
             height: 26
             radius: 13
@@ -862,12 +866,12 @@ NativeWindow {
             }
         }
 
-        // Navigation items list (55 pt pitch)
+        // Navigation items list
         Column {
             id: navColumn
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: railLogo.bottom
-            anchors.topMargin: 16
+            anchors.topMargin: railContainer.height < 650 ? 10 : 16
             spacing: 0
 
             Repeater {
@@ -878,7 +882,7 @@ NativeWindow {
                     required property int index
                     readonly property bool selected: railContainer.activeNavIndex === index
                     width: railContainer.width
-                    height: 55
+                    height: railContainer.itemPitch
                     activeFocusOnTab: true
 
                     Accessible.role: Accessible.PageTab
@@ -938,7 +942,7 @@ NativeWindow {
                     // Label (11 pt, centered below capsule)
                     Txt {
                         anchors.horizontalCenter: parent.horizontalCenter
-                        y: 32
+                        y: railContainer.itemPitch >= 52 ? 32 : 30
                         text: railItem.modelData.label
                         role: "caption"
                         size: 11
