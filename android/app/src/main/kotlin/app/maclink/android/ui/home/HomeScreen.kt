@@ -362,11 +362,13 @@ fun HomeScreen(
                         },
                     contentAlignment = Alignment.Center,
                 ) {
-                    Icon(
-                        imageVector = DeviceAppIcon,
-                        contentDescription = "LinkDesk",
-                        tint = AmberTokens.PrimaryText,
-                        modifier = Modifier.size(24.dp),
+                    Image(
+                        painter = painterResource(R.drawable.maclink_logo),
+                        contentDescription = "MacLink",
+                        modifier = Modifier
+                            .size(30.dp)
+                            .clip(RoundedCornerShape(7.dp)),
+                        contentScale = ContentScale.Fit,
                     )
                 }
 
@@ -374,7 +376,7 @@ fun HomeScreen(
 
                 Column(modifier = Modifier.weight(1f)) {
                     Text(
-                        text = "LinkDesk",
+                        text = "MacLink",
                         color = AmberTokens.PrimaryText,
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
@@ -1540,7 +1542,7 @@ private fun PcCard(
                                 )
                                 Spacer(Modifier.height(2.dp))
                                 Text(
-                                    text = device.model ?: "macOS Sonoma 14.6",
+                                    text = device.formattedOsVersion,
                                     color = AmberTokens.SecondaryText,
                                     fontSize = 12.sp,
                                     fontWeight = FontWeight.Normal,

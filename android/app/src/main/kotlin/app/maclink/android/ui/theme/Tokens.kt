@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.Color
 
 /**
  * Amber Liquid Glass Design System Tokens
- * Reference: LinkDesk Amber Liquid Glass Edition
+ * Reference: MacLink Amber Liquid Glass Edition
  */
 object AmberTokens {
     // Primary Color System
@@ -20,9 +20,10 @@ object AmberTokens {
     val PrimaryAccent = Color(0xFFF49D04)
     val SecondaryAccent = Color(0xFFCB7501)
     val Highlight = Color(0xFFFFB52E)
-    val PrimaryText = Color(0xFFF3F0E8)
-    val SecondaryText = Color(0xFFB5A18B)
-    val MutedText = Color(0xFF897360)
+    // High-contrast clean black & white text scale
+    val PrimaryText = Color(0xFFFFFFFF)
+    val SecondaryText = Color(0xCCFFFFFF)
+    val MutedText = Color(0x99FFFFFF)
 
     // Glass Styling Tokens
     val GlassBorder = Color(0x35FFFFFF)

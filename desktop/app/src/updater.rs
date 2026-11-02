@@ -86,6 +86,7 @@ const DETACHED_PROCESS: u32 = 0x0000_0008;
 static AUTO: AtomicBool = AtomicBool::new(true);
 static AUTO_INSTALL: AtomicBool = AtomicBool::new(true);
 static CHECKING: AtomicBool = AtomicBool::new(false);
+static INSTALL_LAUNCHED: AtomicBool = AtomicBool::new(false);
 static FOUND: Mutex<Option<Update>> = Mutex::new(None);
 
 fn found() -> MutexGuard<'static, Option<Update>> {
@@ -127,12 +128,18 @@ pub fn start() {
             while let Some(left) = next_check.checked_duration_since(std::time::Instant::now()) {
                 if AUTO.load(Ordering::Relaxed)
                     && AUTO_INSTALL.load(Ordering::Relaxed)
+                    && !INSTALL_LAUNCHED.load(Ordering::Relaxed)
                     && available().is_some()
                     && quiet()
                 {
                     tracing::info!("installing the update at a quiet moment");
-                    if let Err(e) = install(|_, _| {}) {
-                        tracing::warn!(error = %e, "the automatic update couldn't be installed yet");
+                    match install(|_, _| {}) {
+                        Ok(()) => {
+                            INSTALL_LAUNCHED.store(true, Ordering::Relaxed);
+                        }
+                        Err(e) => {
+                            tracing::warn!(error = %e, "the automatic update couldn't be installed yet");
+                        }
                     }
                 }
                 std::thread::sleep(left.min(LOOK_FOR_QUIET));
@@ -158,6 +165,7 @@ pub fn check_now(told: bool) -> Option<String> {
             *found() = Some(update.clone());
             core_host::host().hub.update(|_| Changes::UPDATE);
             if new {
+                INSTALL_LAUNCHED.store(false, Ordering::Relaxed);
                 announce(&update);
             }
             if AUTO_INSTALL.load(Ordering::Relaxed) {

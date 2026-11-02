@@ -130,6 +130,8 @@ data class Device(
     val id: String,
     val name: String,
     val kind: app.maclink.core.DeviceKind,
+    val os: String = "macos",
+    val osVersion: String = "",
     val model: String?,
     val accent: UInt? = null,
     val pairedAt: Long,
@@ -161,6 +163,28 @@ data class Device(
         features.any {
             it.id == feature &&
                 (it.status is app.maclink.core.FeatureStatus.Available || it.status is app.maclink.core.FeatureStatus.Partial)
+        }
+
+    /** Formatted real OS version string (e.g. "macOS Sequoia 15.0" or real version sent by peer). */
+    val formattedOsVersion: String
+        get() {
+            if (!model.isNullOrBlank()) {
+                return model
+            }
+            val ver = osVersion.trim()
+            if (ver.isEmpty()) {
+                return "macOS"
+            }
+            val major = ver.substringBefore('.').toIntOrNull()
+            val marketing = when (major) {
+                11 -> "Big Sur"
+                12 -> "Monterey"
+                13 -> "Ventura"
+                14 -> "Sonoma"
+                15 -> "Sequoia"
+                else -> ""
+            }
+            return if (marketing.isNotEmpty()) "macOS $marketing $ver" else "macOS $ver"
         }
 }
 
@@ -503,6 +527,8 @@ internal fun PairedDevice.toDevice() = Device(
     id = id,
     name = info.name,
     kind = info.kind,
+    os = info.os,
+    osVersion = info.osVersion,
     model = info.model,
     accent = info.accent,
     pairedAt = pairedAt,

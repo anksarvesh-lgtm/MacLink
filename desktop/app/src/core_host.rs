@@ -374,12 +374,21 @@ pub fn downloads_dir() -> PathBuf {
 /// How this PC presents itself to phones.
 fn this_device() -> DeviceInfo {
     let name = hostname::get().ok().and_then(|h| h.into_string().ok()).unwrap_or_else(|| "PC".into());
+    let os_ver = crate::win::os_version();
+    let mac_os_name = match os_ver.split('.').next().and_then(|m| m.parse::<u32>().ok()) {
+        Some(11) => format!("macOS Big Sur {os_ver}"),
+        Some(12) => format!("macOS Monterey {os_ver}"),
+        Some(13) => format!("macOS Ventura {os_ver}"),
+        Some(14) => format!("macOS Sonoma {os_ver}"),
+        Some(15) => format!("macOS Sequoia {os_ver}"),
+        _ => format!("macOS {os_ver}"),
+    };
     DeviceInfo {
         name,
         kind: if crate::win::is_laptop() { DeviceKind::Laptop } else { DeviceKind::Desktop },
         os: std::env::consts::OS.into(),
-        os_ver: crate::win::os_version(),
-        model: None,
+        os_ver: os_ver.clone(),
+        model: Some(mac_os_name),
         accent: None,
         screen: None,
         install_id: crate::win::machine_guid().as_deref().and_then(maclink_core::install_id_from),
