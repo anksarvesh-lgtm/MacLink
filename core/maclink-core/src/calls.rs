@@ -4,6 +4,7 @@
 //! audio stays on the phone.
 
 use std::{
+    collections::HashMap,
     sync::{Arc, Mutex},
     time::{Duration, Instant},
 };
@@ -11,8 +12,9 @@ use std::{
 use maclink_protocol::{
     Envelope, ErrorCode,
     messages::{
-        CallAction, CallDial, CallLog, CallLogChanged, CallLogEntry, CallLogGet, CallState, calls,
-        is_dtmf_digit, types,
+        CallAction, CallCapabilities, CallDial, CallEvent, CallEventDirection, CallEventState, CallLog,
+        CallLogChanged, CallLogEntry, CallLogGet, CallState, calls, is_dtmf_digit, types,
+        validate_phone_number,
     },
 };
 
@@ -20,6 +22,26 @@ use crate::{Error, Result, events::NodeEvent, node::Shared, session::Session};
 
 /// The device toggle that allows calls for a device.
 pub(crate) const TOGGLE: &str = "calls";
+
+/// Maximum call commands allowed per 1-second rolling window per peer.
+const MAX_COMMANDS_PER_SEC: usize = 5;
+
+static RATE_LIMITER: Mutex<Option<HashMap<maclink_protocol::DeviceId, Vec<Instant>>>> = Mutex::new(None);
+
+/// Rate limits call commands to prevent flood/denial of service.
+pub(crate) fn check_rate_limit(device: &maclink_protocol::DeviceId) -> bool {
+    let now = Instant::now();
+    let mut guard = RATE_LIMITER.lock().unwrap_or_else(|e| e.into_inner());
+    let map = guard.get_or_insert_default();
+    let timestamps = map.entry(*device).or_default();
+    timestamps.retain(|&t| now.saturating_duration_since(t) < Duration::from_secs(1));
+    if timestamps.len() >= MAX_COMMANDS_PER_SEC {
+        false
+    } else {
+        timestamps.push(now);
+        true
+    }
+}
 
 /// What a PC can ask a phone to do with a call.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -188,6 +210,9 @@ pub(crate) async fn command(
     if !shared.toggle_on(&session.peer, TOGGLE) {
         return Err(Error::Denied);
     }
+    if !check_rate_limit(&session.peer) {
+        return Err(Error::Protocol("rate limited: too many call commands".into()));
+    }
     let action = CallAction { id, action: command.as_str().into(), digit: command.digit() };
     let env = Envelope::new(types::CALL_ACTION, &action)?;
     session.request(env, crate::session::REQUEST_TIMEOUT).await?.expect(types::OK)?;
@@ -214,7 +239,14 @@ pub(crate) async fn dial(shared: &Shared, session: &Session, number: String) -> 
     if !shared.toggle_on(&session.peer, TOGGLE) {
         return Err(Error::Denied);
     }
-    let dial = CallDial { number: number.trim().to_owned() };
+    if !check_rate_limit(&session.peer) {
+        return Err(Error::Protocol("rate limited: too many call commands".into()));
+    }
+    let trimmed = number.trim();
+    if let Err(err_reason) = validate_phone_number(trimmed) {
+        return Err(Error::Protocol(format!("invalid phone number: {err_reason}")));
+    }
+    let dial = CallDial { number: trimmed.to_owned() };
     if !dial.is_valid() {
         return Err(if dial.number.len() > calls::MAX_TEXT_BYTES {
             Error::TooLarge
@@ -231,6 +263,34 @@ pub(crate) async fn dial(shared: &Shared, session: &Session, number: String) -> 
 pub(crate) async fn handle(shared: &Arc<Shared>, session: &Arc<Session>, env: &Envelope) -> Result<bool> {
     let peer = session.peer;
     match env.t.as_str() {
+        types::CALL_CAPABILITIES => {
+            let _caps: CallCapabilities = env.body()?;
+            Ok(true)
+        }
+        types::CALL_EVENT => {
+            let event: CallEvent = env.body()?;
+            let shows = shared.local_capabilities().iter().any(|c| c == calls::SHOW);
+            if shows && event.is_valid() && shared.toggle_on(&peer, TOGGLE) {
+                let call = CallState {
+                    id: event.call_id,
+                    state: match event.state {
+                        CallEventState::Ringing => calls::RINGING,
+                        CallEventState::Dialing | CallEventState::Active => calls::ACTIVE,
+                        CallEventState::Ended | CallEventState::Missed => calls::ENDED,
+                    }
+                    .into(),
+                    incoming: event.direction == CallEventDirection::Incoming,
+                    number: event.number,
+                    name: event.display_name,
+                    photo: None,
+                    missed: event.state == CallEventState::Missed,
+                    since: event.started_at,
+                    controls: None,
+                };
+                shared.emit(NodeEvent::Call { device: peer, call });
+            }
+            Ok(true)
+        }
         types::CALL_STATE => {
             let call: CallState = env.body()?;
             let shows = shared.local_capabilities().iter().any(|c| c == calls::SHOW);
@@ -248,6 +308,11 @@ pub(crate) async fn handle(shared: &Arc<Shared>, session: &Arc<Session>, env: &E
             Ok(true)
         }
         types::CALL_ACTION => {
+            if !check_rate_limit(&peer) {
+                let reply = Envelope::error(ErrorCode::Denied, "rate limited: max 5 commands per second");
+                session.send(reply.reply_to(env.id)).await?;
+                return Ok(true);
+            }
             let CallAction { id, action, digit } = env.body()?;
             let current = shared.calls.get();
             let offers = |cap: &str| shared.local_capabilities().iter().any(|c| c == cap);
@@ -281,6 +346,11 @@ pub(crate) async fn handle(shared: &Arc<Shared>, session: &Arc<Session>, env: &E
             Ok(true)
         }
         types::CALL_LOG | types::CALL_DIAL => {
+            if env.t == types::CALL_DIAL && !check_rate_limit(&peer) {
+                let reply = Envelope::error(ErrorCode::Denied, "rate limited: max 5 commands per second");
+                session.send(reply.reply_to(env.id)).await?;
+                return Ok(true);
+            }
             // Reading the call log or starting a call takes a moment: run off the session's loop,
             // while keeping `call.state` and `call.action` in order on the stream.
             let (shared, session, env) = (shared.clone(), session.clone(), env.clone());
@@ -426,5 +496,16 @@ mod tests {
         // A call in progress stays, however long it lasts.
         current.set(&CallState { state: calls::ACTIVE.into(), ..ringing });
         assert!(current.get_at(start + Duration::from_secs(3600)).is_some());
+    }
+
+    #[test]
+    fn call_commands_are_rate_limited() {
+        let dev = maclink_protocol::DeviceId([0x42; 32]);
+        // Up to 5 commands in a 1-second window should succeed
+        for _ in 0..5 {
+            assert!(check_rate_limit(&dev));
+        }
+        // 6th command should be rate-limited
+        assert!(!check_rate_limit(&dev));
     }
 }

@@ -25,7 +25,7 @@ pub const ALPN_SESSION: &[u8] = b"maclink/0";
 pub const ALPN_PAIR: &[u8] = b"maclink-pair/0";
 
 /// Protocol version spoken by this implementation.
-pub const PROTOCOL_VERSION: u32 = 0;
+pub const PROTOCOL_VERSION: u32 = 1;
 /// Oldest protocol version this implementation still accepts.
 pub const MIN_PROTOCOL_VERSION: u32 = 0;
 

@@ -60,6 +60,11 @@ pub mod types {
     pub const CALL_LOG: &str = "call.log";
     pub const CALL_LOG_CHANGED: &str = "call.log.changed";
     pub const CALL_DIAL: &str = "call.dial";
+    pub const CALL_CAPABILITIES: &str = "call.capabilities";
+    pub const CALL_EVENT: &str = "call.event";
+    pub const CALL_COMMAND_RESULT: &str = "call.command_result";
+    pub const CALL_LOG_REQUEST: &str = "call.log.request";
+    pub const CALL_LOG_PAGE: &str = "call.log.page";
     pub const CONTACTS_LIST: &str = "contacts.list";
     pub const CONTACTS_CHANGED: &str = "contacts.changed";
     pub const SMS_THREADS: &str = "sms.threads";
@@ -2115,6 +2120,12 @@ pub mod calls {
     pub const DTMF: &str = "dtmf";
     pub const VOLUME_UP: &str = "volume_up";
     pub const VOLUME_DOWN: &str = "volume_down";
+
+    pub const CAPABILITIES: &str = "call.capabilities";
+    pub const EVENT: &str = "call.event";
+    pub const COMMAND_RESULT: &str = "call.command_result";
+    pub const LOG_REQUEST: &str = "call.log.request";
+    pub const LOG_PAGE: &str = "call.log.page";
 }
 
 /// A call in progress, as the phone controls it (with `call.incall`).
@@ -2270,10 +2281,180 @@ impl std::fmt::Debug for CallDial {
     }
 }
 
+/// Known global and regional emergency numbers that must never be dialed via desktop remote control.
+pub const EMERGENCY_NUMBERS: &[&str] = &[
+    "000", "100", "101", "102", "108", "110", "112", "119", "120", "911", "988", "999", "1091", "1098",
+];
+
+/// Checks if a string (after stripping non-digits) matches any known emergency service number.
+pub fn is_emergency_number(number: &str) -> bool {
+    let clean: String = number.chars().filter(|c| c.is_ascii_digit()).collect();
+    if clean.is_empty() {
+        return false;
+    }
+    EMERGENCY_NUMBERS.iter().any(|&e| clean == e)
+}
+
+/// Validates a phone number for dial commands and call events.
+///
+/// Rules:
+/// - Maximum 32 characters.
+/// - Only allows digits `0-9`, `+`, spaces ` `, `-`, and parentheses `()`.
+/// - Strictly prohibits `*` and `#` (preventing USSD and MMI code injection like call forwarding).
+/// - Must contain at least one digit.
+/// - Must not be an emergency number (which must be dialed manually on phone).
+pub fn validate_phone_number(number: &str) -> Result<(), &'static str> {
+    let trimmed = number.trim();
+    if trimmed.is_empty() {
+        return Err("empty");
+    }
+    if trimmed.len() > 32 {
+        return Err("too_long");
+    }
+    if trimmed.contains('*') || trimmed.contains('#') {
+        return Err("ussd_prohibited");
+    }
+    let mut has_digit = false;
+    for c in trimmed.chars() {
+        if c.is_ascii_digit() {
+            has_digit = true;
+        } else if !matches!(c, '+' | ' ' | '-' | '(' | ')') {
+            return Err("invalid_characters");
+        }
+    }
+    if !has_digit {
+        return Err("no_digits");
+    }
+    if is_emergency_number(trimmed) {
+        return Err("emergency_number");
+    }
+    Ok(())
+}
+
 impl CallDial {
     pub fn is_valid(&self) -> bool {
-        !self.number.trim().is_empty() && self.number.len() <= calls::MAX_TEXT_BYTES
+        validate_phone_number(&self.number).is_ok()
     }
+}
+
+/// Telephony capabilities advertised by the phone (`call.capabilities`).
+#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
+pub struct CallCapabilities {
+    #[serde(default)]
+    pub can_observe: bool,
+    #[serde(default)]
+    pub can_answer: bool,
+    #[serde(default)]
+    pub can_end: bool,
+    #[serde(default)]
+    pub can_dial: bool,
+    #[serde(default)]
+    pub has_call_log: bool,
+    #[serde(default)]
+    pub has_contacts: bool,
+    #[serde(default)]
+    pub sim_count: u32,
+    #[serde(default)]
+    pub bt_audio_possible: bool,
+}
+
+/// State of a call event.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum CallEventState {
+    Ringing,
+    Dialing,
+    Active,
+    Ended,
+    Missed,
+}
+
+/// Direction of a call event.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "lowercase")]
+pub enum CallEventDirection {
+    Incoming,
+    Outgoing,
+}
+
+/// An event describing a change in call state (`call.event`).
+#[derive(Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct CallEvent {
+    pub call_id: String,
+    pub state: CallEventState,
+    pub direction: CallEventDirection,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub number: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub display_name: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub started_at: Option<i64>,
+}
+
+/// Never leaks full phone numbers or names into logs or Debug representations (privacy rule 5).
+impl std::fmt::Debug for CallEvent {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let masked_number = self.number.as_ref().map(|n| {
+            if n.len() <= 2 {
+                "**".to_string()
+            } else {
+                format!("***{}", &n[n.len() - 2..])
+            }
+        });
+        f.debug_struct("CallEvent")
+            .field("call_id", &self.call_id)
+            .field("state", &self.state)
+            .field("direction", &self.direction)
+            .field("number_last2", &masked_number)
+            .field("started_at", &self.started_at)
+            .finish_non_exhaustive()
+    }
+}
+
+impl CallEvent {
+    pub fn is_valid(&self) -> bool {
+        if self.call_id.is_empty() || self.call_id.len() > calls::MAX_ID_BYTES {
+            return false;
+        }
+        if let Some(ref num) = self.number {
+            // Must not exceed 32 characters and no USSD codes
+            if num.len() > 32 || num.contains('*') || num.contains('#') {
+                return false;
+            }
+        }
+        if let Some(ref name) = self.display_name {
+            if name.len() > calls::MAX_TEXT_BYTES {
+                return false;
+            }
+        }
+        true
+    }
+}
+
+/// Outcome of a call command (`call.command_result`).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct CallCommandResult {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub call_id: Option<String>,
+    pub ok: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reason: Option<String>,
+}
+
+/// Request for recent call history (`call.log.request`).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct CallLogRequest {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub before: Option<i64>,
+    pub limit: u32,
+}
+
+/// Paginated call history response (`call.log.page`).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct CallLogPage {
+    pub entries: Vec<CallLogEntry>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub next: Option<i64>,
 }
 
 // ---- Contacts (docs/protocol/contacts.md) ----
@@ -4699,6 +4880,89 @@ mod tests {
             Envelope::new(types::CONTACTS_LIST, &ContactsList { contacts: vec![contact.clone()] }).unwrap();
         let back: ContactsList = Envelope::from_cbor(&env.to_cbor()).unwrap().body().unwrap();
         assert_eq!(back.contacts, vec![contact]);
+    }
+
+    #[test]
+    fn call_v1_protocol_messages_and_validation() {
+        // 1. Phone number validation
+        assert!(validate_phone_number("+1 (555) 123-4567").is_ok());
+        assert!(validate_phone_number("+91 98765 43210").is_ok());
+        assert!(validate_phone_number("1234567890").is_ok());
+        assert!(validate_phone_number("555-0199").is_ok());
+
+        assert_eq!(validate_phone_number(""), Err("empty"));
+        assert_eq!(validate_phone_number("   "), Err("empty"));
+        assert_eq!(validate_phone_number(&"1".repeat(33)), Err("too_long"));
+        assert_eq!(validate_phone_number("*21*12345#"), Err("ussd_prohibited"));
+        assert_eq!(validate_phone_number("#31#12345"), Err("ussd_prohibited"));
+        assert_eq!(validate_phone_number("*#06#"), Err("ussd_prohibited"));
+        assert_eq!(validate_phone_number("123-ABC-456"), Err("invalid_characters"));
+        assert_eq!(validate_phone_number("123$456"), Err("invalid_characters"));
+        assert_eq!(validate_phone_number("+() -"), Err("no_digits"));
+
+        // Emergency numbers are blocked
+        for em in ["112", "911", "999", "000", "100", "101", "102", "108", "988"] {
+            assert_eq!(validate_phone_number(em), Err("emergency_number"), "Blocked emergency {em}");
+            assert_eq!(validate_phone_number(&format!(" {em} ")), Err("emergency_number"));
+        }
+
+        // 2. CallCapabilities round-trip
+        let caps = CallCapabilities {
+            can_observe: true,
+            can_answer: true,
+            can_end: true,
+            can_dial: true,
+            has_call_log: true,
+            has_contacts: true,
+            sim_count: 2,
+            bt_audio_possible: false,
+        };
+        let env_caps = Envelope::new(types::CALL_CAPABILITIES, &caps).unwrap();
+        let back_caps: CallCapabilities = Envelope::from_cbor(&env_caps.to_cbor()).unwrap().body().unwrap();
+        assert_eq!(back_caps, caps);
+
+        // 3. CallEvent round-trip and privacy masking
+        let event = CallEvent {
+            call_id: "call_abc123".into(),
+            state: CallEventState::Ringing,
+            direction: CallEventDirection::Incoming,
+            number: Some("+1555123456".into()),
+            display_name: Some("Alice Sharma".into()),
+            started_at: Some(1_760_000_000_000),
+        };
+        assert!(event.is_valid());
+        let dbg = format!("{event:?}");
+        assert!(!dbg.contains("555123"), "Debug leaked phone number: {dbg}");
+        assert!(!dbg.contains("Alice"), "Debug leaked contact name: {dbg}");
+        assert!(dbg.contains("56"), "Debug should retain at most last 2 digits: {dbg}");
+
+        let env_evt = Envelope::new(types::CALL_EVENT, &event).unwrap();
+        let back_evt: CallEvent = Envelope::from_cbor(&env_evt.to_cbor()).unwrap().body().unwrap();
+        assert_eq!(back_evt, event);
+
+        // 4. CallCommandResult round-trip
+        let result = CallCommandResult {
+            call_id: Some("call_abc123".into()),
+            ok: false,
+            reason: Some("emergency_number".into()),
+        };
+        let env_res = Envelope::new(types::CALL_COMMAND_RESULT, &result).unwrap();
+        let back_res: CallCommandResult = Envelope::from_cbor(&env_res.to_cbor()).unwrap().body().unwrap();
+        assert_eq!(back_res, result);
+
+        // 5. CallLogRequest and CallLogPage round-trip
+        let req = CallLogRequest { before: Some(1_760_000_000), limit: 25 };
+        let env_req = Envelope::new(types::CALL_LOG_REQUEST, &req).unwrap();
+        let back_req: CallLogRequest = Envelope::from_cbor(&env_req.to_cbor()).unwrap().body().unwrap();
+        assert_eq!(back_req, req);
+
+        let page = CallLogPage {
+            entries: vec![],
+            next: Some(1_759_000_000),
+        };
+        let env_page = Envelope::new(types::CALL_LOG_PAGE, &page).unwrap();
+        let back_page: CallLogPage = Envelope::from_cbor(&env_page.to_cbor()).unwrap().body().unwrap();
+        assert_eq!(back_page, page);
     }
 
     #[test]
