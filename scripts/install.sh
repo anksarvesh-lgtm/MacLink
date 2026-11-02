@@ -4,7 +4,7 @@
 # Downloads, verifies, and installs MacLink.app for macOS.
 set -euo pipefail
 
-VERSION="${MACLINK_VERSION:-0.0.2}"
+VERSION="${MACLINK_VERSION:-0.0.3}"
 ARCH="$(uname -m)"
 REPO="anksarvesh-lgtm/MacLink"
 RELEASE_URL="https://github.com/${REPO}/releases/download/v${VERSION}"
