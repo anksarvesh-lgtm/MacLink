@@ -14,3 +14,4 @@ This directory contains persistent artifacts, engineering plans, architecture de
   - `home_screen_fixed.png` / `screen_now.png`: Live runtime proof of desktop UI rendering with zero blank states.
   - `target_design_mockup.png`: Liquid glass amber UI reference mockups.
   - Responsive window captures (`800px`, `1100px`, `1500px`).
+
