@@ -250,8 +250,7 @@ fn share(files: Vec<PathBuf>, url: Option<String>, text: Option<String>) {
         }
         if let Some(text) = text.filter(|t| !t.trim().is_empty()) {
             let is_online = core_host::host().hub.read(|s| {
-                s.device(&device_id)
-                    .is_some_and(|d| matches!(d.link, maclink_core::LinkState::Online { .. }))
+                s.device(&device_id).is_some_and(|d| matches!(d.link, maclink_core::LinkState::Online { .. }))
             });
             match node.send_clipboard(device_id, text).await {
                 Ok(()) => {
@@ -337,25 +336,24 @@ fn send(device: String, paths: Vec<PathBuf>) {
         let Some((id, name)) = name else {
             return failed("Couldn't send", "That device isn't paired with this PC anymore.");
         };
-        let outgoing =
-            match tokio::task::spawn_blocking(move || maclink_core::outgoing_paths(&paths)).await {
-                Ok(Ok(files)) if !files.is_empty() => files,
-                Ok(Ok(_)) => {
-                    return failed(
-                        &tr!("SendTo", "Couldn't send to %1", name),
-                        "There's nothing to send in there.",
-                    );
-                }
-                Ok(Err(Error::TooLarge)) => {
-                    return failed(
-                        &tr!("SendTo", "Couldn't send to %1", name),
-                        "That's too many files to send at once.",
-                    );
-                }
-                Ok(Err(_)) | Err(_) => {
-                    return failed(&tr!("SendTo", "Couldn't send to %1", name), "Those files can't be read.");
-                }
-            };
+        let outgoing = match tokio::task::spawn_blocking(move || maclink_core::outgoing_paths(&paths)).await {
+            Ok(Ok(files)) if !files.is_empty() => files,
+            Ok(Ok(_)) => {
+                return failed(
+                    &tr!("SendTo", "Couldn't send to %1", name),
+                    "There's nothing to send in there.",
+                );
+            }
+            Ok(Err(Error::TooLarge)) => {
+                return failed(
+                    &tr!("SendTo", "Couldn't send to %1", name),
+                    "That's too many files to send at once.",
+                );
+            }
+            Ok(Err(_)) | Err(_) => {
+                return failed(&tr!("SendTo", "Couldn't send to %1", name), "Those files can't be read.");
+            }
+        };
         match node.send_files(id, outgoing).await {
             Ok(transfer_id) => {
                 let _ = crate::bridge::app::show_offline_queued_toast(id, Some(transfer_id.clone()));
@@ -560,10 +558,7 @@ mod tests {
         let (a, b, c) = (DeviceId([1; 32]), DeviceId([2; 32]), DeviceId([3; 32]));
 
         reconcile(dir.path(), &[(a, "Pixel".into()), (b, "Tab".into()), (c, "Pixel".into())], &exe).unwrap();
-        assert_eq!(
-            names(dir.path()),
-            ["Pixel (MacLink).lnk", "Pixel.lnk", "Tab (MacLink).lnk", "Tab.lnk"]
-        );
+        assert_eq!(names(dir.path()), ["Pixel (MacLink).lnk", "Pixel.lnk", "Tab (MacLink).lnk", "Tab.lnk"]);
         assert_eq!(shortcut::arguments(&dir.path().join("Pixel.lnk")).unwrap(), format!("{ARG} {a}"));
         assert_eq!(
             shortcut::arguments(&dir.path().join("Pixel (MacLink).lnk")).unwrap(),

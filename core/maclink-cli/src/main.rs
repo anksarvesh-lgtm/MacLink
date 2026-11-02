@@ -995,11 +995,8 @@ static SCREEN_ASKS: std::sync::OnceLock<tokio::sync::mpsc::UnboundedSender<(Devi
 /// Whether `screen` offers apps in windows.
 static SCREEN_APPS: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 /// Active `screen` sessions: (session, pending resize (width, height), stream).
-type ScreenSession = (
-    u32,
-    std::sync::Arc<std::sync::Mutex<Option<(u32, u32)>>>,
-    std::sync::Arc<maclink_core::MirrorStream>,
-);
+type ScreenSession =
+    (u32, std::sync::Arc<std::sync::Mutex<Option<(u32, u32)>>>, std::sync::Arc<maclink_core::MirrorStream>);
 static SCREEN_SESSIONS: std::sync::Mutex<Vec<ScreenSession>> = std::sync::Mutex::new(Vec::new());
 static WEBCAM_ASKS: std::sync::OnceLock<tokio::sync::mpsc::UnboundedSender<(DeviceId, String)>> =
     std::sync::OnceLock::new();
@@ -1754,10 +1751,7 @@ fn sample_storage_tree(root: &std::path::Path) {
             "Documents/project-plan.md",
             b"# MacLink Storage\n\nBrowse phone files directly in File Explorer.\n",
         ),
-        (
-            "Download/guide.txt",
-            b"Welcome to MacLink Phone Storage.\nOpen any file to stream it on demand.\n",
-        ),
+        ("Download/guide.txt", b"Welcome to MacLink Phone Storage.\nOpen any file to stream it on demand.\n"),
         (
             "DCIM/Camera/IMG_20260406_184210.jpg",
             &sample_jpeg(640, 480, (58, 124, 165), (22, 48, 72), (242, 193, 78)),
@@ -2013,11 +2007,7 @@ impl Platform for TerminalPlatform {
         }
         Ok(())
     }
-    fn call_command(
-        &self,
-        id: &str,
-        command: maclink_core::CallCommand,
-    ) -> std::result::Result<(), String> {
+    fn call_command(&self, id: &str, command: maclink_core::CallCommand) -> std::result::Result<(), String> {
         use maclink_core::CallCommand as C;
         let mut current = CALL.lock().unwrap();
         let call = current.as_mut().filter(|c| c.id == id).ok_or("no such call")?;
@@ -2554,8 +2544,7 @@ async fn start_node(cli: &Cli) -> Result<Node> {
         let _ = std::fs::create_dir_all(&storage_root);
         sample_storage_tree(&storage_root);
         let trash_dir = data_dir.join("storage-trash");
-        let _ =
-            PHONE_STORAGE.set(maclink_core::FolderStorage::new(storage_root).with_trash_dir(trash_dir));
+        let _ = PHONE_STORAGE.set(maclink_core::FolderStorage::new(storage_root).with_trash_dir(trash_dir));
         config.capabilities.push(maclink_core::STORAGE_READ.into());
         config.capabilities.push(maclink_core::STORAGE_WRITE.into());
         config.capabilities.push(maclink_core::CAMERA_CAPTURE.into());
@@ -3628,8 +3617,7 @@ async fn run(cli: &Cli, node: &Node) -> Result<()> {
             }
             let _ = CALL_NODE.set(node.clone());
             let mut offers = cli.offers.clone();
-            offers
-                .extend([maclink_core::CALLS_STATE.to_owned(), maclink_core::CALLS_CONTROL.to_owned()]);
+            offers.extend([maclink_core::CALLS_STATE.to_owned(), maclink_core::CALLS_CONTROL.to_owned()]);
             CALL_CONTROLS.store(!*basic, std::sync::atomic::Ordering::Relaxed);
             if !*basic {
                 offers.push(maclink_core::CALLS_IN_CALL.to_owned());
@@ -3696,9 +3684,8 @@ async fn run(cli: &Cli, node: &Node) -> Result<()> {
                 .map(str::to_owned),
             );
             if node_power(cli) == PowerLevel::Elevated {
-                offers.extend(
-                    [maclink_core::TOGGLES_WIFI, maclink_core::TOGGLES_BLUETOOTH].map(str::to_owned),
-                );
+                offers
+                    .extend([maclink_core::TOGGLES_WIFI, maclink_core::TOGGLES_BLUETOOTH].map(str::to_owned));
             }
             node.update_power(node_power(cli), offers).await;
             let _ = node.toggles_changed(sample_toggles()).await;
@@ -5263,8 +5250,8 @@ fn stream_screen(
         }
         let time = started.elapsed().as_micros() as u64;
         if let Some((w, h)) = pending.lock().unwrap().take() {
-            let cfg = maclink_core::MirrorConfig { codec: "h264".into(), width: w, height: h, session }
-                .to_cbor();
+            let cfg =
+                maclink_core::MirrorConfig { codec: "h264".into(), width: w, height: h, session }.to_cbor();
             if mirror.send(PacketKind::Config, time, cfg) == MirrorSend::Closed {
                 break;
             }

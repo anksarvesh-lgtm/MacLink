@@ -6,7 +6,11 @@ use std::path::Path;
 
 unsafe extern "C" {
     fn mac_login_item_get_status() -> i32;
-    fn mac_login_item_set_enabled(enabled: bool, err_buf: *mut std::os::raw::c_char, err_buf_len: std::os::raw::c_int) -> bool;
+    fn mac_login_item_set_enabled(
+        enabled: bool,
+        err_buf: *mut std::os::raw::c_char,
+        err_buf_len: std::os::raw::c_int,
+    ) -> bool;
     fn mac_login_item_open_settings();
 }
 
@@ -31,17 +35,11 @@ pub fn is_installed(_exe: &Path) -> bool {
 
 pub fn set_enabled(enabled: bool) -> Result<(), String> {
     let mut err_buf = [0i8; 256];
-    let ok = unsafe {
-        mac_login_item_set_enabled(enabled, err_buf.as_mut_ptr(), 256)
-    };
+    let ok = unsafe { mac_login_item_set_enabled(enabled, err_buf.as_mut_ptr(), 256) };
     if ok {
         Ok(())
     } else {
-        let err_str = unsafe {
-            std::ffi::CStr::from_ptr(err_buf.as_ptr())
-                .to_string_lossy()
-                .into_owned()
-        };
+        let err_str = unsafe { std::ffi::CStr::from_ptr(err_buf.as_ptr()).to_string_lossy().into_owned() };
         if err_str.is_empty() {
             Err("failed to update login item registration".to_string())
         } else {
@@ -55,5 +53,7 @@ pub fn set(enabled: bool, _exe: &Path) -> Result<(), String> {
 }
 
 pub fn open_settings() {
-    unsafe { mac_login_item_open_settings(); }
+    unsafe {
+        mac_login_item_open_settings();
+    }
 }

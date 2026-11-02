@@ -36,11 +36,7 @@ pub struct MenuLabels {
 }
 
 unsafe extern "C" {
-    fn mac_lifecycle_init(
-        on_activate: extern "C" fn(),
-        on_quit: extern "C" fn(),
-        on_wake: extern "C" fn(),
-    );
+    fn mac_lifecycle_init(on_activate: extern "C" fn(), on_quit: extern "C" fn(), on_wake: extern "C" fn());
     fn mac_lifecycle_cleanup();
     fn mac_was_launched_as_login_item() -> bool;
     fn mac_status_item_init(
@@ -160,11 +156,7 @@ impl Tray {
 
     pub fn set_tooltip(&self, text: &str) {
         let connected = text.contains("connected");
-        let line = if connected {
-            text.replace("MacLink · ", "")
-        } else {
-            "No phone connected".to_string()
-        };
+        let line = if connected { text.replace("MacLink · ", "") } else { "No phone connected".to_string() };
         let c_line = CString::new(line).unwrap_or_default();
         let find_phone = FIND_PHONE_ENABLED.load(std::sync::atomic::Ordering::Relaxed) && connected;
         unsafe {

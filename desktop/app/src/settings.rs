@@ -147,11 +147,7 @@ pub fn set_shelf_edge_trigger(on: bool) {
 
 pub fn shelf_edge_size() -> String {
     let s = SHELF_EDGE_SIZE.lock().unwrap_or_else(|e| e.into_inner()).clone();
-    if s.is_empty() {
-        "medium".to_owned()
-    } else {
-        s
-    }
+    if s.is_empty() { "medium".to_owned() } else { s }
 }
 
 pub fn set_shelf_edge_size(size: &str) {
@@ -611,7 +607,8 @@ impl Settings {
         self.window_screen = self.window_screen.map(|s| s.trim().to_owned()).filter(|s| !s.is_empty());
         self.window_width = self.window_width.clamp(MIN_WINDOW_WIDTH, MAX_WINDOW_WIDTH);
         self.window_height = self.window_height.clamp(MIN_WINDOW_HEIGHT, MAX_WINDOW_HEIGHT);
-        if !matches!(self.shelf_edge_size.trim().to_ascii_lowercase().as_str(), "small" | "medium" | "large") {
+        if !matches!(self.shelf_edge_size.trim().to_ascii_lowercase().as_str(), "small" | "medium" | "large")
+        {
             self.shelf_edge_size = default_shelf_edge_size();
         }
         if self.window_x.is_none() || self.window_y.is_none() {

@@ -936,10 +936,9 @@ fn request(window: Window, options: MirrorStart) {
         if let Err(e) = node.mirror_start(window.device, options).await {
             let reason = match e {
                 Error::Denied => tr!("Mirror", "Mirroring is turned off for this phone."),
-                Error::Unsupported if app => tr!(
-                    "Mirror",
-                    "Set up Wireless debugging in MacLink on the phone to open its apps here."
-                ),
+                Error::Unsupported if app => {
+                    tr!("Mirror", "Set up Wireless debugging in MacLink on the phone to open its apps here.")
+                }
                 Error::Unsupported => {
                     tr!(
                         "Mirror",
@@ -1332,10 +1331,7 @@ pub fn drop_files(raw_urls: &[String]) {
 pub fn request_control(key: &str) {
     let Some(window) = Window::parse(key) else { return };
     set_notice(window, "On your phone, tap Allow / turn on Control from your PC in MacLink");
-    input(
-        window,
-        maclink_core::MirrorInput::Touch { action: maclink_core::TouchAction::Up, x: 0.5, y: 0.5 },
-    );
+    input(window, maclink_core::MirrorInput::Touch { action: maclink_core::TouchAction::Up, x: 0.5, y: 0.5 });
 }
 
 /// Notifies PC-to-phone cursor/keyboard Flow when the mouse enters `key`.

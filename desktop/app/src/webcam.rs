@@ -2,9 +2,9 @@
 //! Webcam integration stub for macOS.
 //! Phone camera and webcam continuity are retired per user specification.
 
-use std::sync::{Arc, Mutex};
-use maclink_core::{DeviceId, NodeEvent, WebcamSink};
 use crate::settings::Settings;
+use maclink_core::{DeviceId, NodeEvent, WebcamSink};
+use std::sync::{Arc, Mutex};
 
 #[allow(dead_code)] // Preview stream identifier for webcam
 pub const PREVIEW_STREAM: &str = "webcam";
@@ -13,11 +13,20 @@ pub const PREVIEW_STREAM: &str = "webcam";
 pub enum Phase {
     Idle,
     #[allow(dead_code)] // Asking phase for webcam stream
-    Asking { device: DeviceId },
+    Asking {
+        device: DeviceId,
+    },
     #[allow(dead_code)] // Active streaming phase for webcam stream
-    Streaming { device: DeviceId, width: u32, height: u32, fps: u32 },
+    Streaming {
+        device: DeviceId,
+        width: u32,
+        height: u32,
+        fps: u32,
+    },
     #[allow(dead_code)] // Ended phase for webcam stream
-    Ended { reason: String },
+    Ended {
+        reason: String,
+    },
 }
 
 static SELECTED_PHONE: Mutex<Option<DeviceId>> = Mutex::new(None);

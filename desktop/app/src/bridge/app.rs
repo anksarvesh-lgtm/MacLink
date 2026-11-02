@@ -413,10 +413,20 @@ pub mod qobject {
         fn download_remote_file(self: Pin<&mut AppController>, device: &QString, remote_path: &QString);
         /// Uploads local files to the specified remote directory on the phone
         #[qinvokable]
-        fn upload_files_to_remote(self: Pin<&mut AppController>, device: &QString, remote_dir: &QString, local_urls_json: &QString);
+        fn upload_files_to_remote(
+            self: Pin<&mut AppController>,
+            device: &QString,
+            remote_dir: &QString,
+            local_urls_json: &QString,
+        );
         /// Creates a new folder in remote storage
         #[qinvokable]
-        fn create_remote_folder(self: Pin<&mut AppController>, device: &QString, parent_dir: &QString, folder_name: &QString);
+        fn create_remote_folder(
+            self: Pin<&mut AppController>,
+            device: &QString,
+            parent_dir: &QString,
+            folder_name: &QString,
+        );
         /// Deletes a file or directory in remote storage
         #[qinvokable]
         fn delete_remote_item(self: Pin<&mut AppController>, device: &QString, remote_path: &QString);
@@ -1962,10 +1972,9 @@ impl qobject::AppController {
             match crate::remote_files::download_file(&node, dev, &clean_path, &downloads).await {
                 Ok(saved_path) => {
                     let _ = qt.queue(move |mut object| {
-                        object.as_mut().toast(QString::from(&format!(
-                            "Saved {} to Downloads/MacLink",
-                            file_name
-                        )));
+                        object
+                            .as_mut()
+                            .toast(QString::from(&format!("Saved {} to Downloads/MacLink", file_name)));
                         crate::transfers::show_in_folder(&saved_path);
                     });
                 }
@@ -2039,9 +2048,13 @@ impl qobject::AppController {
 
             let _ = qt.queue(move |mut object| {
                 if let Some(e) = last_err {
-                    object.as_mut().toast(QString::from(&format!("Uploaded {uploaded}/{count} files (error: {e})")));
+                    object
+                        .as_mut()
+                        .toast(QString::from(&format!("Uploaded {uploaded}/{count} files (error: {e})")));
                 } else {
-                    object.as_mut().toast(QString::from(&format!("Successfully uploaded {uploaded} file(s) to phone")));
+                    object
+                        .as_mut()
+                        .toast(QString::from(&format!("Successfully uploaded {uploaded} file(s) to phone")));
                 }
                 object.refresh_remote_storage();
             });
@@ -2159,7 +2172,6 @@ fn decode_url_percent(s: &str) -> String {
 }
 
 impl qobject::AppController {
-
     pub fn watch_home_summary(&self, device: &QString) {
         watch_home(super::parse_device(device));
     }

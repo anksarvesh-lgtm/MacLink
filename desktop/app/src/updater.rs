@@ -40,18 +40,15 @@ use std::{
 use serde::Deserialize;
 use sha2::{Digest, Sha256};
 
-#[cfg(windows)]
-use crate::win::autostart;
-use crate::{
-    core_host,
-    state::Changes,
-};
-#[cfg(windows)]
-use crate::win::{http, toast};
-#[cfg(target_os = "macos")]
-use crate::mac::{http, toast};
 #[cfg(target_os = "linux")]
 use crate::linux::{http, toast};
+#[cfg(target_os = "macos")]
+use crate::mac::{http, toast};
+#[cfg(windows)]
+use crate::win::autostart;
+#[cfg(windows)]
+use crate::win::{http, toast};
+use crate::{core_host, state::Changes};
 
 const LATEST: &str = "https://api.github.com/repos/anksarvesh-lgtm/MacLink/releases/latest";
 const FIRST_CHECK: Duration = Duration::from_millis(1000);
@@ -165,11 +162,9 @@ pub fn check_now(told: bool) -> Option<String> {
             }
             if AUTO_INSTALL.load(Ordering::Relaxed) {
                 let to_stage = update.clone();
-                let _ = std::thread::Builder::new()
-                    .name("update-autodownload".into())
-                    .spawn(move || {
-                        let _ = stage(&to_stage, |_, _| {});
-                    });
+                let _ = std::thread::Builder::new().name("update-autodownload".into()).spawn(move || {
+                    let _ = stage(&to_stage, |_, _| {});
+                });
             }
             Some(tr!("Updater", "MacLink %1 is available.", update.version))
         }

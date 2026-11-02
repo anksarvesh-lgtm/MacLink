@@ -98,34 +98,20 @@ pub fn classify_file_type(name: &str, is_dir: bool) -> (String, String) {
     if is_dir {
         return ("dir".to_string(), "folder".to_string());
     }
-    let ext = Path::new(name)
-        .extension()
-        .and_then(|e| e.to_str())
-        .unwrap_or("")
-        .to_lowercase();
+    let ext = Path::new(name).extension().and_then(|e| e.to_str()).unwrap_or("").to_lowercase();
 
     match ext.as_str() {
         "jpg" | "jpeg" | "png" | "gif" | "webp" | "heic" | "heif" | "bmp" | "svg" => {
             ("image".to_string(), "photo".to_string())
         }
-        "mp4" | "mkv" | "mov" | "avi" | "webm" | "m4v" => {
-            ("video".to_string(), "video".to_string())
-        }
-        "mp3" | "m4a" | "wav" | "flac" | "aac" | "ogg" | "opus" => {
-            ("audio".to_string(), "sound".to_string())
-        }
+        "mp4" | "mkv" | "mov" | "avi" | "webm" | "m4v" => ("video".to_string(), "video".to_string()),
+        "mp3" | "m4a" | "wav" | "flac" | "aac" | "ogg" | "opus" => ("audio".to_string(), "sound".to_string()),
         "pdf" | "doc" | "docx" | "txt" | "rtf" | "md" | "odt" | "xlsx" | "xls" | "csv" | "pptx" | "ppt" => {
             ("doc".to_string(), "text".to_string())
         }
-        "apk" => {
-            ("apk".to_string(), "sparkle".to_string())
-        }
-        "zip" | "tar" | "gz" | "7z" | "rar" | "bz2" | "xz" => {
-            ("archive".to_string(), "folder".to_string())
-        }
-        _ => {
-            ("file".to_string(), "text".to_string())
-        }
+        "apk" => ("apk".to_string(), "sparkle".to_string()),
+        "zip" | "tar" | "gz" | "7z" | "rar" | "bz2" | "xz" => ("archive".to_string(), "folder".to_string()),
+        _ => ("file".to_string(), "text".to_string()),
     }
 }
 
@@ -135,11 +121,7 @@ pub fn entries_to_ui_json(folder: &str, entries: &[StorageEntry]) -> String {
         .iter()
         .map(|entry| {
             let (kind, icon) = classify_file_type(&entry.name, entry.is_dir);
-            let size = if entry.is_dir {
-                "Folder".to_string()
-            } else {
-                format_bytes(entry.size)
-            };
+            let size = if entry.is_dir { "Folder".to_string() } else { format_bytes(entry.size) };
             RemoteFileUiItem {
                 name: entry.name.clone(),
                 folder: folder.to_string(),
@@ -178,8 +160,7 @@ pub async fn download_file(
         .await
         .map_err(|e| format!("failed to read file from phone: {e}"))?;
 
-    std::fs::write(&target_file, &bytes)
-        .map_err(|e| format!("failed to save downloaded file: {e}"))?;
+    std::fs::write(&target_file, &bytes).map_err(|e| format!("failed to save downloaded file: {e}"))?;
 
     Ok(target_file)
 }
@@ -200,11 +181,8 @@ pub async fn upload_file(
         .ok_or_else(|| "invalid local file name".to_string())?;
 
     let clean_dir = normalize_remote_path(remote_dir);
-    let remote_dest = if clean_dir.is_empty() {
-        file_name.to_string()
-    } else {
-        format!("{clean_dir}/{file_name}")
-    };
+    let remote_dest =
+        if clean_dir.is_empty() { file_name.to_string() } else { format!("{clean_dir}/{file_name}") };
 
     node.storage_write(peer, &remote_dest, local_path)
         .await
@@ -225,11 +203,8 @@ pub async fn create_folder(
     if clean_name.is_empty() {
         return Err("folder name cannot be empty".to_string());
     }
-    let target_path = if clean_parent.is_empty() {
-        clean_name.to_string()
-    } else {
-        format!("{clean_parent}/{clean_name}")
-    };
+    let target_path =
+        if clean_parent.is_empty() { clean_name.to_string() } else { format!("{clean_parent}/{clean_name}") };
 
     node.storage_mkdir(peer, &target_path)
         .await
@@ -287,4 +262,3 @@ mod tests {
         assert_eq!(icon, "folder");
     }
 }
-

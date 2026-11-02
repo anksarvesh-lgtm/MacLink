@@ -2331,9 +2331,7 @@ fn file_to_send(file: FileToSend) -> Result<core::OutgoingFile> {
         }
         #[cfg(not(unix))]
         FileToSend::Fd { .. } => {
-            return Err(MacLinkError::Internal {
-                reason: "file descriptors exist only on Android".into(),
-            });
+            return Err(MacLinkError::Internal { reason: "file descriptors exist only on Android".into() });
         }
     })
 }
@@ -4307,12 +4305,13 @@ impl MacLinkNode {
         let peer_id = parse_id(&relay_peer)?;
         let mac_bytes = core::parse_mac(&mac)
             .ok_or_else(|| MacLinkError::Internal { reason: "invalid MAC address".into() })?;
-        let bcast = match broadcast.as_deref().map(str::trim).filter(|s| !s.is_empty()) {
-            Some(s) => Some(s.parse::<std::net::Ipv4Addr>().map_err(|_| MacLinkError::Internal {
-                reason: "invalid broadcast IPv4 address".into(),
-            })?),
-            None => None,
-        };
+        let bcast =
+            match broadcast.as_deref().map(str::trim).filter(|s| !s.is_empty()) {
+                Some(s) => Some(s.parse::<std::net::Ipv4Addr>().map_err(|_| MacLinkError::Internal {
+                    reason: "invalid broadcast IPv4 address".into(),
+                })?),
+                None => None,
+            };
         let node = self.node.clone();
         self.block_on_rt(async move { Ok(node.wake_via_relay(&peer_id, mac_bytes, bcast).await?) })
     }

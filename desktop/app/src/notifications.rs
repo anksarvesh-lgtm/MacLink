@@ -396,18 +396,13 @@ fn show(device: DeviceId, n: &Notification) {
     // When title exists: Title = Contact/Sender name, Subtitle = "AppName · Sub" or "AppName"
     // When title is empty: Title = AppName, Subtitle = Sub or DeviceName
     let (notif_title, notif_sub) = match (&n.title, &n.sub) {
-        (Some(title), Some(sub)) if !title.trim().is_empty() && !sub.trim().is_empty() => (
-            title.trim().to_owned(),
-            format!("{} · {}", n.app_name.trim(), sub.trim()),
-        ),
-        (Some(title), _) if !title.trim().is_empty() => (
-            title.trim().to_owned(),
-            n.app_name.trim().to_owned(),
-        ),
-        (None, Some(sub)) if !sub.trim().is_empty() => (
-            n.app_name.trim().to_owned(),
-            sub.trim().to_owned(),
-        ),
+        (Some(title), Some(sub)) if !title.trim().is_empty() && !sub.trim().is_empty() => {
+            (title.trim().to_owned(), format!("{} · {}", n.app_name.trim(), sub.trim()))
+        }
+        (Some(title), _) if !title.trim().is_empty() => {
+            (title.trim().to_owned(), n.app_name.trim().to_owned())
+        }
+        (None, Some(sub)) if !sub.trim().is_empty() => (n.app_name.trim().to_owned(), sub.trim().to_owned()),
         _ => (
             n.app_name.trim().to_owned(),
             match &device_name {

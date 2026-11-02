@@ -123,11 +123,7 @@ impl Platform for DesktopPlatform {
     ) -> Result<(), MediaError> {
         win::media_sessions::command(player, action, position)
     }
-    fn mirror_requested(
-        &self,
-        peer: &maclink_core::DeviceId,
-        options: &MirrorStart,
-    ) -> Result<(), String> {
+    fn mirror_requested(&self, peer: &maclink_core::DeviceId, options: &MirrorStart) -> Result<(), String> {
         if options.session != maclink_core::MIRROR_SCREEN {
             return Err("unsupported mirror session on PC".into());
         }
@@ -154,10 +150,7 @@ impl Platform for DesktopPlatform {
     ) -> Option<std::sync::Arc<dyn maclink_core::MirrorSink>> {
         mirror::sink(peer, session)
     }
-    fn mic_sink(
-        &self,
-        peer: &maclink_core::DeviceId,
-    ) -> Option<std::sync::Arc<dyn maclink_core::MicSink>> {
+    fn mic_sink(&self, peer: &maclink_core::DeviceId) -> Option<std::sync::Arc<dyn maclink_core::MicSink>> {
         phone_mic::sink(peer)
     }
     fn webcam_sink(
@@ -375,9 +368,7 @@ fn default_data_dir() -> PathBuf {
     let legacy_lower = unmask(&[0x34, 0x3f, 0x39, 0x2e, 0x3b, 0x28, 0x36, 0x33, 0x34, 0x31]);
     for legacy_name in [&legacy_cap, &legacy_lower] {
         let legacy = base.join(&**legacy_name);
-        if !maclink.exists() && legacy.exists()
-            && std::fs::rename(&legacy, &maclink).is_ok()
-        {
+        if !maclink.exists() && legacy.exists() && std::fs::rename(&legacy, &maclink).is_ok() {
             tracing::info!("Migrated legacy data folder to MacLink: {}", maclink.display());
             break;
         }
@@ -759,9 +750,7 @@ mod tests {
     #[test]
     fn parse_options_recognizes_task_flag() {
         let find_opts = parse_options_from(
-            ["--data-dir", r"C:\Temp\maclink-test", "--task", "find-phone"]
-                .into_iter()
-                .map(OsString::from),
+            ["--data-dir", r"C:\Temp\maclink-test", "--task", "find-phone"].into_iter().map(OsString::from),
         );
         assert_eq!(find_opts.data_dir, Some(PathBuf::from(r"C:\Temp\maclink-test")));
         assert_eq!(find_opts.task.as_deref(), Some("find-phone"));

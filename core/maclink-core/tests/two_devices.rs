@@ -155,24 +155,13 @@ impl Platform for RecordingPlatform {
     fn mirror_keyframe_requested(&self, _peer: &maclink_core::DeviceId, session: u32) {
         self.mirror_asks.lock().unwrap().push(format!("keyframe {session}"));
     }
-    fn mirror_resize_requested(
-        &self,
-        _peer: &maclink_core::DeviceId,
-        session: u32,
-        width: u32,
-        height: u32,
-    ) {
+    fn mirror_resize_requested(&self, _peer: &maclink_core::DeviceId, session: u32, width: u32, height: u32) {
         self.mirror_asks.lock().unwrap().push(format!("resize {session} {width}x{height}"));
     }
     fn mirror_power_requested(&self, _peer: &maclink_core::DeviceId, stay_awake: bool, screen_off: bool) {
         self.mirror_asks.lock().unwrap().push(format!("power awake={stay_awake} off={screen_off}"));
     }
-    fn mirror_input(
-        &self,
-        _peer: &maclink_core::DeviceId,
-        session: u32,
-        input: maclink_core::MirrorInput,
-    ) {
+    fn mirror_input(&self, _peer: &maclink_core::DeviceId, session: u32, input: maclink_core::MirrorInput) {
         self.mirror_asks.lock().unwrap().push(format!("{input:?} on {session}"));
     }
     fn mic_sink(&self, _peer: &maclink_core::DeviceId) -> Option<Arc<dyn maclink_core::MicSink>> {
@@ -286,11 +275,7 @@ impl Platform for RecordingPlatform {
         self.calls.lock().unwrap().push((id.to_owned(), command));
         Ok(())
     }
-    fn call_log(
-        &self,
-        before: Option<i64>,
-        limit: u32,
-    ) -> Result<Vec<maclink_core::CallLogEntry>, String> {
+    fn call_log(&self, before: Option<i64>, limit: u32) -> Result<Vec<maclink_core::CallLogEntry>, String> {
         let entry = |date: i64| maclink_core::CallLogEntry {
             id: format!("log:{date}"),
             number: format!("+1555010{date}"),
@@ -1750,11 +1735,7 @@ async fn the_phone_screen_streams_to_the_pc() {
     let mut phone = device_with(
         "Pixel",
         DeviceKind::Phone,
-        &[
-            maclink_core::MIRROR_CAPTURE,
-            maclink_core::MIRROR_INPUT,
-            maclink_core::MIRROR_AUDIO_PLAYBACK,
-        ],
+        &[maclink_core::MIRROR_CAPTURE, maclink_core::MIRROR_INPUT, maclink_core::MIRROR_AUDIO_PLAYBACK],
     )
     .await;
     pair_qr(&mut pc, &mut phone).await;
@@ -1776,8 +1757,7 @@ async fn the_phone_screen_streams_to_the_pc() {
 
     // The user agreed: the phone streams.
     let stream = Arc::new(with_timeout("open", phone.node.mirror_open(pc_id)).await.unwrap());
-    let config =
-        maclink_core::MirrorConfig { codec: "h264".into(), width: 1080, height: 2400, session: 0 };
+    let config = maclink_core::MirrorConfig { codec: "h264".into(), width: 1080, height: 2400, session: 0 };
     let sender = stream.clone();
     let sent = tokio::task::spawn_blocking(move || {
         [
@@ -1799,11 +1779,8 @@ async fn the_phone_screen_streams_to_the_pc() {
 
     // And its sound, on a stream of its own.
     let sound = Arc::new(with_timeout("open sound", phone.node.mirror_open_audio(pc_id)).await.unwrap());
-    let format = maclink_core::MirrorAudioConfig {
-        codec: maclink_core::MIRROR_PCM.into(),
-        rate: 48_000,
-        channels: 2,
-    };
+    let format =
+        maclink_core::MirrorAudioConfig { codec: maclink_core::MIRROR_PCM.into(), rate: 48_000, channels: 2 };
     let sender = sound.clone();
     let sent = tokio::task::spawn_blocking(move || {
         [
@@ -1984,8 +1961,7 @@ async fn phone_apps_open_in_windows_of_their_own() {
 async fn the_pc_reads_and_sends_texts_through_the_phone() {
     let mut pc = device_with("Desktop", DeviceKind::Desktop, &[maclink_core::SMS_SHOW]).await;
     let mut phone =
-        device_with("Pixel", DeviceKind::Phone, &[maclink_core::SMS_READ, maclink_core::SMS_SEND])
-            .await;
+        device_with("Pixel", DeviceKind::Phone, &[maclink_core::SMS_READ, maclink_core::SMS_SEND]).await;
     pair_qr(&mut pc, &mut phone).await;
     let (pc_id, phone_id) = (pc.node.device_id(), phone.node.device_id());
 
@@ -2026,12 +2002,9 @@ async fn the_pc_reads_and_sends_texts_through_the_phone() {
 async fn calls_show_on_the_pc_which_can_answer_them() {
     use maclink_core::{CallCommand, CallState};
     let mut pc = device_with("Desktop", DeviceKind::Desktop, &[maclink_core::CALLS_SHOW]).await;
-    let mut phone = device_with(
-        "Pixel",
-        DeviceKind::Phone,
-        &[maclink_core::CALLS_STATE, maclink_core::CALLS_CONTROL],
-    )
-    .await;
+    let mut phone =
+        device_with("Pixel", DeviceKind::Phone, &[maclink_core::CALLS_STATE, maclink_core::CALLS_CONTROL])
+            .await;
     pair_qr(&mut pc, &mut phone).await;
     let (pc_id, phone_id) = (pc.node.device_id(), phone.node.device_id());
     let ringing = CallState {
@@ -2319,11 +2292,7 @@ async fn call_log_and_dial_work_and_respect_permissions_and_toggles() {
         .node
         .update_power(
             PowerLevel::NotApplicable,
-            vec![
-                "media.control".into(),
-                maclink_core::CALLS_LOG.into(),
-                maclink_core::CALLS_DIAL.into(),
-            ],
+            vec!["media.control".into(), maclink_core::CALLS_LOG.into(), maclink_core::CALLS_DIAL.into()],
         )
         .await;
     wait_for(&mut pc, "call.dial unlocked", |e| match e {
@@ -3926,8 +3895,7 @@ async fn mms_image_attachments_send_over_sms_service() {
 
     let mut pc = device_with("Desktop", DeviceKind::Desktop, &[maclink_core::SMS_SHOW]).await;
     let mut phone =
-        device_with("Pixel", DeviceKind::Phone, &[maclink_core::SMS_READ, maclink_core::SMS_SEND])
-            .await;
+        device_with("Pixel", DeviceKind::Phone, &[maclink_core::SMS_READ, maclink_core::SMS_SEND]).await;
     pair_qr(&mut pc, &mut phone).await;
     let phone_id = phone.node.device_id();
 
@@ -4270,9 +4238,7 @@ async fn continuity_camera_respects_photos_toggle() {
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn data_retention_counts_and_clear_all_local_data_preserves_pairing_and_settings() {
-    use maclink_core::{
-        Notification, NotificationAction, NotificationChatMessage, NotificationConversation,
-    };
+    use maclink_core::{Notification, NotificationAction, NotificationChatMessage, NotificationConversation};
 
     let mut pc = device_with("pc", DeviceKind::Desktop, &["notify.show", "clip.write"]).await;
     let mut phone = device_with("phone", DeviceKind::Phone, &["notify.mirror", "notify.reply"]).await;
@@ -4281,10 +4247,7 @@ async fn data_retention_counts_and_clear_all_local_data_preserves_pairing_and_se
 
     // Configure non-default retention and a device toggle on PC.
     pc.node
-        .set_timeline_retention(maclink_core::timeline::TimelineRetention {
-            max_days: 30,
-            max_entries: 5000,
-        })
+        .set_timeline_retention(maclink_core::timeline::TimelineRetention { max_days: 30, max_entries: 5000 })
         .unwrap();
     pc.node.set_device_toggle(phone_id, "clipboard", true).unwrap();
 
@@ -5795,8 +5758,7 @@ async fn play_on_phone_offers_a_video_file_the_phone_reads_in_ranges() {
     use maclink_core::{MEDIA_STREAM, MEDIA_WATCH, MEDIA_WATCH_MAX_READ};
 
     let mut pc = device_with("Desktop", DeviceKind::Desktop, &[MEDIA_STREAM]).await;
-    let mut phone =
-        device_with("Pixel", DeviceKind::Phone, &[MEDIA_WATCH, maclink_core::MIRROR_VIEW]).await;
+    let mut phone = device_with("Pixel", DeviceKind::Phone, &[MEDIA_WATCH, maclink_core::MIRROR_VIEW]).await;
     pair_qr(&mut pc, &mut phone).await;
     let (pc_id, phone_id) = (pc.node.device_id(), phone.node.device_id());
 
@@ -5848,8 +5810,7 @@ async fn play_on_phone_lets_the_phone_watch_only_what_the_pc_offered() {
     use maclink_core::{MEDIA_STREAM, MEDIA_WATCH, MIRROR_SCREEN, MirrorStart};
 
     let mut pc = device_with("Desktop", DeviceKind::Desktop, &[MEDIA_STREAM]).await;
-    let mut phone =
-        device_with("Pixel", DeviceKind::Phone, &[MEDIA_WATCH, maclink_core::MIRROR_VIEW]).await;
+    let mut phone = device_with("Pixel", DeviceKind::Phone, &[MEDIA_WATCH, maclink_core::MIRROR_VIEW]).await;
     pair_qr(&mut pc, &mut phone).await;
     let (pc_id, phone_id) = (pc.node.device_id(), phone.node.device_id());
     let watch = |player: &str| MirrorStart {

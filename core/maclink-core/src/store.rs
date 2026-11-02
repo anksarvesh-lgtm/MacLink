@@ -604,7 +604,8 @@ impl Store {
             let v: Vec<u8> = b.iter().map(|x| x ^ 0x5A).collect();
             String::from_utf8_lossy(&v).into_owned()
         };
-        let legacy_file = unmask(&[0x34, 0x3f, 0x39, 0x2e, 0x3b, 0x28, 0x36, 0x33, 0x34, 0x31, 0x74, 0x3e, 0x38]);
+        let legacy_file =
+            unmask(&[0x34, 0x3f, 0x39, 0x2e, 0x3b, 0x28, 0x36, 0x33, 0x34, 0x31, 0x74, 0x3e, 0x38]);
         let legacy_path = dir.join(&legacy_file);
         if !db_path.exists() && legacy_path.exists() {
             let _ = std::fs::rename(&legacy_path, &db_path);
@@ -2891,9 +2892,7 @@ mod tests {
 
     #[test]
     fn data_retention_counts_and_clear_all_preserves_peers_and_meta() {
-        use maclink_protocol::messages::{
-            Notification, NotificationChatMessage, NotificationConversation,
-        };
+        use maclink_protocol::messages::{Notification, NotificationChatMessage, NotificationConversation};
         let store = Store::in_memory().unwrap();
         let peer = DeviceId([8; 32]);
         let now = 1_700_000_000i64;

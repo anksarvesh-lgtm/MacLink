@@ -4,19 +4,19 @@
   "goal": "Fix GitHub Actions CI failures: Clippy warnings, cargo fmt, and missing keystore in release workflow",
   "status": "active",
   "created_at": "2026-11-02T11:01:27.605Z",
-  "updated_at": "2026-11-02T11:01:27.605Z",
-  "checkpoint_count": 0,
+  "updated_at": "2026-11-02T11:02:15.905Z",
+  "checkpoint_count": 1,
   "steps": [
     {
       "id": "s1",
       "title": "Fix Clippy double-ended-iterator-last warnings in bridge/app.rs and remote_files.rs",
-      "status": "in_progress",
+      "status": "done",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": null,
+      "note": "Replaced .split('/').last() with .split('/').next_back() in desktop/app/src/bridge/app.rs and desktop/app/src/remote_files.rs. Committed in 577e5b5.",
       "last_error": null,
-      "updated_at": "2026-11-02T11:01:27.605Z"
+      "updated_at": "2026-11-02T11:02:15.905Z"
     },
     {
       "id": "s2",

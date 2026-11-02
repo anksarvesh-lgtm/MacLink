@@ -33,7 +33,6 @@ pub fn init() {
     set_size(&crate::settings::shelf_edge_size());
 }
 
-
 /// Toggles whether the edge trigger and cursor monitor are active.
 pub fn set_enabled(enabled: bool) {
     unsafe {

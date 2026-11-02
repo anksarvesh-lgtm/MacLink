@@ -89,10 +89,7 @@ unsafe extern "C" {
         value: f64,
         status: *const std::os::raw::c_char,
     );
-    fn mac_notification_remove(
-        device: *const std::os::raw::c_char,
-        key: *const std::os::raw::c_char,
-    );
+    fn mac_notification_remove(device: *const std::os::raw::c_char, key: *const std::os::raw::c_char);
     fn mac_notification_remove_device(device: *const std::os::raw::c_char);
     fn mac_notification_unregister();
 }
@@ -167,11 +164,9 @@ pub fn show(toast: Toast) {
     let img_c = toast.image.and_then(|p| p.to_str().and_then(|s| CString::new(s).ok()));
 
     let (has_reply, reply_id_c, reply_title_c) = match toast.reply {
-        Some((id, title)) => (
-            true,
-            CString::new(id).unwrap_or_default(),
-            CString::new(title).unwrap_or_default(),
-        ),
+        Some((id, title)) => {
+            (true, CString::new(id).unwrap_or_default(), CString::new(title).unwrap_or_default())
+        }
         None => (false, CString::default(), CString::default()),
     };
 
@@ -207,11 +202,9 @@ pub fn show(toast: Toast) {
 }
 
 pub fn update_progress(device: &str, key: &str, progress: Progress) {
-    if let (Ok(dev_c), Ok(key_c), Ok(status_c)) = (
-        CString::new(device),
-        CString::new(key),
-        CString::new(progress.status),
-    ) {
+    if let (Ok(dev_c), Ok(key_c), Ok(status_c)) =
+        (CString::new(device), CString::new(key), CString::new(progress.status))
+    {
         unsafe {
             mac_notification_update_progress(
                 dev_c.as_ptr(),

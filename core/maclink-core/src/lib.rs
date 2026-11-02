@@ -73,9 +73,6 @@ pub use localsend::{
     LOCALSEND_DEFAULT_PORT, LOCALSEND_MULTICAST_ADDR, LOCALSEND_PROTOCOL_VERSION, LocalSendPeer,
     peer_device_id as localsend_peer_device_id,
 };
-pub use media::{MediaAction, MediaError};
-pub use mic::{MicSink, TOGGLE as MIC_TOGGLE};
-pub use mirror::{MirrorSend, MirrorSink, MirrorStream, PC_MIRROR_TOGGLE};
 pub use maclink_protocol::messages::clip::{
     IMAGE_TYPES as CLIP_IMAGE_TYPES, MAX_IMAGE_BYTES as CLIP_MAX_IMAGE_BYTES,
 };
@@ -138,6 +135,9 @@ pub use maclink_protocol::{
     },
     pairing::PairingUri,
 };
+pub use media::{MediaAction, MediaError};
+pub use mic::{MicSink, TOGGLE as MIC_TOGGLE};
+pub use mirror::{MirrorSend, MirrorSink, MirrorStream, PC_MIRROR_TOGGLE};
 pub use node::{DataRetentionCounts, Node, PeerDiagnostics};
 pub use notifications::{NotificationError, SHOW as NOTIFY_SHOW};
 pub use palette::{

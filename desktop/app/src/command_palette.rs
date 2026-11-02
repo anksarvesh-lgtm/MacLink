@@ -687,11 +687,7 @@ fn build_candidates() -> Vec<PaletteCandidate> {
             } else {
                 tr!("CommandPalette", "Use phone as webcam")
             },
-            subtitle: tr!(
-                "CommandPalette",
-                "Stream %1's camera into the MacLink virtual webcam",
-                dev_name
-            ),
+            subtitle: tr!("CommandPalette", "Stream %1's camera into the MacLink virtual webcam", dev_name),
             category: "Actions".into(),
             icon: "video".into(),
             badge: dev_name.clone(),

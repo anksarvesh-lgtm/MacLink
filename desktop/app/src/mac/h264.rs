@@ -43,10 +43,8 @@ unsafe impl Send for Decoder {}
 
 impl Default for Decoder {
     fn default() -> Self {
-        Self::new_for_codec("h264").unwrap_or_else(|_| Self {
-            codec: "h264".into(),
-            raw: std::ptr::null_mut(),
-        })
+        Self::new_for_codec("h264")
+            .unwrap_or_else(|_| Self { codec: "h264".into(), raw: std::ptr::null_mut() })
     }
 }
 
@@ -57,10 +55,7 @@ impl Decoder {
         if raw.is_null() {
             return Err("failed to create VideoToolbox decoder".into());
         }
-        Ok(Decoder {
-            codec: codec.to_string(),
-            raw,
-        })
+        Ok(Decoder { codec: codec.to_string(), raw })
     }
 
     pub fn new_gpu(codec: &str) -> Result<Decoder, String> {

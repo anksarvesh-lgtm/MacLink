@@ -307,8 +307,7 @@ async fn run(data_dir: PathBuf, platform: Arc<dyn Platform>) {
                     let items = node.send_queue(None).unwrap_or_default();
                     host.hub.update(|s| s.set_send_queue(items));
                 }
-                if let maclink_core::NodeEvent::QueueDroppedOnUnpair { peer_name, dropped_count, .. } =
-                    &event
+                if let maclink_core::NodeEvent::QueueDroppedOnUnpair { peer_name, dropped_count, .. } = &event
                     && *dropped_count > 0
                 {
                     crate::bridge::app::show_message(tr!(
@@ -419,13 +418,19 @@ mod tests {
         let caps = compute_capabilities(None);
         // Ensure unsupported features on macOS are not advertised
         assert!(!caps.contains(&"mirror.listen".into()), "macOS must not advertise mirror.listen");
-        assert!(!caps.contains(&maclink_core::STORAGE_MOUNT.into()), "macOS must not advertise storage.mount");
+        assert!(
+            !caps.contains(&maclink_core::STORAGE_MOUNT.into()),
+            "macOS must not advertise storage.mount"
+        );
         assert!(!caps.contains(&maclink_core::PC_AUDIO.into()), "macOS must not advertise pc.audio");
 
         // Ensure supported features on macOS are advertised
         assert!(caps.contains(&"pc.power".into()));
         assert!(caps.contains(&maclink_core::PHOTOS_SHOW.into()));
-        assert!(caps.contains(&maclink_core::MIRROR_VIEW.into()), "macOS advertises mirror.view with VideoToolbox");
+        assert!(
+            caps.contains(&maclink_core::MIRROR_VIEW.into()),
+            "macOS advertises mirror.view with VideoToolbox"
+        );
         assert!(!caps.contains(&maclink_core::CAMERA_CONTINUITY.into()));
         assert!(caps.contains(&maclink_core::CALLS_SHOW.into()));
         assert!(caps.contains(&maclink_core::CONTACTS_SHOW.into()));

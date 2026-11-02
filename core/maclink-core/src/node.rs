@@ -622,7 +622,8 @@ impl Shared {
                 .collect();
             if addrs.iter().any(|a| !a.ip().is_loopback()) || tokio::time::Instant::now() >= deadline {
                 if cfg!(test)
-                    && let Some(sock) = self.endpoint.bound_sockets().into_iter().find(|a| a.is_ipv4() && a.port() != 0)
+                    && let Some(sock) =
+                        self.endpoint.bound_sockets().into_iter().find(|a| a.is_ipv4() && a.port() != 0)
                 {
                     let loopback = SocketAddr::from(([127, 0, 0, 1], sock.port()));
                     if !addrs.contains(&loopback) {
@@ -1069,12 +1070,27 @@ impl Shared {
         eprintln!("------------------------------------------------------------");
         eprintln!("  Feature Requirements Check:");
         eprintln!("    Mirror Screen (mirroring.view):");
-        eprintln!("      - phone requires 'mirror.capture': {}", remote.caps.contains(&"mirror.capture".to_string()));
-        eprintln!("      - mac requires 'mirror.view':     {}", local_caps.contains(&"mirror.view".to_string()));
+        eprintln!(
+            "      - phone requires 'mirror.capture': {}",
+            remote.caps.contains(&"mirror.capture".to_string())
+        );
+        eprintln!(
+            "      - mac requires 'mirror.view':     {}",
+            local_caps.contains(&"mirror.view".to_string())
+        );
         eprintln!("    Type on Phone (mirroring.control):");
-        eprintln!("      - phone requires 'mirror.capture': {}", remote.caps.contains(&"mirror.capture".to_string()));
-        eprintln!("      - phone requires 'mirror.input':   {}", remote.caps.contains(&"mirror.input".to_string()));
-        eprintln!("      - mac requires 'mirror.view':     {}", local_caps.contains(&"mirror.view".to_string()));
+        eprintln!(
+            "      - phone requires 'mirror.capture': {}",
+            remote.caps.contains(&"mirror.capture".to_string())
+        );
+        eprintln!(
+            "      - phone requires 'mirror.input':   {}",
+            remote.caps.contains(&"mirror.input".to_string())
+        );
+        eprintln!(
+            "      - mac requires 'mirror.view':     {}",
+            local_caps.contains(&"mirror.view".to_string())
+        );
         eprintln!("============================================================");
 
         let weak = Arc::downgrade(self);
