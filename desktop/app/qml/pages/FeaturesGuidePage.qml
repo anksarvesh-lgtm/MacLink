@@ -204,6 +204,19 @@ Item {
             docKey: "photos"
         },
         {
+            id: "files",
+            name: "File Manager",
+            icon: Icons.folder,
+            area: "clipboard_files",
+            capKey: "files",
+            toggleKey: "files",
+            summary: "Browse internal storage, upload files from Mac, download documents, and manage phone folders.",
+            whereLabel: "Left rail › Files",
+            needsLabel: "Connected phone with storage permission",
+            targetId: "files:main",
+            docKey: "transfers"
+        },
+        {
             id: "mirroring",
             name: "Screen mirroring",
             icon: Icons.mirror,

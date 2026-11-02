@@ -86,6 +86,10 @@ NativeWindow {
             window.page = "deck"
             return
         }
+        if (targetId.indexOf("files:") === 0 || targetId.indexOf("file_manager:") === 0) {
+            window.page = "files"
+            return
+        }
         if (targetId.indexOf("apps:") === 0) {
             window.page = "apps"
             return
@@ -801,7 +805,8 @@ NativeWindow {
             case "messages": return 1
             case "calls": return 2
             case "photos": return 3
-            case "files": return 4
+            case "files":
+            case "file_manager": return 4
             case "apps": return 5
             case "deck": return 6
             case "help_center":
@@ -911,7 +916,7 @@ NativeWindow {
                         activeFocusOnTab: true
 
                         Accessible.role: Accessible.PageTab
-                        Accessible.name: modelData.label
+                        Accessible.name: modelData.id === "files" ? qsTr("File Manager") : modelData.label
                         Accessible.selected: selected
                         Accessible.onPressAction: window.navigateTab(modelData.id)
 
@@ -967,6 +972,9 @@ NativeWindow {
                         // Label (11 pt, centered below capsule)
                         Txt {
                             anchors.horizontalCenter: parent.horizontalCenter
+                            width: railContainer.width - 4
+                            horizontalAlignment: Text.AlignHCenter
+                            elide: Text.ElideRight
                             y: railContainer.itemPitch >= 50 ? 32 : (railContainer.itemPitch >= 44 ? 29 : 27)
                             text: railItem.modelData.label
                             role: "caption"
@@ -1145,7 +1153,7 @@ NativeWindow {
                     : window.page === "messages" ? qsTr("Messages")
                     : window.page === "calls" ? qsTr("Calls")
                     : window.page === "photos" ? qsTr("Photos")
-                    : window.page === "files" ? qsTr("Files")
+                    : (window.page === "files" || window.page === "file_manager") ? qsTr("File Manager")
                     : window.page === "apps" ? qsTr("Apps")
                     : window.page === "deck" ? qsTr("Deck")
                     : (window.page === "help_center" || window.page === "guide") ? qsTr("Guide")
@@ -1364,7 +1372,8 @@ NativeWindow {
                     case "messages": return "qrc:/qt/qml/app/maclink/qml/pages/MessagesPage.qml"
                     case "calls": return "qrc:/qt/qml/app/maclink/qml/pages/CallsPage.qml"
                     case "photos": return "qrc:/qt/qml/app/maclink/qml/pages/PhotosPage.qml"
-                    case "files": return "qrc:/qt/qml/app/maclink/qml/pages/FilesPage.qml"
+                    case "files":
+                    case "file_manager": return "qrc:/qt/qml/app/maclink/qml/pages/FilesPage.qml"
                     case "apps": return "qrc:/qt/qml/app/maclink/qml/pages/AppsPage.qml"
                     case "deck": return "qrc:/qt/qml/app/maclink/qml/pages/DeckPage.qml"
                     case "help_center":
