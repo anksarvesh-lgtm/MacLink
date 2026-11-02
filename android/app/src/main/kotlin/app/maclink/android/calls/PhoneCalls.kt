@@ -292,6 +292,9 @@ internal class PhoneCalls(
      */
     @SuppressLint("MissingPermission")
     fun command(id: String, command: CallCommand): Boolean {
+        if (!app.maclink.android.telephony.TelephonySettings.get(context).allowCallControl) {
+            return false
+        }
         val call = current?.takeIf { it.id == id } ?: return false
         return runCatching {
             when (command) {
@@ -329,6 +332,9 @@ internal class PhoneCalls(
     /** Recent calls from the phone's call history (`call.log`). */
     @SuppressLint("MissingPermission")
     fun callLog(before: Long?, limit: Int): List<CallLogEntry> {
+        if (!app.maclink.android.telephony.TelephonySettings.get(context).shareCallHistory) {
+            return emptyList()
+        }
         check(canReadLog(context)) { "Call log permission not granted" }
         return try {
             val resolver = context.contentResolver
@@ -411,8 +417,14 @@ internal class PhoneCalls(
      */
     @SuppressLint("MissingPermission")
     fun dial(number: String): Boolean {
+        if (!app.maclink.android.telephony.TelephonySettings.get(context).allowCallControl) {
+            return false
+        }
         val trimmed = number.trim()
         if (trimmed.isEmpty()) return false
+        if (app.maclink.android.telephony.CallController.validatePhoneNumber(trimmed) != null) {
+            return false
+        }
         lastDialed = trimmed to System.currentTimeMillis()
         val uri = Uri.fromParts("tel", trimmed, null)
         return runCatching {
