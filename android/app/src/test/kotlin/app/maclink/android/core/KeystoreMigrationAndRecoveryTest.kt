@@ -196,3 +196,4 @@ class KeystoreMigrationAndRecoveryTest {
         assertTrue(chain.contains("caused by AEADBadTagException: Tag mismatch"))
     }
 }
+
