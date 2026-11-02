@@ -18,7 +18,8 @@ Rectangle {
         ? Theme.textPrimary
         : Theme.textSecondary
 
-    height: 48
+    implicitHeight: Math.max(48, textCol.implicitHeight + 16)
+    height: implicitHeight
     radius: 14
     color: checked
         ? Qt.rgba(0.95, 0.66, 0.23, 0.12)
@@ -41,6 +42,7 @@ Rectangle {
             color: bar.ink
         }
         Column {
+            id: textCol
             width: parent.width - 27
             anchors.verticalCenter: parent.verticalCenter
             spacing: 1
@@ -55,6 +57,8 @@ Rectangle {
                 visible: bar.caption.length > 0
                 width: parent.width
                 role: "caption"
+                wrapMode: Text.WordWrap
+                maximumLineCount: 2
                 elide: Text.ElideRight
                 color: bar.ink
                 opacity: 0.85

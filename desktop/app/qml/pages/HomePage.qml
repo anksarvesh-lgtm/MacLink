@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 import QtQuick
+import QtQuick.Layouts
 import QtQuick.Window
 import QtQuick.Dialogs
 import QtQuick.Shapes
@@ -201,6 +202,7 @@ Item {
 
     Flickable {
         anchors.fill: parent
+        contentWidth: width
         contentHeight: column.height + Theme.contentPadding * 2
         boundsBehavior: Flickable.StopAtBounds
         clip: true
@@ -217,7 +219,8 @@ Item {
             Item {
                 id: heroGreetingBanner
                 width: column.width
-                height: Math.max(greetingCol.implicitHeight, clockCard.implicitHeight) + 12
+                implicitHeight: heroGreetingLayout.implicitHeight + 12
+                height: implicitHeight
 
                 property var currentTime: new Date()
                 Timer {
@@ -232,6 +235,7 @@ Item {
                     ? qsTr("Good Morning,")
                     : (currentHour < 17 ? qsTr("Good Afternoon,") : qsTr("Good Evening,"))
                 readonly property bool isDay: currentHour >= 6 && currentHour < 18
+                readonly property bool compactClock: heroGreetingBanner.width < 520
 
                 // Faint large dark orb / arc behind the greeting (Image 2)
                 Rectangle {
@@ -248,96 +252,114 @@ Item {
                     }
                 }
 
-                Column {
-                    id: greetingCol
-                    anchors.left: parent.left
-                    anchors.leftMargin: 2
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 4
+                RowLayout {
+                    id: heroGreetingLayout
+                    anchors.fill: parent
+                    spacing: 12
 
-                    Txt {
-                        text: heroGreetingBanner.greetingText
-                        role: "caption"
-                        size: 13
-                        weight: 500
-                        color: Theme.textSecondary
-                    }
+                    ColumnLayout {
+                        id: greetingCol
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignVCenter
+                        spacing: 4
 
-                    Row {
-                        spacing: 8
                         Txt {
-                            text: qsTr("Your phone,")
-                            role: "display"
-                            size: 30
-                            weight: 700
-                            color: Theme.textPrimary
+                            text: heroGreetingBanner.greetingText
+                            role: "caption"
+                            size: 13
+                            weight: 500
+                            color: Theme.textSecondary
                         }
-                        Txt {
-                            text: qsTr("on your Mac")
-                            role: "display"
-                            size: 30
-                            weight: 700
-                            color: Theme.amberAccent
-                        }
-                    }
 
-                    Txt {
-                        text: qsTr("Stay connected. Work faster. Do more together.")
-                        role: "bodySmall"
-                        size: 13
-                        color: Theme.textSecondary
-                    }
-                }
-
-                // System clock & date card (top-right, Image 2)
-                Rectangle {
-                    id: clockCard
-                    anchors.right: parent.right
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: clockRow.implicitWidth + 28
-                    height: 52
-                    radius: 14
-                    color: Theme.cardFill
-                    border.width: 1
-                    border.color: Theme.cardBorderSubtle
-
-                    Row {
-                        id: clockRow
-                        anchors.centerIn: parent
-                        spacing: 11
-
-                        Rectangle {
-                            width: 32; height: 32
-                            radius: 16
-                            anchors.verticalCenter: parent.verticalCenter
-                            color: Qt.rgba(0.95, 0.66, 0.23, 0.15)
-                            border.width: 1
-                            border.color: Qt.rgba(0.95, 0.66, 0.23, 0.28)
-
-                            Icon {
-                                anchors.centerIn: parent
-                                width: 16; height: 16
-                                path: heroGreetingBanner.isDay ? Icons.brightness : Icons.moon
+                        Flow {
+                            Layout.fillWidth: true
+                            spacing: 8
+                            Txt {
+                                text: qsTr("Your phone,")
+                                role: "display"
+                                size: Math.max(20, Math.min(30, Math.round(heroGreetingBanner.width / 26)))
+                                weight: 700
+                                color: Theme.textPrimary
+                            }
+                            Txt {
+                                text: qsTr("on your Mac")
+                                role: "display"
+                                size: Math.max(20, Math.min(30, Math.round(heroGreetingBanner.width / 26)))
+                                weight: 700
                                 color: Theme.amberAccent
                             }
                         }
 
-                        Column {
-                            anchors.verticalCenter: parent.verticalCenter
-                            spacing: 1
+                        Txt {
+                            Layout.fillWidth: true
+                            text: qsTr("Stay connected. Work faster. Do more together.")
+                            role: "bodySmall"
+                            size: 13
+                            wrapMode: Text.WordWrap
+                            color: Theme.textSecondary
+                        }
+                    }
 
-                            Txt {
-                                text: heroGreetingBanner.currentTime.toLocaleDateString(Qt.locale(), "ddd, d MMM")
-                                role: "caption"
-                                size: 11
-                                weight: 500
-                                color: Theme.textSecondary
+                    // System clock & date card (top-right, Image 2)
+                    Rectangle {
+                        id: clockCard
+                        Layout.alignment: Qt.AlignVCenter
+                        Layout.preferredWidth: clockRow.implicitWidth + 24
+                        Layout.preferredHeight: 52
+                        radius: 14
+                        color: Theme.cardFill
+                        border.width: 1
+                        border.color: Theme.cardBorderSubtle
+
+                        Row {
+                            id: clockRow
+                            anchors.centerIn: parent
+                            spacing: 10
+
+                            Rectangle {
+                                width: 32; height: 32
+                                radius: 16
+                                anchors.verticalCenter: parent.verticalCenter
+                                color: Qt.rgba(0.95, 0.66, 0.23, 0.15)
+                                border.width: 1
+                                border.color: Qt.rgba(0.95, 0.66, 0.23, 0.28)
+
+                                Icon {
+                                    anchors.centerIn: parent
+                                    width: 16; height: 16
+                                    path: heroGreetingBanner.isDay ? Icons.brightness : Icons.moon
+                                    color: Theme.amberAccent
+                                }
+                            }
+
+                            Column {
+                                anchors.verticalCenter: parent.verticalCenter
+                                spacing: 1
+                                visible: !heroGreetingBanner.compactClock
+
+                                Txt {
+                                    text: heroGreetingBanner.currentTime.toLocaleDateString(Qt.locale(), "ddd, d MMM")
+                                    role: "caption"
+                                    size: 11
+                                    weight: 500
+                                    color: Theme.textSecondary
+                                }
+
+                                Txt {
+                                    text: Qt.formatTime(heroGreetingBanner.currentTime, "h:mm AP")
+                                    role: "body"
+                                    size: 14
+                                    weight: 600
+                                    color: Theme.textPrimary
+                                }
                             }
 
                             Txt {
+                                visible: heroGreetingBanner.compactClock
+                                anchors.verticalCenter: parent.verticalCenter
                                 text: Qt.formatTime(heroGreetingBanner.currentTime, "h:mm AP")
                                 role: "body"
-                                size: 14
+                                size: 13
                                 weight: 600
                                 color: Theme.textPrimary
                             }
@@ -352,34 +374,31 @@ Item {
                 width: column.width
                 visible: Preferences.walkthroughCompleted && !Preferences.whatsNewDismissed
                 padding: 16
-                Item {
+                RowLayout {
                     width: parent.width
-                    height: Math.max(whatsNewTextCol.implicitHeight, whatsNewBtnRow.implicitHeight)
-                    Column {
+                    spacing: 12
+                    ColumnLayout {
                         id: whatsNewTextCol
-                        anchors.left: parent.left
-                        anchors.right: whatsNewBtnRow.left
-                        anchors.rightMargin: 16
-                        anchors.verticalCenter: parent.verticalCenter
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignVCenter
                         spacing: 4
                         Txt {
-                            width: parent.width
+                            Layout.fillWidth: true
                             role: "title"
                             text: qsTr("New: Features guide")
                             wrapMode: Text.WordWrap
                         }
                         Txt {
-                            width: parent.width
+                            Layout.fillWidth: true
                             role: "bodySmall"
                             muted: true
                             text: qsTr("See what each feature needs and where to find it.")
                             wrapMode: Text.WordWrap
                         }
                     }
-                    Row {
+                    Flow {
                         id: whatsNewBtnRow
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
+                        Layout.alignment: Qt.AlignVCenter
                         spacing: 8
                         Button {
                             variant: "text"
@@ -401,40 +420,36 @@ Item {
                 }
             }
 
-
             // Card shown when no phone is paired yet (for example after skipping first-run setup).
             Card {
                 width: column.width
                 visible: DeviceList.count === 0
                 padding: 20
-                Item {
+                RowLayout {
                     width: parent.width
-                    height: Math.max(noDeviceTextCol.implicitHeight, noDeviceBtnRow.implicitHeight)
-                    Column {
+                    spacing: 12
+                    ColumnLayout {
                         id: noDeviceTextCol
-                        anchors.left: parent.left
-                        anchors.right: noDeviceBtnRow.left
-                        anchors.rightMargin: 16
-                        anchors.verticalCenter: parent.verticalCenter
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignVCenter
                         spacing: 4
                         Txt {
-                            width: parent.width
+                            Layout.fillWidth: true
                             role: "title"
                             text: qsTr("No phone paired yet")
                             wrapMode: Text.WordWrap
                         }
                         Txt {
-                            width: parent.width
+                            Layout.fillWidth: true
                             role: "bodySmall"
                             muted: true
                             text: qsTr("Pair your Android phone over Wi-Fi or USB.")
                             wrapMode: Text.WordWrap
                         }
                     }
-                    Row {
+                    Flow {
                         id: noDeviceBtnRow
-                        anchors.right: parent.right
-                        anchors.verticalCenter: parent.verticalCenter
+                        Layout.alignment: Qt.AlignVCenter
                         spacing: 8
                         Button {
                             variant: "text"
@@ -494,20 +509,19 @@ Item {
                 Column {
                     width: parent.width
                     spacing: 8
-                    Item {
+                    RowLayout {
                         width: parent.width
-                        height: Math.max(standaloneTransfersHeader.height, standaloneClearTransfers.height)
                         Txt {
                             id: standaloneTransfersHeader
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignVCenter
                             role: "label"
                             muted: true
                             text: qsTr("Transfers")
                         }
                         Button {
                             id: standaloneClearTransfers
-                            anchors.right: parent.right
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.alignment: Qt.AlignVCenter
                             visible: TransferList.count > TransferList.active
                             variant: "text"
                             size: "sm"
@@ -588,7 +602,7 @@ Item {
         }
     }
 
-    component DeviceHome: Row {
+    component DeviceHome: Item {
         id: home
         required property string deviceId
         required property string name
@@ -690,43 +704,68 @@ Item {
         }
 
         spacing: Theme.gutter
-        readonly property real sideWidth: Math.round(Math.min(450, Math.max(320, home.width * 0.34)))
+        readonly property bool isTwoZone: Theme.isTwoColumn(home.width)
+        readonly property real gutter: Theme.gutter
+        readonly property real sideWidth: isTwoZone
+            ? Math.round(Math.min(380, Math.max(300, home.width * 0.32)))
+            : home.width
+        readonly property real mainWidth: isTwoZone
+            ? (home.width - sideWidth - gutter)
+            : home.width
+
+        implicitWidth: home.width
+        implicitHeight: isTwoZone
+            ? Math.max(mainCol.implicitHeight, sideCol.implicitHeight)
+            : (mainCol.implicitHeight + gutter + sideCol.implicitHeight)
+        height: implicitHeight
 
         Column {
-            width: home.width - home.sideWidth - home.spacing
-            spacing: Theme.gutter
+            id: mainCol
+            width: home.mainWidth
+            spacing: home.gutter
 
             // ---- Top Hero Cards Row: Phone Card (left) & Media Card (right) (Image 2) ----
-            Row {
+            Item {
                 id: topCardsRow
                 width: parent.width
-                spacing: Theme.gutter
-                readonly property bool wide: parent.width >= 560
-                readonly property real phoneCardWidth: wide ? Math.round((parent.width - spacing) * 0.52) : parent.width
-                readonly property real mediaCardWidth: wide ? (parent.width - spacing - phoneCardWidth) : parent.width
+                readonly property bool sideBySide: Theme.topCardsSideBySide(home.width)
+                readonly property real phoneCardWidth: sideBySide
+                    ? Math.round((width - home.gutter) * 0.52)
+                    : width
+                readonly property real mediaCardWidth: sideBySide
+                    ? (width - home.gutter - phoneCardWidth)
+                    : width
+
+                implicitHeight: sideBySide
+                    ? Math.max(phoneCard.implicitHeight, mediaCardContainer.implicitHeight)
+                    : (phoneCard.implicitHeight + home.gutter + mediaCardContainer.implicitHeight)
+                height: implicitHeight
 
                 // 1. Phone Card
                 Card {
                     id: phoneCard
-                    width: topCardsRow.wide ? topCardsRow.phoneCardWidth : parent.width
-                    height: topCardsRow.wide ? 204 : implicitHeight
-                    padding: 16
+                    x: 0; y: 0
+                    width: topCardsRow.phoneCardWidth
+                    implicitHeight: Math.max(196, phoneCardRow.implicitHeight + padding * 2)
+                    height: implicitHeight
+                    padding: width < 360 ? 12 : 16
 
-                    Row {
+                    RowLayout {
+                        id: phoneCardRow
                         anchors.fill: parent
-                        spacing: 14
+                        spacing: phoneCard.width < 360 ? 10 : 14
 
                         // Vector front phone preview
                         Item {
                             id: phoneArt
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.alignment: Qt.AlignVCenter
                             readonly property real aspect: {
                                 const s = home.screenData
                                 if (s && s.aspect >= 0.25 && s.aspect <= 2.5)
                                     return s.aspect
                                 return home.kind === "tablet" ? 0.70 : 0.47
                             }
-                            height: 156
+                            height: phoneCard.width < 340 ? 130 : 156
                             width: Math.round(height * aspect)
                             readonly property real bezel: 3.5
                             readonly property real innerW: Math.max(10, width - bezel * 2)
@@ -1011,42 +1050,44 @@ Item {
                         }
 
                         // Right details inside Phone Card
-                        Column {
+                        ColumnLayout {
                             id: phoneDetailsCol
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: parent.width - phoneArt.width - parent.spacing
-                            spacing: 8
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignVCenter
+                            spacing: 6
 
                             Txt {
-                                width: parent.width
+                                Layout.fillWidth: true
                                 text: home.name
                                 role: "displaySmall"
-                                size: home.name.length > 14 ? 18 : 21
+                                size: phoneCard.width < 340 ? 16 : (home.name.length > 14 ? 18 : 21)
                                 weight: 700
                                 color: Theme.textPrimary
                                 elide: Text.ElideRight
                             }
 
-                            Row {
+                            RowLayout {
                                 spacing: 6
                                 Rectangle {
                                     width: 8; height: 8; radius: 4
-                                    anchors.verticalCenter: parent.verticalCenter
+                                    Layout.alignment: Qt.AlignVCenter
                                     color: home.online ? Theme.successGreen : Theme.textSecondary
                                 }
                                 Txt {
-                                    anchors.verticalCenter: parent.verticalCenter
+                                    Layout.fillWidth: true
+                                    Layout.alignment: Qt.AlignVCenter
                                     text: home.online ? qsTr("Connected") : (home.lastSeen > 0 ? qsTr("Offline · %1").arg(page.relativeTime(home.lastSeen)) : qsTr("Offline"))
                                     role: "caption"
                                     weight: 600
                                     color: home.online ? Theme.successGreen : Theme.textSecondary
+                                    elide: Text.ElideRight
                                 }
                             }
 
-                            Row {
+                            RowLayout {
                                 spacing: 6
                                 Icon {
-                                    anchors.verticalCenter: parent.verticalCenter
+                                    Layout.alignment: Qt.AlignVCenter
                                     width: 14; height: 14
                                     path: !home.online ? Icons.unlink
                                           : home.path === "usb" ? Icons.usb
@@ -1055,7 +1096,8 @@ Item {
                                     color: Theme.textSecondary
                                 }
                                 Txt {
-                                    anchors.verticalCenter: parent.verticalCenter
+                                    Layout.fillWidth: true
+                                    Layout.alignment: Qt.AlignVCenter
                                     text: home.online
                                           ? (home.path === "relay"
                                              ? (home.rttMs >= 1 ? qsTr("Away · %1 ms").arg(home.rttMs) : qsTr("Away"))
@@ -1065,20 +1107,22 @@ Item {
                                           : qsTr("Offline")
                                     role: "caption"
                                     color: Theme.textSecondary
+                                    elide: Text.ElideRight
                                 }
                             }
 
-                            Row {
+                            RowLayout {
                                 spacing: 6
                                 visible: home.battery >= 0
                                 Icon {
-                                    anchors.verticalCenter: parent.verticalCenter
+                                    Layout.alignment: Qt.AlignVCenter
                                     width: 14; height: 14
                                     path: home.charging ? Icons.bolt : Icons.battery
                                     color: home.charging ? Theme.successGreen : Theme.textSecondary
                                 }
                                 Txt {
-                                    anchors.verticalCenter: parent.verticalCenter
+                                    Layout.fillWidth: true
+                                    Layout.alignment: Qt.AlignVCenter
                                     text: home.charging
                                         ? (page.formatChargeEta(home.batteryFullIn).length > 0
                                             ? qsTr("%1% · %2").arg(home.battery).arg(page.formatChargeEta(home.batteryFullIn))
@@ -1086,15 +1130,17 @@ Item {
                                         : qsTr("%1%").arg(home.battery)
                                     role: "caption"
                                     color: Theme.textSecondary
+                                    elide: Text.ElideRight
                                 }
                             }
 
-                            Row {
+                            Flow {
+                                Layout.fillWidth: true
                                 spacing: 8
                                 Button {
                                     variant: "amber"
                                     size: "sm"
-                                    text: qsTr("Manage Device →")
+                                    text: phoneCard.width < 340 ? qsTr("Manage →") : qsTr("Manage Device →")
                                     onClicked: AppController.currentPage = "settings"
                                 }
                                 IconButton {
@@ -1102,6 +1148,7 @@ Item {
                                     iconSize: 15
                                     iconPath: Icons.settings
                                     label: qsTr("Device settings")
+                                    Accessible.name: qsTr("Device settings")
                                     onClicked: AppController.currentPage = "settings"
                                 }
                             }
@@ -1112,29 +1159,47 @@ Item {
                 // 2. Media Card
                 Item {
                     id: mediaCardContainer
-                    width: topCardsRow.wide ? topCardsRow.mediaCardWidth : parent.width
-                    height: phoneCard.height
+                    x: topCardsRow.sideBySide ? (topCardsRow.phoneCardWidth + home.gutter) : 0
+                    y: topCardsRow.sideBySide ? 0 : (phoneCard.implicitHeight + home.gutter)
+                    width: topCardsRow.mediaCardWidth
+
+                    readonly property bool hasActiveMedia: home.activeMediaRow >= 0
+
+                    implicitHeight: hasActiveMedia
+                        ? Math.max(140, activeMediaNowPlaying ? activeMediaNowPlaying.implicitHeight : 140)
+                        : (topCardsRow.sideBySide ? phoneCard.implicitHeight : 68)
+                    height: implicitHeight
+
+                    property Item activeMediaNowPlaying: null
 
                     Repeater {
                         model: MediaList
                         delegate: NowPlaying {
+                            id: npDelegate
                             required property int index
                             visible: MediaList.revision >= 0 && index === home.activeMediaRow
                             width: mediaCardContainer.width
-                            height: mediaCardContainer.height
                             hasMultipleSources: home.hasBothMedia
                             phoneVolume: phoneControls.state ? phoneControls.state.volume : 65
                             onSourceSelected: (src) => home.preferredMediaSource = src
+                            Component.onCompleted: {
+                                if (visible) mediaCardContainer.activeMediaNowPlaying = npDelegate
+                            }
+                            onVisibleChanged: {
+                                if (visible) mediaCardContainer.activeMediaNowPlaying = npDelegate
+                                else if (mediaCardContainer.activeMediaNowPlaying === npDelegate) mediaCardContainer.activeMediaNowPlaying = null
+                            }
                         }
                     }
 
                     Card {
-                        visible: home.activeMediaRow < 0
+                        visible: !mediaCardContainer.hasActiveMedia
                         width: mediaCardContainer.width
                         height: mediaCardContainer.height
-                        padding: 18
+                        padding: topCardsRow.sideBySide ? 18 : 12
 
                         Column {
+                            visible: topCardsRow.sideBySide
                             anchors.centerIn: parent
                             spacing: 10
 
@@ -1172,6 +1237,49 @@ Item {
                                 }
                             }
                         }
+
+                        RowLayout {
+                            visible: !topCardsRow.sideBySide
+                            anchors.fill: parent
+                            spacing: 12
+
+                            Rectangle {
+                                Layout.preferredWidth: 36; Layout.preferredHeight: 36
+                                radius: 18
+                                Layout.alignment: Qt.AlignVCenter
+                                color: Qt.rgba(1, 1, 1, 0.06)
+                                border.width: 1
+                                border.color: Qt.rgba(1, 1, 1, 0.08)
+                                Icon {
+                                    anchors.centerIn: parent
+                                    width: 16; height: 16
+                                    path: Icons.music
+                                    color: Theme.amberAccent
+                                }
+                            }
+
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignVCenter
+                                spacing: 2
+                                Txt {
+                                    Layout.fillWidth: true
+                                    text: qsTr("Media player")
+                                    role: "title"
+                                    size: 13
+                                    weight: 600
+                                    color: Theme.textPrimary
+                                    elide: Text.ElideRight
+                                }
+                                Txt {
+                                    Layout.fillWidth: true
+                                    text: qsTr("Nothing playing")
+                                    role: "caption"
+                                    color: Theme.textSecondary
+                                    elide: Text.ElideRight
+                                }
+                            }
+                        }
                     }
                 }
             }
@@ -1180,9 +1288,9 @@ Item {
             Grid {
                 id: actions
                 width: parent.width
-                columns: width > 640 ? 4 : 2
+                columns: (home.isTwoZone && parent.width >= 600) ? 4 : 2
                 spacing: 12
-                readonly property real tileWidth: (width - spacing * (columns - 1)) / columns
+                readonly property real tileWidth: Math.floor((width - spacing * (columns - 1)) / columns)
 
                 ActionTile {
                     width: actions.tileWidth
@@ -1296,22 +1404,22 @@ Item {
                 Column {
                     width: parent.width
                     spacing: 4
-                    Item {
+                    RowLayout {
                         width: parent.width
-                        height: Math.max(queueHeader.height, queueHeaderActions.height)
                         Txt {
                             id: queueHeader
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignVCenter
                             role: "label"
                             muted: true
+                            elide: Text.ElideRight
                             text: TransferList.waitingCount > 0
                                   ? qsTr("Waiting to send · %1").arg(TransferList.waitingCount)
                                   : qsTr("Waiting to send")
                         }
-                        Row {
+                        Flow {
                             id: queueHeaderActions
-                            anchors.right: parent.right
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.alignment: Qt.AlignVCenter
                             spacing: 6
                             Button {
                                 visible: TransferList.hasFailedOrExpiredQueue
@@ -1353,15 +1461,15 @@ Item {
                                 readonly property real totalBytes: Number(queueRow.modelData.totalBytes || 0)
                                 readonly property real progress: Number(queueRow.modelData.progress || 0)
 
-                                Row {
+                                RowLayout {
                                     id: queueRowInner
                                     x: 4; y: 9
                                     width: parent.width - 8
                                     spacing: 12
 
                                     Rectangle {
-                                        width: 32; height: 32
-                                        anchors.verticalCenter: parent.verticalCenter
+                                        Layout.preferredWidth: 32; Layout.preferredHeight: 32
+                                        Layout.alignment: Qt.AlignVCenter
                                         radius: Theme.graphite ? Theme.radiusSm : 16
                                         color: Theme.graphite ? "transparent" : Theme.secondaryContainer
                                         border.width: Theme.graphite ? 1 : 0
@@ -1379,13 +1487,13 @@ Item {
                                         }
                                     }
 
-                                    Column {
+                                    ColumnLayout {
                                         id: queueItemCol
-                                        width: Math.max(80, queueRowInner.width - 32 - queueItemActions.width - queueRowInner.spacing * 2)
-                                        anchors.verticalCenter: parent.verticalCenter
+                                        Layout.fillWidth: true
+                                        Layout.alignment: Qt.AlignVCenter
                                         spacing: 4
                                         Txt {
-                                            width: parent.width
+                                            Layout.fillWidth: true
                                             role: "title"
                                             size: 14
                                             elide: (queueRow.modelData.kind === "link"
@@ -1397,7 +1505,7 @@ Item {
                                             text: queueRow.modelData.title || ""
                                         }
                                         Rectangle {
-                                            width: parent.width
+                                            Layout.fillWidth: true
                                             height: 4
                                             radius: 2
                                             visible: queueRow.itemStatus === "sending" && queueRow.totalBytes > 0
@@ -1414,7 +1522,7 @@ Item {
                                             }
                                         }
                                         Txt {
-                                            width: parent.width
+                                            Layout.fillWidth: true
                                             role: "bodySmall"
                                             muted: !queueRow.isFailedOrExpired
                                             color: queueRow.isFailedOrExpired ? Theme.error : Theme.surfaceContentVariant
@@ -1447,19 +1555,21 @@ Item {
                                         }
                                     }
 
-                                    Row {
+                                    RowLayout {
                                         id: queueItemActions
-                                        anchors.verticalCenter: parent.verticalCenter
+                                        Layout.alignment: Qt.AlignVCenter
                                         spacing: 4
                                         IconButton {
                                             visible: queueRow.isFailedOrExpired
                                             iconPath: Icons.refresh
                                             label: qsTr("Retry")
+                                            Accessible.name: qsTr("Retry transfer")
                                             onClicked: TransferList.retryQueueItem(queueRow.modelData.id)
                                         }
                                         IconButton {
                                             iconPath: Icons.close
                                             label: queueRow.isFailedOrExpired ? qsTr("Dismiss") : qsTr("Cancel")
+                                            Accessible.name: queueRow.isFailedOrExpired ? qsTr("Dismiss transfer") : qsTr("Cancel transfer")
                                             onClicked: TransferList.cancelQueueItem(queueRow.modelData.id)
                                         }
                                     }
@@ -1477,19 +1587,18 @@ Item {
                 Column {
                     width: parent.width
                     spacing: 4
-                    Item {
+                    RowLayout {
                         width: parent.width
-                        height: Math.max(transfersHeader.height, clearTransfers.height)
                         Txt {
                             id: transfersHeader
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignVCenter
                             role: "label"
                             muted: true
                             text: qsTr("Transfers")
                         }
-                        Row {
-                            anchors.right: parent.right
-                            anchors.verticalCenter: parent.verticalCenter
+                        Flow {
+                            Layout.alignment: Qt.AlignVCenter
                             spacing: 6
                             Button {
                                 variant: "text"
@@ -1548,19 +1657,20 @@ Item {
                 Column {
                     width: parent.width
                     spacing: 8
-                    Item {
+                    RowLayout {
                         width: parent.width
-                        height: 28
+                        spacing: 8
 
-                        Row {
-                            anchors.left: parent.left
-                            anchors.verticalCenter: parent.verticalCenter
+                        RowLayout {
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignVCenter
                             spacing: 8
 
                             Rectangle {
-                                width: 26; height: 26
+                                Layout.preferredWidth: 26
+                                Layout.preferredHeight: 26
                                 radius: 13
-                                anchors.verticalCenter: parent.verticalCenter
+                                Layout.alignment: Qt.AlignVCenter
                                 color: Qt.rgba(0.95, 0.66, 0.23, 0.15)
                                 border.width: 1
                                 border.color: Qt.rgba(0.95, 0.66, 0.23, 0.28)
@@ -1573,19 +1683,22 @@ Item {
                             }
 
                             Txt {
-                                anchors.verticalCenter: parent.verticalCenter
+                                Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignVCenter
                                 role: "title"
                                 size: 14
                                 weight: 600
                                 color: Theme.textPrimary
+                                elide: Text.ElideRight
                                 text: feed.count > 0 ? qsTr("Notifications · %1").arg(feed.count) : qsTr("Notifications")
                             }
                         }
 
-                        Row {
-                            anchors.right: parent.right
-                            anchors.verticalCenter: parent.verticalCenter
+                        RowLayout {
+                            Layout.alignment: Qt.AlignVCenter
                             spacing: 6
+
+                            readonly property bool compactBtns: feed.width < 460
 
                             Button {
                                 visible: feed.count > 0
@@ -1598,8 +1711,9 @@ Item {
                             IconButton {
                                 visible: NotificationList.historyEnabled && NotificationHistory.count > 0
                                 iconPath: Icons.history
-                                text: qsTr("History")
+                                text: compactBtns ? "" : qsTr("History")
                                 label: qsTr("Notification history (last 24 hours)")
+                                Accessible.name: qsTr("Notification history")
                                 onClicked: {
                                     historySearch.text = ""
                                     historySheet.open()
@@ -1612,7 +1726,8 @@ Item {
                                 variant: "tonal"
                                 size: "sm"
                                 iconPath: Icons.close
-                                text: qsTr("Clear all")
+                                text: compactBtns ? "" : qsTr("Clear all")
+                                Accessible.name: qsTr("Clear all notifications")
                                 onClicked: NotificationList.dismissAll(home.deviceId)
                             }
                         }
@@ -1760,15 +1875,18 @@ Item {
             }
         }
 
-        // ---- Details ----
+        // ---- Details (Side on wide >= 1100, stacked underneath on < 1100) ----
         Column {
+            id: sideCol
             width: home.sideWidth
-            spacing: Theme.gutter
+            x: home.isTwoZone ? (home.mainWidth + home.gutter) : 0
+            y: home.isTwoZone ? 0 : (mainCol.y + mainCol.implicitHeight + home.gutter)
+            spacing: home.gutter
 
             // The call in progress on the phone.
             Binding { target: PhoneCall; property: "device"; value: home.deviceId; when: home.visible; restoreMode: Binding.RestoreNone }
             CallCard {
-                width: home.sideWidth
+                width: parent.width
                 visible: PhoneCall.active && PhoneCall.device === home.deviceId
             }
 
@@ -1819,21 +1937,20 @@ Item {
                     width: parent.width
                     spacing: 12
 
-                    Item {
+                    RowLayout {
                         width: parent.width
-                        height: 24
                         Txt {
-                            anchors.left: parent.left
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignVCenter
                             text: qsTr("Phone Controls")
                             role: "title"
                             size: 14
                             weight: 600
                             color: Theme.textPrimary
+                            elide: Text.ElideRight
                         }
                         Button {
-                            anchors.right: parent.right
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.alignment: Qt.AlignVCenter
                             variant: "text"
                             size: "sm"
                             text: phoneControls.expanded ? qsTr("Less") : qsTr("See all →")
@@ -1841,15 +1958,16 @@ Item {
                         }
                     }
 
-                    Row {
-                        id: toggleRow
+                    Grid {
+                        id: toggleGrid
                         width: parent.width
-                        spacing: 6
                         readonly property int buttonCount: phoneControls.hasFlashlight ? 5 : 4
-                        readonly property real buttonWidth: (width - spacing * (buttonCount - 1)) / buttonCount
+                        columns: Math.max(3, Math.min(buttonCount, Math.floor((width + 6) / 70)))
+                        spacing: 6
+                        readonly property real buttonWidth: Math.floor((width - spacing * (columns - 1)) / columns)
 
                         QuickToggleButton {
-                            width: toggleRow.buttonWidth
+                            width: toggleGrid.buttonWidth
                             iconPath: Icons.moon
                             shortTitle: qsTr("DND")
                             label: qsTr("Do Not Disturb")
@@ -1860,7 +1978,7 @@ Item {
                         }
                         QuickToggleButton {
                             visible: phoneControls.hasFlashlight
-                            width: toggleRow.buttonWidth
+                            width: toggleGrid.buttonWidth
                             iconPath: Icons.flashlight
                             shortTitle: qsTr("Torch")
                             label: qsTr("Flashlight")
@@ -1870,7 +1988,7 @@ Item {
                             onClicked: AppController.setPhoneToggle(home.deviceId, "flashlight", String(!active))
                         }
                         QuickToggleButton {
-                            width: toggleRow.buttonWidth
+                            width: toggleGrid.buttonWidth
                             iconPath: Icons.wifi
                             shortTitle: qsTr("Wi‑Fi")
                             label: qsTr("Wi‑Fi")
@@ -1885,7 +2003,7 @@ Item {
                             }
                         }
                         QuickToggleButton {
-                            width: toggleRow.buttonWidth
+                            width: toggleGrid.buttonWidth
                             iconPath: Icons.bluetooth
                             shortTitle: qsTr("BT")
                             label: qsTr("Bluetooth")
@@ -1895,7 +2013,7 @@ Item {
                             onClicked: AppController.setPhoneToggle(home.deviceId, "bluetooth", String(!active))
                         }
                         QuickToggleButton {
-                            width: toggleRow.buttonWidth
+                            width: toggleGrid.buttonWidth
                             iconPath: Icons.globe
                             shortTitle: qsTr("Hotspot")
                             label: qsTr("Instant Hotspot")
@@ -2057,19 +2175,19 @@ Item {
                 Column {
                     width: parent.width
                     spacing: 10
-                    Item {
+                    RowLayout {
                         width: parent.width
-                        height: Math.max(typeHeaderLeft.height, typeToggleBtn.height)
-                        Row {
+                        spacing: 10
+
+                        RowLayout {
                             id: typeHeaderLeft
-                            anchors.left: parent.left
-                            anchors.right: typeToggleBtn.left
-                            anchors.rightMargin: 10
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignVCenter
                             spacing: 10
+
                             Rectangle {
-                                width: 32; height: 32
-                                anchors.verticalCenter: parent.verticalCenter
+                                Layout.preferredWidth: 32; Layout.preferredHeight: 32
+                                Layout.alignment: Qt.AlignVCenter
                                 radius: Theme.graphite ? Theme.radiusSm : Theme.radiusMd
                                 color: typeOnPhoneCard.activeHere
                                     ? Theme.primary
@@ -2085,12 +2203,12 @@ Item {
                                     color: typeOnPhoneCard.activeHere ? Theme.primaryContent : Theme.secondaryContainerContent
                                 }
                             }
-                            Column {
-                                width: parent.width - 42
-                                anchors.verticalCenter: parent.verticalCenter
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignVCenter
                                 spacing: 1
                                 Txt {
-                                    width: parent.width
+                                    Layout.fillWidth: true
                                     role: "title"
                                     size: 13
                                     weight: 600
@@ -2099,7 +2217,7 @@ Item {
                                     opacity: typeOnPhoneCard.canStart ? 1 : 0.6
                                 }
                                 Txt {
-                                    width: parent.width
+                                    Layout.fillWidth: true
                                     role: "caption"
                                     muted: true
                                     elide: Text.ElideRight
@@ -2113,8 +2231,7 @@ Item {
                         }
                         Button {
                             id: typeToggleBtn
-                            anchors.right: parent.right
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.alignment: Qt.AlignVCenter
                             visible: typeOnPhoneCard.canStart
                             variant: typeOnPhoneCard.activeHere ? "tonal" : "amber"
                             size: "sm"
@@ -2196,17 +2313,16 @@ Item {
                             }
                         }
 
-                        Row {
-                            x: 12
-                            anchors.verticalCenter: parent.verticalCenter
-                            width: parent.width - 24
+                        RowLayout {
+                            anchors.fill: parent
+                            anchors.margins: 10
                             spacing: 8
-                            Column {
-                                width: parent.width - pasteBtn.width - 8
-                                anchors.verticalCenter: parent.verticalCenter
+                            ColumnLayout {
+                                Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignVCenter
                                 spacing: 2
                                 Txt {
-                                    width: parent.width
+                                    Layout.fillWidth: true
                                     role: "bodySmall"
                                     weight: 600
                                     elide: Text.ElideRight
@@ -2216,7 +2332,7 @@ Item {
                                         : qsTr("Click to focus keyboard")
                                 }
                                 Txt {
-                                    width: parent.width
+                                    Layout.fillWidth: true
                                     role: "caption"
                                     muted: true
                                     elide: Text.ElideRight
@@ -2225,7 +2341,7 @@ Item {
                             }
                             Button {
                                 id: pasteBtn
-                                anchors.verticalCenter: parent.verticalCenter
+                                Layout.alignment: Qt.AlignVCenter
                                 variant: "outline"
                                 size: "sm"
                                 iconPath: Icons.clipboard
@@ -2259,31 +2375,31 @@ Item {
                 Column {
                     width: parent.width
                     spacing: 8
-                    Item {
+                    RowLayout {
                         width: parent.width
-                        height: 24
-                        Row {
-                            anchors.left: parent.left
-                            anchors.verticalCenter: parent.verticalCenter
+                        RowLayout {
+                            Layout.fillWidth: true
+                            Layout.alignment: Qt.AlignVCenter
                             spacing: 8
                             Icon {
-                                anchors.verticalCenter: parent.verticalCenter
+                                Layout.alignment: Qt.AlignVCenter
                                 width: 15; height: 15
                                 path: Icons.clock
                                 color: Theme.amberAccent
                             }
                             Txt {
-                                anchors.verticalCenter: parent.verticalCenter
+                                Layout.fillWidth: true
+                                Layout.alignment: Qt.AlignVCenter
                                 text: qsTr("Timeline")
                                 role: "title"
                                 size: 14
                                 weight: 600
                                 color: Theme.textPrimary
+                                elide: Text.ElideRight
                             }
                         }
                         Button {
-                            anchors.right: parent.right
-                            anchors.verticalCenter: parent.verticalCenter
+                            Layout.alignment: Qt.AlignVCenter
                             variant: "text"
                             size: "sm"
                             text: qsTr("View all →")
@@ -2326,54 +2442,59 @@ Item {
                                 border.color: Theme.primary
                             }
 
-                            Icon {
-                                id: previewIcon
-                                anchors.left: parent.left
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 16; height: 16
-                                path: modelData.kind === "file" ? Icons.folder
-                                    : modelData.kind === "clip" ? Icons.clipboard
-                                    : modelData.kind === "link" ? Icons.globe
-                                    : modelData.kind === "photo" ? Icons.photo
-                                    : modelData.kind === "recording" ? Icons.mic
-                                    : Icons.mirror
-                                color: Theme.primary
-                            }
-                            Column {
-                                anchors.left: previewIcon.right
-                                anchors.leftMargin: 10
-                                anchors.right: previewMoreBtn.left
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.leftMargin: 4
                                 anchors.rightMargin: 4
-                                anchors.verticalCenter: parent.verticalCenter
-                                spacing: 1
-                                Txt {
-                                    width: parent.width
-                                    role: "bodySmall"
-                                    weight: 600
-                                    elide: Text.ElideRight
-                                    text: previewRow.modelData.title || ""
+                                spacing: 8
+
+                                Icon {
+                                    id: previewIcon
+                                    Layout.preferredWidth: 16
+                                    Layout.preferredHeight: 16
+                                    Layout.alignment: Qt.AlignVCenter
+                                    path: modelData.kind === "file" ? Icons.folder
+                                        : modelData.kind === "clip" ? Icons.clipboard
+                                        : modelData.kind === "link" ? Icons.globe
+                                        : modelData.kind === "photo" ? Icons.photo
+                                        : modelData.kind === "recording" ? Icons.mic
+                                        : Icons.mirror
+                                    color: Theme.primary
                                 }
-                                Txt {
-                                    width: parent.width
-                                    role: "caption"
-                                    muted: true
-                                    elide: Text.ElideRight
-                                    text: {
-                                        const sub = previewRow.modelData.subtitle || ""
-                                        const rel = previewRow.modelData.timestamp ? (" · " + page.relativeTime(previewRow.modelData.timestamp)) : ""
-                                        return sub + rel
+                                ColumnLayout {
+                                    Layout.fillWidth: true
+                                    Layout.alignment: Qt.AlignVCenter
+                                    spacing: 1
+                                    Txt {
+                                        Layout.fillWidth: true
+                                        role: "bodySmall"
+                                        weight: 600
+                                        elide: Text.ElideRight
+                                        text: previewRow.modelData.title || ""
+                                    }
+                                    Txt {
+                                        Layout.fillWidth: true
+                                        role: "caption"
+                                        muted: true
+                                        elide: Text.ElideRight
+                                        text: {
+                                            const sub = previewRow.modelData.subtitle || ""
+                                            const rel = previewRow.modelData.timestamp ? (" · " + page.relativeTime(previewRow.modelData.timestamp)) : ""
+                                            return sub + rel
+                                        }
                                     }
                                 }
-                            }
-                            IconButton {
-                                id: previewMoreBtn
-                                anchors.right: parent.right
-                                anchors.verticalCenter: parent.verticalCenter
-                                width: 24; height: 24
-                                iconSize: 13
-                                iconPath: Icons.more
-                                label: qsTr("More actions")
-                                onClicked: AppController.currentPage = "timeline"
+                                IconButton {
+                                    id: previewMoreBtn
+                                    Layout.preferredWidth: 24
+                                    Layout.preferredHeight: 24
+                                    Layout.alignment: Qt.AlignVCenter
+                                    iconSize: 13
+                                    iconPath: Icons.more
+                                    label: qsTr("More actions")
+                                    Accessible.name: qsTr("More actions")
+                                    onClicked: AppController.currentPage = "timeline"
+                                }
                             }
                             HoverHandler { id: previewHover; cursorShape: Qt.PointingHandCursor }
                             TapHandler { onTapped: AppController.currentPage = "timeline" }
@@ -2825,7 +2946,8 @@ Item {
                                            || (playableWhenAddonMissing && feature.state === "locked" && feature.action === "enableAddon")
                                            || (queueableWhenOffline && (!tile.deviceOnline || feature.state === "unknown") && feature.state !== "locked" && feature.state !== "unsupported"))
 
-        height: 86
+        implicitHeight: Math.max(86, tileContentRow.implicitHeight + 24)
+        height: implicitHeight
         activeFocusOnTab: available
         radius: 16
         color: tile.active
@@ -2859,15 +2981,17 @@ Item {
             opacity: tap.pressed && tile.available ? 0.06 : 0
         }
 
-        Row {
+        RowLayout {
+            id: tileContentRow
             anchors.fill: parent
-            anchors.margins: 14
-            spacing: 12
+            anchors.margins: tile.width < 180 ? 10 : 14
+            spacing: tile.width < 180 ? 8 : 12
 
             Rectangle {
-                width: 38; height: 38
+                Layout.preferredWidth: 38
+                Layout.preferredHeight: 38
+                Layout.alignment: Qt.AlignVCenter
                 radius: 19
-                anchors.verticalCenter: parent.verticalCenter
                 color: tile.active
                     ? Qt.rgba(0.95, 0.66, 0.23, 0.25)
                     : Qt.rgba(1, 1, 1, 0.06)
@@ -2882,23 +3006,25 @@ Item {
                 }
             }
 
-            Column {
-                anchors.verticalCenter: parent.verticalCenter
-                width: parent.width - 38 - (tile.available ? 32 : 0) - parent.spacing * 2
-                spacing: 3
+            ColumnLayout {
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignVCenter
+                spacing: 2
 
                 Txt {
-                    width: parent.width
+                    Layout.fillWidth: true
                     text: tile.title
                     role: "title"
-                    size: 13.5
+                    size: tile.width < 180 ? 12.5 : 13.5
                     weight: 600
+                    wrapMode: Text.WordWrap
+                    maximumLineCount: 2
                     elide: Text.ElideRight
                     color: Theme.textPrimary
                     opacity: tile.available ? 1 : 0.6
                 }
                 Txt {
-                    width: parent.width
+                    Layout.fillWidth: true
                     visible: tile.available && tile.subtitle.length > 0
                     text: tile.subtitle
                     role: "caption"
@@ -2907,26 +3033,29 @@ Item {
                     color: Theme.textSecondary
                 }
                 Txt {
-                    width: parent.width
+                    Layout.fillWidth: true
                     visible: !tile.available && !lock.visible
                     text: qsTr("When connected")
                     role: "caption"
                     size: 11
                     muted: true
+                    elide: Text.ElideRight
                 }
                 LockChip {
                     id: lock
                     visible: !tile.available && label.length > 0 && (tile.deviceOnline || tile.feature.action !== "updateApp")
                     feature: tile.feature
+                    maxWidth: parent.width
                 }
             }
 
             // Right-aligned round arrow button (Image 2)
             Rectangle {
-                visible: tile.available
-                width: 26; height: 26
+                visible: tile.available && tile.width >= 170
+                Layout.preferredWidth: 26
+                Layout.preferredHeight: 26
+                Layout.alignment: Qt.AlignVCenter
                 radius: 13
-                anchors.verticalCenter: parent.verticalCenter
                 color: hover.hovered && tile.available ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(1, 1, 1, 0.04)
                 border.width: 1
                 border.color: hover.hovered && tile.available ? Theme.cardBorderHover : Qt.rgba(1, 1, 1, 0.08)
