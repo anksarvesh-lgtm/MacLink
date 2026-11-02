@@ -181,6 +181,19 @@ QtObject {
     readonly property int gutter: layout.gutter
     function space(step) { return Tokens.data.spacing.scale[step] }
 
+    // ---- Responsive Breakpoints (content area width, not window width) ----
+    readonly property real bpTwoColumn: 1100
+    readonly property real bpMedium: 760
+
+    function isTwoColumn(contentW) { return contentW >= bpTwoColumn }
+    function isMedium(contentW) { return contentW >= bpMedium && contentW < bpTwoColumn }
+    function isCompact(contentW) { return contentW < bpMedium }
+    function topCardsSideBySide(contentW) {
+        // Phone card and Media card side-by-side if each is at least 320 wide plus gutter
+        const available = isTwoColumn(contentW) ? (contentW - 360 - gutter * 3) : (contentW - gutter)
+        return available >= (320 * 2)
+    }
+
     // Focus rings show for keyboard focus only, not after a click (TapHandler
     // doesn't take activeFocus on click; activeFocus on a control comes from Tab).
     function focusVisible(item) {

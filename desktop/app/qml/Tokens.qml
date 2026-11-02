@@ -27,8 +27,8 @@ QtObject {
           "contentPadding": 22,
           "gutter": 16,
           "minWindow": [
-            880,
-            600
+            720,
+            520
           ],
           "railWidth": 80,
           "topBarHeight": 52
