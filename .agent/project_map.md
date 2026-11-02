@@ -1,5 +1,5 @@
-# Project Map & Architecture: maclink
-Generated on: 2026-11-01T19:42:16.738Z | Total Tracked Files: 607
+# Project Map & Architecture: nectarlink
+Generated on: 2026-11-02T03:56:33.165Z | Total Tracked Files: 607
 
 ## Architecture Flowchart
 ```mermaid

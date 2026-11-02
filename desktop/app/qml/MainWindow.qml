@@ -1118,7 +1118,7 @@ NativeWindow {
                     : window.page === "files" ? qsTr("Files")
                     : window.page === "apps" ? qsTr("Apps")
                     : window.page === "deck" ? qsTr("Deck")
-                    : (window.page === "help_center" || window.page === "guide") ? qsTr("Help Center")
+                    : (window.page === "help_center" || window.page === "guide") ? qsTr("Guide")
                     : qsTr("Settings")
                 role: "headline"
                 size: 20

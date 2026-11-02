@@ -1,66 +1,74 @@
 {
   "version": 1,
-  "task_id": "t-20261101-9009",
-  "goal": "Execute full MacLink development plan: Task 0 toolchain inspection, Task 1 Android release APK, Task 2 macOS release bundle/DMG, Task 3 build-all.sh automation, Task 4 test suites and clippy",
-  "status": "done",
-  "created_at": "2026-11-01T19:42:32.226Z",
-  "updated_at": "2026-11-01T20:08:43.647Z",
-  "checkpoint_count": 5,
+  "task_id": "t-20261102-5349",
+  "goal": "Replace wide sidebar with narrow Liquid Glass icon rail from Image 1, matching macOS 26 style with floating glass panel, backdrop sampling, specular rim, sliding active capsule, and zero Rust changes.",
+  "status": "active",
+  "created_at": "2026-11-02T03:56:42.014Z",
+  "updated_at": "2026-11-02T04:09:02.665Z",
+  "checkpoint_count": 3,
   "steps": [
     {
       "id": "s1",
-      "title": "Task 0: Toolchain Inspection",
+      "title": "Inspect current sidebar, git history for old rail code, QtQuick.Effects deployment, and page existence",
       "status": "done",
       "tries": 0,
       "max_tries": 3,
       "depends_on": [],
-      "note": "Task 0 Toolchain Inspection complete: rustc 1.98.1, Apple clang 21.0.0, OpenJDK 21.0.12.1, NDK 30.0.16248370, cargo-ndk 4.1.2, Qt 6.8.2. All doubts verified.",
+      "note": "Completed Step 0 inspection: 1) Sidebar, device chip and router located in MainWindow.qml. 2) Old narrow rail code from before d2ce411 reviewed in git log. 3) Real pages confirmed: Home, Messages, Calls, Photos, Apps, Deck, Guide, Settings. 4) Files exists (FilesPage.qml), Mirror Screen is a floating window/action, Help Center is Guide. 5) Background identified in MainWindow.qml lines 424-439 ready to encapsulate in windowBackdrop. 6) QtQuick.Effects confirmed deployed in MacLink.app.",
       "last_error": null,
-      "updated_at": "2026-11-01T19:43:53.253Z"
+      "updated_at": "2026-11-02T03:57:53.172Z"
     },
     {
       "id": "s2",
-      "title": "Task 1: Android Release APK Build",
+      "title": "Add Theme tokens (railInset, reduceGlass) and implement reusable GlassPanel component",
       "status": "done",
       "tries": 0,
       "max_tries": 3,
-      "depends_on": [],
-      "note": "Task 1 Android release APK built: MacLink-0.0.1-android.apk (93 MB), dual-arch libmaclink_ffi.so (arm64-v8a + x86_64), 16KB page-aligned (0x4000), aapt package name in.maclink.srv, signed with v2 scheme verified.",
+      "depends_on": [
+        "s1"
+      ],
+      "note": "Added Theme.railInset: 8 and Theme.reduceGlass tokens in Theme.qml, and implemented reusable GlassPanel component in desktop/app/qml/components/GlassPanel.qml with blurred backdrop ShaderEffectSource, MultiEffect blur, tint, top light, specular rim cutout, and shadow. Verified with cargo check (0 Rust diffs) and committed to git (commit 0532cf0).",
       "last_error": null,
-      "updated_at": "2026-11-01T19:45:25.348Z"
+      "updated_at": "2026-11-02T04:02:35.761Z"
     },
     {
       "id": "s3",
-      "title": "Task 2: macOS Release App and DMG Build",
+      "title": "Implement 74pt narrow Liquid Glass rail with logo, 8 items, sliding capsule, and glass plus button",
       "status": "done",
       "tries": 0,
       "max_tries": 3,
-      "depends_on": [],
-      "note": "Task 2 verified: maclink-desktop compiled in release mode, MacLink.app bundled with Qt 6.8.2 frameworks via macdeployqt, ad-hoc signed, codesign --verify --deep --strict passed, otool -L confirmed @rpath references, hdiutil verify confirmed valid DMG, and test launch verified process runs cleanly.",
+      "depends_on": [
+        "s2"
+      ],
+      "note": "Implemented 74pt floating Liquid Glass rail with logo, 8 items, sliding capsule, and glass plus button in MainWindow.qml. cargo check passed cleanly.",
       "last_error": null,
-      "updated_at": "2026-11-01T19:53:36.015Z"
+      "updated_at": "2026-11-02T04:09:02.665Z"
     },
     {
       "id": "s4",
-      "title": "Task 3: Unified Build Automation Script",
-      "status": "done",
+      "title": "Extend backdrop amber glow behind rail and reflow content area cleanly",
+      "status": "pending",
       "tries": 0,
       "max_tries": 3,
-      "depends_on": [],
-      "note": "Task 3 verified: scripts/build-all.sh all executed cleanly, produced all target artifacts (MacLink.app, MacLink-0.0.1-macos-arm64.dmg, MacLink-0.0.1-macos-arm64.zip, MacLink-0.0.1-android.apk), generated SHA256SUMS.txt, and shasum -a 256 -c SHA256SUMS.txt verified OK for all files.",
+      "depends_on": [
+        "s3"
+      ],
+      "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T19:56:43.132Z"
+      "updated_at": "2026-11-02T03:56:42.014Z"
     },
     {
       "id": "s5",
-      "title": "Task 4: Tests and Clippy Verification",
-      "status": "done",
+      "title": "Verify build, test running app and idle CPU, confirm zero Rust changes, capture screenshots, and generate report",
+      "status": "pending",
       "tries": 0,
       "max_tries": 3,
-      "depends_on": [],
-      "note": "Task 4 verified: 154 Rust tests passed across workspace (including all 80 two_devices integration tests), cargo clippy --workspace -- -D warnings passed cleanly with zero warnings/errors, and 78 Android unit tests passed with BUILD SUCCESSFUL in testDebugUnitTest.",
+      "depends_on": [
+        "s4"
+      ],
+      "note": null,
       "last_error": null,
-      "updated_at": "2026-11-01T20:08:43.647Z"
+      "updated_at": "2026-11-02T03:56:42.014Z"
     }
   ]
 }

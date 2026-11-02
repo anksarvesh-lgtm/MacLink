@@ -1,6 +1,6 @@
-<!-- BRIEF: COMMIT=25a9a050 HASH=021a27f1 DATE=2026-11-01T19:42:16.733Z -->
-# Project Brief: maclink
-- **Commit**: `25a9a050` | **Updated**: 2026-11-01T19:42:16.733Z | **Files Tracked**: 607
+<!-- BRIEF: COMMIT=9d7e294b HASH=021a27f1 DATE=2026-11-02T03:56:33.163Z -->
+# Project Brief: nectarlink
+- **Commit**: `9d7e294b` | **Updated**: 2026-11-02T03:56:33.163Z | **Files Tracked**: 607
 
 ## Overview
 **Your Android phone and your Mac, working seamlessly as one.**
