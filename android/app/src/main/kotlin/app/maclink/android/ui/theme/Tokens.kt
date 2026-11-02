@@ -3,7 +3,76 @@
 package app.maclink.android.ui.theme
 
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+
+/**
+ * Amber Liquid Glass Design System Tokens
+ * Reference: LinkDesk Amber Liquid Glass Edition
+ */
+object AmberTokens {
+    // Primary Color System
+    val Background = Color(0xFF221A0F)
+    val DeepBackground = Color(0xFF1A1008)
+    val DarkAmber = Color(0xFF603606)
+    val BurntOrange = Color(0xFF894F03)
+    val BrownSurface = Color(0xFF6D4510)
+    val PrimaryAccent = Color(0xFFF49D04)
+    val SecondaryAccent = Color(0xFFCB7501)
+    val Highlight = Color(0xFFFFB52E)
+    val PrimaryText = Color(0xFFF3F0E8)
+    val SecondaryText = Color(0xFFB5A18B)
+    val MutedText = Color(0xFF897360)
+
+    // Glass Styling Tokens
+    val GlassBorder = Color(0x35FFFFFF)
+    val GlassBorderBright = Color(0x75FFB52E)
+    val GlassBorderSubtle = Color(0x18FFFFFF)
+    val GlassBackground = Color(0x3D603606)
+    val GlassBackgroundSubtle = Color(0x286D4510)
+    val GlassBackgroundDark = Color(0x601A1008)
+    val GlassInnerHighlight = Color(0x24FFFFFF)
+    val GlassShadowAmber = Color(0x40F49D04)
+    val GlowGreen = Color(0xFF4ADE80)
+    val GlowRed = Color(0xFFEF4444)
+    val OnlineGreen = GlowGreen
+    val OfflineGray = MutedText
+
+    // Gradients
+    val ActiveCardGradient = Brush.verticalGradient(
+        listOf(
+            Color(0xFFF49D04),
+            Color(0xFFAC5A00)
+        )
+    )
+    val CardGradient = Brush.verticalGradient(
+        listOf(
+            Color(0x4D6D4510),
+            Color(0x35351E04)
+        )
+    )
+    val SurfaceGradient = Brush.verticalGradient(
+        listOf(
+            Color(0x55603606),
+            Color(0x3D221A0F)
+        )
+    )
+    val PillActiveGradient = Brush.horizontalGradient(
+        listOf(
+            Color(0xFFF49D04),
+            Color(0xFFC76A00)
+        )
+    )
+    val WaveGradient = Brush.horizontalGradient(
+        listOf(
+            Color(0x00F49D04),
+            Color(0x4DF49D04),
+            Color(0x99FFB52E),
+            Color(0x4DF49D04),
+            Color(0x00F49D04)
+        )
+    )
+}
 
 /** Material color roles of one theme variant. */
 @Immutable
@@ -71,14 +140,14 @@ object Tokens {
             ),
         ),
         "honey" to Seed(
-            color = Color(0xFFB7791F),
+            color = Color(0xFFF49D04),
             light = Palette(
-                primary = Color(0xFF8A5100),
+                primary = Color(0xFF894F03),
                 onPrimary = Color(0xFFFFFFFF),
-                primaryContainer = Color(0xFFFFDDB8),
-                onPrimaryContainer = Color(0xFF2C1600),
-                secondaryContainer = Color(0xFFF3E0CB),
-                onSecondaryContainer = Color(0xFF261A0C),
+                primaryContainer = Color(0xFFFFB52E),
+                onPrimaryContainer = Color(0xFF1A1008),
+                secondaryContainer = Color(0xFF6D4510),
+                onSecondaryContainer = Color(0xFFF3F0E8),
                 surface = Color(0xFFFFF8F3),
                 surfaceContainerLow = Color(0xFFFBF2EB),
                 surfaceContainer = Color(0xFFF5ECE4),
@@ -90,21 +159,21 @@ object Tokens {
                 outlineVariant = Color(0xFFD5C3B5),
             ),
             dark = Palette(
-                primary = Color(0xFFFFB95F),
-                onPrimary = Color(0xFF4A2800),
-                primaryContainer = Color(0xFF693C00),
-                onPrimaryContainer = Color(0xFFFFDDB8),
-                secondaryContainer = Color(0xFF574330),
-                onSecondaryContainer = Color(0xFFF3E0CB),
-                surface = Color(0xFF17130E),
-                surfaceContainerLow = Color(0xFF120E0A),
-                surfaceContainer = Color(0xFF241F1A),
-                surfaceContainerHigh = Color(0xFF2E2924),
-                surfaceContainerHighest = Color(0xFF39342E),
-                onSurface = Color(0xFFEBE1D9),
-                onSurfaceVariant = Color(0xFFD5C3B5),
-                outline = Color(0xFF9E8E81),
-                outlineVariant = Color(0xFF51453A),
+                primary = Color(0xFFF49D04),
+                onPrimary = Color(0xFF1A1008),
+                primaryContainer = Color(0xFF894F03),
+                onPrimaryContainer = Color(0xFFF3F0E8),
+                secondaryContainer = Color(0xFF603606),
+                onSecondaryContainer = Color(0xFFB5A18B),
+                surface = Color(0xFF221A0F),
+                surfaceContainerLow = Color(0xFF1A1008),
+                surfaceContainer = Color(0xFF6D4510),
+                surfaceContainerHigh = Color(0xFF894F03),
+                surfaceContainerHighest = Color(0xFF603606),
+                onSurface = Color(0xFFF3F0E8),
+                onSurfaceVariant = Color(0xFFB5A18B),
+                outline = Color(0xFF897360),
+                outlineVariant = Color(0x35FFFFFF),
             ),
         ),
         "lavender" to Seed(

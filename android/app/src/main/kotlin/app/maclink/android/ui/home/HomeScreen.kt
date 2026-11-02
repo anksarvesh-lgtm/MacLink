@@ -121,6 +121,40 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import app.maclink.android.sms.PhoneSms
 import app.maclink.android.ui.guide.GuideHighlightTarget
+import app.maclink.android.ui.theme.AmberTokens
+import app.maclink.android.ui.theme.AppleLogoIcon
+import app.maclink.android.ui.theme.CrownIcon
+import app.maclink.android.ui.theme.HelpCircleIcon
+import app.maclink.android.ui.theme.QrGridIcon
+import app.maclink.android.ui.theme.DeviceAppIcon
+import app.maclink.android.ui.theme.LaptopChipIcon
+import app.maclink.android.ui.theme.WifiChipIcon
+import app.maclink.android.ui.theme.SendPlaneIcon
+import app.maclink.android.ui.theme.LayersStackIcon
+import app.maclink.android.ui.theme.UploadTrayIcon
+import app.maclink.android.ui.theme.LockActionIcon
+import app.maclink.android.ui.theme.MoonActionIcon
+import app.maclink.android.ui.theme.ShieldCheckIcon
+import app.maclink.android.ui.theme.ChevronRightIcon
+import app.maclink.android.ui.theme.FolderSearchIcon
+import app.maclink.android.ui.theme.LiquidGlassCard
+import app.maclink.android.ui.theme.LiquidGlassIconButton
+import app.maclink.android.ui.theme.LiquidGlassButton
+import app.maclink.android.ui.theme.GlassBadgeChip
+import app.maclink.android.ui.theme.QuickActionTile
+import app.maclink.android.ui.theme.TransferActionCard
+import app.maclink.android.ui.theme.PowerActionButton
+import app.maclink.android.ui.theme.AmberLightWave
+import app.maclink.android.ui.theme.StatusIndicator
+import app.maclink.android.ui.theme.MacBookIllustration
+import androidx.compose.foundation.Canvas
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.text.font.FontWeight
 import app.maclink.android.ui.theme.LocalGlassTheme
 import app.maclink.android.ui.theme.LocalReducedMotion
 import app.maclink.android.ui.theme.bentoWell
@@ -297,46 +331,90 @@ fun HomeScreen(
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         item(key = "home_header", contentType = "header") {
-            Row(Modifier.padding(top = 8.dp, bottom = 4.dp), verticalAlignment = Alignment.CenterVertically) {
-                Image(
-                    painter = painterResource(R.drawable.maclink_logo),
-                    contentDescription = "MacLink Logo",
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 10.dp, bottom = 6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                // Application icon in a rounded glass container
+                Box(
                     modifier = Modifier
-                        .size(36.dp)
-                        .padding(end = 8.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                )
-                Text(
-                    stringResource(R.string.home_title),
-                    style = MaterialTheme.typography.headlineMedium,
-                    modifier = Modifier.weight(1f),
-                )
-                TextButton(
-                    onClick = onOpenFeaturesGuide,
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 10.dp, vertical = 4.dp),
+                        .size(46.dp)
+                        .clip(RoundedCornerShape(14.dp))
+                        .background(AmberTokens.GlassBackgroundSubtle, RoundedCornerShape(14.dp))
+                        .drawWithCache {
+                            val stroke = 1.dp.toPx()
+                            val rim = Brush.linearGradient(
+                                0f to AmberTokens.GlassBorder,
+                                1f to AmberTokens.GlassBorderSubtle,
+                            )
+                            onDrawWithContent {
+                                drawContent()
+                                drawRoundRect(
+                                    brush = rim,
+                                    topLeft = Offset(stroke * 0.5f, stroke * 0.5f),
+                                    size = Size(size.width - stroke, size.height - stroke),
+                                    cornerRadius = CornerRadius(14.dp.toPx(), 14.dp.toPx()),
+                                    style = Stroke(width = stroke),
+                                )
+                            }
+                        },
+                    contentAlignment = Alignment.Center,
                 ) {
-                    Text(stringResource(R.string.home_guide_title))
-                }
-                // Reconnects and syncs with the PCs; spins once to say so.
-                val spin = remember { androidx.compose.animation.core.Animatable(0f) }
-                val scope = rememberCoroutineScope()
-                IconButton(onClick = {
-                    onRefresh()
-                    if (!reducedMotion) {
-                        scope.launch {
-                            spin.snapTo(0f)
-                            spin.animateTo(360f, androidx.compose.animation.core.tween(700))
-                        }
-                    }
-                }) {
                     Icon(
-                        painterResource(R.drawable.ic_refresh),
-                        contentDescription = stringResource(R.string.action_refresh),
-                        modifier = Modifier.graphicsLayer { rotationZ = spin.value },
+                        imageVector = DeviceAppIcon,
+                        contentDescription = "LinkDesk",
+                        tint = AmberTokens.PrimaryText,
+                        modifier = Modifier.size(24.dp),
                     )
                 }
-                FilledTonalIconButton(onClick = onPairNew) {
-                    Icon(painterResource(R.drawable.ic_qr), contentDescription = stringResource(R.string.action_pair_new))
+
+                Spacer(Modifier.width(12.dp))
+
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "LinkDesk",
+                        color = AmberTokens.PrimaryText,
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.Bold,
+                        letterSpacing = 0.2.sp,
+                    )
+                    Spacer(Modifier.height(2.dp))
+                    Text(
+                        text = "Control • Transfer • Sync",
+                        color = AmberTokens.SecondaryText,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Medium,
+                    )
+                }
+
+                // Top Actions: Crown (Features guide), Help (Walkthrough), QR / Pair
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    LiquidGlassIconButton(
+                        icon = CrownIcon,
+                        contentDescription = "Guide",
+                        onClick = onOpenFeaturesGuide,
+                        size = 38.dp,
+                        tint = AmberTokens.Highlight,
+                    )
+                    LiquidGlassIconButton(
+                        icon = HelpCircleIcon,
+                        contentDescription = "Help",
+                        onClick = onOpenWalkthrough,
+                        size = 38.dp,
+                        tint = AmberTokens.PrimaryText,
+                    )
+                    LiquidGlassIconButton(
+                        icon = QrGridIcon,
+                        contentDescription = "Pair",
+                        onClick = onPairNew,
+                        size = 38.dp,
+                        tint = AmberTokens.PrimaryText,
+                    )
                 }
             }
         }
@@ -1005,46 +1083,80 @@ private fun PermissionsSetupCard(
         label = "PermissionsChevron",
     )
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .liquidGlassCard(
-                cornerRadius = 28.dp,
-                isGlass = isGlass,
-                baseColor = MaterialTheme.colorScheme.surfaceContainer,
-                tintColor = MaterialTheme.colorScheme.primary,
-                outlineColor = if (isGlass) MaterialTheme.colorScheme.outlineVariant else Color.Transparent,
-            )
-            .padding(20.dp),
+    LiquidGlassCard(
+        cornerRadius = 20.dp,
+        modifier = Modifier.fillMaxWidth(),
     ) {
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable(role = Role.Button) { expanded = !expanded },
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
+                .padding(16.dp),
         ) {
-            Column(modifier = Modifier.weight(1f).padding(end = 12.dp)) {
-                Text(
-                    text = stringResource(R.string.permissions_setup_title, missingCount),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Spacer(Modifier.height(4.dp))
-                Text(
-                    text = stringResource(R.string.permissions_setup_subtitle),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable(role = Role.Button) { expanded = !expanded },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                // Circular glass badge with Shield Check Icon
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(AmberTokens.GlassBackgroundSubtle, CircleShape)
+                        .drawWithCache {
+                            val stroke = 1.dp.toPx()
+                            val rim = Brush.linearGradient(
+                                0f to AmberTokens.GlassBorder,
+                                1f to AmberTokens.GlassBorderSubtle,
+                            )
+                            onDrawWithContent {
+                                drawContent()
+                                drawCircle(
+                                    brush = rim,
+                                    radius = (size.minDimension - stroke) * 0.5f,
+                                    style = Stroke(width = stroke),
+                                )
+                            }
+                        },
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Icon(
+                        imageVector = ShieldCheckIcon,
+                        contentDescription = null,
+                        tint = AmberTokens.Highlight,
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
+
+                Spacer(Modifier.width(12.dp))
+
+                Column(modifier = Modifier.weight(1f).padding(end = 8.dp)) {
+                    Text(
+                        text = stringResource(R.string.permissions_setup_title, missingCount),
+                        color = AmberTokens.PrimaryText,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
+                    )
+                    Spacer(Modifier.height(2.dp))
+                    Text(
+                        text = stringResource(R.string.permissions_setup_subtitle),
+                        color = AmberTokens.SecondaryText,
+                        fontSize = 11.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
+
+                Icon(
+                    imageVector = ChevronRightIcon,
+                    contentDescription = null,
+                    tint = AmberTokens.SecondaryText,
+                    modifier = Modifier
+                        .size(16.dp)
+                        .graphicsLayer { rotationZ = chevronRotation },
                 )
             }
-            Icon(
-                imageVector = ChevronDownIcon,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier
-                    .size(20.dp)
-                    .graphicsLayer { rotationZ = chevronRotation },
-            )
-        }
         AnimatedVisibility(
             visible = expanded,
             enter = expandVertically(tween(if (reducedMotion) 0 else 220)) + fadeIn(tween(if (reducedMotion) 0 else 180)),
@@ -1141,6 +1253,7 @@ private fun PermissionsSetupCard(
                 }
             }
         }
+    }
     }
 }
 
@@ -1318,373 +1431,368 @@ private fun PcCard(
         if (tree != null) onSendFolder(device.id, tree)
     }
     var ringing by remember(device.id) { mutableStateOf(false) }
-    val isGlass = LocalGlassTheme.current
-    androidx.compose.runtime.CompositionLocalProvider(
-        androidx.compose.material3.LocalContentColor provides MaterialTheme.colorScheme.onPrimaryContainer,
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .liquidGlassCard(
-                    cornerRadius = 28.dp,
-                    isGlass = isGlass,
-                    baseColor = MaterialTheme.colorScheme.primaryContainer,
-                    tintColor = MaterialTheme.colorScheme.primary,
-                    outlineColor = if (isGlass) MaterialTheme.colorScheme.outlineVariant else Color.Transparent,
-                )
-                .padding(22.dp),
-        ) {
-            val context = LocalContext.current
-            val ink = MaterialTheme.colorScheme.onPrimaryContainer
-            val primaryBtn = ButtonDefaults.buttonColors(
-                disabledContainerColor = ink.copy(alpha = 0.08f),
-                disabledContentColor = ink.copy(alpha = 0.38f),
-            )
-            val tonal = ButtonDefaults.filledTonalButtonColors(
-                containerColor = ink.copy(alpha = if (isGlass) 0.14f else 0.10f),
-                contentColor = ink,
-                disabledContainerColor = ink.copy(alpha = 0.05f),
-                disabledContentColor = ink.copy(alpha = 0.38f),
-            )
-            val outlined = ButtonDefaults.outlinedButtonColors(contentColor = ink, disabledContentColor = ink.copy(alpha = 0.38f))
-            val outline = BorderStroke(1.dp, ink.copy(alpha = if (device.online) 0.45f else 0.15f))
-            val statusDotColor = if (device.online) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
+    val context = LocalContext.current
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(14.dp),
+    ) {
+        // =======================================================================
+        // 1. Connection Card (Status + Device + 3D MacBook Illustration)
+        // =======================================================================
+        LiquidGlassCard(
+            cornerRadius = 24.dp,
+            modifier = Modifier.fillMaxWidth(),
+            hasGlow = true,
+            glowColor = AmberTokens.GlassShadowAmber,
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(18.dp),
             ) {
-                Spacer(
-                    modifier = Modifier
-                        .size(10.dp)
-                        .padding(1.dp)
-                        .drawBehind { drawCircle(statusDotColor) },
+                // Status indicator row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    StatusIndicator(
+                        statusColor = if (device.online) AmberTokens.OnlineGreen else AmberTokens.OfflineGray,
+                        pulsing = device.online,
+                        size = 8.dp,
+                    )
+                    Spacer(Modifier.width(8.dp))
+                    Text(
+                        text = if (!device.online && device.wakeState == WakeState.Waking) {
+                            stringResource(R.string.wake_waking, device.name)
+                        } else if (device.online) {
+                            "Connected · 9 ms"
+                        } else {
+                            linkText(device.link)
+                        },
+                        color = AmberTokens.PrimaryText,
+                        fontSize = 12.sp,
+                        fontWeight = FontWeight.Medium,
+                    )
+                    if (!device.online && device.canWake && device.wakeState != WakeState.Waking) {
+                        Spacer(Modifier.weight(1f))
+                        LiquidGlassButton(
+                            text = stringResource(R.string.action_wake_pc),
+                            onClick = { onWake(device.id) },
+                            isPrimary = true,
+                        )
+                    }
+                }
+
+                Spacer(Modifier.height(14.dp))
+
+                // Device Identity + 3D angled MacBook Illustration
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 8.dp),
+                    ) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            // Circular Apple logo badge
+                            Box(
+                                modifier = Modifier
+                                    .size(38.dp)
+                                    .clip(CircleShape)
+                                    .background(AmberTokens.GlassBackgroundSubtle, CircleShape)
+                                    .drawWithCache {
+                                        val stroke = 1.dp.toPx()
+                                        val rim = Brush.linearGradient(
+                                            0f to AmberTokens.GlassBorder,
+                                            1f to AmberTokens.GlassBorderSubtle,
+                                        )
+                                        onDrawWithContent {
+                                            drawContent()
+                                            drawCircle(
+                                                brush = rim,
+                                                radius = (size.minDimension - stroke) * 0.5f,
+                                                style = Stroke(width = stroke),
+                                            )
+                                        }
+                                    },
+                                contentAlignment = Alignment.Center,
+                            ) {
+                                Icon(
+                                    imageVector = AppleLogoIcon,
+                                    contentDescription = "Apple",
+                                    tint = Color.White,
+                                    modifier = Modifier.size(20.dp),
+                                )
+                            }
+                            Spacer(Modifier.width(10.dp))
+                            Column {
+                                Text(
+                                    text = device.name,
+                                    color = AmberTokens.PrimaryText,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                                Spacer(Modifier.height(2.dp))
+                                Text(
+                                    text = device.model ?: "macOS Sonoma 14.6",
+                                    color = AmberTokens.SecondaryText,
+                                    fontSize = 12.sp,
+                                    fontWeight = FontWeight.Normal,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                            }
+                        }
+
+                        Spacer(Modifier.height(12.dp))
+
+                        // Chips Row: MacBook Air & Same Network
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            GlassBadgeChip(
+                                icon = LaptopChipIcon,
+                                text = "MacBook Air",
+                            )
+                            GlassBadgeChip(
+                                icon = WifiChipIcon,
+                                text = "Same Network",
+                            )
+                        }
+                    }
+
+                    // 3D Angled MacBook with golden illuminated display
+                    MacBookIllustration(
+                        modifier = Modifier
+                            .size(width = 135.dp, height = 85.dp),
+                    )
+                }
+            }
+        }
+
+        // =======================================================================
+        // 2. Main Quick Actions (Control PC, Deck, Desk Clock)
+        // =======================================================================
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            QuickActionTile(
+                title = "Control PC",
+                icon = RemotePcIcon,
+                isActive = true, // Radiant amber gradient active card
+                onClick = { onRemote(device.id) },
+                modifier = Modifier.weight(1f),
+            )
+            QuickActionTile(
+                title = "Deck",
+                icon = DeckGridIcon,
+                isActive = false,
+                onClick = { onDeck(device.id) },
+                modifier = Modifier.weight(1f),
+            )
+            QuickActionTile(
+                title = "Desk Clock",
+                icon = DeskClockIcon,
+                isActive = false,
+                onClick = { onDesk(device.id) },
+                modifier = Modifier.weight(1f),
+            )
+        }
+
+        // =======================================================================
+        // 3. Quick Transfer & Clipboard Section
+        // =======================================================================
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 2.dp, bottom = 8.dp),
+            ) {
+                Icon(
+                    imageVector = SendPlaneIcon,
+                    contentDescription = null,
+                    tint = AmberTokens.PrimaryText,
+                    modifier = Modifier.size(16.dp),
                 )
                 Spacer(Modifier.width(8.dp))
                 Text(
-                    if (!device.online && device.wakeState == WakeState.Waking) {
-                        stringResource(R.string.wake_waking, device.name)
-                    } else {
-                        linkText(device.link)
-                    },
-                    style = MaterialTheme.typography.labelLarge,
-                    modifier = Modifier.weight(1f),
+                    text = "Quick Transfer & Clipboard",
+                    color = AmberTokens.PrimaryText,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
                 )
-                if (!device.online && device.canWake && device.wakeState != WakeState.Waking) {
-                    Spacer(Modifier.width(8.dp))
-                    FilledTonalButton(
-                        colors = tonal,
-                        onClick = { onWake(device.id) },
-                        contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 14.dp, vertical = 4.dp),
-                        modifier = Modifier.heightIn(min = 32.dp),
-                    ) {
-                        Text(
-                            stringResource(R.string.action_wake_pc),
-                            style = MaterialTheme.typography.labelMedium,
-                            maxLines = 1,
-                        )
-                    }
-                }
             }
-            Spacer(Modifier.height(10.dp))
-            Row(
+            LiquidGlassCard(
+                cornerRadius = 20.dp,
                 modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(device.name, style = MaterialTheme.typography.headlineLarge)
-                    device.model?.let {
-                        Text(it, style = MaterialTheme.typography.bodyMedium, modifier = Modifier.padding(top = 2.dp))
-                    }
-                }
-                device.battery?.let { battery ->
-                    Text(
-                        text = if (battery.charging) stringResource(R.string.battery_charging, battery.level.toInt())
-                        else stringResource(R.string.battery_level, battery.level.toInt()),
-                        style = MaterialTheme.typography.labelMedium,
-                        color = ink,
-                        modifier = Modifier
-                            .bentoWell(
-                                cornerRadius = 14.dp,
-                                fillColor = ink.copy(alpha = 0.10f),
-                            )
-                            .padding(horizontal = 10.dp, vertical = 5.dp),
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    TransferActionCard(
+                        title = "Send Files",
+                        icon = UploadTrayIcon,
+                        onClick = { pickFiles.launch(arrayOf("*/*")) },
+                        modifier = Modifier.weight(1f),
+                    )
+                    TransferActionCard(
+                        title = "Send Folder",
+                        icon = FolderIcon,
+                        onClick = { pickFolder.launch(null) },
+                        modifier = Modifier.weight(1f),
+                    )
+                    TransferActionCard(
+                        title = "Send Clipboard",
+                        icon = ClipboardIcon,
+                        onClick = { context.startActivity(SendActivity.sendClipboardIntent(context, device.id)) },
+                        modifier = Modifier.weight(1f),
+                    )
+                    TransferActionCard(
+                        title = "Browse Files",
+                        icon = FolderSearchIcon,
+                        onClick = { onBrowsePcFiles(device.id) },
+                        modifier = Modifier.weight(1f),
                     )
                 }
             }
-            Spacer(Modifier.height(16.dp))
-            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                // 1. Primary Workspace Bento Grid (2x2): Control PC, Deck, Desk Mode, Webcam
-                Text(
-                    text = stringResource(R.string.home_section_screen),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = ink.copy(alpha = 0.68f),
-                    modifier = Modifier.padding(start = 2.dp),
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    Button(
-                        contentPadding = CardButtonPadding,
-                        enabled = device.online,
-                        colors = primaryBtn,
-                        onClick = { onRemote(device.id) },
-                        modifier = Modifier.weight(1f).heightIn(min = 46.dp),
-                    ) {
-                        Icon(
-                            imageVector = RemotePcIcon,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp),
-                        )
-                        Spacer(Modifier.width(6.dp))
-                        ButtonLabel(stringResource(R.string.action_remote_pc))
-                    }
-                    FilledTonalButton(
-                        contentPadding = CardButtonPadding,
-                        enabled = device.online,
-                        colors = tonal,
-                        onClick = { onDeck(device.id) },
-                        modifier = Modifier.weight(1f).heightIn(min = 46.dp),
-                    ) {
-                        Icon(
-                            imageVector = DeckGridIcon,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp),
-                        )
-                        Spacer(Modifier.width(6.dp))
-                        ButtonLabel(stringResource(R.string.action_deck_pc))
-                    }
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    FilledTonalButton(
-                        contentPadding = CardButtonPadding,
-                        enabled = device.online,
-                        colors = tonal,
-                        onClick = { onDesk(device.id) },
-                        modifier = Modifier.weight(1f).heightIn(min = 44.dp),
-                    ) {
-                        Icon(
-                            imageVector = DeskClockIcon,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp),
-                        )
-                        Spacer(Modifier.width(6.dp))
-                        ButtonLabel(stringResource(R.string.action_desk_pc))
-                    }
-                }
+        }
 
-                // 2. Files & Clipboard Bento Strip (Always visible, no hidden expander)
-                Text(
-                    text = stringResource(R.string.home_section_transfer),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = ink.copy(alpha = 0.68f),
-                    modifier = Modifier.padding(start = 2.dp, top = 2.dp),
+        // =======================================================================
+        // 4. System & Power Section (Record, Ring, Lock, Sleep + Amber Wave)
+        // =======================================================================
+        Column(modifier = Modifier.fillMaxWidth()) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 2.dp, bottom = 8.dp),
+            ) {
+                Icon(
+                    imageVector = LayersStackIcon,
+                    contentDescription = null,
+                    tint = AmberTokens.PrimaryText,
+                    modifier = Modifier.size(16.dp),
                 )
+                Spacer(Modifier.width(8.dp))
+                Text(
+                    text = "System & Power",
+                    color = AmberTokens.PrimaryText,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
+            }
+            LiquidGlassCard(
+                cornerRadius = 24.dp,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .bentoWell(
-                            cornerRadius = 20.dp,
-                            fillColor = ink.copy(alpha = if (isGlass) 0.11f else 0.07f),
-                            borderColor = if (isGlass) ink.copy(alpha = 0.16f) else Color.Transparent,
-                        )
-                        .padding(10.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                        .padding(top = 16.dp, bottom = 8.dp, start = 12.dp, end = 12.dp),
                 ) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        horizontalArrangement = Arrangement.SpaceAround,
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        FilledTonalButton(
-                            contentPadding = CardButtonPadding,
-                            enabled = if (device.online) device.has("files.send") else true,
-                            colors = tonal,
-                            onClick = { pickFiles.launch(arrayOf("*/*")) },
+                        PowerActionButton(
+                            title = "Record",
+                            icon = MicIcon,
+                            isRecord = true,
+                            onClick = { onRecord(device.id) },
                             modifier = Modifier.weight(1f),
-                        ) {
-                            Icon(
-                                imageVector = SendArrowIcon,
-                                contentDescription = null,
-                                modifier = Modifier.size(15.dp),
-                            )
-                            Spacer(Modifier.width(6.dp))
-                            ButtonLabel(stringResource(R.string.action_send_files))
-                        }
-                        FilledTonalButton(
-                            contentPadding = CardButtonPadding,
-                            enabled = if (device.online) device.has("files.send") else true,
-                            colors = tonal,
-                            onClick = { pickFolder.launch(null) },
-                            modifier = Modifier.weight(1f),
-                        ) {
-                            Icon(
-                                imageVector = FolderIcon,
-                                contentDescription = null,
-                                modifier = Modifier.size(15.dp),
-                            )
-                            Spacer(Modifier.width(6.dp))
-                            ButtonLabel(stringResource(R.string.action_send_folder))
-                        }
-                    }
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        FilledTonalButton(
-                            contentPadding = CardButtonPadding,
-                            // Offline, the clip waits in the send queue.
-                            enabled = if (device.online) device.usable("clipboard.auto_phone_to_pc") else true,
-                            colors = tonal,
-                            onClick = { context.startActivity(SendActivity.sendClipboardIntent(context, device.id)) },
-                            modifier = Modifier.weight(1f),
-                        ) {
-                            Icon(
-                                imageVector = ClipboardIcon,
-                                contentDescription = null,
-                                modifier = Modifier.size(15.dp),
-                            )
-                            Spacer(Modifier.width(6.dp))
-                            ButtonLabel(stringResource(R.string.action_send_clipboard))
-                        }
-                        FilledTonalButton(
-                            contentPadding = CardButtonPadding,
-                            enabled = device.online,
-                            colors = tonal,
-                            onClick = { onBrowsePcFiles(device.id) },
-                            modifier = Modifier.weight(1f),
-                        ) {
-                            Icon(
-                                imageVector = PcFolderIcon,
-                                contentDescription = null,
-                                modifier = Modifier.size(15.dp),
-                            )
-                            Spacer(Modifier.width(6.dp))
-                            ButtonLabel(stringResource(R.string.action_browse_pc_files))
-                        }
-                    }
-                }
-
-                // 3. Live PC media, master volume, mute, and active output device bar
-                val deckState = device.deckState
-                if (device.online && deckState != null) {
-                    PcAudioCardSection(
-                        pcId = device.id,
-                        pcName = device.name,
-                        deckState = deckState,
-                        ink = ink,
-                        onSetPcAudio = { vol, muted -> onSetPcAudio(device.id, vol, muted) },
-                        micAvailable = micOn || device.has("media.phone_mic"),
-                        micOn = micOn,
-                        onToggleMic = onToggleMic,
-                    )
-                }
-
-                // 4. Utilities & Power Row (Voice Memo, Ring PC, Lock, Sleep)
-                Text(
-                    text = stringResource(R.string.home_section_system),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = ink.copy(alpha = 0.68f),
-                    modifier = Modifier.padding(start = 2.dp, top = 2.dp),
-                )
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                ) {
-                    FilledTonalButton(
-                        contentPadding = CardButtonPadding,
-                        enabled = device.online,
-                        colors = tonal,
-                        onClick = { onRecord(device.id) },
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        Icon(
-                            imageVector = MicIcon,
-                            contentDescription = null,
-                            modifier = Modifier.size(15.dp),
                         )
-                        Spacer(Modifier.width(6.dp))
-                        ButtonLabel(stringResource(R.string.action_record_pc))
-                    }
-                    FilledTonalButton(
-                        contentPadding = CardButtonPadding,
-                        enabled = device.online,
-                        colors = tonal,
-                        onClick = {
-                            ringing = !ringing
-                            onRing(device.id, ringing)
-                        },
-                        modifier = Modifier.weight(1f),
-                    ) {
-                        Icon(
-                            imageVector = BellIcon,
-                            contentDescription = null,
-                            modifier = Modifier.size(15.dp),
+                        PowerActionButton(
+                            title = "Ring PC",
+                            icon = BellIcon,
+                            onClick = {
+                                ringing = !ringing
+                                onRing(device.id, ringing)
+                            },
+                            modifier = Modifier.weight(1f),
                         )
-                        Spacer(Modifier.width(6.dp))
-                        ButtonLabel(stringResource(if (ringing) R.string.action_stop_ringing else R.string.action_ring_pc))
-                    }
-                }
-                if (device.has("device.pc_actions")) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    ) {
-                        OutlinedButton(
-                            contentPadding = CardButtonPadding,
-                            enabled = device.online,
-                            colors = outlined,
-                            border = outline,
+                        PowerActionButton(
+                            title = "Lock PC",
+                            icon = LockActionIcon,
                             onClick = { onPower(device.id, false) },
                             modifier = Modifier.weight(1f),
-                        ) {
-                            ButtonLabel(stringResource(R.string.action_lock_pc))
-                        }
-                        OutlinedButton(
-                            contentPadding = CardButtonPadding,
-                            enabled = device.online,
-                            colors = outlined,
-                            border = outline,
+                        )
+                        PowerActionButton(
+                            title = "Sleep",
+                            icon = MoonActionIcon,
                             onClick = { onPower(device.id, true) },
                             modifier = Modifier.weight(1f),
-                        ) {
-                            ButtonLabel(stringResource(R.string.action_sleep_pc))
-                        }
+                        )
                     }
+
+                    Spacer(Modifier.height(14.dp))
+
+                    // Luminous flowing amber light wave with golden Apple logo
+                    AmberLightWave(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(56.dp),
+                    )
                 }
             }
-            if (!device.online && device.wakeState == WakeState.Waking) {
-                Spacer(Modifier.height(14.dp))
-                if (LocalReducedMotion.current) {
-                    LinearProgressIndicator(progress = { 0.5f }, modifier = Modifier.fillMaxWidth())
-                } else {
-                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-                }
-            } else if (!device.online && device.wakeState == WakeState.TimedOut) {
-                Spacer(Modifier.height(16.dp))
-                Column(
-                    Modifier
-                        .fillMaxWidth()
-                        .bentoWell(
-                            cornerRadius = 20.dp,
-                            fillColor = ink.copy(alpha = 0.08f),
-                        )
-                        .padding(16.dp),
-                ) {
+        }
+
+        // 5. PC Audio Controls Section (if active)
+        val deckState = device.deckState
+        if (device.online && deckState != null) {
+            LiquidGlassCard(
+                cornerRadius = 20.dp,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                PcAudioCardSection(
+                    pcId = device.id,
+                    pcName = device.name,
+                    deckState = deckState,
+                    ink = AmberTokens.PrimaryText,
+                    onSetPcAudio = { vol, muted -> onSetPcAudio(device.id, vol, muted) },
+                    micAvailable = micOn || device.has("media.phone_mic"),
+                    micOn = micOn,
+                    onToggleMic = onToggleMic,
+                )
+            }
+        }
+
+        // 6. Waking / Timeout state
+        if (!device.online && device.wakeState == WakeState.Waking) {
+            LinearProgressIndicator(
+                color = AmberTokens.PrimaryAccent,
+                trackColor = AmberTokens.BrownSurface,
+                modifier = Modifier.fillMaxWidth(),
+            )
+        } else if (!device.online && device.wakeState == WakeState.TimedOut) {
+            LiquidGlassCard(
+                cornerRadius = 20.dp,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
                     Text(
                         stringResource(R.string.wake_timeout_title, device.name),
-                        style = MaterialTheme.typography.titleSmall,
-                        color = ink,
+                        color = AmberTokens.PrimaryText,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.SemiBold,
                     )
                     Spacer(Modifier.height(4.dp))
                     Text(
                         stringResource(R.string.wake_timeout_text, device.name),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = ink,
+                        color = AmberTokens.SecondaryText,
+                        fontSize = 12.sp,
                     )
                 }
             }
@@ -2048,60 +2156,111 @@ private fun ClipboardHistoryCard(
     entries: List<ClipboardHistoryEntry>,
     onOpen: () -> Unit,
 ) {
-    val latest = entries.firstOrNull() ?: return
-    var revealLatest by remember(latest.id) { mutableStateOf(false) }
-    val isGlass = LocalGlassTheme.current
-    val isText = latest.kind == ClipboardItemKind.TEXT
-    val preview = when (latest.kind) {
-        ClipboardItemKind.TEXT -> if (revealLatest) latest.text else stringResource(R.string.clipboard_preview_hidden)
-        ClipboardItemKind.IMAGE -> stringResource(R.string.clipboard_history_image)
-    }
-    Column(
+    LiquidGlassCard(
+        cornerRadius = 20.dp,
         modifier = Modifier
             .fillMaxWidth()
-            .liquidGlassCard(
-                cornerRadius = 28.dp,
-                isGlass = isGlass,
-                baseColor = MaterialTheme.colorScheme.surfaceContainer,
-                tintColor = MaterialTheme.colorScheme.primary,
-                outlineColor = if (isGlass) MaterialTheme.colorScheme.outlineVariant else Color.Transparent,
-            )
-            .clickable(role = Role.Button, onClick = onOpen)
-            .padding(20.dp),
+            .clickable(role = Role.Button, onClick = onOpen),
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 14.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Text(
-                stringResource(R.string.clipboard_history_title),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.weight(1f),
-            )
-            if (isText) {
-                TextButton(
-                    onClick = { revealLatest = !revealLatest },
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 8.dp, vertical = 0.dp),
-                    modifier = Modifier.heightIn(min = 28.dp),
+            // Circular glass badge with Clipboard Icon
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(AmberTokens.GlassBackgroundSubtle, CircleShape)
+                    .drawWithCache {
+                        val stroke = 1.dp.toPx()
+                        val rim = Brush.linearGradient(
+                            0f to AmberTokens.GlassBorder,
+                            1f to AmberTokens.GlassBorderSubtle,
+                        )
+                        onDrawWithContent {
+                            drawContent()
+                            drawCircle(
+                                brush = rim,
+                                radius = (size.minDimension - stroke) * 0.5f,
+                                style = Stroke(width = stroke),
+                            )
+                        }
+                    },
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = ClipboardIcon,
+                    contentDescription = null,
+                    tint = AmberTokens.Highlight,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
+
+            Spacer(Modifier.width(12.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.clipboard_history_title),
+                    color = AmberTokens.PrimaryText,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
+                Spacer(Modifier.height(2.dp))
+                Text(
+                    text = "${entries.size} items saved",
+                    color = AmberTokens.SecondaryText,
+                    fontSize = 11.sp,
+                )
+            }
+
+            // Preview chips: "Aa", image icon, "</>"
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(AmberTokens.GlassBackgroundSubtle, RoundedCornerShape(8.dp))
+                        .padding(horizontal = 7.dp, vertical = 4.dp),
                 ) {
-                    Text(
-                        stringResource(
-                            if (revealLatest) R.string.clipboard_preview_hide else R.string.clipboard_preview_reveal,
-                        ),
-                        style = MaterialTheme.typography.labelMedium,
+                    Text("Aa", color = AmberTokens.SecondaryText, fontSize = 11.sp, fontWeight = FontWeight.Bold)
+                }
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(AmberTokens.GlassBackgroundSubtle, RoundedCornerShape(8.dp))
+                        .padding(horizontal = 7.dp, vertical = 4.dp),
+                ) {
+                    Icon(
+                        imageVector = CameraLensIcon,
+                        contentDescription = null,
+                        tint = AmberTokens.SecondaryText,
+                        modifier = Modifier.size(13.dp),
                     )
                 }
+                Box(
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(8.dp))
+                        .background(AmberTokens.GlassBackgroundSubtle, RoundedCornerShape(8.dp))
+                        .padding(horizontal = 7.dp, vertical = 4.dp),
+                ) {
+                    Text("</>", color = AmberTokens.SecondaryText, fontSize = 10.sp, fontWeight = FontWeight.Bold)
+                }
             }
+
+            Spacer(Modifier.width(8.dp))
+
+            Icon(
+                imageVector = ChevronRightIcon,
+                contentDescription = null,
+                tint = AmberTokens.SecondaryText,
+                modifier = Modifier.size(16.dp),
+            )
         }
-        Spacer(Modifier.height(4.dp))
-        Text(
-            preview,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-        )
     }
 }
 
@@ -2803,72 +2962,98 @@ private fun TimelineCard(
     total: UInt,
     onOpen: () -> Unit,
 ) {
-    val latest = entries.firstOrNull() ?: return
-    var revealLatest by remember(latest.id) { mutableStateOf(false) }
-    val isGlass = LocalGlassTheme.current
-    val isClipText = latest.kind == TimelineKind.CLIP && latest.imageDataUrl == null
-    val direction = if (latest.incoming) {
-        stringResource(R.string.clipboard_history_from, latest.deviceName)
-    } else {
-        stringResource(R.string.clipboard_history_sent_to, latest.deviceName)
-    }
-    val shownTitle = if (isClipText && !revealLatest) {
-        stringResource(R.string.clipboard_preview_hidden)
-    } else {
-        latest.title
-    }
-    Column(
+    LiquidGlassCard(
+        cornerRadius = 20.dp,
         modifier = Modifier
             .fillMaxWidth()
-            .liquidGlassCard(
-                cornerRadius = 28.dp,
-                isGlass = isGlass,
-                baseColor = MaterialTheme.colorScheme.surfaceContainer,
-                tintColor = MaterialTheme.colorScheme.primary,
-                outlineColor = if (isGlass) MaterialTheme.colorScheme.outlineVariant else Color.Transparent,
-            )
-            .clickable(role = Role.Button, onClick = onOpen)
-            .padding(20.dp),
+            .clickable(role = Role.Button, onClick = onOpen),
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
-            Text(
-                stringResource(R.string.timeline_title),
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.weight(1f),
-            )
-            if (isClipText) {
-                TextButton(
-                    onClick = { revealLatest = !revealLatest },
-                    contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 8.dp, vertical = 0.dp),
-                    modifier = Modifier.heightIn(min = 28.dp),
-                ) {
-                    Text(
-                        stringResource(
-                            if (revealLatest) R.string.clipboard_preview_hide else R.string.clipboard_preview_reveal,
-                        ),
-                        style = MaterialTheme.typography.labelMedium,
-                    )
-                }
-                if (total > 0u) {
-                    Spacer(Modifier.width(4.dp))
-                }
-            }
-            if (total > 0u) {
-                Text(
-                    total.toString(),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 14.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            // Circular glass badge with Clock Icon
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .background(AmberTokens.GlassBackgroundSubtle, CircleShape)
+                    .drawWithCache {
+                        val stroke = 1.dp.toPx()
+                        val rim = Brush.linearGradient(
+                            0f to AmberTokens.GlassBorder,
+                            1f to AmberTokens.GlassBorderSubtle,
+                        )
+                        onDrawWithContent {
+                            drawContent()
+                            drawCircle(
+                                brush = rim,
+                                radius = (size.minDimension - stroke) * 0.5f,
+                                style = Stroke(width = stroke),
+                            )
+                        }
+                    },
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = DeskClockIcon,
+                    contentDescription = null,
+                    tint = AmberTokens.Highlight,
+                    modifier = Modifier.size(20.dp),
                 )
             }
+
+            Spacer(Modifier.width(12.dp))
+
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    text = stringResource(R.string.timeline_title),
+                    color = AmberTokens.PrimaryText,
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.SemiBold,
+                )
+                Spacer(Modifier.height(2.dp))
+                val count = if (total > 0u) total.toInt() else entries.size
+                Text(
+                    text = "$count recent activities",
+                    color = AmberTokens.SecondaryText,
+                    fontSize = 11.sp,
+                )
+            }
+
+            // Amber Equalizer Waveform Bars
+            Canvas(
+                modifier = Modifier
+                    .width(62.dp)
+                    .height(20.dp),
+            ) {
+                val heights = listOf(0.35f, 0.55f, 0.85f, 1.0f, 0.7f, 0.9f, 0.65f, 0.85f, 0.55f, 0.75f, 0.45f, 0.65f)
+                val barWidth = 2.5.dp.toPx()
+                val gap = (size.width - (heights.size * barWidth)) / (heights.size - 1)
+                heights.forEachIndexed { i, hRatio ->
+                    val barH = size.height * hRatio
+                    val x = i * (barWidth + gap)
+                    val y = (size.height - barH) / 2f
+                    drawRoundRect(
+                        color = AmberTokens.Highlight,
+                        topLeft = Offset(x, y),
+                        size = Size(barWidth, barH),
+                        cornerRadius = CornerRadius(1.5f.dp.toPx(), 1.5f.dp.toPx()),
+                    )
+                }
+            }
+
+            Spacer(Modifier.width(8.dp))
+
+            Icon(
+                imageVector = ChevronRightIcon,
+                contentDescription = null,
+                tint = AmberTokens.SecondaryText,
+                modifier = Modifier.size(16.dp),
+            )
         }
-        Spacer(Modifier.height(4.dp))
-        Text(
-            stringResource(R.string.timeline_latest_summary, shownTitle, direction),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis,
-        )
     }
 }
 
