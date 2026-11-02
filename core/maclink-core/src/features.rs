@@ -1480,10 +1480,11 @@ mod tests {
             "contacts.show",
             "sms.show",
             "toggles.show",
+            "mirror.view",
         ];
         let mac = facts(DeviceKind::Desktop, "macos", "15.0", PowerLevel::NotApplicable, MAC_DESKTOP);
         let mut phone_caps = BASIC_PHONE.to_vec();
-        phone_caps.extend(["link.open", "storage.read", "storage.write"]);
+        phone_caps.extend(["link.open", "storage.read", "storage.write", "mirror.input"]);
         let phone = facts(DeviceKind::Phone, "android", "16", PowerLevel::Elevated, &phone_caps);
         let m = matrix_with(&phone, &mac, &HashMap::new());
 
@@ -1500,13 +1501,10 @@ mod tests {
         assert_eq!(m.state("contacts.read"), Some(FeatureState::Available));
         assert_eq!(m.state("toggles.volume"), Some(FeatureState::Available));
         assert_eq!(m.state("clipboard.pc_to_phone"), Some(FeatureState::Available));
+        assert_eq!(m.state("mirroring.view"), Some(FeatureState::Available));
+        assert_eq!(m.state("mirroring.control"), Some(FeatureState::Available));
 
         // Unsupported macOS features are NOT Available:
-        assert_eq!(
-            m.state("mirroring.view"),
-            Some(locked(UpgradeAction::UpdateApp(Role::Desktop), Effort::Minutes(2)))
-        );
-        assert_ne!(m.state("mirroring.control"), Some(FeatureState::Available));
         assert_ne!(m.state("mirroring.app_windows"), Some(FeatureState::Available));
         assert_ne!(m.state("mirroring.audio"), Some(FeatureState::Available));
         assert_eq!(

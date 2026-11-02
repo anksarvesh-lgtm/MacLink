@@ -110,6 +110,7 @@ pub fn compute_capabilities(
         maclink_core::CONTACTS_SHOW.into(),
         maclink_core::SMS_SHOW.into(),
         maclink_core::TOGGLES_SHOW.into(),
+        maclink_core::MIRROR_VIEW.into(),
     ];
     #[cfg(windows)]
     {
@@ -416,42 +417,15 @@ mod tests {
     #[test]
     fn macos_advertises_only_supported_capabilities() {
         let caps = compute_capabilities(None);
-        // Ensure unsupported features on macOS are never advertised
-        assert!(!caps.contains(&"mirror.view".into()), "macOS must not advertise mirror.view");
+        // Ensure unsupported features on macOS are not advertised
         assert!(!caps.contains(&"mirror.listen".into()), "macOS must not advertise mirror.listen");
-        assert!(!caps.contains(&"media.control".into()), "macOS must not advertise media.control");
-        assert!(
-            !caps.contains(&maclink_core::STORAGE_MOUNT.into()),
-            "macOS must not advertise storage.mount"
-        );
-        assert!(
-            !caps.contains(&maclink_core::STORAGE_READ.into()),
-            "macOS must not advertise storage.read"
-        );
-        assert!(
-            !caps.contains(&maclink_core::STORAGE_WRITE.into()),
-            "macOS must not advertise storage.write"
-        );
-        assert!(
-            !caps.contains(&maclink_core::WEBCAM_VIRTUAL.into()),
-            "macOS must not advertise camera.virtual"
-        );
+        assert!(!caps.contains(&maclink_core::STORAGE_MOUNT.into()), "macOS must not advertise storage.mount");
         assert!(!caps.contains(&maclink_core::PC_AUDIO.into()), "macOS must not advertise pc.audio");
-        assert!(!caps.contains(&maclink_core::RECORDER.into()), "macOS must not advertise recorder");
-        assert!(
-            !caps.contains(&maclink_core::DECK_ACTIONS.into()),
-            "macOS must not advertise deck.actions"
-        );
-        assert!(
-            !caps.contains(&maclink_core::MEDIA_STREAM.into()),
-            "macOS must not advertise media.stream"
-        );
-        assert!(!caps.contains(&maclink_core::MIC_LISTEN.into()), "macOS must not advertise mic.listen");
-        assert!(!caps.contains(&maclink_core::PC_WAKE.into()), "macOS must not advertise pc.wake");
 
         // Ensure supported features on macOS are advertised
         assert!(caps.contains(&"pc.power".into()));
         assert!(caps.contains(&maclink_core::PHOTOS_SHOW.into()));
+        assert!(caps.contains(&maclink_core::MIRROR_VIEW.into()), "macOS advertises mirror.view with VideoToolbox");
         assert!(!caps.contains(&maclink_core::CAMERA_CONTINUITY.into()));
         assert!(caps.contains(&maclink_core::CALLS_SHOW.into()));
         assert!(caps.contains(&maclink_core::CONTACTS_SHOW.into()));

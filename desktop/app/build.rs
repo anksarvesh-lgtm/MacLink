@@ -378,12 +378,17 @@ fn main() {
     println!("cargo:rustc-link-lib=framework=AudioToolbox");
     println!("cargo:rustc-link-lib=framework=IOKit");
     println!("cargo:rustc-link-lib=framework=ServiceManagement");
+    println!("cargo:rustc-link-lib=framework=VideoToolbox");
+    println!("cargo:rustc-link-lib=framework=CoreMedia");
+    println!("cargo:rustc-link-lib=framework=CoreVideo");
     println!("cargo:rerun-if-changed=cpp/app_helpers.h");
     println!("cargo:rerun-if-changed=cpp/app_helpers.cpp");
     println!("cargo:rerun-if-changed=cpp/native_window.h");
     println!("cargo:rerun-if-changed=cpp/native_window.cpp");
     println!("cargo:rerun-if-changed=cpp/video_view.h");
     println!("cargo:rerun-if-changed=cpp/video_view.cpp");
+    println!("cargo:rerun-if-changed=cpp/mac_videotoolbox.h");
+    println!("cargo:rerun-if-changed=cpp/mac_videotoolbox.mm");
     println!("cargo:rerun-if-changed=cpp/mac_notifications.h");
     println!("cargo:rerun-if-changed=cpp/mac_notifications.mm");
     println!("cargo:rerun-if-changed=cpp/shelf_edge.h");
@@ -397,6 +402,7 @@ fn main() {
             .file("cpp/mac_notifications.mm")
             .file("cpp/shelf_edge.mm")
             .file("cpp/mac_lifecycle.mm")
+            .file("cpp/mac_videotoolbox.mm")
             .flag("-fobjc-arc")
             .flag("-std=c++17")
             .compile("mac_native");
