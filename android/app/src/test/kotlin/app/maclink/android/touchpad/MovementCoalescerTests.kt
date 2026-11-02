@@ -49,3 +49,4 @@ class MovementCoalescerTests {
         assertEquals(2L, emitted[1].sequence)
     }
 }
+
