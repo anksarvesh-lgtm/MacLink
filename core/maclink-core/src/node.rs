@@ -1049,10 +1049,33 @@ impl Shared {
         }
         let effective_device =
             self.store.get_peer(&peer).ok().flatten().map(|p| p.info).unwrap_or(remote_device);
-        let caps = features::sanitize_capabilities(remote.caps);
+        let caps = features::sanitize_capabilities(remote.caps.clone());
         if let Err(e) = self.store.update_capabilities(&peer, Some(&caps), Some(remote.power.effective())) {
             tracing::warn!(error = %e, "failed to update peer capabilities");
         }
+
+        let local_caps = self.local.read().unwrap_or_else(|e| e.into_inner()).capabilities();
+        eprintln!("============================================================");
+        eprintln!("[MACLINK LIVE HANDSHAKE DIAGNOSTICS]");
+        eprintln!("  Peer ID:            {}", peer.short());
+        eprintln!("  Device Name:        {}", effective_device.name);
+        eprintln!("  Device OS:          {} {}", effective_device.os, effective_device.os_ver);
+        eprintln!("  Phone App Version:  {}", remote.app);
+        eprintln!("  Protocol Version:   {} (min: {})", remote.proto, remote.min);
+        eprintln!("  Phone Power Level:  {:?}", remote.power);
+        eprintln!("  Phone Caps Count:   {}", remote.caps.len());
+        eprintln!("  Phone Capabilities: {:?}", remote.caps);
+        eprintln!("  Mac Local Caps:     {:?}", local_caps);
+        eprintln!("------------------------------------------------------------");
+        eprintln!("  Feature Requirements Check:");
+        eprintln!("    Mirror Screen (mirroring.view):");
+        eprintln!("      - phone requires 'mirror.capture': {}", remote.caps.contains(&"mirror.capture".to_string()));
+        eprintln!("      - mac requires 'mirror.view':     {}", local_caps.contains(&"mirror.view".to_string()));
+        eprintln!("    Type on Phone (mirroring.control):");
+        eprintln!("      - phone requires 'mirror.capture': {}", remote.caps.contains(&"mirror.capture".to_string()));
+        eprintln!("      - phone requires 'mirror.input':   {}", remote.caps.contains(&"mirror.input".to_string()));
+        eprintln!("      - mac requires 'mirror.view':     {}", local_caps.contains(&"mirror.view".to_string()));
+        eprintln!("============================================================");
 
         let weak = Arc::downgrade(self);
         let session = Session::spawn(self, conn, dialer, streams, move |ended| {
