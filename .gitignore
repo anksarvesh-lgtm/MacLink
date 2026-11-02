@@ -62,3 +62,4 @@ aqtinstall.log
 
 # Kotlin compiler session data
 .kotlin/
+.build/

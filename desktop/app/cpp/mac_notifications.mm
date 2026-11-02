@@ -359,9 +359,13 @@ void mac_notification_show(
                 } else if (actionIdList.count > 0 && actionTitleList.count > 0) {
                     userInfo[@"primary_action"] = actionIdList[0];
                     for (NSUInteger i = 0; i < actionIdList.count && i < actionTitleList.count; i++) {
+                        UNNotificationActionOptions opt = UNNotificationActionOptionForeground;
+                        if ([actionIdList[i] isEqualToString:@"decline"] || [actionIdList[i] isEqualToString:@"end"]) {
+                            opt = UNNotificationActionOptionDestructive;
+                        }
                         UNNotificationAction *action = [UNNotificationAction actionWithIdentifier:actionIdList[i]
                                                                                             title:actionTitleList[i]
-                                                                                          options:UNNotificationActionOptionForeground];
+                                                                                          options:opt];
                         [unActions addObject:action];
                     }
                 }
