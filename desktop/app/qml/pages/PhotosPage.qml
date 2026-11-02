@@ -504,7 +504,7 @@ Item {
 
                 Button {
                     anchors.verticalCenter: parent.verticalCenter
-                    variant: "fill"
+                    variant: Theme.glass ? "amber" : "fill"
                     size: "sm"
                     iconPath: Icons.download
                     busy: Photos.saving
@@ -967,14 +967,23 @@ Item {
             anchors.rightMargin: 10
             anchors.topMargin: 2
             anchors.bottomMargin: 2
-            radius: Theme.graphite ? Theme.radiusSm : Theme.radiusMd
+            radius: 14
+            gradient: albumRow.selected && Theme.glass ? amberAlbumGrad : null
             color: albumRow.selected
-                ? Theme.secondaryContainer
-                : albumHover.hovered
-                  ? Qt.rgba(Theme.surfaceContent.r, Theme.surfaceContent.g, Theme.surfaceContent.b, 0.06)
-                  : "transparent"
-            border.width: Theme.focusVisible(albumRow) ? 2 : (Theme.graphite && albumRow.selected ? 1 : 0)
-            border.color: Theme.focusVisible(albumRow) ? Theme.primary : Theme.surfaceContent
+                ? (Theme.glass ? Theme.amberAccentDeep : Theme.secondaryContainer)
+                : (albumHover.hovered ? Qt.rgba(1, 1, 1, 0.05) : "transparent")
+            border.width: 1
+            border.color: albumRow.selected
+                ? (Theme.glass ? Theme.amberBorder : Theme.primary)
+                : (albumHover.hovered ? Theme.cardBorderHover : "transparent")
+            Behavior on border.color { ColorAnimation { duration: 120 } }
+
+            Gradient {
+                id: amberAlbumGrad
+                orientation: Gradient.Horizontal
+                GradientStop { position: 0.0; color: Qt.rgba(0.72, 0.45, 0.10, 0.35) }
+                GradientStop { position: 1.0; color: Qt.rgba(0.95, 0.66, 0.23, 0.20) }
+            }
 
             Item {
                 id: coverBox
@@ -1094,9 +1103,10 @@ Item {
             anchors.fill: parent
             anchors.margins: 4
             radius: Theme.radiusSm
-            color: Theme.surfaceContainerHigh
-            border.width: tile.selected ? 3 : (Theme.focusVisible(tile) ? 2 : (Theme.graphite ? 1 : 0))
-            border.color: (tile.selected || Theme.focusVisible(tile)) ? Theme.primary : Theme.outlineVariant
+            color: Theme.graphite ? "transparent" : (Theme.glass ? Theme.cardFill : Theme.surfaceContainerHigh)
+            border.width: tile.selected ? 2 : (Theme.focusVisible(tile) ? 2 : 1)
+            border.color: tile.selected ? Theme.amberAccent : (Theme.focusVisible(tile) ? Theme.primary : (tileHover.hovered ? Theme.cardBorderHover : Theme.cardBorderSubtle))
+            Behavior on border.color { ColorAnimation { duration: 120 } }
             clip: true
 
             Icon {

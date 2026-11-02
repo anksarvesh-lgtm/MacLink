@@ -111,10 +111,10 @@ Item {
         Rectangle {
             Layout.fillWidth: true
             implicitHeight: storageCol.implicitHeight + 24
-            radius: Theme.radiusMd
-            color: Theme.surfaceContainerLow
+            radius: Theme.cardCornerRadius
+            color: Theme.cardFill
             border.width: 1
-            border.color: Theme.outlineVariant
+            border.color: Theme.cardBorderSubtle
 
             ColumnLayout {
                 id: storageCol
@@ -205,10 +205,10 @@ Item {
             Rectangle {
                 Layout.fillWidth: true
                 implicitHeight: 36
-                radius: Theme.radiusSm
-                color: Theme.surfaceContainer
+                radius: Theme.tileCornerRadius
+                color: Theme.cardFill
                 border.width: 1
-                border.color: Theme.outlineVariant
+                border.color: Theme.cardBorderSubtle
 
                 RowLayout {
                     anchors.fill: parent
@@ -236,10 +236,11 @@ Item {
             Rectangle {
                 implicitWidth: 200
                 implicitHeight: 36
-                radius: Theme.radiusSm
-                color: Theme.surfaceContainer
+                radius: height / 2
+                color: Theme.cardFill
                 border.width: 1
-                border.color: searchInput.activeFocus ? Theme.primary : Theme.outlineVariant
+                border.color: searchInput.activeFocus ? Theme.amberAccent : Theme.cardBorderSubtle
+                Behavior on border.color { ColorAnimation { duration: 120 } }
 
                 RowLayout {
                     anchors.fill: parent
@@ -275,7 +276,7 @@ Item {
             Button {
                 text: qsTr("Upload to Phone")
                 iconPath: Icons.download
-                variant: "fill"
+                variant: Theme.glass ? "amber" : "fill"
                 size: "sm"
                 Accessible.name: qsTr("Upload files from Mac to Android phone")
                 onClicked: uploadDialog.open()
@@ -296,9 +297,22 @@ Item {
                     implicitWidth: chipRow.implicitWidth + 20
                     implicitHeight: 32
                     radius: 16
-                    color: selected ? Theme.primary : Theme.surfaceContainerHigh
+                    gradient: selected && Theme.glass ? amberChipGrad : null
+                    color: selected
+                        ? (Theme.glass ? Theme.amberAccentDeep : Theme.primary)
+                        : (chipHover.hovered ? Qt.rgba(1, 1, 1, 0.08) : Theme.cardFill)
                     border.width: 1
-                    border.color: selected ? Theme.primary : Theme.outlineVariant
+                    border.color: selected
+                        ? (Theme.glass ? Theme.amberBorder : Theme.primary)
+                        : (chipHover.hovered ? Theme.cardBorderHover : Theme.cardBorderSubtle)
+                    Behavior on border.color { ColorAnimation { duration: 120 } }
+
+                    Gradient {
+                        id: amberChipGrad
+                        orientation: Gradient.Horizontal
+                        GradientStop { position: 0.0; color: Theme.amberAccentDeep }
+                        GradientStop { position: 1.0; color: Theme.amberAccent }
+                    }
 
                     HoverHandler {
                         id: chipHover
@@ -317,14 +331,14 @@ Item {
                         Icon {
                             path: modelData.icon
                             width: 13; height: 13
-                            color: parent.parent.selected ? Theme.primaryContent : Theme.surfaceContent
+                            color: parent.parent.selected ? (Theme.glass ? "#FFFFFF" : Theme.primaryContent) : Theme.surfaceContent
                         }
 
                         Txt {
                             text: modelData.name
                             role: "label"
                             size: 12
-                            color: parent.parent.selected ? Theme.primaryContent : Theme.surfaceContent
+                            color: parent.parent.selected ? (Theme.glass ? "#FFFFFF" : Theme.primaryContent) : Theme.surfaceContent
                         }
                     }
                 }
@@ -345,10 +359,11 @@ Item {
                 required property var modelData
                 width: fileListView.width
                 implicitHeight: 52
-                radius: Theme.radiusSm
-                color: itemHover.hovered ? Theme.surfaceContainerHighest : Theme.surfaceContainerLow
+                radius: Theme.tileCornerRadius
+                color: itemHover.hovered ? Qt.rgba(1, 1, 1, 0.06) : Theme.cardFill
                 border.width: 1
-                border.color: itemHover.hovered ? Theme.primary : Theme.outlineVariant
+                border.color: itemHover.hovered ? Theme.cardBorderHover : Theme.cardBorderSubtle
+                Behavior on border.color { ColorAnimation { duration: 120 } }
 
                 HoverHandler {
                     id: itemHover
