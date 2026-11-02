@@ -211,27 +211,49 @@ pub fn resume(id: &str) {
     }
 }
 
-/// Opens a received file with its app (or a folder in File Explorer).
+/// Opens a received file with its app (or a folder in Finder / File Explorer).
 pub fn open(path: &Path) {
     if path.to_str().is_some_and(|s| s.starts_with("req:")) {
         crate::bridge::app::request_activation();
         return;
     }
-    if let Err(e) = std::process::Command::new("explorer").arg(path).spawn() {
+    #[cfg(target_os = "windows")]
+    let res = std::process::Command::new("explorer").arg(path).spawn();
+    #[cfg(target_os = "macos")]
+    let res = std::process::Command::new("open").arg(path).spawn();
+    #[cfg(not(any(target_os = "windows", target_os = "macos")))]
+    let res = std::process::Command::new("xdg-open").arg(path).spawn();
+    if let Err(e) = res {
         tracing::warn!(error = %e, "can't open a received file");
     }
 }
 
-/// Shows a received file or folder in File Explorer, selected.
+/// Shows a received file or folder in Finder / File Explorer, selected.
 pub fn show_in_folder(path: &Path) {
     if path.to_str().is_some_and(|s| s.starts_with("req:")) {
         crate::bridge::app::request_activation();
         return;
     }
-    let mut select = std::ffi::OsString::from("/select,");
-    select.push(path);
-    if let Err(e) = std::process::Command::new("explorer").arg(select).spawn() {
-        tracing::warn!(error = %e, "can't show a received file");
+    #[cfg(target_os = "windows")]
+    {
+        let mut select = std::ffi::OsString::from("/select,");
+        select.push(path);
+        if let Err(e) = std::process::Command::new("explorer").arg(select).spawn() {
+            tracing::warn!(error = %e, "can't show a received file");
+        }
+    }
+    #[cfg(target_os = "macos")]
+    {
+        if let Err(e) = std::process::Command::new("open").arg("-R").arg(path).spawn() {
+            tracing::warn!(error = %e, "can't show a received file");
+        }
+    }
+    #[cfg(not(any(target_os = "windows", target_os = "macos")))]
+    {
+        let parent = path.parent().unwrap_or(path);
+        if let Err(e) = std::process::Command::new("xdg-open").arg(parent).spawn() {
+            tracing::warn!(error = %e, "can't show a received file");
+        }
     }
 }
 

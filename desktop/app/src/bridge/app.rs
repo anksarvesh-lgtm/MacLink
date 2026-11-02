@@ -150,6 +150,18 @@ pub mod qobject {
         #[qproperty(QString, guide_doc_body)]
         /// Control target ID highlighted by `"Show me"` in the Features guide (`""` when none).
         #[qproperty(QString, highlight_target)]
+        /// Current remote path being browsed on the phone ("" for root, "Download", "Documents", etc.)
+        #[qproperty(QString, remote_storage_path)]
+        /// JSON array of remote entries: `[{ name, folder, size, sizeFormatted, date, isDir, icon, type }]`
+        #[qproperty(QString, remote_storage_entries_json)]
+        /// Whether remote storage is currently fetching entries
+        #[qproperty(bool, remote_storage_loading)]
+        /// Error message if storage request failed
+        #[qproperty(QString, remote_storage_error)]
+        /// Whether storage permission is needed / was requested on the phone
+        #[qproperty(bool, remote_storage_permission_needed)]
+        /// Storage telemetry summary text
+        #[qproperty(QString, remote_storage_summary)]
         type AppController = super::AppControllerRust;
 
         /// Enables or disables LocalSend LAN discovery and file sharing.
@@ -382,6 +394,28 @@ pub mod qobject {
         #[qinvokable]
         fn clear_highlight(self: Pin<&mut AppController>);
 
+        /// Browses remote storage on the phone at `path` ("" for root, "Download", etc.)
+        #[qinvokable]
+        fn browse_remote_storage(self: Pin<&mut AppController>, device: &QString, path: &QString);
+        /// Refreshes the currently active remote storage directory
+        #[qinvokable]
+        fn refresh_remote_storage(self: Pin<&mut AppController>);
+        /// Downloads a file from remote storage on the phone to ~/Downloads/MacLink/
+        #[qinvokable]
+        fn download_remote_file(self: Pin<&mut AppController>, device: &QString, remote_path: &QString);
+        /// Uploads local files to the specified remote directory on the phone
+        #[qinvokable]
+        fn upload_files_to_remote(self: Pin<&mut AppController>, device: &QString, remote_dir: &QString, local_urls_json: &QString);
+        /// Creates a new folder in remote storage
+        #[qinvokable]
+        fn create_remote_folder(self: Pin<&mut AppController>, device: &QString, parent_dir: &QString, folder_name: &QString);
+        /// Deletes a file or directory in remote storage
+        #[qinvokable]
+        fn delete_remote_item(self: Pin<&mut AppController>, device: &QString, remote_path: &QString);
+        /// Opens the local MacLink Downloads folder in Finder / file manager
+        #[qinvokable]
+        fn open_local_downloads(self: &AppController);
+
         /// A short message for the user (e.g. a command failed).
         #[qsignal]
         fn toast(self: Pin<&mut AppController>, message: QString);
@@ -475,6 +509,12 @@ pub struct AppControllerRust {
     guide_doc_title: QString,
     guide_doc_body: QString,
     highlight_target: QString,
+    remote_storage_path: QString,
+    remote_storage_entries_json: QString,
+    remote_storage_loading: bool,
+    remote_storage_error: QString,
+    remote_storage_permission_needed: bool,
+    remote_storage_summary: QString,
     last_online_count: usize,
     last_tray_tooltip: String,
     tray: Option<tray::Tray>,
@@ -1779,6 +1819,305 @@ impl qobject::AppController {
             show_message(e);
         }
     }
+
+    pub fn browse_remote_storage(mut self: Pin<&mut Self>, device: &QString, path: &QString) {
+        let dev_id = super::parse_device(device).or_else(|| {
+            let s = self.device_id.to_string();
+            super::parse_device(&QString::from(&s))
+        });
+        let Some(dev) = dev_id else {
+            self.as_mut().set_remote_storage_loading(false);
+            self.as_mut().set_remote_storage_error(QString::from("No phone connected"));
+            return;
+        };
+
+        let req_path = crate::remote_files::normalize_remote_path(&path.to_string());
+        self.as_mut().set_remote_storage_path(QString::from(&req_path));
+        self.as_mut().set_remote_storage_loading(true);
+        self.as_mut().set_remote_storage_error(QString::from(""));
+        self.as_mut().set_remote_storage_permission_needed(false);
+
+        let Some(node) = core_host::node() else {
+            self.as_mut().set_remote_storage_loading(false);
+            self.as_mut().set_remote_storage_error(QString::from("Core service not ready"));
+            return;
+        };
+
+        let qt = self.qt_thread();
+        let path_clone = req_path.clone();
+        core_host::spawn(async move {
+            let res = node.storage_list(dev, &path_clone).await;
+            let _ = qt.queue(move |mut object| {
+                object.as_mut().set_remote_storage_loading(false);
+                match res {
+                    Ok(entries) => {
+                        let json = crate::remote_files::entries_to_ui_json(&path_clone, &entries);
+                        let summary = format!("{} items", entries.len());
+                        object.as_mut().set_remote_storage_entries_json(QString::from(&json));
+                        object.as_mut().set_remote_storage_summary(QString::from(&summary));
+                        object.as_mut().set_remote_storage_error(QString::from(""));
+                        object.as_mut().set_remote_storage_permission_needed(false);
+                    }
+                    Err(maclink_core::Error::Denied) => {
+                        object.as_mut().set_remote_storage_permission_needed(true);
+                        object.as_mut().set_remote_storage_error(QString::from(
+                            "Storage permission required on your phone. Please grant storage access in phone settings."
+                        ));
+                    }
+                    Err(e) => {
+                        let err_msg = format!("Failed to load files: {e}");
+                        object.as_mut().set_remote_storage_error(QString::from(&err_msg));
+                    }
+                }
+            });
+        });
+    }
+
+    pub fn refresh_remote_storage(self: Pin<&mut Self>) {
+        let dev = self.device_id.clone();
+        let path = self.remote_storage_path.clone();
+        self.browse_remote_storage(&dev, &path);
+    }
+
+    pub fn download_remote_file(mut self: Pin<&mut Self>, device: &QString, remote_path: &QString) {
+        let dev_id = super::parse_device(device).or_else(|| {
+            let s = self.device_id.to_string();
+            super::parse_device(&QString::from(&s))
+        });
+        let Some(dev) = dev_id else {
+            self.as_mut().toast(QString::from("Cannot download: phone not connected"));
+            return;
+        };
+
+        let clean_path = crate::remote_files::normalize_remote_path(&remote_path.to_string());
+        if clean_path.is_empty() {
+            return;
+        }
+
+        let Some(node) = core_host::node() else {
+            self.as_mut().toast(QString::from("Cannot download: core service not ready"));
+            return;
+        };
+
+        let downloads = core_host::downloads_dir();
+        let qt = self.qt_thread();
+        let file_name = clean_path.split('/').last().unwrap_or("file").to_string();
+
+        self.as_mut().toast(QString::from(&format!("Downloading {file_name}...")));
+
+        core_host::spawn(async move {
+            match crate::remote_files::download_file(&node, dev, &clean_path, &downloads).await {
+                Ok(saved_path) => {
+                    let _ = qt.queue(move |mut object| {
+                        object.as_mut().toast(QString::from(&format!(
+                            "Saved {} to Downloads/MacLink",
+                            file_name
+                        )));
+                        crate::transfers::show_in_folder(&saved_path);
+                    });
+                }
+                Err(e) => {
+                    let _ = qt.queue(move |mut object| {
+                        object.as_mut().toast(QString::from(&format!("Download failed: {e}")));
+                    });
+                }
+            }
+        });
+    }
+
+    pub fn upload_files_to_remote(
+        mut self: Pin<&mut Self>,
+        device: &QString,
+        remote_dir: &QString,
+        local_urls_json: &QString,
+    ) {
+        let dev_id = super::parse_device(device).or_else(|| {
+            let s = self.device_id.to_string();
+            super::parse_device(&QString::from(&s))
+        });
+        let Some(dev) = dev_id else {
+            self.as_mut().toast(QString::from("Cannot upload: phone not connected"));
+            return;
+        };
+
+        let target_dir = crate::remote_files::normalize_remote_path(&remote_dir.to_string());
+        let raw_json = local_urls_json.to_string();
+
+        let mut paths = Vec::new();
+        if let Ok(serde_json::Value::Array(arr)) = serde_json::from_str::<serde_json::Value>(&raw_json) {
+            for val in arr {
+                if let Some(s) = val.as_str() {
+                    let clean = s.strip_prefix("file://").unwrap_or(s);
+                    let decoded = decode_url_percent(clean);
+                    let pb = std::path::PathBuf::from(decoded);
+                    if pb.is_file() {
+                        paths.push(pb);
+                    }
+                }
+            }
+        } else {
+            let clean = raw_json.strip_prefix("file://").unwrap_or(&raw_json);
+            let decoded = decode_url_percent(clean);
+            let pb = std::path::PathBuf::from(decoded);
+            if pb.is_file() {
+                paths.push(pb);
+            }
+        }
+
+        if paths.is_empty() {
+            self.as_mut().toast(QString::from("No valid local files selected for upload"));
+            return;
+        }
+
+        let Some(node) = core_host::node() else {
+            self.as_mut().toast(QString::from("Cannot upload: core service not ready"));
+            return;
+        };
+
+        let count = paths.len();
+        self.as_mut().toast(QString::from(&format!("Uploading {count} file(s) to phone...")));
+
+        let qt = self.qt_thread();
+        core_host::spawn(async move {
+            let mut uploaded = 0;
+            let mut last_err = None;
+            for p in &paths {
+                match crate::remote_files::upload_file(&node, dev, &target_dir, p).await {
+                    Ok(_) => uploaded += 1,
+                    Err(e) => last_err = Some(e),
+                }
+            }
+
+            let _ = qt.queue(move |mut object| {
+                if let Some(e) = last_err {
+                    object.as_mut().toast(QString::from(&format!("Uploaded {uploaded}/{count} files (error: {e})")));
+                } else {
+                    object.as_mut().toast(QString::from(&format!("Successfully uploaded {uploaded} file(s) to phone")));
+                }
+                object.refresh_remote_storage();
+            });
+        });
+    }
+
+    pub fn create_remote_folder(
+        mut self: Pin<&mut Self>,
+        device: &QString,
+        parent_dir: &QString,
+        folder_name: &QString,
+    ) {
+        let dev_id = super::parse_device(device).or_else(|| {
+            let s = self.device_id.to_string();
+            super::parse_device(&QString::from(&s))
+        });
+        let Some(dev) = dev_id else {
+            self.as_mut().toast(QString::from("Cannot create folder: phone not connected"));
+            return;
+        };
+
+        let parent = crate::remote_files::normalize_remote_path(&parent_dir.to_string());
+        let name = folder_name.to_string().trim().to_string();
+        if name.is_empty() {
+            self.as_mut().toast(QString::from("Folder name cannot be empty"));
+            return;
+        }
+
+        let Some(node) = core_host::node() else {
+            self.as_mut().toast(QString::from("Cannot create folder: core service not ready"));
+            return;
+        };
+
+        let qt = self.qt_thread();
+        let name_clone = name.clone();
+        core_host::spawn(async move {
+            match crate::remote_files::create_folder(&node, dev, &parent, &name_clone).await {
+                Ok(_) => {
+                    let _ = qt.queue(move |mut object| {
+                        object.as_mut().toast(QString::from(&format!("Created folder {name_clone}")));
+                        object.refresh_remote_storage();
+                    });
+                }
+                Err(e) => {
+                    let _ = qt.queue(move |mut object| {
+                        object.as_mut().toast(QString::from(&format!("Failed to create folder: {e}")));
+                    });
+                }
+            }
+        });
+    }
+
+    pub fn delete_remote_item(mut self: Pin<&mut Self>, device: &QString, remote_path: &QString) {
+        let dev_id = super::parse_device(device).or_else(|| {
+            let s = self.device_id.to_string();
+            super::parse_device(&QString::from(&s))
+        });
+        let Some(dev) = dev_id else {
+            self.as_mut().toast(QString::from("Cannot delete: phone not connected"));
+            return;
+        };
+
+        let path_str = crate::remote_files::normalize_remote_path(&remote_path.to_string());
+        if path_str.is_empty() {
+            self.as_mut().toast(QString::from("Cannot delete root directory"));
+            return;
+        }
+
+        let Some(node) = core_host::node() else {
+            self.as_mut().toast(QString::from("Cannot delete: core service not ready"));
+            return;
+        };
+
+        let file_name = path_str.split('/').last().unwrap_or("item").to_string();
+        let qt = self.qt_thread();
+        core_host::spawn(async move {
+            match crate::remote_files::delete_item(&node, dev, &path_str).await {
+                Ok(_) => {
+                    let _ = qt.queue(move |mut object| {
+                        object.as_mut().toast(QString::from(&format!("Deleted {file_name}")));
+                        object.refresh_remote_storage();
+                    });
+                }
+                Err(e) => {
+                    let _ = qt.queue(move |mut object| {
+                        object.as_mut().toast(QString::from(&format!("Failed to delete: {e}")));
+                    });
+                }
+            }
+        });
+    }
+
+    pub fn open_local_downloads(&self) {
+        let dir = core_host::downloads_dir();
+        let _ = std::fs::create_dir_all(&dir);
+        crate::transfers::open(&dir);
+    }
+}
+
+fn decode_url_percent(s: &str) -> String {
+    let mut bytes = Vec::with_capacity(s.len());
+    let mut chars = s.bytes();
+    while let Some(b) = chars.next() {
+        if b == b'%' {
+            let h1 = chars.next();
+            let h2 = chars.next();
+            if let (Some(h1), Some(h2)) = (h1, h2) {
+                if let Ok(val) = u8::from_str_radix(std::str::from_utf8(&[h1, h2]).unwrap_or(""), 16) {
+                    bytes.push(val);
+                    continue;
+                }
+                bytes.push(b'%');
+                bytes.push(h1);
+                bytes.push(h2);
+            } else {
+                bytes.push(b'%');
+            }
+        } else {
+            bytes.push(b);
+        }
+    }
+    String::from_utf8_lossy(&bytes).to_string()
+}
+
+impl qobject::AppController {
 
     pub fn watch_home_summary(&self, device: &QString) {
         watch_home(super::parse_device(device));
