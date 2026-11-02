@@ -106,10 +106,11 @@ Item {
             Rectangle {
                 width: parent.width - refresh.width - mirrorBtn.width - parent.spacing * 2
                 height: parent.height
-                radius: Theme.graphite ? Theme.radiusSm : height / 2
-                color: Theme.graphite ? "transparent" : Theme.surfaceContainerHighest
-                border.width: search.activeFocus ? 2 : (Theme.graphite ? 1 : 0)
-                border.color: search.activeFocus ? Theme.primary : Theme.outlineVariant
+                radius: height / 2
+                color: Theme.graphite ? "transparent" : (Theme.glass ? Theme.cardFill : Theme.surfaceContainerHighest)
+                border.width: 1
+                border.color: search.activeFocus ? Theme.amberAccent : (Theme.glass ? Theme.cardBorderSubtle : Theme.outlineVariant)
+                Behavior on border.color { ColorAnimation { duration: 120 } }
                 Icon {
                     id: searchIcon
                     anchors.left: parent.left
@@ -158,7 +159,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
                 text: qsTr("Mirror Phone")
                 iconPath: Icons.window
-                variant: "tonal"
+                variant: Theme.glass ? "amber" : "tonal"
                 size: "sm"
                 Accessible.name: qsTr("Mirror phone screen")
                 onClicked: Mirror.start(page.deviceId)
@@ -270,17 +271,11 @@ Item {
         Rectangle {
             anchors.fill: parent
             anchors.margins: 4
-            radius: Theme.radiusMd
-            color: Theme.surfaceContent
-            opacity: tap.pressed ? 0.12 : (hover.hovered ? 0.06 : 0)
-        }
-        Rectangle {
-            anchors.fill: parent
-            anchors.margins: 4
-            radius: Theme.radiusMd
-            color: "transparent"
-            border.width: Theme.focusVisible(cell) ? 2 : 0
-            border.color: Theme.primary
+            radius: Theme.tileCornerRadius
+            color: tap.pressed ? Qt.rgba(1, 1, 1, 0.08) : (hover.hovered ? Qt.rgba(1, 1, 1, 0.05) : "transparent")
+            border.width: 1
+            border.color: Theme.focusVisible(cell) ? Theme.primary : (hover.hovered ? Theme.cardBorderHover : "transparent")
+            Behavior on border.color { ColorAnimation { duration: 120 } }
         }
         Column {
             anchors.centerIn: parent

@@ -280,17 +280,28 @@ Item {
                     readonly property bool selected: page.currentSection === modelData.id
                     readonly property bool isHovered: railCol.hoveredCategoryId === modelData.id && navMouse.containsMouse
                     readonly property color fg: selected
-                        ? (Theme.graphite ? Theme.surface : Theme.secondaryContainerContent)
+                        ? (Theme.glass ? "#FFFFFF" : (Theme.graphite ? Theme.surface : Theme.secondaryContainerContent))
                         : Theme.surfaceContent
                     width: railCol.width
                     height: 42
-                    radius: Theme.radiusMd
+                    radius: 12
                     activeFocusOnTab: true
+                    gradient: selected && Theme.glass ? amberSettingsNavGrad : null
                     color: selected
-                        ? (Theme.graphite ? Theme.surfaceContent : Theme.secondaryContainer)
-                        : (isHovered ? Qt.rgba(Theme.surfaceContent.r, Theme.surfaceContent.g, Theme.surfaceContent.b, Theme.dark ? 0.06 : 0.04) : "transparent")
-                    border.width: Theme.focusVisible(navItem) ? 2 : (Theme.graphite && selected ? 1 : 0)
-                    border.color: Theme.focusVisible(navItem) ? Theme.primary : Theme.outlineVariant
+                        ? (Theme.glass ? Theme.amberAccentDeep : (Theme.graphite ? Theme.surfaceContent : Theme.secondaryContainer))
+                        : (isHovered ? Qt.rgba(1, 1, 1, 0.05) : "transparent")
+                    border.width: 1
+                    border.color: selected
+                        ? (Theme.glass ? Theme.amberBorder : Theme.primary)
+                        : (isHovered ? Theme.cardBorderHover : "transparent")
+                    Behavior on border.color { ColorAnimation { duration: 120 } }
+
+                    Gradient {
+                        id: amberSettingsNavGrad
+                        orientation: Gradient.Horizontal
+                        GradientStop { position: 0.0; color: Qt.rgba(0.72, 0.45, 0.10, 0.45) }
+                        GradientStop { position: 1.0; color: Qt.rgba(0.95, 0.66, 0.23, 0.30) }
+                    }
 
                     Accessible.role: Accessible.PageTab
                     Accessible.name: modelData.title
@@ -399,17 +410,27 @@ Item {
                     required property var modelData
                     readonly property bool selected: page.currentSection === modelData.id
                     readonly property color fg: selected
-                        ? (Theme.graphite ? Theme.surface : Theme.secondaryContainerContent)
+                        ? (Theme.glass ? "#FFFFFF" : (Theme.graphite ? Theme.surface : Theme.secondaryContainerContent))
                         : Theme.surfaceContent
                     height: 34
                     width: compactTabRow.implicitWidth + 22
                     anchors.verticalCenter: parent.verticalCenter
                     radius: Theme.pill(height)
+                    gradient: selected && Theme.glass ? amberCompactTabGrad : null
                     color: selected
-                        ? (Theme.graphite ? Theme.surfaceContent : Theme.secondaryContainer)
-                        : Theme.surfaceContainerHigh
-                    border.width: Theme.graphite ? 1 : 0
-                    border.color: Theme.outlineVariant
+                        ? (Theme.glass ? Theme.amberAccentDeep : (Theme.graphite ? Theme.surfaceContent : Theme.secondaryContainer))
+                        : (Theme.glass ? Theme.cardFill : Theme.surfaceContainerHigh)
+                    border.width: 1
+                    border.color: selected
+                        ? (Theme.glass ? Theme.amberBorder : Theme.outlineVariant)
+                        : (Theme.glass ? Theme.cardBorderSubtle : Theme.outlineVariant)
+
+                    Gradient {
+                        id: amberCompactTabGrad
+                        orientation: Gradient.Horizontal
+                        GradientStop { position: 0.0; color: Qt.rgba(0.72, 0.45, 0.10, 0.65) }
+                        GradientStop { position: 1.0; color: Qt.rgba(0.95, 0.66, 0.23, 0.50) }
+                    }
                     Row {
                         id: compactTabRow
                         anchors.centerIn: parent

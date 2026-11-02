@@ -38,20 +38,26 @@ FocusScope {
         Behavior on opacity { enabled: !Theme.reduceMotion; NumberAnimation { duration: 180; easing.type: Easing.OutCubic } }
     }
 
+    Gradient {
+        id: amberTrackGrad
+        orientation: Gradient.Horizontal
+        GradientStop { position: 0.0; color: Theme.amberAccentDeep }
+        GradientStop { position: 1.0; color: Theme.amberAccent }
+    }
+
     Rectangle {
         id: track
         anchors.fill: parent
         radius: Theme.graphite ? Theme.radiusSm : height / 2
+        gradient: (Theme.glass && toggle.checked) ? amberTrackGrad : null
         color: Theme.glass
             ? (toggle.checked
-                ? Qt.rgba(Theme.primary.r, Theme.primary.g, Theme.primary.b, Theme.dark ? 0.62 : 0.76)
-                : Qt.rgba(1, 1, 1, Theme.dark ? 0.12 : 0.44))
+                ? Theme.amberAccent
+                : Qt.rgba(1, 1, 1, 0.08))
             : (toggle.checked ? Theme.primary : Theme.surfaceContainerHighest)
         border.width: Theme.glass ? 1 : (toggle.checked ? 0 : 1.5)
         border.color: Theme.glass
-            ? (toggle.checked
-                ? Qt.rgba(1, 1, 1, Theme.dark ? 0.18 : 0.42)
-                : Qt.rgba(1, 1, 1, Theme.dark ? 0.12 : 0.34))
+            ? (toggle.checked ? Theme.amberBorder : Theme.cardBorderSubtle)
             : Theme.outline
         Behavior on color { ColorAnimation { duration: Theme.fadeFast } }
 
@@ -64,9 +70,7 @@ FocusScope {
             anchors.verticalCenter: parent.verticalCenter
             x: toggle.checked ? parent.width - width - 4.5 : 6.5
             color: Theme.glass
-                ? (toggle.checked
-                    ? "#FFFFFF"
-                    : (Theme.dark ? Qt.rgba(1, 1, 1, mouse.containsMouse ? 0.90 : 0.78) : Qt.rgba(Theme.surfaceContent.r, Theme.surfaceContent.g, Theme.surfaceContent.b, mouse.containsMouse ? 0.78 : 0.62)))
+                ? (toggle.checked ? "#FFFFFF" : Qt.rgba(1, 1, 1, 0.70))
                 : (toggle.checked ? Theme.primaryContent : (mouse.containsMouse ? Theme.surfaceContentVariant : Theme.outline))
             border.width: Theme.glass ? 1 : 0
             border.color: Qt.rgba(1, 1, 1, Theme.dark ? 0.55 : 0.90)
