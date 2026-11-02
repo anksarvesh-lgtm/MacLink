@@ -109,7 +109,9 @@ QtObject {
     readonly property int cardGap: 16
     readonly property int cardPadding: 20
     readonly property int sidebarWidth: 230
-    readonly property int sidebarRailWidth: 72
+    readonly property int sidebarRailWidth: 74
+    property real railInset: 8
+    property bool reduceGlass: false
 
     // ---- Color roles ----
     readonly property color primary: amberAccent
