@@ -6,103 +6,235 @@
 
 **Your Android phone and your Mac, working seamlessly as one.**
 
-Notifications, messages, calls, bidirectional clipboard, high-speed file transfers, photo access, and low-latency screen mirroring between Android and macOS.
-Fast, local-first, end-to-end encrypted, without third-party cloud servers or accounts.
+Notifications, messages, phone calls, bidirectional clipboard, gigabit file transfers, photo library access, and low-latency hardware-accelerated screen mirroring between Android and macOS.
 
-[![Platform: macOS](https://img.shields.io/badge/platform-macOS%20(Apple%20Silicon%20%26%20Intel)-black.svg)](desktop/packaging/macos/build-app.sh)
-[![Platform: Android](https://img.shields.io/badge/platform-Android%20(API%2026%2B)-green.svg)](android/)
-[![Package ID: in.maclink.srv](https://img.shields.io/badge/package-in.maclink.srv-blue.svg)](core/maclink-core/src/session.rs)
-[![Apps: GPL-3.0-or-later](https://img.shields.io/badge/apps-GPL--3.0--or--later-blue)](LICENSE)
-[![Core: MPL-2.0](https://img.shields.io/badge/core-MPL--2.0-blue)](LICENSE)
+*Local-first • Zero-Cloud • End-to-End Encrypted via QUIC & TLS 1.3 • Apple Liquid Glass Edition*
+
+---
+
+[![Latest Release](https://img.shields.io/github/v/release/anksarvesh-lgtm/MacLink?style=flat-square&color=F49D04&label=Release)](https://github.com/anksarvesh-lgtm/MacLink/releases)
+[![Platform: macOS](https://img.shields.io/badge/Platform-macOS%20(Apple%20Silicon%20%26%20Intel)-black.svg?style=flat-square&logo=apple)](desktop/packaging/macos/build-app.sh)
+[![Platform: Android](https://img.shields.io/badge/Platform-Android%20(API%2026%2B)-3DDC84.svg?style=flat-square&logo=android&logoColor=white)](android/)
+[![Package ID: in.maclink.srv](https://img.shields.io/badge/Package%20ID-in.maclink.srv-CB7501.svg?style=flat-square)](core/maclink-core/src/session.rs)
+[![Rust: 1.80+](https://img.shields.io/badge/Rust-1.80+-orange.svg?style=flat-square&logo=rust)](rust-toolchain.toml)
+[![Qt: 6.8+](https://img.shields.io/badge/Qt-6.8+-41CD52.svg?style=flat-square&logo=qt)](desktop/app/)
+[![License: GPL-3.0-or-later](https://img.shields.io/badge/License-GPL--3.0--or--later-blue.svg?style=flat-square)](LICENSES/GPL-3.0-or-later.txt)
 
 </div>
 
 ---
 
-## Overview
+## 📸 Visual Showcase
 
-**MacLink** delivers a deep, native integration between Android devices and macOS computers. Connected directly over local Wi-Fi or USB via authenticated peer-to-peer QUIC tunnels, your data remains completely private, secure, and on-device at all times.
+<div align="center">
 
-### Key Capabilities
+### Desktop Interface (macOS · Amber Liquid Glass)
+<img src="assets/screenshots/desktop-home.png" alt="MacLink Desktop Home Screen" width="950" style="border-radius: 12px; box-shadow: 0 16px 36px rgba(0,0,0,0.5);">
 
-- **Apple Liquid Glass Interface**: Designed from the ground up with a fluid, translucent glass aesthetic inspired by modern optical physics. Features Snell refraction, chromatic dispersion along edges, dual-axis specular highlights, and natural spring motion in both **Obsidian Dark** and **Crystal Light** modes.
-- **Mandatory Package Verification**: Handshakes enforce strict application package validation (`in.maclink.srv`). Connection attempts from unauthorized or mismatched clients are rejected before establishing a session.
-- **Real-Time Notification Mirroring**: Stream notifications directly to macOS with interactive quick-reply actions, dismiss actions, and one-click OTP verification code copying.
-- **Unified Messaging**: View conversations, SMS, MMS, and chat threads in a unified desktop interface with full reply and notification support.
-- **Phone Calls & Audio Management**: Receive caller ID alerts, answer or decline incoming calls from your Mac, and dial contacts directly through your phone.
-- **Encrypted Bidirectional Clipboard**: Seamlessly copy text or images on Mac and paste on Android, and vice-versa. Includes automatic protection and filtering for passwords and sensitive credentials.
-- **High-Speed File & Folder Sharing**: Drag and drop documents, photos, and directories over local Wi-Fi with integrity hashing and automatic transfer resume.
-- **Phone Screen Mirroring & Remote Input**: Mirror your Android display at up to 60 FPS using hardware-accelerated H.264 video, with keyboard, mouse, and multi-touch support.
-- **Media Controls & Handoff**: Control music and video playback across devices, and pass open browser URLs and map locations between devices instantly.
+<br/><br/>
+
+### Mobile Interface (Android · Liquid Glass Edition)
+<img src="assets/screenshots/android-liquid-glass.jpg" alt="MacLink Android Mobile Screen" width="420" style="border-radius: 16px; box-shadow: 0 16px 36px rgba(0,0,0,0.5);">
+
+</div>
 
 ---
 
-## Architecture
+## ✨ Key Capabilities
 
-```text
-  Android App (Kotlin, Jetpack Compose)          Mac App (Qt 6, C++, Rust)
-  Package: in.maclink.srv                        Package: in.maclink.srv
-               │ UniFFI                                    │ cxx-qt
-               ▼                                           ▼
-      ┌──────────────────┐       QUIC (iroh)      ┌──────────────────┐
-      │   maclink-core   │◄──────────────────────►│   maclink-core   │
-      │ pairing, crypto, │   TLS 1.3 encrypted    │ pairing, crypto, │
-      │ sessions, storage│   ALPN: maclink/0      │ sessions, storage│
-      └──────────────────┘                        └──────────────────┘
+- **Apple Liquid Glass Aesthetic**: Crafted with physical optical properties—Snell refraction, chromatic dispersion along borders, dual-axis warm specular highlights, and natural spring motion in deep amber/warm charcoal surfaces.
+- **Strict Package Verification Gate**: Handshakes enforce cryptographically verified package identities (`in.maclink.srv`). Mismatched or spoofed clients are rejected before session creation.
+- **Live Notification Mirroring**: Push notifications from Android directly to macOS with interactive inline quick-replies, dismiss-sync, and one-tap OTP verification code clipboard copying.
+- **Unified SMS & Messaging**: Read and compose SMS, RCS, and chat threads directly in a fluid desktop interface with photo attachment support.
+- **Phone Calls & Dialer**: Receive caller ID alerts, accept or reject incoming phone calls from your Mac, dial contacts directly, and route phone audio.
+- **End-to-End Encrypted Clipboard Sync**: Bidirectional real-time clipboard sharing for text and images with automatic sensitive credential filtering (passwords, auth tokens).
+- **Gigabit Drag-and-Drop File Transfers**: Transfer folders and multi-gigabyte files over local Wi-Fi or USB with BLAKE3 integrity verification and automatic transfer resume.
+- **Phone Screen Mirroring & PC Control**: Hardware-accelerated 60 FPS H.264 display streaming with sub-frame input latency, keyboard navigation, and touch simulation.
+- **Audio Routing & Media Handoff**: Control music playback across Spotify, YouTube Music, and local media; toggle playback, adjust volume, or route audio output.
+- **Device Management & Power Controls**: Ring phone to find it, trigger DND, flashlight, battery health monitoring, lock PC, and trigger sleep mode remotely.
+
+---
+
+## 🏛️ System Architecture
+
+MacLink utilizes a memory-safe, shared Rust core powering both native frontends via zero-overhead foreign function interfaces (FFI).
+
+```mermaid
+flowchart TD
+    subgraph Android["Android Application (Kotlin + Jetpack Compose)"]
+        UI_A["Compose UI + AGSL Liquid Glass Shaders"]
+        SVC_A["Android System Services (NotificationListener, MediaSession, Telecom)"]
+        UNI_A["UniFFI JNI Bridge"]
+        UI_A --> UNI_A
+        SVC_A --> UNI_A
+    end
+
+    subgraph Core["Shared Cross-Platform Core (Rust)"]
+        direction TB
+        CORE_A["maclink-core (Android Runtime)"]
+        PROTO["maclink-protocol (CBOR Serialization, Enums, Caps)"]
+        CRYPTO["Cryptography (Ed25519, TLS 1.3, BLAKE3, SAS)"]
+        TRANS["Transport Engine (iroh QUIC + Multiplexed Streams)"]
+        CORE_M["maclink-core (macOS Runtime)"]
+        
+        CORE_A --- PROTO
+        CORE_A --- CRYPTO
+        CORE_A --- TRANS
+        
+        CORE_M --- PROTO
+        CORE_M --- CRYPTO
+        CORE_M --- TRANS
+    end
+
+    subgraph macOS["macOS Desktop Application (Qt 6 + C++ + Rust)"]
+        UNI_M["cxx-qt C++ / Rust Bridge"]
+        QML_M["Qt Quick QML + Amber Liquid Glass Shaders"]
+        NATIVE_M["macOS Native Frameworks (UserNotifications, IOKit, AVFoundation)"]
+        UNI_M --> QML_M
+        NATIVE_M --> UNI_M
+    end
+
+    UNI_A <===>|"FFI Bindings"| CORE_A
+    UNI_M <===>|"cxx-qt Bridge"| CORE_M
+
+    CORE_A <===>|"Encrypted Peer-to-Peer QUIC Tunnel\nLocal Wi-Fi 5GHz/6GHz or USB Cable"| CORE_M
 ```
 
-- **Shared Rust Core (`core/`)**: Cross-platform engine managing Ed25519 cryptography, TLS 1.3 QUIC transports, SAS visual verification, peer pairing, and state storage.
-- **Native Mac Desktop App (`desktop/`)**: Built for macOS using Qt 6 Quick with Apple Liquid Glass QML shaders, native window borders, menu bar integration, and Apple Silicon optimizations.
-- **Native Android App (`android/`)**: Built in Kotlin and Jetpack Compose featuring custom AGSL Liquid Glass runtime shaders with chromatic dispersion and system services integration.
-- **Command-Line Interface (`maclink`)**: Comprehensive CLI utility for terminal workflows, scripting, and headless daemon operations.
+---
+
+## 🔐 Cryptographic Handshake & Protocol Flow
+
+Every connection guarantees zero external server interaction, mutual authentication, and cryptographic channel binding.
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant Phone as Android (in.maclink.srv)
+    participant CoreP as Phone Rust Core
+    participant CoreM as Mac Rust Core
+    participant Mac as macOS (MacLink.app)
+
+    Note over Phone,Mac: Discovery & Transport Handshake
+    CoreP->>CoreM: mDNS / LAN Broadcast (Ed25519 Peer ID)
+    CoreM->>CoreP: QUIC Connection Request (ALPN: maclink/0)
+    CoreP-->>CoreM: TLS 1.3 Handshake (Ed25519 Ephemeral Keys)
+
+    Note over Phone,Mac: Package Verification & Security Gate
+    CoreM->>CoreP: HandshakeInit(package: "in.maclink.srv", nonce, protocol: 0)
+    CoreP->>CoreM: HandshakeResp(package: "in.maclink.srv", signature, caps)
+    
+    alt Package Mismatch or Invalid Signature
+        CoreM-->>CoreP: Terminate Session (Reject Connection)
+    else Package Verified
+        CoreM->>Mac: Display SAS / Compare QR Fingerprint
+        CoreP->>Phone: Display SAS / Verify Fingerprint
+        Note over Phone,Mac: Out-of-Band SAS Verification (Visual Match)
+    end
+
+    Note over Phone,Mac: Active Multiplexed Streams
+    CoreP->>CoreM: Stream 1: Device State & Battery (CBOR)
+    CoreP->>CoreM: Stream 2: Push Notifications & Live OTP
+    CoreM->>CoreP: Stream 3: Encrypted Clipboard Sync
+    CoreP->>CoreM: Stream 4: H.264 Video Mirroring (60 FPS)
+    CoreM->>CoreP: Stream 5: High-Speed File Chunks (BLAKE3 Hashed)
+```
 
 ---
 
-## Building from Source
+## 🎨 Liquid Glass Design System (Amber Edition)
 
-### Prerequisites
+MacLink features a warm, physical glass design tokens system crafted to match modern macOS window aesthetics:
 
-- **macOS Host**: macOS 14 (Sonoma) or macOS 15+ (Sequoia), Apple Silicon (M1/M2/M3/M4) or Intel
-- **Rust Toolchain**: `rustup` with Rust 1.80+ (`rust-toolchain.toml`)
-- **Qt 6**: Qt 6.8+ SDK (Core, Quick, Qml, Tools)
-- **Android SDK & NDK**: Platform 34/35/37, NDK `30.0.16248370`, JDK 21
+```mermaid
+flowchart LR
+    WP["Desktop / Wallpaper Surface"] --> BLUR["Volumetric Gaussian Blur (28px - 48px)"]
+    BLUR --> TINT["Translucent Amber Tint (#221A0F @ 78%)"]
+    TINT --> BORDER["Subtle Specular Border (#FFFFFF @ 12%)"]
+    BORDER --> GLOW["Warm Inner Radiance (#F49D04 @ 15%)"]
+    GLOW --> CONTENT["High-Contrast Typography (#F3F0E8 / #FFFFFF)"]
+```
 
-### 1. Build MacLink for macOS
+### Color Palette
 
-To compile the native Apple Silicon release binaries and bundle the standalone `MacLink.app`:
+| Token | Hex Value | Role |
+| :--- | :--- | :--- |
+| **Deep Background** | `#1A1008` | Canvas foundation, dark contrast floor |
+| **Glass Background** | `#221A0F` | Translucent frosted glass card body |
+| **Dark Amber** | `#603606` | Ambient gradient accent, subtle glow base |
+| **Burnt Orange** | `#894F03` | Active card borders, energetic illumination |
+| **Brown Surface** | `#6D4510` | Elevated glass controls and buttons |
+| **Primary Accent** | `#F49D04` | Focus rings, status indicators, badges |
+| **Highlight Yellow** | `#FFB52E` | Specular reflection, star ratings, active states |
+| **Text Primary** | `#F3F0E8` | High-contrast readable typography (100% white-gold) |
+| **Text Secondary** | `#B5A18B` | Labels, captions, timestamps, secondary data |
+| **Text Muted** | `#897360` | Inactive hints, disabled states, subtle borders |
+
+---
+
+## ⚡ Capability Matrix
+
+| Feature | Protocol Capability | macOS Support | Android Support | Encryption |
+| :--- | :--- | :---: | :---: | :---: |
+| **Device Battery & Health** | `device.battery` | Receive & Display | Broadcast & Charge ETA | TLS 1.3 |
+| **Notification Mirroring** | `notify.mirror` | Inline Action & View | Capture & Remote Dismiss | TLS 1.3 |
+| **SMS / RCS Messaging** | `sms.read`, `sms.send` | Full Desktop Chat | Carrier Transport Gateway | TLS 1.3 |
+| **Phone Calls & Audio** | `call.state`, `call.control` | Caller ID & Remote Dial | Telephony Manager | TLS 1.3 |
+| **Encrypted Clipboard** | `clip.write`, `clip.share` | Bidirectional Sync | Bidirectional Sync | TLS 1.3 |
+| **High-Speed File Transfer** | `files.transfer` | Drag-and-Drop Hub | SAF File System | BLAKE3 + TLS |
+| **60 FPS Screen Mirror** | `mirror.capture`, `mirror.view` | Hardware Decode Window | MediaProjection H.264 | TLS 1.3 |
+| **Remote Touch & Type** | `mirror.input` | Trackpad & Keyboard | Accessibility Dispatcher | TLS 1.3 |
+| **Remote System Toggles** | `toggles.*` (DND/Torch/BT/Wi-Fi)| Controls Palette | Device Settings Provider | TLS 1.3 |
+
+---
+
+## 🛠️ Building & Installing
+
+### Requirements
+- **macOS**: Sonoma 14.0+ or Sequoia 15.0+ (Apple Silicon or Intel)
+- **Rust**: 1.80+ (`rustup toolchain install stable`)
+- **Qt SDK**: Qt 6.8+ (Homebrew or official installer)
+- **Android SDK**: API 34+, NDK `30.0.16248370`, JDK 21
+
+### 1. Prebuilt Binaries
+
+Download ready-to-run releases from the [Releases Page](https://github.com/anksarvesh-lgtm/MacLink/releases):
+- **macOS**: `MacLink-0.0.5-macos-arm64.dmg` or `.zip`
+- **Android**: `MacLink-0.0.5-android.apk`
+- **Verification**: `SHA256SUMS.txt`
+
+### 2. Build macOS App from Source
 
 ```bash
-# Build the native CLI executable
-cargo build --release --bin maclink
+# Clone the repository
+git clone https://github.com/anksarvesh-lgtm/MacLink.git
+cd MacLink/nectarlink
 
-# Build the desktop GUI executable
-cargo build --release --bin maclink-desktop
+# Build release binaries
+QT_ROOT_DIR=~/Qt/6.8.2/macos cargo build --release --bin maclink-desktop
 
-# Package MacLink.app and distribution zip
+# Package MacLink.app bundle and DMG
 ./desktop/packaging/macos/build-app.sh
 ```
 
-The resulting application bundle `MacLink.app` is placed in `dist/`.
+The resulting `MacLink.app` and `MacLink-0.0.5.dmg` will be placed in `dist/`.
 
-### 2. Build MacLink for Android
-
-To compile the shared Rust FFI library via `cargo-ndk` and assemble the Android APK:
+### 3. Build Android App from Source
 
 ```bash
-# Install Android target
+cd android
+
+# Install Rust Android toolchain
 rustup target add aarch64-linux-android
 cargo install cargo-ndk
 
-# Assemble the Android APK
-cd android
+# Compile APK
 ./gradlew assembleDebug -Pmaclink.abis=arm64-v8a
 ```
 
-The compiled APK will be generated at `android/app/build/outputs/apk/debug/app-debug.apk`.
+Compiled APK will be located at:
+`android/app/build/outputs/apk/debug/app-debug.apk`.
 
-### 3. Run Test Suites
-
-To verify cryptographic handshakes, package verification gates, and protocol serialization:
+### 4. Run Test Suite
 
 ```bash
 cargo test -p maclink-protocol -p maclink-core -p maclink-cli
@@ -110,18 +242,41 @@ cargo test -p maclink-protocol -p maclink-core -p maclink-cli
 
 ---
 
-## Security & Privacy
+## 🔒 Security & Privacy Guarantees
 
-- **Zero-Cloud Architecture**: All pairing tokens, media streams, and clipboard payloads travel directly peer-to-peer over your local network. No external servers or telemetry are involved.
-- **Cryptographic Mutual Authentication**: Every device generates a persistent Ed25519 identity key. Pairing requires out-of-band QR code scanning or a 6-digit Short Authentication String (SAS) derived from TLS keying material.
-- **App Authenticity Gate**: Handshakes require and enforce matching `in.maclink.srv` application signatures and package identifiers before establishing any connection.
-- **Encrypted Local Storage**: Cached tokens, paired peer endpoints, and transfer metadata are stored in AES-GCM / XChaCha20 encrypted local SQLite databases protected by the OS keychain/keystore.
-- **Granular Controls**: Every capability—including clipboard sync, cameras, microphones, and screen mirroring—can be toggled and audited individually per device.
+1. **Zero Cloud Infrastructure**: MacLink operates 100% peer-to-peer. There are no registration accounts, no analytics tracking, no remote relay servers, and no telemetry sent anywhere.
+2. **Ed25519 Identity Keys**: All devices generate cryptographic keys stored in the Apple Keychain or Android EncryptedSharedPreferences.
+3. **Short Authentication String (SAS)**: Man-in-the-middle attacks are prevented by visual SAS matching or cryptographic QR verification during initial pairing.
+4. **Credential Isolation**: Clipboards containing sensitive data (passwords, 2FA codes, hidden clipboard flags) are strictly sanitized according to user preferences.
 
 ---
 
-## License
+## 📂 Repository Structure
 
-- Applications & CLI: [GPL-3.0-or-later](LICENSES/GPL-3.0-or-later.txt)
-- Core Engine & Protocol: [MPL-2.0](LICENSES/MPL-2.0.txt)
-- Typography: [SIL Open Font License 1.1](assets/fonts/OFL-SpaceMono.txt)
+```text
+MacLink/
+├── android/                    # Android application (Kotlin, Jetpack Compose, AGSL)
+│   ├── app/src/main/kotlin/   # UI pages, services, notification listeners
+│   └── app/src/main/res/      # Drawables, layouts, vector assets
+├── assets/                     # Brand icons, typography, and screenshots
+│   ├── brand/                 # SVG, PNG, and ICNS logo assets
+│   └── screenshots/           # High-resolution desktop and mobile graphics
+├── core/
+│   ├── maclink-core/          # QUIC engine, session state, storage, crypto
+│   ├── maclink-protocol/      # Type-safe protocol messages, CBOR contracts
+│   └── maclink-cli/           # Headless command-line daemon & tools
+├── desktop/
+│   ├── app/                   # macOS Desktop client (Qt 6, C++, Rust cxx-qt)
+│   │   ├── qml/               # Liquid Glass pages, components, and animations
+│   │   └── src/               # Native bridge, menu bar, system lifecycle
+│   └── packaging/macos/       # DMG generation, Info.plist, codesign scripts
+└── dist/                      # Distribution artifacts (DMG, ZIP, APK, checksums)
+```
+
+---
+
+## 📜 License
+
+- **Applications & Desktop Client**: [GPL-3.0-or-later](LICENSES/GPL-3.0-or-later.txt)
+- **Core Engine & Protocol**: [MPL-2.0](LICENSES/MPL-2.0.txt)
+- **Typography & Fonts**: [SIL Open Font License 1.1](assets/fonts/OFL-SpaceMono.txt)
