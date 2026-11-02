@@ -792,7 +792,7 @@ NativeWindow {
             { id: "settings", label: qsTr("Settings"), icon: Icons.settings }
         ]
 
-        readonly property real itemPitch: Math.min(54, Math.max(48, Math.floor((railContainer.height - 116) / navItems.length)))
+        readonly property real itemPitch: Math.min(54, Math.max(42, Math.floor((railFlickable.height - 4) / navItems.length)))
 
         readonly property int activeNavIndex: {
             switch (window.page) {
@@ -823,143 +823,169 @@ NativeWindow {
             NumberAnimation { target: capsuleStretch; property: "yScale"; to: 1.0; duration: 130; easing.type: Easing.OutCubic }
         }
 
-        // The ONE sliding active glass capsule behind the active icon
-        GlassPanel {
-            id: activeCapsule
-            x: Math.round((railContainer.width - width) / 2)
-            y: navColumn.y + railContainer.activeNavIndex * railContainer.itemPitch + 2
-            width: 46
-            height: 26
-            radius: 13
-            backdrop: windowBackdrop
-            tintTop: 0.22
-            tintBottom: 0.12
-            amberTint: 0.12
-            hasShadow: false
-            hasTopLight: true
-            hasRim: true
-            visible: railContainer.activeNavIndex >= 0
-
-            // Amber rim/glow for the active capsule
-            Rectangle {
-                anchors.fill: parent
-                radius: parent.radius
-                color: "transparent"
-                border.width: 1
-                border.color: Theme.amberBorder
-            }
-
-            transform: Scale {
-                id: capsuleStretch
-                origin.x: 23
-                origin.y: 13
-                xScale: 1.0
-                yScale: 1.0
-            }
-
-            Behavior on y {
-                enabled: !Theme.reduceMotion
-                NumberAnimation {
-                    duration: 220
-                    easing.type: Easing.OutCubic
-                }
-            }
-        }
-
-        // Navigation items list
-        Column {
-            id: navColumn
+        // Middle navigation items list inside Flickable for short screens
+        Flickable {
+            id: railFlickable
             anchors.horizontalCenter: parent.horizontalCenter
             anchors.top: railLogo.bottom
-            anchors.topMargin: railContainer.height < 650 ? 10 : 16
-            spacing: 0
+            anchors.topMargin: railContainer.height < 600 ? 6 : 14
+            anchors.bottom: addDeviceButton.top
+            anchors.bottomMargin: railContainer.height < 600 ? 6 : 14
+            width: railContainer.width
+            contentWidth: width
+            contentHeight: navColumn.implicitHeight
+            boundsBehavior: Flickable.StopAtBounds
+            clip: true
 
-            Repeater {
-                model: railContainer.navItems
-                delegate: FocusScope {
-                    id: railItem
-                    required property var modelData
-                    required property int index
-                    readonly property bool selected: railContainer.activeNavIndex === index
-                    width: railContainer.width
-                    height: railContainer.itemPitch
-                    activeFocusOnTab: true
-
-                    Accessible.role: Accessible.PageTab
-                    Accessible.name: modelData.label
-                    Accessible.selected: selected
-                    Accessible.onPressAction: window.navigateTab(modelData.id)
-
-                    Keys.onReturnPressed: window.navigateTab(modelData.id)
-                    Keys.onEnterPressed: window.navigateTab(modelData.id)
-                    Keys.onSpacePressed: window.navigateTab(modelData.id)
-
-                    // Focus ring
-                    Rectangle {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        y: 0
-                        width: 50; height: 30
-                        radius: 15
-                        color: "transparent"
-                        border.width: 2
-                        border.color: Theme.amberAccent
-                        visible: Theme.focusVisible(railItem)
+            // Keep active item scrolled into view if window is short
+            Connections {
+                target: railContainer
+                function onActiveNavIndexChanged() {
+                    const targetY = railContainer.activeNavIndex * railContainer.itemPitch
+                    if (targetY < railFlickable.contentY) {
+                        railFlickable.contentY = targetY
+                    } else if (targetY + railContainer.itemPitch > railFlickable.contentY + railFlickable.height) {
+                        railFlickable.contentY = targetY + railContainer.itemPitch - railFlickable.height
                     }
+                }
+            }
 
-                    // Hover capsule (fades in over 120 ms when hovered and not selected)
-                    Rectangle {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        y: 2
-                        width: 46; height: 26
-                        radius: 13
-                        color: Qt.rgba(1, 1, 1, 0.08)
-                        visible: itemMouse.containsMouse && !railItem.selected
-                        opacity: visible ? 1.0 : 0.0
-                        Behavior on opacity {
-                            enabled: !Theme.reduceMotion
-                            NumberAnimation { duration: 120 }
-                        }
+            // The ONE sliding active glass capsule behind the active icon
+            GlassPanel {
+                id: activeCapsule
+                x: Math.round((railContainer.width - width) / 2)
+                y: railContainer.activeNavIndex * railContainer.itemPitch + 2
+                width: 46
+                height: 26
+                radius: 13
+                backdrop: windowBackdrop
+                tintTop: 0.22
+                tintBottom: 0.12
+                amberTint: 0.12
+                hasShadow: false
+                hasTopLight: true
+                hasRim: true
+                visible: railContainer.activeNavIndex >= 0
+
+                // Amber rim/glow for the active capsule
+                Rectangle {
+                    anchors.fill: parent
+                    radius: parent.radius
+                    color: "transparent"
+                    border.width: 1
+                    border.color: Theme.amberBorder
+                }
+
+                transform: Scale {
+                    id: capsuleStretch
+                    origin.x: 23
+                    origin.y: 13
+                    xScale: 1.0
+                    yScale: 1.0
+                }
+
+                Behavior on y {
+                    enabled: !Theme.reduceMotion
+                    NumberAnimation {
+                        duration: 220
+                        easing.type: Easing.OutCubic
                     }
+                }
+            }
 
-                    // Icon (22 pt, centered in top 26 pt area)
-                    Icon {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        y: 4
-                        width: 22; height: 22
-                        path: railItem.modelData.icon
-                        color: railItem.selected ? "#FFFFFF" : (itemMouse.containsMouse ? Theme.textPrimary : Theme.textSecondary)
-                        scale: itemMouse.pressed ? 0.94 : (railItem.selected ? 1.05 : 1.0)
-                        Behavior on color {
-                            enabled: !Theme.reduceMotion
-                            ColorAnimation { duration: 120 }
-                        }
-                        Behavior on scale {
-                            enabled: !Theme.reduceMotion
-                            NumberAnimation { duration: 80 }
-                        }
-                    }
+            // Navigation items list
+            Column {
+                id: navColumn
+                width: parent.width
+                spacing: 0
 
-                    // Label (11 pt, centered below capsule)
-                    Txt {
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        y: railContainer.itemPitch >= 52 ? 32 : 30
-                        text: railItem.modelData.label
-                        role: "caption"
-                        size: 11
-                        weight: railItem.selected ? 600 : 500
-                        color: railItem.selected ? Theme.textPrimary : (itemMouse.containsMouse ? Theme.textPrimary : Theme.textSecondary)
-                        Behavior on color {
-                            enabled: !Theme.reduceMotion
-                            ColorAnimation { duration: 120 }
-                        }
-                    }
+                Repeater {
+                    model: railContainer.navItems
+                    delegate: FocusScope {
+                        id: railItem
+                        required property var modelData
+                        required property int index
+                        readonly property bool selected: railContainer.activeNavIndex === index
+                        width: railContainer.width
+                        height: railContainer.itemPitch
+                        activeFocusOnTab: true
 
-                    MouseArea {
-                        id: itemMouse
-                        anchors.fill: parent
-                        hoverEnabled: true
-                        cursorShape: Qt.PointingHandCursor
-                        onClicked: window.navigateTab(railItem.modelData.id)
+                        Accessible.role: Accessible.PageTab
+                        Accessible.name: modelData.label
+                        Accessible.selected: selected
+                        Accessible.onPressAction: window.navigateTab(modelData.id)
+
+                        Keys.onReturnPressed: window.navigateTab(modelData.id)
+                        Keys.onEnterPressed: window.navigateTab(modelData.id)
+                        Keys.onSpacePressed: window.navigateTab(modelData.id)
+
+                        // Focus ring
+                        Rectangle {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            y: 0
+                            width: 50; height: 30
+                            radius: 15
+                            color: "transparent"
+                            border.width: 2
+                            border.color: Theme.amberAccent
+                            visible: Theme.focusVisible(railItem)
+                        }
+
+                        // Hover capsule (fades in over 120 ms when hovered and not selected)
+                        Rectangle {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            y: 2
+                            width: 46; height: 26
+                            radius: 13
+                            color: Qt.rgba(1, 1, 1, 0.08)
+                            visible: itemMouse.containsMouse && !railItem.selected
+                            opacity: visible ? 1.0 : 0.0
+                            Behavior on opacity {
+                                enabled: !Theme.reduceMotion
+                                NumberAnimation { duration: 120 }
+                            }
+                        }
+
+                        // Icon (22 pt, centered in top 26 pt area)
+                        Icon {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            y: 4
+                            width: 22; height: 22
+                            path: railItem.modelData.icon
+                            color: railItem.selected ? "#FFFFFF" : (itemMouse.containsMouse ? Theme.textPrimary : Theme.textSecondary)
+                            scale: itemMouse.pressed ? 0.94 : (railItem.selected ? 1.05 : 1.0)
+                            Behavior on color {
+                                enabled: !Theme.reduceMotion
+                                ColorAnimation { duration: 120 }
+                            }
+                            Behavior on scale {
+                                enabled: !Theme.reduceMotion
+                                NumberAnimation { duration: 80 }
+                            }
+                        }
+
+                        // Label (11 pt, centered below capsule)
+                        Txt {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            y: railContainer.itemPitch >= 50 ? 32 : (railContainer.itemPitch >= 44 ? 29 : 27)
+                            text: railItem.modelData.label
+                            role: "caption"
+                            size: 11
+                            weight: railItem.selected ? 600 : 500
+                            color: railItem.selected ? Theme.textPrimary : (itemMouse.containsMouse ? Theme.textPrimary : Theme.textSecondary)
+                            Behavior on color {
+                                enabled: !Theme.reduceMotion
+                                ColorAnimation { duration: 120 }
+                            }
+                        }
+
+                        MouseArea {
+                            id: itemMouse
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: window.navigateTab(railItem.modelData.id)
+                        }
                     }
                 }
             }
@@ -1236,9 +1262,10 @@ NativeWindow {
                     visible: (window.page === "home" || window.page === "timeline") && AppController.hasDevices
                     iconPath: Icons.history
                     iconSize: 16
-                    text: qsTr("Timeline")
+                    text: topBar.width < 540 ? "" : qsTr("Timeline")
                     tonal: window.page === "timeline"
                     label: qsTr("Files, clips, links, photos, recordings and sessions")
+                    Accessible.name: qsTr("Timeline")
                     onClicked: window.page = window.page === "timeline" ? "home" : "timeline"
                     Component.onCompleted: window.addCaptionHole(timelineTopBtn)
                 }
