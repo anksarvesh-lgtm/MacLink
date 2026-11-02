@@ -96,6 +96,12 @@ NativeWindow {
         }
         window.page = "home"
     }
+    function navigateTab(tabId) {
+        if (tabId === "guide")
+            window.page = "help_center"
+        else
+            window.page = tabId
+    }
     function navigateAndHighlight(targetId) {
         if (!targetId || targetId.length === 0)
             return
@@ -420,21 +426,42 @@ NativeWindow {
                 Theme.isPhoneSeed ? (Theme.dark ? 0.22 : 0.30) : (Theme.dark ? 0.12 : 0.18)
             )
         )
-    // Window background: near-black warm brown with soft amber glow at top-right (Image 2)
-    Rectangle {
+    // Window backdrop layer (sampled by Liquid Glass panels)
+    Item {
+        id: windowBackdrop
         anchors.fill: parent
-        color: Theme.windowBg
-    }
-    Rectangle {
-        anchors.top: parent.top
-        anchors.right: parent.right
-        anchors.topMargin: -90
-        anchors.rightMargin: -90
-        width: 520; height: 520; radius: 260
-        gradient: Gradient {
-            GradientStop { position: 0.0; color: Qt.rgba(0.72, 0.45, 0.10, 0.20) }
-            GradientStop { position: 0.45; color: Qt.rgba(0.72, 0.45, 0.10, 0.06) }
-            GradientStop { position: 1.0; color: "transparent" }
+
+        // Warm near-black brown base
+        Rectangle {
+            anchors.fill: parent
+            color: Theme.windowBg
+        }
+
+        // Soft amber glow at top-right
+        Rectangle {
+            anchors.top: parent.top
+            anchors.right: parent.right
+            anchors.topMargin: -90
+            anchors.rightMargin: -90
+            width: 520; height: 520; radius: 260
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: Qt.rgba(0.72, 0.45, 0.10, 0.22) }
+                GradientStop { position: 0.45; color: Qt.rgba(0.72, 0.45, 0.10, 0.06) }
+                GradientStop { position: 1.0; color: "transparent" }
+            }
+        }
+
+        // Extended amber glow behind the left sidebar/rail for rich glass refraction
+        Rectangle {
+            anchors.left: parent.left
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.leftMargin: -120
+            width: 380; height: 520; radius: 190
+            gradient: Gradient {
+                GradientStop { position: 0.0; color: Qt.rgba(0.72, 0.45, 0.10, 0.20) }
+                GradientStop { position: 0.50; color: Qt.rgba(0.72, 0.45, 0.10, 0.06) }
+                GradientStop { position: 1.0; color: "transparent" }
+            }
         }
     }
 
@@ -559,285 +586,428 @@ NativeWindow {
         }
     }
 
-    readonly property bool isWideSidebar: window.width >= 1000
+    // ---- Liquid Glass component (for rail, capsule, and buttons) ----
+    component GlassPanel: Item {
+        id: gpRoot
+        property Item backdrop: windowBackdrop
+        property real radius: 28
+        property bool reduceGlass: Theme.reduceGlass
+        property bool hasShadow: true
+        property real tintTop: 0.14
+        property real tintBottom: 0.06
+        property real amberTint: 0.05
+        property real topLightHeight: Math.min(40, height * 0.45)
+        property bool hasTopLight: true
+        property bool hasRim: true
 
-    // ---- Navigation rail / wide sidebar ----
-    Rectangle {
-        id: rail
-        visible: !window.welcome
-        width: window.isWideSidebar ? Theme.sidebarWidth : Theme.sidebarRailWidth
-        height: parent.height
-        color: "transparent"
-        property string hoveredNav: ""
-        Behavior on width {
-            enabled: !Theme.reduceMotion
-            NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
+        // Mask for panel shape
+        Item {
+            id: shapeMask
+            anchors.fill: parent
+            layer.enabled: true
+            visible: false
+            Rectangle {
+                anchors.fill: parent
+                radius: gpRoot.radius
+                color: "#FFFFFF"
+            }
         }
 
-        // Wide mode brand header
-        Row {
-            id: brandHeader
-            visible: window.isWideSidebar
-            anchors.left: parent.left
-            anchors.leftMargin: 20
+        // 5. Shadow (soft shadow below and outside panel)
+        MultiEffect {
+            anchors.fill: parent
+            visible: gpRoot.hasShadow && !gpRoot.reduceGlass && width > 0 && height > 0
+            source: shapeMask
+            shadowEnabled: true
+            shadowColor: Qt.rgba(0, 0, 0, 0.45)
+            shadowBlur: 0.6
+            shadowOpacity: 0.35
+            shadowVerticalOffset: 6
+            shadowHorizontalOffset: 0
+        }
+
+        // 1. Blurred backdrop
+        ShaderEffectSource {
+            id: snap
+            anchors.fill: parent
+            visible: false
+            sourceItem: gpRoot.backdrop
+            live: false
+            recursive: false
+            sourceRect: gpRoot.backdrop ? gpRoot.mapToItem(gpRoot.backdrop, 0, 0, gpRoot.width, gpRoot.height) : Qt.rect(0, 0, 0, 0)
+        }
+
+        MultiEffect {
+            id: blurEffect
+            anchors.fill: parent
+            visible: !gpRoot.reduceGlass && gpRoot.backdrop !== null && width > 0 && height > 0
+            source: snap
+            blurEnabled: true
+            blur: 1.0
+            blurMax: 48
+            saturation: 0.35
+            brightness: 0.04
+            maskEnabled: true
+            maskSource: shapeMask
+        }
+
+        // 2. Tint
+        Rectangle {
+            id: tintLayer
+            anchors.fill: parent
+            radius: gpRoot.radius
+            gradient: Gradient {
+                orientation: Gradient.Vertical
+                GradientStop {
+                    position: 0.0
+                    color: Qt.rgba(1, 1, 1, gpRoot.reduceGlass ? 0.22 : gpRoot.tintTop)
+                }
+                GradientStop {
+                    position: 1.0
+                    color: Qt.rgba(1, 1, 1, gpRoot.reduceGlass ? 0.12 : gpRoot.tintBottom)
+                }
+            }
+        }
+
+        // Faint amber tint layer
+        Rectangle {
+            id: amberLayer
+            anchors.fill: parent
+            radius: gpRoot.radius
+            visible: gpRoot.amberTint > 0
+            color: Qt.rgba(0.95, 0.66, 0.23, gpRoot.amberTint)
+        }
+
+        // 3. Top light
+        Rectangle {
+            id: topLight
             anchors.top: parent.top
-            anchors.topMargin: 20
-            spacing: 11
-
-            Image {
-                anchors.verticalCenter: parent.verticalCenter
-                width: 26; height: 26
-                source: "qrc:/brand/maclink-liquid-logo.png"
-                mipmap: true; smooth: true
-                fillMode: Image.PreserveAspectFit
-            }
-            Txt {
-                anchors.verticalCenter: parent.verticalCenter
-                text: "MacLink"
-                role: "title"
-                size: 16
-                weight: 700
-                color: Theme.textPrimary
-            }
-        }
-
-        // Compact rail mark
-        Rectangle {
-            id: mark
-            visible: !window.isWideSidebar
-            anchors.horizontalCenter: parent.horizontalCenter
-            y: (Theme.topBarHeight - height) / 2
-            width: 38; height: 38
-            radius: Theme.radiusSm
-            color: "transparent"
-            Image {
-                anchors.centerIn: parent
-                width: 36; height: 36
-                source: "qrc:/brand/maclink-liquid-logo.png"
-                mipmap: true
-                smooth: true
-                fillMode: Image.PreserveAspectFit
-            }
-        }
-        Column {
-            anchors.left: window.isWideSidebar ? parent.left : undefined
-            anchors.leftMargin: window.isWideSidebar ? 12 : 0
-            anchors.right: window.isWideSidebar ? parent.right : undefined
-            anchors.rightMargin: window.isWideSidebar ? 12 : 0
-            anchors.horizontalCenter: window.isWideSidebar ? undefined : parent.horizontalCenter
-            anchors.top: window.isWideSidebar ? brandHeader.bottom : mark.bottom
-            anchors.topMargin: window.isWideSidebar ? 22 : 31
-            spacing: window.isWideSidebar ? 4 : 6
-
-            NavItem {
-                wide: window.isWideSidebar
-                iconPath: Icons.home
-                text: qsTr("Home")
-                selected: window.page === "home" || window.page === "timeline"
-                activeHover: rail.hoveredNav === "home"
-                onHoveredChanged: {
-                    if (hovered) rail.hoveredNav = "home"
-                    else if (rail.hoveredNav === "home") rail.hoveredNav = ""
-                }
-                onClicked: window.page = "home"
-            }
-            NavItem {
-                wide: window.isWideSidebar
-                iconPath: Icons.messages
-                text: qsTr("Messages")
-                selected: window.page === "messages"
-                activeHover: rail.hoveredNav === "messages"
-                onHoveredChanged: {
-                    if (hovered) rail.hoveredNav = "messages"
-                    else if (rail.hoveredNav === "messages") rail.hoveredNav = ""
-                }
-                onClicked: window.page = "messages"
-            }
-            NavItem {
-                wide: window.isWideSidebar
-                iconPath: Icons.call
-                text: qsTr("Calls")
-                selected: window.page === "calls"
-                activeHover: rail.hoveredNav === "calls"
-                onHoveredChanged: {
-                    if (hovered) rail.hoveredNav = "calls"
-                    else if (rail.hoveredNav === "calls") rail.hoveredNav = ""
-                }
-                onClicked: window.page = "calls"
-            }
-            NavItem {
-                wide: window.isWideSidebar
-                iconPath: Icons.photo
-                text: qsTr("Photos")
-                selected: window.page === "photos"
-                activeHover: rail.hoveredNav === "photos"
-                onHoveredChanged: {
-                    if (hovered) rail.hoveredNav = "photos"
-                    else if (rail.hoveredNav === "photos") rail.hoveredNav = ""
-                }
-                onClicked: window.page = "photos"
-            }
-            NavItem {
-                wide: window.isWideSidebar
-                iconPath: Icons.folder
-                text: qsTr("Files")
-                selected: window.page === "files"
-                activeHover: rail.hoveredNav === "files"
-                onHoveredChanged: {
-                    if (hovered) rail.hoveredNav = "files"
-                    else if (rail.hoveredNav === "files") rail.hoveredNav = ""
-                }
-                onClicked: window.page = "files"
-            }
-            NavItem {
-                wide: window.isWideSidebar
-                iconPath: Icons.apps
-                text: qsTr("Apps")
-                selected: window.page === "apps"
-                activeHover: rail.hoveredNav === "apps"
-                onHoveredChanged: {
-                    if (hovered) rail.hoveredNav = "apps"
-                    else if (rail.hoveredNav === "apps") rail.hoveredNav = ""
-                }
-                onClicked: window.page = "apps"
-            }
-            NavItem {
-                wide: window.isWideSidebar
-                iconPath: Icons.deck
-                text: qsTr("Deck")
-                selected: window.page === "deck"
-                activeHover: rail.hoveredNav === "deck"
-                onHoveredChanged: {
-                    if (hovered) rail.hoveredNav = "deck"
-                    else if (rail.hoveredNav === "deck") rail.hoveredNav = ""
-                }
-                onClicked: window.page = "deck"
-            }
-
-            // Tools section (wide mode)
-            Txt {
-                visible: window.isWideSidebar
-                text: qsTr("TOOLS")
-                role: "caption"
-                size: 11
-                weight: 600
-                color: Theme.textSecondary
-                leftPadding: 12
-                topPadding: 12
-                bottomPadding: 4
-            }
-            NavItem {
-                wide: window.isWideSidebar
-                iconPath: Icons.mirror
-                text: qsTr("Mirror Screen")
-                selected: AppController.mirrorActive
-                onClicked: AppController.openMirror()
-            }
-            NavItem {
-                wide: window.isWideSidebar
-                iconPath: Icons.info
-                text: qsTr("Help Center")
-                selected: window.page === "help_center" || window.page === "guide"
-                activeHover: rail.hoveredNav === "help_center" || rail.hoveredNav === "guide"
-                onHoveredChanged: {
-                    if (hovered) rail.hoveredNav = "help_center"
-                    else if (rail.hoveredNav === "help_center" || rail.hoveredNav === "guide") rail.hoveredNav = ""
-                }
-                onClicked: window.page = "help_center"
-            }
-            NavItem {
-                wide: window.isWideSidebar
-                iconPath: Icons.settings
-                text: qsTr("Settings")
-                selected: window.page === "settings"
-                activeHover: rail.hoveredNav === "settings"
-                onHoveredChanged: {
-                    if (hovered) rail.hoveredNav = "settings"
-                    else if (rail.hoveredNav === "settings") rail.hoveredNav = ""
-                }
-                onClicked: window.page = "settings"
-            }
-        }
-
-        // Wide mode bottom device chip
-        Rectangle {
-            id: deviceChip
-            visible: window.isWideSidebar
             anchors.left: parent.left
-            anchors.leftMargin: 12
             anchors.right: parent.right
-            anchors.rightMargin: 12
+            height: gpRoot.topLightHeight
+            visible: gpRoot.hasTopLight && height > 0
+            radius: gpRoot.radius
+            gradient: Gradient {
+                orientation: Gradient.Vertical
+                GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.12) }
+                GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.0) }
+            }
+        }
+
+        // 4. Specular rim
+        Item {
+            id: rimContainer
+            anchors.fill: parent
+            visible: gpRoot.hasRim
+
+            Rectangle {
+                id: rimGradRect
+                anchors.fill: parent
+                radius: gpRoot.radius
+                visible: false
+                gradient: Gradient {
+                    orientation: Gradient.Vertical
+                    GradientStop { position: 0.0; color: Qt.rgba(1, 1, 1, 0.45) }
+                    GradientStop { position: 0.45; color: Qt.rgba(1, 1, 1, 0.05) }
+                    GradientStop { position: 0.85; color: Qt.rgba(1, 1, 1, 0.08) }
+                    GradientStop { position: 1.0; color: Qt.rgba(1, 1, 1, 0.20) }
+                }
+            }
+
+            Item {
+                id: innerCutout
+                anchors.fill: parent
+                visible: false
+                layer.enabled: true
+                Rectangle {
+                    anchors.fill: parent
+                    anchors.margins: 1
+                    radius: Math.max(0, gpRoot.radius - 1)
+                    color: "#FFFFFF"
+                }
+            }
+
+            MultiEffect {
+                anchors.fill: parent
+                source: rimGradRect
+                maskEnabled: true
+                maskSource: innerCutout
+                maskInverted: true
+            }
+        }
+
+        function updateSnapshot() {
+            if (snap && snap.sourceItem) {
+                snap.sourceRect = gpRoot.mapToItem(gpRoot.backdrop, 0, 0, gpRoot.width, gpRoot.height)
+                snap.scheduleUpdate()
+            }
+        }
+
+        onWidthChanged: updateSnapshot()
+        onHeightChanged: updateSnapshot()
+        onXChanged: updateSnapshot()
+        onYChanged: updateSnapshot()
+        Component.onCompleted: updateSnapshot()
+    }
+
+    // ---- Navigation rail (74pt Narrow Liquid Glass style matching Image 1) ----
+    Item {
+        id: railContainer
+        visible: !window.welcome
+        x: Theme.railInset
+        y: Theme.railInset
+        width: 74
+        height: parent.height - Theme.railInset * 2
+
+        // Floating Liquid Glass panel
+        GlassPanel {
+            id: railGlass
+            anchors.fill: parent
+            radius: Theme.railInset > 0 ? 28 : 0
+            hasShadow: Theme.railInset > 0
+            backdrop: windowBackdrop
+        }
+
+        // App logo (icon only, no "MacLink" text, below title bar)
+        Image {
+            id: railLogo
+            anchors.horizontalCenter: parent.horizontalCenter
+            y: 18
+            width: 26; height: 26
+            source: "qrc:/brand/maclink-liquid-logo.png"
+            mipmap: true
+            smooth: true
+            fillMode: Image.PreserveAspectFit
+        }
+
+        readonly property var navItems: [
+            { id: "home", label: qsTr("Home"), icon: Icons.home },
+            { id: "messages", label: qsTr("Messages"), icon: Icons.messages },
+            { id: "calls", label: qsTr("Calls"), icon: Icons.call },
+            { id: "photos", label: qsTr("Photos"), icon: Icons.photo },
+            { id: "apps", label: qsTr("Apps"), icon: Icons.apps },
+            { id: "deck", label: qsTr("Deck"), icon: Icons.deck },
+            { id: "guide", label: qsTr("Guide"), icon: Icons.info },
+            { id: "settings", label: qsTr("Settings"), icon: Icons.settings }
+        ]
+
+        readonly property int activeNavIndex: {
+            switch (window.page) {
+            case "home":
+            case "timeline": return 0
+            case "messages": return 1
+            case "calls": return 2
+            case "photos": return 3
+            case "apps": return 4
+            case "deck": return 5
+            case "help_center":
+            case "guide": return 6
+            case "settings": return 7
+            default: return 0
+            }
+        }
+
+        onActiveNavIndexChanged: {
+            if (!Theme.reduceMotion) {
+                liquidStretch.restart()
+            }
+        }
+
+        SequentialAnimation {
+            id: liquidStretch
+            NumberAnimation { target: capsuleStretch; property: "yScale"; to: 1.10; duration: 90; easing.type: Easing.OutQuad }
+            NumberAnimation { target: capsuleStretch; property: "yScale"; to: 1.0; duration: 130; easing.type: Easing.OutCubic }
+        }
+
+        // The ONE sliding active glass capsule behind the active icon
+        GlassPanel {
+            id: activeCapsule
+            x: Math.round((railContainer.width - width) / 2)
+            y: navColumn.y + railContainer.activeNavIndex * 55 + 2
+            width: 46
+            height: 26
+            radius: 13
+            backdrop: windowBackdrop
+            tintTop: 0.22
+            tintBottom: 0.12
+            amberTint: 0.12
+            hasShadow: false
+            hasTopLight: true
+            hasRim: true
+            visible: railContainer.activeNavIndex >= 0
+
+            // Amber rim/glow for the active capsule
+            Rectangle {
+                anchors.fill: parent
+                radius: parent.radius
+                color: "transparent"
+                border.width: 1
+                border.color: Theme.amberBorder
+            }
+
+            transform: Scale {
+                id: capsuleStretch
+                origin.x: 23
+                origin.y: 13
+                xScale: 1.0
+                yScale: 1.0
+            }
+
+            Behavior on y {
+                enabled: !Theme.reduceMotion
+                NumberAnimation {
+                    duration: 220
+                    easing.type: Easing.OutCubic
+                }
+            }
+        }
+
+        // Navigation items list (55 pt pitch)
+        Column {
+            id: navColumn
+            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.top: railLogo.bottom
+            anchors.topMargin: 16
+            spacing: 0
+
+            Repeater {
+                model: railContainer.navItems
+                delegate: FocusScope {
+                    id: railItem
+                    required property var modelData
+                    required property int index
+                    readonly property bool selected: railContainer.activeNavIndex === index
+                    width: railContainer.width
+                    height: 55
+                    activeFocusOnTab: true
+
+                    Accessible.role: Accessible.PageTab
+                    Accessible.name: modelData.label
+                    Accessible.selected: selected
+                    Accessible.onPressAction: window.navigateTab(modelData.id)
+
+                    Keys.onReturnPressed: window.navigateTab(modelData.id)
+                    Keys.onEnterPressed: window.navigateTab(modelData.id)
+                    Keys.onSpacePressed: window.navigateTab(modelData.id)
+
+                    // Focus ring
+                    Rectangle {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        y: 0
+                        width: 50; height: 30
+                        radius: 15
+                        color: "transparent"
+                        border.width: 2
+                        border.color: Theme.amberAccent
+                        visible: Theme.focusVisible(railItem)
+                    }
+
+                    // Hover capsule (fades in over 120 ms when hovered and not selected)
+                    Rectangle {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        y: 2
+                        width: 46; height: 26
+                        radius: 13
+                        color: Qt.rgba(1, 1, 1, 0.08)
+                        visible: itemMouse.containsMouse && !railItem.selected
+                        opacity: visible ? 1.0 : 0.0
+                        Behavior on opacity {
+                            enabled: !Theme.reduceMotion
+                            NumberAnimation { duration: 120 }
+                        }
+                    }
+
+                    // Icon (22 pt, centered in top 26 pt area)
+                    Icon {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        y: 4
+                        width: 22; height: 22
+                        path: railItem.modelData.icon
+                        color: railItem.selected ? "#FFFFFF" : (itemMouse.containsMouse ? Theme.textPrimary : Theme.textSecondary)
+                        scale: itemMouse.pressed ? 0.94 : (railItem.selected ? 1.05 : 1.0)
+                        Behavior on color {
+                            enabled: !Theme.reduceMotion
+                            ColorAnimation { duration: 120 }
+                        }
+                        Behavior on scale {
+                            enabled: !Theme.reduceMotion
+                            NumberAnimation { duration: 80 }
+                        }
+                    }
+
+                    // Label (11 pt, centered below capsule)
+                    Txt {
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        y: 32
+                        text: railItem.modelData.label
+                        role: "caption"
+                        size: 11
+                        weight: railItem.selected ? 600 : 500
+                        color: railItem.selected ? Theme.textPrimary : (itemMouse.containsMouse ? Theme.textPrimary : Theme.textSecondary)
+                        Behavior on color {
+                            enabled: !Theme.reduceMotion
+                            ColorAnimation { duration: 120 }
+                        }
+                    }
+
+                    MouseArea {
+                        id: itemMouse
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: window.navigateTab(railItem.modelData.id)
+                    }
+                }
+            }
+        }
+
+        // Bottom round "+" button (32 pt, glass style)
+        Item {
+            id: addDeviceButton
+            anchors.horizontalCenter: parent.horizontalCenter
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 16
-            height: 48
-            radius: 14
-            color: Theme.cardFill
-            border.width: 1
-            border.color: Theme.cardBorderSubtle
+            width: 32; height: 32
+
+            GlassPanel {
+                id: addGlassBg
+                anchors.fill: parent
+                radius: 16
+                backdrop: windowBackdrop
+                tintTop: addMouse.pressed ? 0.28 : (addMouse.containsMouse ? 0.22 : 0.14)
+                tintBottom: addMouse.pressed ? 0.16 : (addMouse.containsMouse ? 0.12 : 0.06)
+                amberTint: addMouse.containsMouse ? 0.10 : 0.04
+                hasShadow: true
+                hasRim: true
+                scale: addMouse.pressed ? 0.94 : (addMouse.containsMouse ? 1.04 : 1.0)
+                Behavior on scale {
+                    enabled: !Theme.reduceMotion
+                    NumberAnimation { duration: 80 }
+                }
+            }
+
+            Icon {
+                anchors.centerIn: parent
+                width: 16; height: 16
+                path: Icons.plus
+                color: addMouse.containsMouse ? Theme.textPrimary : Theme.textSecondary
+                Behavior on color {
+                    enabled: !Theme.reduceMotion
+                    ColorAnimation { duration: 120 }
+                }
+            }
+
+            Accessible.role: Accessible.Button
+            Accessible.name: qsTr("Pair a new device")
+            Accessible.onPressAction: window.openPairing()
 
             MouseArea {
+                id: addMouse
                 anchors.fill: parent
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
                 onClicked: window.openPairing()
             }
-
-            Row {
-                anchors.left: parent.left
-                anchors.leftMargin: 12
-                anchors.right: plusBtn.left
-                anchors.rightMargin: 4
-                anchors.verticalCenter: parent.verticalCenter
-                spacing: 9
-
-                Rectangle {
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: 8; height: 8; radius: 4
-                    color: AppController.hasDevices ? Theme.successGreen : Theme.textSecondary
-                }
-                Column {
-                    anchors.verticalCenter: parent.verticalCenter
-                    spacing: 1
-                    Txt {
-                        text: window.currentDeviceName.length > 0 ? window.currentDeviceName : qsTr("Android Phone")
-                        role: "label"
-                        size: 12
-                        weight: 600
-                        color: Theme.textPrimary
-                        elide: Text.ElideRight
-                        width: deviceChip.width - 76
-                    }
-                    Txt {
-                        text: AppController.hasDevices ? qsTr("Connected") : qsTr("Pair device")
-                        role: "caption"
-                        size: 11
-                        color: Theme.textSecondary
-                    }
-                }
-            }
-            IconButton {
-                id: plusBtn
-                anchors.right: parent.right
-                anchors.rightMargin: 6
-                anchors.verticalCenter: parent.verticalCenter
-                iconPath: Icons.plus
-                iconSize: 13
-                label: qsTr("Pair a new device")
-                tonal: true
-                onClicked: window.openPairing()
-            }
-        }
-
-        // Compact rail bottom pair button
-        IconButton {
-            visible: !window.isWideSidebar
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.bottom: parent.bottom
-            anchors.bottomMargin: 18
-            iconPath: Icons.plus
-            label: qsTr("Pair a new device")
-            tonal: true
-            onClicked: window.openPairing()
         }
     }
 
@@ -845,7 +1015,8 @@ NativeWindow {
     Item {
         id: main
         visible: !window.welcome
-        anchors.left: rail.right
+        anchors.left: railContainer.right
+        anchors.leftMargin: Theme.railInset > 0 ? 8 : 0
         anchors.right: parent.right
         height: parent.height
 
