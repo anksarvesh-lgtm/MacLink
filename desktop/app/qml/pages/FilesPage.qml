@@ -93,19 +93,25 @@ Item {
     }
 
     Component.onCompleted: {
-        if (page.deviceId.length > 0) {
-            AppController.browse_remote_storage(page.deviceId, page.currentPath)
+        let dev = page.deviceId.length > 0 ? page.deviceId : (typeof window !== "undefined" && window.currentDeviceId ? window.currentDeviceId : "")
+        if (dev.length > 0) {
+            if (page.deviceId !== dev) page.deviceId = dev
+            AppController.browse_remote_storage(dev, page.currentPath)
         }
     }
 
     onActiveChanged: {
-        if (active && page.deviceId.length > 0) {
-            AppController.browse_remote_storage(page.deviceId, page.currentPath)
+        if (active) {
+            let dev = page.deviceId.length > 0 ? page.deviceId : (typeof window !== "undefined" && window.currentDeviceId ? window.currentDeviceId : "")
+            if (dev.length > 0) {
+                if (page.deviceId !== dev) page.deviceId = dev
+                AppController.browse_remote_storage(dev, page.currentPath)
+            }
         }
     }
 
     onDeviceIdChanged: {
-        if (page.deviceId.length > 0) {
+        if (page.deviceId.length > 0 && active) {
             AppController.browse_remote_storage(page.deviceId, page.currentPath)
         }
     }

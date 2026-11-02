@@ -1850,12 +1850,25 @@ impl qobject::AppController {
         }
     }
 
+    fn resolve_target_device(&self, device: &QString) -> Option<DeviceId> {
+        super::parse_device(device)
+            .or_else(|| {
+                let s = self.device_id.to_string();
+                super::parse_device(&QString::from(&s))
+            })
+            .or_else(|| {
+                core_host::host().hub.read(|s| {
+                    s.devices
+                        .iter()
+                        .find(|d| matches!(d.link, LinkState::Online { .. }))
+                        .map(|d| d.id)
+                        .or_else(|| s.devices.first().map(|d| d.id))
+                })
+            })
+    }
+
     pub fn browse_remote_storage(mut self: Pin<&mut Self>, device: &QString, path: &QString) {
-        let dev_id = super::parse_device(device).or_else(|| {
-            let s = self.device_id.to_string();
-            super::parse_device(&QString::from(&s))
-        });
-        let Some(dev) = dev_id else {
+        let Some(dev) = self.resolve_target_device(device) else {
             self.as_mut().set_remote_storage_loading(false);
             self.as_mut().set_remote_storage_error(QString::from("No phone connected"));
             return;
@@ -1910,11 +1923,7 @@ impl qobject::AppController {
     }
 
     pub fn download_remote_file(mut self: Pin<&mut Self>, device: &QString, remote_path: &QString) {
-        let dev_id = super::parse_device(device).or_else(|| {
-            let s = self.device_id.to_string();
-            super::parse_device(&QString::from(&s))
-        });
-        let Some(dev) = dev_id else {
+        let Some(dev) = self.resolve_target_device(device) else {
             self.as_mut().toast(QString::from("Cannot download: phone not connected"));
             return;
         };
@@ -1961,11 +1970,7 @@ impl qobject::AppController {
         remote_dir: &QString,
         local_urls_json: &QString,
     ) {
-        let dev_id = super::parse_device(device).or_else(|| {
-            let s = self.device_id.to_string();
-            super::parse_device(&QString::from(&s))
-        });
-        let Some(dev) = dev_id else {
+        let Some(dev) = self.resolve_target_device(device) else {
             self.as_mut().toast(QString::from("Cannot upload: phone not connected"));
             return;
         };
@@ -2035,11 +2040,7 @@ impl qobject::AppController {
         parent_dir: &QString,
         folder_name: &QString,
     ) {
-        let dev_id = super::parse_device(device).or_else(|| {
-            let s = self.device_id.to_string();
-            super::parse_device(&QString::from(&s))
-        });
-        let Some(dev) = dev_id else {
+        let Some(dev) = self.resolve_target_device(device) else {
             self.as_mut().toast(QString::from("Cannot create folder: phone not connected"));
             return;
         };
@@ -2076,11 +2077,7 @@ impl qobject::AppController {
     }
 
     pub fn delete_remote_item(mut self: Pin<&mut Self>, device: &QString, remote_path: &QString) {
-        let dev_id = super::parse_device(device).or_else(|| {
-            let s = self.device_id.to_string();
-            super::parse_device(&QString::from(&s))
-        });
-        let Some(dev) = dev_id else {
+        let Some(dev) = self.resolve_target_device(device) else {
             self.as_mut().toast(QString::from("Cannot delete: phone not connected"));
             return;
         };
