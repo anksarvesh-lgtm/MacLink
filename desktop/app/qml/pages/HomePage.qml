@@ -2163,7 +2163,7 @@ Item {
                                 event.accepted = true
                                 return
                             }
-                            if ((event.modifiers & Qt.ControlModifier) && event.key === Qt.Key_V) {
+                            if ((event.modifiers & (Qt.ControlModifier | Qt.MetaModifier)) && event.key === Qt.Key_V) {
                                 Mirror.keyboardPaste(home.deviceId)
                                 typeOnPhoneCard.lastSent = qsTr("Clipboard")
                                 event.accepted = true
@@ -2220,7 +2220,7 @@ Item {
                                     role: "caption"
                                     muted: true
                                     elide: Text.ElideRight
-                                    text: qsTr("Ctrl+V pastes · Esc stops")
+                                    text: qsTr("⌘V / Ctrl+V pastes · Esc stops")
                                 }
                             }
                             Button {
