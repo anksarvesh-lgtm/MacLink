@@ -189,6 +189,33 @@ flowchart LR
 
 ---
 
+## ⚡ One-Line Install & Launch (macOS)
+
+Install MacLink and launch it immediately from your terminal with a single command:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/anksarvesh-lgtm/MacLink/main/install.sh | bash
+```
+
+**What this one-liner does automatically:**
+1. 🔍 Detects your macOS architecture (Apple Silicon `arm64` / Intel `x86_64`).
+2. 📦 Downloads and verifies the latest release (`v0.0.6`) from GitHub.
+3. 🚀 Installs `MacLink.app` to `/Applications/MacLink.app` and removes Gatekeeper quarantine.
+4. ⚙️ Installs the `maclink` CLI helper to `~/.local/bin/maclink` (and `/usr/local/bin` if permitted).
+5. ✨ Opens MacLink immediately!
+
+### 💻 Terminal CLI Usage
+Once installed, open or control MacLink anytime directly from your terminal:
+
+```bash
+maclink            # Launch or bring MacLink to front
+maclink --ui-check # Run headless UI verification
+maclink --version  # Print version
+maclink --help     # Display CLI options
+```
+
+---
+
 ## 🛠️ Building & Installing
 
 ### Requirements
@@ -200,8 +227,8 @@ flowchart LR
 ### 1. Prebuilt Binaries
 
 Download ready-to-run releases from the [Releases Page](https://github.com/anksarvesh-lgtm/MacLink/releases):
-- **macOS**: `MacLink-0.0.5-macos-arm64.dmg` or `.zip`
-- **Android**: `MacLink-0.0.5-android.apk`
+- **macOS**: `MacLink-0.0.6-macos-arm64.dmg` or `.zip`
+- **Android**: `MacLink-0.0.6-android.apk`
 - **Verification**: `SHA256SUMS.txt`
 
 ### 2. Build macOS App from Source
