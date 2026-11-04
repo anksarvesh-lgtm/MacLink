@@ -133,6 +133,10 @@
     <string name="calls_title">Calls on your PC</string>
     <string name="calls_on">On. Your PC shows incoming and recent calls, and can start or answer calls.</string>
     <string name="calls_off">See who\'s calling and start or answer calls from your PC. Audio stays on the phone. Needs access to calls, call history and contacts.</string>
+    <string name="calls_share_history_title">Share call history with Mac</string>
+    <string name="calls_share_history_desc">Allows your Mac to browse recent incoming and outgoing calls.</string>
+    <string name="calls_control_title">Let paired Mac answer and place calls</string>
+    <string name="calls_control_desc">Allow answering incoming calls, ending calls, and dialing from your Mac.</string>
     <string name="contacts_title">Contacts on your PC</string>
     <string name="contacts_on">On. Your contacts are available in Calls and Messages on your PC.</string>
     <string name="contacts_off">Search contacts and call or text from your PC. Needs access to contacts.</string>

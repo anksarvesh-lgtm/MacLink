@@ -381,8 +381,15 @@ internal class PhoneCalls(
             resolver.query(CallLog.Calls.CONTENT_URI, columns, selection, args, "${CallLog.Calls.DATE} DESC")?.use { c ->
                 buildList {
                     while (size < max && c.moveToNext()) {
-                        val number = c.getString(1)?.trim().orEmpty()
-                        if (number.isEmpty()) continue
+                        val rawNumber = c.getString(1)?.trim().orEmpty()
+                        val number = if (rawNumber.isEmpty() || rawNumber == "-1" || rawNumber == "-2" ||
+                            rawNumber.equals("UNKNOWN", ignoreCase = true) ||
+                            rawNumber.equals("PRIVATE", ignoreCase = true)
+                        ) {
+                            "Unknown"
+                        } else {
+                            rawNumber
+                        }
                         val direction = when (c.getInt(3)) {
                             CallLog.Calls.OUTGOING_TYPE -> "outgoing"
                             CallLog.Calls.MISSED_TYPE -> "missed"
@@ -524,14 +531,18 @@ internal class PhoneCalls(
 
         /** Whether it can answer and decline them (declining needs Android 9). */
         fun canControl(context: Context) =
-            canFollow(context) && granted(context, Manifest.permission.ANSWER_PHONE_CALLS)
+            canFollow(context) && granted(context, Manifest.permission.ANSWER_PHONE_CALLS) &&
+                app.maclink.android.telephony.TelephonySettings.get(context).allowCallControl
 
         /** Whether it can read the phone's call history (`call.log`). */
-        fun canReadLog(context: Context) = granted(context, Manifest.permission.READ_CALL_LOG)
+        fun canReadLog(context: Context) =
+            granted(context, Manifest.permission.READ_CALL_LOG) &&
+                app.maclink.android.telephony.TelephonySettings.get(context).shareCallHistory
 
         /** Whether it can place calls from a PC (`call.dial`). */
         fun canDial(context: Context) =
-            context.packageManager.hasSystemFeature(PackageManager.FEATURE_TELEPHONY) &&
+            app.maclink.android.telephony.TelephonySettings.get(context).allowCallControl &&
+                context.packageManager.hasSystemFeature(PackageManager.FEATURE_TELEPHONY) &&
                 (granted(context, Manifest.permission.CALL_PHONE) || canFollow(context))
 
         /** Whether everything the card asks for is granted. */

@@ -103,7 +103,7 @@ class CallLogRepository(
                 trimmed.equals("UNKNOWN", ignoreCase = true) ||
                 trimmed.equals("PRIVATE", ignoreCase = true)
             ) {
-                return ""
+                return "Unknown"
             }
             return trimmed
         }

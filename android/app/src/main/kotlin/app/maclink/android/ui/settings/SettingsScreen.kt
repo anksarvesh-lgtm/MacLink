@@ -74,6 +74,7 @@ import android.app.Activity
 import app.maclink.android.BuildConfig
 import app.maclink.android.R
 import app.maclink.android.calls.PhoneCalls
+import app.maclink.android.telephony.TelephonySettings
 import app.maclink.android.companion.PcCompanion
 import app.maclink.android.contacts.PhoneContacts
 import app.maclink.android.elevated.Elevated
@@ -464,6 +465,11 @@ fun SettingsScreen(
                     title = stringResource(R.string.settings_calls_and_contacts),
                     highlighted = pulsingSectionKey == "calls_contacts",
                 ) {
+                    val callsContext = LocalContext.current
+                    val telephonySettings = remember { TelephonySettings.get(callsContext) }
+                    var allowCallControl by remember { mutableStateOf(telephonySettings.allowCallControl) }
+                    var shareCallHistory by remember { mutableStateOf(telephonySettings.shareCallHistory) }
+
                     RuntimePermissionAccess(
                         title = stringResource(R.string.calls_title),
                         textOn = stringResource(R.string.calls_on),
@@ -472,6 +478,58 @@ fun SettingsScreen(
                         permissions = PhoneCalls.permissions,
                         onAccessChanged = onAccessChanged,
                     )
+                    SettingRowDivider()
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    ) {
+                        Column(Modifier.weight(1f).padding(end = 12.dp)) {
+                            Text(
+                                stringResource(R.string.calls_share_history_title),
+                                style = MaterialTheme.typography.titleSmall,
+                            )
+                            Text(
+                                stringResource(R.string.calls_share_history_desc),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        Switch(
+                            checked = shareCallHistory,
+                            onCheckedChange = { checked ->
+                                shareCallHistory = checked
+                                telephonySettings.shareCallHistory = checked
+                                onAccessChanged()
+                            },
+                            colors = app.maclink.android.ui.theme.maclinkSwitchColors(),
+                        )
+                    }
+                    SettingRowDivider()
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                    ) {
+                        Column(Modifier.weight(1f).padding(end = 12.dp)) {
+                            Text(
+                                stringResource(R.string.calls_control_title),
+                                style = MaterialTheme.typography.titleSmall,
+                            )
+                            Text(
+                                stringResource(R.string.calls_control_desc),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        Switch(
+                            checked = allowCallControl,
+                            onCheckedChange = { checked ->
+                                allowCallControl = checked
+                                telephonySettings.allowCallControl = checked
+                                onAccessChanged()
+                            },
+                            colors = app.maclink.android.ui.theme.maclinkSwitchColors(),
+                        )
+                    }
                     SettingRowDivider()
                     RuntimePermissionAccess(
                         title = stringResource(R.string.contacts_title),
