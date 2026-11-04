@@ -83,7 +83,7 @@ if command -v curl >/dev/null 2>&1; then
 fi
 
 if [[ -z "$LATEST_TAG" ]]; then
-    LATEST_TAG="${MACLINK_VERSION:-v0.0.8}"
+    LATEST_TAG="${MACLINK_VERSION:-v0.0.9}"
 fi
 if [[ "$LATEST_TAG" != v* ]]; then
     LATEST_TAG="v${LATEST_TAG}"
@@ -205,7 +205,7 @@ case "${1:-}" in
         exit 0
         ;;
     -v|--version)
-        defaults read "${APP_PATH}/Contents/Info.plist" CFBundleShortVersionString 2>/dev/null || echo "0.0.8"
+        defaults read "${APP_PATH}/Contents/Info.plist" CFBundleShortVersionString 2>/dev/null || echo "0.0.9"
         exit 0
         ;;
     --fg|--foreground)

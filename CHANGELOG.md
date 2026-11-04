@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [0.0.9] - 2026-11-04
+
+### Added & Fixed - Seamless Auto-Updates, Bluetooth Calling & Zero-Permission Mirroring
+
+#### Seamless Auto-Update & In-Place Replacement
+- **Zero-Loop Update Engine:** Resolved update detection loops where installed apps showed older versions. Android versionCode bumped to 9 with genuine v0.0.9 signed artifact.
+- **In-Place macOS Replacement:** In-app updater extracts `.app` directly, clears Gatekeeper quarantine with `xattr -cr`, atomically replaces `/Applications/MacLink.app`, and auto-relaunches seamlessly.
+- **Dynamic Bundle Versioning:** Desktop UI dynamically reads installed bundle version from `Info.plist`, ensuring consistency with release artifacts.
+- **Developer-Grade Installer:** Interactive one-line terminal installer with ASCII branding, progressive step indicators, and instant `maclink` CLI launcher.
+
+#### Bluetooth Calling & Hands-Free Profile (HFP 1.7)
+- **Native Objective-C++ Engine:** Integrated Bluetooth HFP 1.7 SDP service publishing and Synchronous Connection-Oriented (SCO) audio routing directly with `IOBluetooth`.
+- **Bidirectional Audio Routing:** Answer, decline, and route incoming cellular audio between Android phone and Mac microphone/speakers.
+- **Call Privacy & Security:** Automated sanitization of caller numbers in memory, zero call audio persistence on disk.
+
+#### Zero-Permission App Mirroring & Multi-Touch Input
+- **Hardware Bluetooth HID Input:** Injects native trackpad and touchscreen events into Android without requiring accessibility or USB developer debugging permissions.
+- **Multi-Touch Trackpad Support:** Smooth 1-4 finger gestures with local haptic feedback.
+
 ## [0.0.4] - 2026-11-02
 
 ### Added & Changed - Amber Liquid Glass Mobile Experience & Desktop Polish
