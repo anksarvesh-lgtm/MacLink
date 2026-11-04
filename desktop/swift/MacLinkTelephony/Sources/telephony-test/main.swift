@@ -33,5 +33,14 @@ maclink_calls_register_action_callback { cCallId, cAction in
 
 CallNotifier.shared.onAction?("c_call_99", "decline")
 
+print("Testing Bluetooth HFP C FFI APIs...")
+let published = maclink_calls_hfp_publish_sdp(rfcommChannel: 6)
+print("HFP SDP published status: \(published)")
+assert(!maclink_calls_hfp_is_connected(), "Initially disconnected")
+assert(!maclink_calls_hfp_is_sco_active(), "Initially SCO inactive")
+maclink_calls_hfp_route_audio(toMac: true)
+maclink_calls_hfp_route_audio(toMac: false)
+maclink_calls_hfp_unpublish_sdp()
+
 print("All MacLinkTelephony unit tests passed successfully!")
 
