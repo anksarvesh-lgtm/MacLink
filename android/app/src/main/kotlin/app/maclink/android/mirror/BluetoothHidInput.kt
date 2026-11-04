@@ -74,11 +74,11 @@ object BluetoothHidInput {
 
     private fun handleTouch(touch: MirrorInputEvent.Touch): Boolean {
         // Zero-permission HID pointer dispatch
-        val action = when (touch.phase) {
+        val action = when (touch.action) {
             TouchPhase.DOWN -> "down"
             TouchPhase.MOVE -> "move"
             TouchPhase.UP -> "up"
-            TouchPhase.CANCEL -> "cancel"
+            else -> "unknown"
         }
         Log.d(TAG, "Zero-permission touch event: $action at (${touch.x}, ${touch.y})")
         return true

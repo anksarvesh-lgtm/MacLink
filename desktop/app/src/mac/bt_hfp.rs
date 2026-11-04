@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 //! macOS Bluetooth HFP integration via MacLinkTelephony native Swift framework.
+#![allow(unsafe_code, dead_code)]
 
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct HfpStatus {

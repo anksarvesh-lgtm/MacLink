@@ -218,6 +218,34 @@ struct Asset {
     browser_download_url: String,
 }
 
+pub fn running_version() -> String {
+    #[cfg(target_os = "macos")]
+    {
+        if let Ok(exe) = std::env::current_exe() {
+            let plist_path = exe.parent().and_then(|p| p.parent()).map(|p| p.join("Info.plist"));
+            if let Some(plist_path) = plist_path {
+                if plist_path.is_file() {
+                    if let Ok(content) = std::fs::read_to_string(&plist_path) {
+                        if let Some(pos) = content.find("<key>CFBundleShortVersionString</key>") {
+                            let rest = &content[pos..];
+                            if let Some(start) = rest.find("<string>") {
+                                let after_start = &rest[start + 8..];
+                                if let Some(end) = after_start.find("</string>") {
+                                    let ver = after_start[..end].trim();
+                                    if !ver.is_empty() {
+                                        return ver.to_string();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    env!("CARGO_PKG_VERSION").to_string()
+}
+
 fn latest() -> Result<Option<Update>, String> {
     let body = match http::get(LATEST, 1024 * 1024) {
         Ok(body) => body,
@@ -226,7 +254,8 @@ fn latest() -> Result<Option<Update>, String> {
         Err(e) => return Err(e),
     };
     let release: Release = serde_json::from_slice(&body).map_err(|e| e.to_string())?;
-    Ok(newer_release(release, env!("CARGO_PKG_VERSION")))
+    let current = running_version();
+    Ok(newer_release(release, &current))
 }
 
 /// The release as an update, if it's a newer published one with a
@@ -328,15 +357,61 @@ fn quiet() -> bool {
 }
 
 /// Installs the update found: downloads it (reporting `progress(done,
-/// total)`), checks SHA-256 integrity, and opens the macOS installer package.
+/// total)`), checks SHA-256 integrity, and replaces /Applications/MacLink.app
+/// or opens the installer package.
 pub fn install(progress: impl FnMut(u64, u64)) -> Result<(), String> {
     let update = available().ok_or("There's no update to install.")?;
     let staged = stage(&update, progress).map_err(|e| {
         tracing::warn!(error = %e, "update download failed");
         e.for_user()
     })?;
-    let _ = std::process::Command::new("open").arg(&staged).spawn();
-    Ok(())
+
+    #[cfg(target_os = "macos")]
+    {
+        let staged_str = staged.to_string_lossy().to_string();
+        let install_script = format!(
+            r#"
+            (
+                sleep 0.5
+                STAGED="{staged_str}"
+                TARGET="/Applications/MacLink.app"
+                MOUNT_POINT=$(mktemp -d /tmp/maclink_mnt.XXXXXX)
+
+                if [[ "$STAGED" == *.dmg ]]; then
+                    hdiutil attach -nobrowse -readonly "$STAGED" -mountpoint "$MOUNT_POINT" >/dev/null 2>&1
+                    if [[ -d "$MOUNT_POINT/MacLink.app" ]]; then
+                        rm -rf "$TARGET"
+                        cp -R "$MOUNT_POINT/MacLink.app" "$TARGET"
+                    fi
+                    hdiutil detach "$MOUNT_POINT" -force >/dev/null 2>&1
+                    rm -rf "$MOUNT_POINT"
+                elif [[ "$STAGED" == *.zip ]]; then
+                    EXTRACT_DIR=$(mktemp -d /tmp/maclink_zip.XXXXXX)
+                    ditto -x -k "$STAGED" "$EXTRACT_DIR"
+                    if [[ -d "$EXTRACT_DIR/MacLink.app" ]]; then
+                        rm -rf "$TARGET"
+                        cp -R "$EXTRACT_DIR/MacLink.app" "$TARGET"
+                    fi
+                    rm -rf "$EXTRACT_DIR"
+                else
+                    open "$STAGED"
+                    exit 0
+                fi
+
+                xattr -cr "$TARGET" 2>/dev/null || true
+                open "$TARGET"
+            ) >/dev/null 2>&1 &
+            "#
+        );
+        let _ = std::process::Command::new("/bin/bash").arg("-c").arg(&install_script).spawn();
+        std::process::exit(0);
+    }
+
+    #[cfg(not(target_os = "macos"))]
+    {
+        let _ = std::process::Command::new("open").arg(&staged).spawn();
+        Ok(())
+    }
 }
 
 /// Why a download didn't produce a checked installer.
@@ -483,20 +558,20 @@ const LAST_VERSION_FILE: &str = "last-version";
 pub fn note_running_version(data_dir: &Path) -> Option<String> {
     let path = data_dir.join(LAST_VERSION_FILE);
     let previous = std::fs::read_to_string(&path).ok().map(|v| v.trim().to_owned());
-    let current = env!("CARGO_PKG_VERSION");
-    if previous.as_deref() != Some(current)
-        && let Err(e) = std::fs::write(&path, current)
+    let current = running_version();
+    if previous.as_deref() != Some(&current)
+        && let Err(e) = std::fs::write(&path, &current)
     {
         tracing::warn!(error = %e, "can't note the running version");
     }
-    previous.filter(|p| is_newer(current, p))
+    previous.filter(|p| is_newer(&current, p))
 }
 
 /// Just updated: says so, and when the window was asked for, brings it to
 /// the front. Started from the background, Windows would otherwise leave
 /// the new window behind whatever the user has open.
 pub fn announce_update(previous: String, shown: bool) {
-    let current = env!("CARGO_PKG_VERSION");
+    let current = running_version();
     tracing::info!(from = previous, to = current, "updated");
     after_start(
         shown,
