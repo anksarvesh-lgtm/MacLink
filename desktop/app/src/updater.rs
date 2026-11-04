@@ -445,7 +445,7 @@ pub fn install(progress: impl FnMut(u64, u64)) -> Result<(), String> {
             xattr -cr "$NEW_APP" 2>/dev/null || true
 
             # Atomic swap
-            BACKUP="${DEST}.old.$$"
+            BACKUP="$DEST.old.$$"
             if [[ -d "$DEST" ]]; then
                 mv "$DEST" "$BACKUP" 2>/dev/null || rm -rf "$DEST" 2>/dev/null || true
             fi
