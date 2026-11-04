@@ -823,7 +823,7 @@ fn spawn_data_retention_refresh(qt: CxxQtThread<qobject::AppController>) {
 
 impl cxx_qt::Initialize for qobject::AppController {
     fn initialize(mut self: Pin<&mut Self>) {
-        self.as_mut().set_version(QString::from(env!("CARGO_PKG_VERSION")));
+        self.as_mut().set_version(QString::from(&crate::updater::running_version()));
         self.as_mut().set_current_page(QString::from("home"));
         self.as_mut().set_can_update(crate::updater::can_update());
         // Nothing downloading yet (0 would show an empty bar).

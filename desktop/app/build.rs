@@ -381,6 +381,7 @@ fn main() {
     println!("cargo:rustc-link-lib=framework=VideoToolbox");
     println!("cargo:rustc-link-lib=framework=CoreMedia");
     println!("cargo:rustc-link-lib=framework=CoreVideo");
+    println!("cargo:rustc-link-lib=framework=IOBluetooth");
     println!("cargo:rerun-if-changed=cpp/app_helpers.h");
     println!("cargo:rerun-if-changed=cpp/app_helpers.cpp");
     println!("cargo:rerun-if-changed=cpp/native_window.h");
@@ -395,6 +396,8 @@ fn main() {
     println!("cargo:rerun-if-changed=cpp/shelf_edge.mm");
     println!("cargo:rerun-if-changed=cpp/mac_lifecycle.h");
     println!("cargo:rerun-if-changed=cpp/mac_lifecycle.mm");
+    println!("cargo:rerun-if-changed=cpp/mac_hfp.h");
+    println!("cargo:rerun-if-changed=cpp/mac_hfp.mm");
 
     #[cfg(target_os = "macos")]
     {
@@ -403,6 +406,7 @@ fn main() {
             .file("cpp/shelf_edge.mm")
             .file("cpp/mac_lifecycle.mm")
             .file("cpp/mac_videotoolbox.mm")
+            .file("cpp/mac_hfp.mm")
             .flag("-fobjc-arc")
             .flag("-std=c++17")
             .compile("mac_native");
