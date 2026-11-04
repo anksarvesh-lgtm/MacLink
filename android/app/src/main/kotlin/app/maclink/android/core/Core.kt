@@ -1767,7 +1767,7 @@ class Core(context: Context, private val scope: CoroutineScope) : EventListener 
             (if (PhoneSms.canRead(context)) listOf("sms.read") else emptyList()) +
             (if (PhoneSms.canSend(context)) listOf("sms.send") else emptyList()) +
             PhoneStorage.capabilities(context) +
-            (if (InputService.running || Elevated.running) listOf("mirror.input") else emptyList()) +
+            (if (InputService.running || Elevated.running || app.maclink.android.mirror.BluetoothHidInput.isAvailable(context)) listOf("mirror.input") else emptyList()) +
             (if (Elevated.running) listOf("clip.read.auto") else emptyList()) +
             // Apps in windows of their own run on displays the Elevated helper makes.
             (if (Elevated.running && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) listOf("mirror.virtual_display") else emptyList()) +

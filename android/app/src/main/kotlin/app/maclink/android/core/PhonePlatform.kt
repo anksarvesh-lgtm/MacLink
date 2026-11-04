@@ -16,6 +16,7 @@ import app.maclink.android.media.PhoneMedia
 import app.maclink.android.photos.RecentPhotos
 import app.maclink.android.elevated.Elevated
 import app.maclink.android.mirror.AppWindows
+import app.maclink.android.mirror.BluetoothHidInput
 import app.maclink.android.mirror.InputService
 import app.maclink.android.mirror.MirrorRequest
 import app.maclink.android.mirror.MirrorRequests
@@ -189,7 +190,9 @@ internal class PhonePlatform(
             InputService.handle(input)
             return
         }
-        if (!Elevated.handle(input)) InputService.handle(input)
+        if (!Elevated.handle(input) && !InputService.handle(input)) {
+            BluetoothHidInput.handle(input)
+        }
     }
 
     override fun webcamRequested(pcId: String, options: WebcamOptions): Boolean = false
