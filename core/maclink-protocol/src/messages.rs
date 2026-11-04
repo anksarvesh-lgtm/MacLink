@@ -2282,9 +2282,8 @@ impl std::fmt::Debug for CallDial {
 }
 
 /// Known global and regional emergency numbers that must never be dialed via desktop remote control.
-pub const EMERGENCY_NUMBERS: &[&str] = &[
-    "000", "100", "101", "102", "108", "110", "112", "119", "120", "911", "988", "999", "1091", "1098",
-];
+pub const EMERGENCY_NUMBERS: &[&str] =
+    &["000", "100", "101", "102", "108", "110", "112", "119", "120", "911", "988", "999", "1091", "1098"];
 
 /// Checks if a string (after stripping non-digits) matches any known emergency service number.
 pub fn is_emergency_number(number: &str) -> bool {
@@ -2394,13 +2393,10 @@ pub struct CallEvent {
 /// Never leaks full phone numbers or names into logs or Debug representations (privacy rule 5).
 impl std::fmt::Debug for CallEvent {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let masked_number = self.number.as_ref().map(|n| {
-            if n.len() <= 2 {
-                "**".to_string()
-            } else {
-                format!("***{}", &n[n.len() - 2..])
-            }
-        });
+        let masked_number = self
+            .number
+            .as_ref()
+            .map(|n| if n.len() <= 2 { "**".to_string() } else { format!("***{}", &n[n.len() - 2..]) });
         f.debug_struct("CallEvent")
             .field("call_id", &self.call_id)
             .field("state", &self.state)
@@ -2422,10 +2418,8 @@ impl CallEvent {
                 return false;
             }
         }
-        if let Some(ref name) = self.display_name {
-            if name.len() > calls::MAX_TEXT_BYTES {
-                return false;
-            }
+        if self.display_name.as_ref().is_some_and(|name| name.len() > calls::MAX_TEXT_BYTES) {
+            return false;
         }
         true
     }
@@ -4956,10 +4950,7 @@ mod tests {
         let back_req: CallLogRequest = Envelope::from_cbor(&env_req.to_cbor()).unwrap().body().unwrap();
         assert_eq!(back_req, req);
 
-        let page = CallLogPage {
-            entries: vec![],
-            next: Some(1_759_000_000),
-        };
+        let page = CallLogPage { entries: vec![], next: Some(1_759_000_000) };
         let env_page = Envelope::new(types::CALL_LOG_PAGE, &page).unwrap();
         let back_page: CallLogPage = Envelope::from_cbor(&env_page.to_cbor()).unwrap().body().unwrap();
         assert_eq!(back_page, page);

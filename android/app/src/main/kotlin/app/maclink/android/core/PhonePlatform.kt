@@ -190,8 +190,12 @@ internal class PhonePlatform(
             InputService.handle(input)
             return
         }
-        if (!Elevated.handle(input) && !InputService.handle(input)) {
-            BluetoothHidInput.handle(input)
+        if (!Elevated.handle(input)) {
+            if (InputService.running) {
+                InputService.handle(input)
+            } else {
+                BluetoothHidInput.handle(input)
+            }
         }
     }
 
