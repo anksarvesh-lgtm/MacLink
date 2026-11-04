@@ -259,7 +259,16 @@ fn latest() -> Result<Option<Update>, String> {
 }
 
 /// The release as an update, if it's a newer published one with a
-/// macOS package (.dmg, .pkg, or .zip).
+/// macOS package (.zip, .dmg, or .pkg). On macOS, .zip is preferred
+/// as it directly extracts the MacLink.app bundle cleanly.
+#[cfg(target_os = "macos")]
+fn newer_release(release: Release, current: &str) -> Option<Update> {
+    newer_release_for(release.clone(), current, ".zip")
+        .or_else(|| newer_release_for(release.clone(), current, ".dmg"))
+        .or_else(|| newer_release_for(release, current, ".pkg"))
+}
+
+#[cfg(not(target_os = "macos"))]
 fn newer_release(release: Release, current: &str) -> Option<Update> {
     newer_release_for(release.clone(), current, ".dmg")
         .or_else(|| newer_release_for(release.clone(), current, ".pkg"))
@@ -369,41 +378,95 @@ pub fn install(progress: impl FnMut(u64, u64)) -> Result<(), String> {
     #[cfg(target_os = "macos")]
     {
         let staged_str = staged.to_string_lossy().to_string();
+        let target_bundle = std::env::current_exe()
+            .ok()
+            .and_then(|p| {
+                let bundle = p.ancestors().nth(3)?;
+                if bundle.extension().is_some_and(|ext| ext == "app") {
+                    Some(bundle.to_string_lossy().to_string())
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_else(|| "/Applications/MacLink.app".to_string());
+
+        let current_pid = std::process::id();
+
         let install_script = format!(
             r#"
-            (
-                sleep 0.5
-                STAGED="{staged_str}"
-                TARGET="/Applications/MacLink.app"
-                MOUNT_POINT=$(mktemp -d /tmp/maclink_mnt.XXXXXX)
+            PID="{current_pid}"
+            STAGED="{staged_str}"
+            TARGET="{target_bundle}"
+            FALLBACK="/Applications/MacLink.app"
+            STAGE_DIR=$(mktemp -d /tmp/maclink_update.XXXXXX)
 
-                if [[ "$STAGED" == *.dmg ]]; then
-                    hdiutil attach -nobrowse -readonly "$STAGED" -mountpoint "$MOUNT_POINT" >/dev/null 2>&1
-                    if [[ -d "$MOUNT_POINT/MacLink.app" ]]; then
-                        rm -rf "$TARGET"
-                        cp -R "$MOUNT_POINT/MacLink.app" "$TARGET"
-                    fi
-                    hdiutil detach "$MOUNT_POINT" -force >/dev/null 2>&1
-                    rm -rf "$MOUNT_POINT"
-                elif [[ "$STAGED" == *.zip ]]; then
-                    EXTRACT_DIR=$(mktemp -d /tmp/maclink_zip.XXXXXX)
-                    ditto -x -k "$STAGED" "$EXTRACT_DIR"
-                    if [[ -d "$EXTRACT_DIR/MacLink.app" ]]; then
-                        rm -rf "$TARGET"
-                        cp -R "$EXTRACT_DIR/MacLink.app" "$TARGET"
-                    fi
-                    rm -rf "$EXTRACT_DIR"
+            # Wait for current process to exit cleanly
+            for _ in {{1..25}}; do
+                if kill -0 "$PID" 2>/dev/null; then
+                    sleep 0.2
                 else
-                    open "$STAGED"
-                    exit 0
+                    break
                 fi
+            done
 
-                xattr -cr "$TARGET" 2>/dev/null || true
-                open "$TARGET"
-            ) >/dev/null 2>&1 &
+            NEW_APP=""
+            MOUNT_POINT=""
+
+            if [[ "$STAGED" == *.zip ]]; then
+                ditto -x -k "$STAGED" "$STAGE_DIR"
+                if [[ -d "$STAGE_DIR/MacLink.app" ]]; then
+                    NEW_APP="$STAGE_DIR/MacLink.app"
+                fi
+            elif [[ "$STAGED" == *.dmg ]]; then
+                MOUNT_POINT=$(mktemp -d /tmp/maclink_mnt.XXXXXX)
+                if hdiutil attach -nobrowse -readonly "$STAGED" -mountpoint "$MOUNT_POINT" >/dev/null 2>&1; then
+                    if [[ -d "$MOUNT_POINT/MacLink.app" ]]; then
+                        cp -R "$MOUNT_POINT/MacLink.app" "$STAGE_DIR/MacLink.app"
+                        NEW_APP="$STAGE_DIR/MacLink.app"
+                    fi
+                    hdiutil detach "$MOUNT_POINT" -force >/dev/null 2>&1 || true
+                fi
+                rm -rf "$MOUNT_POINT"
+            fi
+
+            # Fallback to opening installer if extraction failed
+            if [[ -z "$NEW_APP" || ! -d "$NEW_APP" ]]; then
+                open "$STAGED"
+                rm -rf "$STAGE_DIR"
+                exit 0
+            fi
+
+            DEST="$TARGET"
+            if [[ ! -w "$(dirname "$DEST")" && -w "/Applications" ]]; then
+                DEST="$FALLBACK"
+            fi
+
+            # Remove quarantine attributes before moving
+            xattr -cr "$NEW_APP" 2>/dev/null || true
+
+            # Atomic swap
+            BACKUP="${DEST}.old.$$"
+            if [[ -d "$DEST" ]]; then
+                mv "$DEST" "$BACKUP" 2>/dev/null || rm -rf "$DEST" 2>/dev/null || true
+            fi
+
+            if cp -R "$NEW_APP" "$DEST" 2>/dev/null; then
+                rm -rf "$BACKUP" 2>/dev/null || true
+                rm -rf "$STAGE_DIR" 2>/dev/null || true
+                xattr -cr "$DEST" 2>/dev/null || true
+                open "$DEST" --args --updated
+            else
+                if [[ -d "$BACKUP" ]]; then
+                    mv "$BACKUP" "$DEST" 2>/dev/null || true
+                fi
+                open "$STAGED"
+                rm -rf "$STAGE_DIR"
+            fi
             "#
         );
+
         let _ = std::process::Command::new("/bin/bash").arg("-c").arg(&install_script).spawn();
+
         std::process::exit(0);
     }
 
