@@ -75,3 +75,4 @@ public final class HfpServiceRecord: NSObject {
         isPublished = false
     }
 }
+
