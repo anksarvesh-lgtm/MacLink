@@ -36,7 +36,7 @@ if command -v curl >/dev/null 2>&1; then
 fi
 
 if [[ -z "$LATEST_TAG" ]]; then
-    LATEST_TAG="${MACLINK_VERSION:-v0.0.6}"
+    LATEST_TAG="${MACLINK_VERSION:-v0.0.8}"
 fi
 if [[ "$LATEST_TAG" != v* ]]; then
     LATEST_TAG="v${LATEST_TAG}"
