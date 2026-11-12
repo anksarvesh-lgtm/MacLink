@@ -11,3 +11,7 @@
 
 ## Rule 3: Use REA for Every Repo Link Provided
 - Whenever a repository link or target binary/package is provided, always utilize REA (Reverse Engineer Anything) to inspect, reverse-engineer, decompile, extract assets, and trace architecture/semantics thoroughly.
+
+## Rule 4: Write All Code in macOS-Supported Swift
+- Where new code, services, extensions, or modular add-ons are written, prioritize macOS-supported native Swift (using AppKit, SwiftUI, Combine, CoreGraphics, and Apple platform frameworks).
+- All implementations must be strictly compatible with macOS and follow native Apple guidelines.
