@@ -102,4 +102,8 @@ QtObject {
     readonly property string clock: history
     readonly property string sound: speaker
     readonly property string file: "M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6"
+    readonly property string cpu: "M4 4h16v16H4zM9 1v3M15 1v3M9 20v3M15 20v3M1 9h3M1 15h3M20 9h3M20 15h3M8 8h8v8H8z"
+    readonly property string memorychip: "M2 8h20v8H2zM6 8V5M10 8V5M14 8V5M18 8V5M6 16v3M10 16v3M14 16v3M18 16v3"
+    readonly property string arrowDown: "M12 4v16m0 0l-6-6m6 6l6-6"
+    readonly property string arrowUp: "M12 20V4m0 0l-6 6m6-6l6 6"
 }
