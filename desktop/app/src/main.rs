@@ -18,6 +18,7 @@ mod continuity_camera;
 mod core_host;
 mod deck;
 mod doctor;
+mod dynamo;
 mod folder_sync;
 mod hotspot;
 mod i18n;
@@ -679,6 +680,7 @@ fn main() -> ExitCode {
         bridge::native::ffi::register_qml_app_engine(engine.as_mut());
         engine.load(&QUrl::from("qrc:/qt/qml/app/maclink/qml/App.qml"));
     }
+    dynamo::on_app_start();
     if options.ui_check {
         std::thread::spawn(|| {
             std::thread::sleep(Duration::from_secs(UI_CHECK_SECONDS));
@@ -690,6 +692,7 @@ fn main() -> ExitCode {
     tracing::info!(code, "shutting down");
     // QML first (it holds references into Qt), then the core.
     drop(engine);
+    dynamo::shutdown();
     pc_audio_stream::set_enabled(false);
     pc_mirror::stop_all();
     local_api::stop();

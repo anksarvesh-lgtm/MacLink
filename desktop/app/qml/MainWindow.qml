@@ -793,6 +793,7 @@ NativeWindow {
             { id: "apps", label: qsTr("Apps"), icon: Icons.apps },
             { id: "deck", label: qsTr("Deck"), icon: Icons.deck },
             { id: "guide", label: qsTr("Guide"), icon: Icons.info },
+            { id: "dynamo", label: qsTr("Dynamo"), icon: Icons.island },
             { id: "settings", label: qsTr("Settings"), icon: Icons.settings }
         ]
 
@@ -811,7 +812,8 @@ NativeWindow {
             case "deck": return 6
             case "help_center":
             case "guide": return 7
-            case "settings": return 8
+            case "dynamo": return 8
+            case "settings": return 9
             default: return 0
             }
         }
@@ -1157,6 +1159,7 @@ NativeWindow {
                     : window.page === "apps" ? qsTr("Apps")
                     : window.page === "deck" ? qsTr("Deck")
                     : (window.page === "help_center" || window.page === "guide") ? qsTr("Guide")
+                    : window.page === "dynamo" ? qsTr("Dynamo")
                     : qsTr("Settings")
                 role: "headline"
                 size: 20
@@ -1383,6 +1386,7 @@ NativeWindow {
                     case "deck": return "qrc:/qt/qml/app/maclink/qml/pages/DeckPage.qml"
                     case "help_center":
                     case "guide": return "qrc:/qt/qml/app/maclink/qml/pages/FeaturesGuidePage.qml"
+                    case "dynamo": return "qrc:/qt/qml/app/maclink/qml/pages/DynamoPage.qml"
                     case "settings": return "qrc:/qt/qml/app/maclink/qml/pages/SettingsPage.qml"
                     default: return "qrc:/qt/qml/app/maclink/qml/pages/HomePage.qml"
                     }

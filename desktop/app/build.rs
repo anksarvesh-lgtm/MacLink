@@ -57,6 +57,7 @@ const QML: &[&str] = &[
     "qml/pages/AppsPage.qml",
     "qml/pages/CallsPage.qml",
     "qml/pages/DeckPage.qml",
+    "qml/pages/DynamoPage.qml",
     "qml/pages/FeaturesGuidePage.qml",
     "qml/pages/HomePage.qml",
     "qml/pages/MessagesPage.qml",
@@ -365,6 +366,7 @@ fn main() {
             "src/bridge/timeline.rs",
             "src/bridge/transfers.rs",
             "src/bridge/webcam.rs",
+            "src/bridge/dynamo.rs",
         ])
         .build();
 

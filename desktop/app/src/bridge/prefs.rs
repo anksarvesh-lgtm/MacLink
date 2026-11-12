@@ -1123,6 +1123,7 @@ impl qobject::Preferences {
             window_width: win_w,
             window_height: win_h,
             window_maximized: win_max,
+            dynamo_autostart: crate::settings::dynamo_autostart(),
         }
     }
 

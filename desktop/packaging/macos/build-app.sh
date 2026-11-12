@@ -116,6 +116,13 @@ PLIST
 # Clean any extended attributes/resource forks before signing
 xattr -cr "$APP"
 
+# Optional: embed LiquidDynamo helper application if DYNAMO_APP is set
+if [[ -n "${DYNAMO_APP:-}" && -d "$DYNAMO_APP" ]]; then
+    echo "Embedding LiquidDynamo from $DYNAMO_APP into $APP/Contents/Helpers/LiquidDynamo.app..."
+    mkdir -p "$APP/Contents/Helpers"
+    cp -Rf "$DYNAMO_APP" "$APP/Contents/Helpers/LiquidDynamo.app"
+fi
+
 # Ad-hoc signature: no identity, but Apple Silicon won't run unsigned code.
 codesign --force --deep --sign - "$APP"
 codesign --verify --deep --strict "$APP"

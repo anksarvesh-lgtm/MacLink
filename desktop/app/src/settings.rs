@@ -160,6 +160,7 @@ pub fn set_shelf_edge_size(size: &str) {
 
 static CLIPBOARD_AUTO_COPY_FILES: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(true);
 static MACLINK_ISLAND: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
+static DYNAMO_AUTOSTART: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 static STREAM_PC_AUDIO: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 static SHARE_PC_STORAGE: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 static FORWARD_PC_NOTIFICATIONS: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
@@ -199,6 +200,14 @@ pub fn maclink_island() -> bool {
 
 pub fn set_maclink_island(on: bool) {
     MACLINK_ISLAND.store(on, std::sync::atomic::Ordering::Relaxed);
+}
+
+pub fn dynamo_autostart() -> bool {
+    DYNAMO_AUTOSTART.load(std::sync::atomic::Ordering::Relaxed)
+}
+
+pub fn set_dynamo_autostart(on: bool) {
+    DYNAMO_AUTOSTART.store(on, std::sync::atomic::Ordering::Relaxed);
 }
 
 #[allow(dead_code)]
@@ -474,6 +483,9 @@ pub struct Settings {
     /// Trigger MacLink Island for phone notifications.
     #[serde(default, alias = "island_notifications")]
     pub maclink_island_notifications: bool,
+    /// Automatically launch LiquidDynamo helper when MacLink starts.
+    #[serde(default, alias = "dynamo_autostart")]
+    pub dynamo_autostart: bool,
     /// Configured "When X, Do Y" automation rules.
     #[serde(default, skip_serializing_if = "Vec::is_empty", alias = "automation_rules")]
     pub automation_rules: Vec<crate::automations::AutomationRule>,
@@ -575,6 +587,7 @@ impl Default for Settings {
             maclink_island_transfers: true,
             maclink_island_media: true,
             maclink_island_notifications: false,
+            dynamo_autostart: false,
             automation_rules: Vec::new(),
             stream_pc_audio_to_phone: false,
             share_pc_storage: false,
@@ -644,6 +657,7 @@ impl Settings {
             self.obs_password.clone(),
         );
         set_maclink_island(self.maclink_island);
+        set_dynamo_autostart(self.dynamo_autostart);
         set_automation_rules(self.automation_rules.clone());
         set_stream_pc_audio_to_phone(self.stream_pc_audio_to_phone);
         set_share_pc_storage(self.share_pc_storage);
@@ -762,6 +776,7 @@ mod tests {
             maclink_island_transfers: true,
             maclink_island_media: true,
             maclink_island_notifications: false,
+            dynamo_autostart: false,
             automation_rules: Vec::new(),
             stream_pc_audio_to_phone: true,
             share_pc_storage: true,
