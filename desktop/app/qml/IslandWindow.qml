@@ -192,7 +192,7 @@ Window {
         try { return JSON.parse(DynamoController.systemHudJson || "{}") } catch (e) { return {} }
     }
     readonly property var hudEvent: sysHud && sysHud.event ? sysHud.event : null
-    readonly property bool hudActive: Preferences.notchHudEnabled && !!(sysHud && sysHud.visible && hudEvent)
+    readonly property bool hudActive: !!(sysHud && sysHud.visible && hudEvent)
     readonly property bool wingsActive: (Preferences.notchWingsEnabled !== undefined) ? Preferences.notchWingsEnabled : true
     readonly property bool hasPhysicalNotch: {
         if (telemetry && (telemetry.hasPhysicalNotch || (telemetry.layout && telemetry.layout.hasPhysicalNotch)))
@@ -227,7 +227,14 @@ Window {
     }
 
     readonly property bool hasActivity: (mode !== "idle") || wingsActive
-    visible: Preferences.maclinkIsland && hasActivity && (!Preferences.notchAutoHideFullscreen || !isFullscreen)
+    visible: Preferences.maclinkIsland && (!Preferences.notchAutoHideFullscreen || !isFullscreen)
+
+    property string activeTab: (mode === "call" || mode === "media" || mode === "transfer") ? mode : "home"
+    onModeChanged: {
+        if (mode === "call" || mode === "media" || mode === "transfer") {
+            activeTab = mode
+        }
+    }
 
     onVisibleChanged: {
         console.warn("=== IslandWindow visibleChanged:", visible, "maclinkIsland:", Preferences.maclinkIsland, "hasActivity:", hasActivity, "wingsActive:", wingsActive, "mode:", mode)
@@ -263,7 +270,7 @@ Window {
 
     Timer {
         id: autoCollapseTimer
-        interval: 3500
+        interval: 12000
         repeat: false
         onTriggered: {
             if (!expHovered && !notchHovered && !floatingHovered && !PhoneCall.active) {
@@ -275,7 +282,6 @@ Window {
     readonly property bool expanded: userPinnedOpen
         || notchHovered
         || floatingHovered
-        || expHovered
         || (Preferences.maclinkIslandCalls && PhoneCall.active && PhoneCall.ringing)
 
     readonly property real collapsedW: {
@@ -286,10 +292,11 @@ Window {
         }
     }
 
-    readonly property real targetW: expanded ? Math.max(380.0, collapsedW) : collapsedW
+    readonly property real targetW: expanded ? Math.max(680.0, Math.min(840.0, areaW - 32.0)) : collapsedW
     readonly property real targetH: {
         if (expanded) {
-            return (mode === "call" || mode === "media") ? 120.0 : 88.0
+            if (activeTab === "home") return isNotchAttached ? 230.0 : 250.0
+            return (mode === "call" || mode === "media") ? 180.0 : 130.0
         }
         return isNotchAttached ? centerNotchHeight : 34.0
     }
@@ -1281,15 +1288,59 @@ Window {
             }
 
             // ================================================================
-            // EXPANDED CONTENT INTERIOR (Calls, Media, Transfers, HUD)
+            // EXPANDED CONTENT INTERIOR (Top Toolbar, Home Cards, Activities)
             // ================================================================
+            IslandToolbar {
+                id: islandTopToolbar
+                anchors.top: parent.top
+                anchors.topMargin: islandWin.isNotchAttached ? 4 : 4
+                anchors.left: parent.left
+                anchors.right: parent.right
+                centerNotchWidth: islandWin.centerNotchWidth
+                centerNotchHeight: islandWin.centerNotchHeight
+                hasPhysicalNotch: islandWin.isNotchAttached
+                activeTab: islandWin.activeTab
+                onHomeClicked: {
+                    islandWin.activeTab = "home"
+                    islandWin.userPinnedOpen = true
+                }
+                onMoreClicked: (mouse) => {
+                    morePopover.isOpen = !morePopover.isOpen
+                }
+                onEditClicked: {
+                    editSheet.isOpen = true
+                }
+                onToolSelected: (toolId) => {
+                    islandWin.userPinnedOpen = true
+                    if (toolId === "music") islandWin.activeTab = "media"
+                    else if (toolId === "home") islandWin.activeTab = "home"
+                }
+            }
+
+            // Interior Area 1: Home Dashboard (4 Cards)
+            IslandHomeCards {
+                id: homeDashboardView
+                anchors.top: islandTopToolbar.bottom
+                anchors.topMargin: 2
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
+                anchors.bottomMargin: 8
+                visible: islandWin.activeTab === "home"
+            }
+
+            // Interior Area 2: Live Activity / Media / Call / Transfer
             Item {
                 id: expContent
-                anchors.fill: parent
+                anchors.top: islandTopToolbar.bottom
+                anchors.topMargin: 4
+                anchors.left: parent.left
+                anchors.right: parent.right
+                anchors.bottom: parent.bottom
                 anchors.leftMargin: 16
                 anchors.rightMargin: 16
-                anchors.topMargin: islandWin.isNotchAttached ? (islandWin.centerNotchHeight > 30 ? 12 : 8) : 8
                 anchors.bottomMargin: 10
+                visible: islandWin.activeTab !== "home"
 
                 // Left slot: Album Art / Progress Ring / Call Pulse (48×48px)
                 Item {
@@ -1628,6 +1679,31 @@ Window {
                         }
                     }
                 }
+            }
+
+            // Smart More Overflow Popover
+            IslandMorePopover {
+                id: morePopover
+                anchors.top: islandTopToolbar.bottom
+                anchors.topMargin: 4
+                anchors.right: parent.right
+                anchors.rightMargin: 16
+                overflowTools: islandTopToolbar.overflowTools
+                onToolSelected: (id) => islandTopToolbar.handleToolClick(id)
+                onCloseRequested: morePopover.isOpen = false
+                z: 15
+            }
+
+            // Toolbar Customization Sheet
+            IslandEditSheet {
+                id: editSheet
+                allFeatures: islandTopToolbar.allFeatures
+                currentEnabledIds: islandTopToolbar.enabledToolIds
+                onSaveRequested: (newIds) => {
+                    islandTopToolbar.enabledToolIds = newIds
+                }
+                onCloseRequested: editSheet.isOpen = false
+                z: 25
             }
         }
     }

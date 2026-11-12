@@ -108,8 +108,9 @@ Item {
                     spacing: 14
 
                     Icon {
-                        source: Icons.island
-                        size: 24
+                        path: Icons.island
+                        width: 24
+                        height: 24
                         color: Theme.accentAmber || Theme.primary
                     }
 
