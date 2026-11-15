@@ -25,6 +25,8 @@ static id<NSObject> g_phoneActivityAssertion = nil;
 static id<NSObject> g_wakeObserver = nil;
 static id<NSObject> g_reopenObserver = nil;
 
+static NSImage *loadBrandImage(void);
+
 // ---------------------------------------------------------------------------
 // Menu Bar Helper Target
 // ---------------------------------------------------------------------------
@@ -118,6 +120,12 @@ void mac_lifecycle_init(MacLifecycleCallback on_activate, MacLifecycleCallback o
     dispatch_async(dispatch_get_main_queue(), ^{
         swizzleAppDelegateReopen();
         
+        // Ensure the application dock icon uses the latest high-res brand image
+        NSImage *dockIcon = loadBrandImage();
+        if (dockIcon && dockIcon.isValid) {
+            [NSApp setApplicationIconImage:dockIcon];
+        }
+        
         // Also listen for applicationDidBecomeActive
         if (!g_reopenObserver) {
             g_reopenObserver = [[NSNotificationCenter defaultCenter]
@@ -197,6 +205,10 @@ void mac_on_window_shown(void) {
     dispatch_async(dispatch_get_main_queue(), ^{
         if (g_dockIconMode == DOCK_ICON_MODE_ACCESSORY_WHEN_HIDDEN) {
             [NSApp setActivationPolicy:NSApplicationActivationPolicyRegular];
+        }
+        NSImage *dockIcon = loadBrandImage();
+        if (dockIcon && dockIcon.isValid) {
+            [NSApp setApplicationIconImage:dockIcon];
         }
         [NSApp activateIgnoringOtherApps:YES];
     });

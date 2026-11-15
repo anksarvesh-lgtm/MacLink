@@ -47,7 +47,8 @@ for ts in desktop/app/i18n/maclink_*.ts; do
 done
 
 # The icon: every size macOS asks for, from the 1024 px brand icon.
-ICONSET="$(mktemp -d)/MacLink.iconset"
+ICONSET_DIR="$(mktemp -d)"
+ICONSET="${ICONSET_DIR}/MacLink.iconset"
 mkdir -p "$ICONSET"
 SOURCE_ICON="assets/brand/icon-1024.png"
 [[ -f "$SOURCE_ICON" ]] || SOURCE_ICON="assets/brand/icon-512.png"
@@ -56,7 +57,8 @@ for size in 16 32 128 256 512; do
     double=$((size * 2))
     sips -z "$double" "$double" "$SOURCE_ICON" --out "$ICONSET/icon_${size}x${size}@2x.png" >/dev/null
 done
-iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/MacLink.icns"
+iconutil -c icns "$ICONSET" -o "assets/brand/MacLink.icns"
+cp -f "assets/brand/MacLink.icns" "$APP/Contents/Resources/MacLink.icns"
 cp -f "assets/brand/maclink-liquid-logo.png" "$APP/Contents/Resources/maclink-liquid-logo.png"
 cp -f "assets/brand/maclink-liquid-logo.png" "$APP/Contents/MacOS/maclink-liquid-logo.png"
 cp -f "assets/brand/notification-icon.png" "$APP/Contents/Resources/notification-icon.png"
