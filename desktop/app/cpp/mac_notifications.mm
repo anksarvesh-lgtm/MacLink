@@ -309,6 +309,13 @@ void mac_notification_show(
         userInfo[@"device"] = deviceStr;
         userInfo[@"key"] = keyStr;
 
+        if (iconPathStr.length == 0) {
+            NSString *defaultNotifIcon = [[NSBundle mainBundle] pathForResource:@"notification-icon" ofType:@"png"];
+            if (defaultNotifIcon && [[NSFileManager defaultManager] fileExistsAtPath:defaultNotifIcon]) {
+                iconPathStr = defaultNotifIcon;
+            }
+        }
+
         // If an app icon or sender avatar is provided, deliver via NSUserNotificationCenter
         // with _identityImage so macOS displays the mirrored app's icon on the left
         // rather than the host MacLink bundle icon.

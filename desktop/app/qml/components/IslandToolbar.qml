@@ -52,15 +52,22 @@ Item {
         { id: "brightnessControl", label: qsTr("Brightness"), icon: Icons.brightness, category: "system" },
         { id: "calendar", label: qsTr("Calendar"), icon: Icons.book, category: "tools" },
         { id: "reminders", label: qsTr("Reminders"), icon: Icons.pin, category: "tools" },
+        { id: "coucoudoro", label: qsTr("Coucoudoro Focus"), icon: Icons.clock, category: "tools" },
+        { id: "screenshot", label: qsTr("Quick Screenshot"), icon: Icons.camera, category: "tools" },
+        { id: "mochi", label: qsTr("Mochi Companion"), icon: Icons.sparkle, category: "tools" },
+        { id: "launcher", label: qsTr("Notch Launcher"), icon: Icons.search, category: "tools" },
+        { id: "teleprompter", label: qsTr("Notch Teleprompter"), icon: Icons.desktop || Icons.camera, category: "tools" },
+        { id: "emojiPicker", label: qsTr("Emoji Picker"), icon: Icons.sparkle, category: "tools" },
+        { id: "airdrop", label: qsTr("AirDrop Share"), icon: Icons.share || Icons.send || Icons.shelf, category: "tools" },
         { id: "deviceUniverse", label: qsTr("Device Universe"), icon: Icons.globe, category: "phone" },
         { id: "externalDisplay", label: qsTr("External Island"), icon: Icons.window, category: "system" }
     ]
 
     // Persistent Toolbar Ordering & Visibility
     property var enabledToolIds: [
-        "dropper", "keepAwake", "phoneBridge", "music", "systemStats",
+        "launcher", "clipboard", "teleprompter", "emojiPicker", "dropper", "keepAwake", "phoneBridge", "music", "systemStats",
         "scopa", "watcher", "powerload", "shelf", "timer", "privacyGuard",
-        "downloads", "clipboard", "volumeControl", "brightnessControl"
+        "downloads", "volumeControl", "brightnessControl"
     ]
 
     // Geometry Calculation
@@ -125,8 +132,10 @@ Item {
             }
 
             HoverHandler { id: homeHover; cursorShape: Qt.PointingHandCursor }
-            TapHandler {
-                onTapped: {
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: {
                     activeTab = "home"
                     activeToolId = ""
                     toolbarRoot.homeClicked()
@@ -174,8 +183,10 @@ Item {
                 }
 
                 HoverHandler { id: toolHover; cursorShape: Qt.PointingHandCursor }
-                TapHandler {
-                    onTapped: toolbarRoot.handleToolClick(modelData.id)
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: toolbarRoot.handleToolClick(modelData.id)
                 }
 
                 ToolTip.visible: toolHover.hovered
@@ -232,8 +243,10 @@ Item {
                 }
 
                 HoverHandler { id: rHover; cursorShape: Qt.PointingHandCursor }
-                TapHandler {
-                    onTapped: toolbarRoot.handleToolClick(modelData.id)
+                MouseArea {
+                    anchors.fill: parent
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: toolbarRoot.handleToolClick(modelData.id)
                 }
 
                 ToolTip.visible: rHover.hovered
@@ -263,8 +276,10 @@ Item {
             }
 
             HoverHandler { id: moreHover; cursorShape: Qt.PointingHandCursor }
-            TapHandler {
-                onTapped: (mouse) => toolbarRoot.moreClicked(mouse)
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: (mouse) => toolbarRoot.moreClicked(mouse)
             }
 
             ToolTip.visible: moreHover.hovered
@@ -292,8 +307,10 @@ Item {
             }
 
             HoverHandler { id: editHover; cursorShape: Qt.PointingHandCursor }
-            TapHandler {
-                onTapped: toolbarRoot.editClicked()
+            MouseArea {
+                anchors.fill: parent
+                cursorShape: Qt.PointingHandCursor
+                onClicked: toolbarRoot.editClicked()
             }
 
             ToolTip.visible: editHover.hovered
@@ -327,7 +344,25 @@ Item {
         } else if (toolId === "music") {
             if (activeTab === "media") activeTab = "home"
             else activeTab = "media"
-        } else if (toolId === "scopa" || toolId === "clipboard" || toolId === "systemStats") {
+        } else if (toolId === "coucoudoro") {
+            try {
+                const c = JSON.parse(DynamoController.coucoudoroJson || "{}")
+                if (c.active && !c.isPaused) DynamoController.coucoudoroPause()
+                else if (c.isPaused) DynamoController.coucoudoroResume()
+                else DynamoController.coucoudoroStart()
+            } catch (e) {
+                DynamoController.coucoudoroStart()
+            }
+        } else if (toolId === "screenshot") {
+            DynamoController.takeQuickScreenshot()
+        } else if (toolId === "airdrop") {
+            DynamoController.triggerAirDrop("")
+        } else if (toolId === "mochi") {
+            DynamoController.pokeMochi()
+        } else if (toolId === "clipboard") {
+            if (activeTab === "clipboard") activeTab = "home"
+            else activeTab = "clipboard"
+        } else if (toolId === "scopa" || toolId === "systemStats") {
             activeTab = "home"
         }
     }

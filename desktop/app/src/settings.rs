@@ -118,6 +118,26 @@ fn default_true() -> bool {
     true
 }
 
+fn default_mochi() -> String {
+    "mochi".to_string()
+}
+
+fn default_btc() -> String {
+    "BTC".to_string()
+}
+
+fn default_left_wing_content() -> String {
+    "cpu_temp_flame".to_string()
+}
+
+fn default_right_wing_content() -> String {
+    "ram_bar".to_string()
+}
+
+fn default_everyone() -> String {
+    "everyone".to_string()
+}
+
 fn default_close_to_tray() -> bool {
     !cfg!(target_os = "macos")
 }
@@ -469,7 +489,7 @@ pub struct Settings {
     #[serde(default, skip_serializing_if = "Vec::is_empty", alias = "folder_sync_rules")]
     pub folder_sync_rules: Vec<crate::folder_sync::FolderSyncRule>,
     /// Show the optional top-of-screen MacLink Island status pill when phone activity is ongoing.
-    #[serde(default, alias = "island")]
+    #[serde(default = "default_true", alias = "island")]
     pub maclink_island: bool,
     /// Trigger MacLink Island for incoming and active phone calls.
     #[serde(default = "default_true", alias = "island_calls")]
@@ -483,6 +503,168 @@ pub struct Settings {
     /// Trigger MacLink Island for phone notifications.
     #[serde(default, alias = "island_notifications")]
     pub maclink_island_notifications: bool,
+    /// Enable Live Telemetry Wings (sinusoidal CPU glow and RAM capsule track).
+    #[serde(default = "default_true", alias = "notch_wings_enabled")]
+    pub notch_wings_enabled: bool,
+    /// What info to display in the Left Telemetry Wing ("cpu_temp_flame", "cpu_load", "ram_bar", "net_speed", "battery", "clock", "media", "crypto", "none")
+    #[serde(default = "default_left_wing_content", alias = "notch_left_wing_content")]
+    pub notch_left_wing_content: String,
+    /// What info to display in the Right Telemetry Wing ("ram_bar", "cpu_temp_flame", "cpu_load", "net_speed", "battery", "clock", "media", "crypto", "none")
+    #[serde(default = "default_right_wing_content", alias = "notch_right_wing_content")]
+    pub notch_right_wing_content: String,
+    /// Anchor island flush against the hardware camera notch.
+    #[serde(default = "default_true", alias = "notch_hardware_attached")]
+    pub notch_hardware_attached: bool,
+    /// Auto-hide island in fullscreen mode.
+    #[serde(default, alias = "notch_auto_hide_fullscreen")]
+    pub notch_auto_hide_fullscreen: bool,
+    /// Show system HUD feedback for volume and brightness.
+    #[serde(default = "default_true", alias = "notch_hud_enabled")]
+    pub notch_hud_enabled: bool,
+    /// Scroll gestures over hardware notch for volume & brightness.
+    #[serde(default = "default_true", alias = "notch_scroll_gestures")]
+    pub notch_scroll_gestures: bool,
+    /// Draw debug-only geometry overlay over notch, auxiliary areas, and island.
+    #[serde(default, alias = "notch_debug_overlay")]
+    pub notch_debug_overlay: bool,
+    /// Manual calibration nudge for notch width (points).
+    #[serde(default, alias = "notch_override_width")]
+    pub notch_override_width: f64,
+    /// Manual calibration nudge for notch height (points).
+    #[serde(default, alias = "notch_override_height")]
+    pub notch_override_height: f64,
+    /// Manual calibration nudge for island corner radius (points).
+    #[serde(default, alias = "notch_override_radius")]
+    pub notch_override_radius: f64,
+    /// Drag and drop files onto hardware notch to open Shelf.
+    #[serde(default = "default_true", alias = "notch_drag_to_shelf")]
+    pub notch_drag_to_shelf: bool,
+    /// Show Mac battery percentage and MagSafe charging HUD in notch wings.
+    #[serde(default = "default_true", alias = "notch_battery_hud")]
+    pub notch_battery_hud: bool,
+    /// Mac system media controls (Apple Music & Spotify) and live visualizer.
+    #[serde(default = "default_true", alias = "notch_system_media")]
+    pub notch_system_media: bool,
+    /// Upcoming calendar event sneak-peek on hardware notch and island.
+    #[serde(default = "default_true", alias = "notch_calendar_sneak_peek")]
+    pub notch_calendar_sneak_peek: bool,
+    /// Mochi animated notch companion character (Coucou).
+    #[serde(default = "default_true", alias = "notch_mochi_companion")]
+    pub notch_mochi_companion: bool,
+    /// Coucoudoro focus & Pomodoro notch countdown timer.
+    #[serde(default = "default_true", alias = "notch_coucoudoro_enabled")]
+    pub notch_coucoudoro_enabled: bool,
+    /// AI agent session tracker and permission approval queue.
+    #[serde(default = "default_true", alias = "notch_agent_hooks_enabled")]
+    pub notch_agent_hooks_enabled: bool,
+    /// CodeIsland AI agent task checklist progress bar.
+    #[serde(default = "default_true", alias = "notch_agent_tasks_enabled")]
+    pub notch_agent_tasks_enabled: bool,
+    /// Notch mascot type: "mochi" or "antigravity".
+    #[serde(default = "default_mochi", alias = "notch_mascot_type")]
+    pub notch_mascot_type: String,
+    /// Quick Share / Nearby Share receiver enabled.
+    #[serde(default = "default_true", alias = "notch_quickshare_enabled")]
+    pub notch_quickshare_enabled: bool,
+    /// Quick Share visibility: "everyone", "temporary", "hidden".
+    #[serde(default = "default_everyone", alias = "notch_quickshare_visibility")]
+    pub notch_quickshare_visibility: String,
+    /// Quick Share auto-accept transfers from trusted devices.
+    #[serde(default, alias = "notch_quickshare_auto_accept_trusted")]
+    pub notch_quickshare_auto_accept_trusted: bool,
+    /// Caps Lock visual HUD indicator on notch.
+    #[serde(default = "default_true", alias = "notch_capslock_hud")]
+    pub notch_capslock_hud: bool,
+    /// macOS Focus / Do Not Disturb state change indicator on notch.
+    #[serde(default = "default_true", alias = "notch_focus_hud")]
+    pub notch_focus_hud: bool,
+    /// Bluetooth audio device connection & battery HUD.
+    #[serde(default = "default_true", alias = "notch_bluetooth_hud")]
+    pub notch_bluetooth_hud: bool,
+    /// NotchIsland quick command launcher, math evaluator & unit converter.
+    #[serde(default = "default_true", alias = "notch_launcher_enabled")]
+    pub notch_launcher_enabled: bool,
+    /// Island live system download progress HUD on notch.
+    #[serde(default = "default_true", alias = "notch_downloads_hud")]
+    pub notch_downloads_hud: bool,
+    /// Island real-time hardware microphone & camera sensor indicator HUD.
+    #[serde(default = "default_true", alias = "notch_privacy_sensor_hud")]
+    pub notch_privacy_sensor_hud: bool,
+    /// Ledge standing notch announcements & peripheral vision alerts.
+    #[serde(default = "default_true", alias = "notch_announcements_enabled")]
+    pub notch_announcements_enabled: bool,
+    /// SuperIsland camera-aligned notch teleprompter for presentations & meetings.
+    #[serde(default = "default_true", alias = "notch_teleprompter_enabled")]
+    pub notch_teleprompter_enabled: bool,
+    /// SuperIsland docked instant emoji picker & fuzzy search.
+    #[serde(default = "default_true", alias = "notch_emoji_picker_enabled")]
+    pub notch_emoji_picker_enabled: bool,
+    /// SuperIsland AI token quota and usage monitor rings.
+    #[serde(default = "default_true", alias = "notch_ai_usage_enabled")]
+    pub notch_ai_usage_enabled: bool,
+    /// MioIsland synthesized 8-bit chiptune audio cues for agent states & transitions.
+    #[serde(default = "default_true", alias = "notch_synth_audio_enabled")]
+    pub notch_synth_audio_enabled: bool,
+    /// MioIsland direct-to-terminal activation jumper (Ghostty, iTerm, Terminal, Warp, etc.).
+    #[serde(default = "default_true", alias = "notch_terminal_jumper_enabled")]
+    pub notch_terminal_jumper_enabled: bool,
+    /// Notchly real-time Wi-Fi & Hotspot network tracking and connection toasts.
+    #[serde(default = "default_true", alias = "notch_network_status_enabled")]
+    pub notch_network_status_enabled: bool,
+    /// Notchly lock screen state detection and island presentation.
+    #[serde(default = "default_true", alias = "notch_lock_screen_overlay_enabled")]
+    pub notch_lock_screen_overlay_enabled: bool,
+    /// QuietNotch inline Volume & Brightness HUD directly in the notch.
+    #[serde(default = "default_true", alias = "notch_quiet_inline_hud_enabled")]
+    pub notch_quiet_inline_hud_enabled: bool,
+    /// QuietNotch system notifications drop/toast directly at the notch.
+    #[serde(default = "default_true", alias = "notch_quiet_notifications_enabled")]
+    pub notch_quiet_notifications_enabled: bool,
+    /// QuietNotch Quiet Hours / DND filter suppressing non-critical alerts.
+    #[serde(default, alias = "notch_quiet_hours_enabled")]
+    pub notch_quiet_hours_enabled: bool,
+    /// AnotherNotch clipboard history shelf and quick-paste directly in the notch.
+    #[serde(default = "default_true", alias = "notch_clipboard_shelf_enabled")]
+    pub notch_clipboard_shelf_enabled: bool,
+    /// AnotherNotch Mac fan speed and thermal telemetry monitor.
+    #[serde(default = "default_true", alias = "notch_fan_telemetry_enabled")]
+    pub notch_fan_telemetry_enabled: bool,
+    /// GHNotch fast local command bar and natural language expression evaluator.
+    #[serde(default = "default_true", alias = "notch_command_engine_enabled")]
+    pub notch_command_engine_enabled: bool,
+    /// Isle crypto and foreign exchange financial market ticker.
+    #[serde(default, alias = "notch_isle_finance_enabled")]
+    pub notch_isle_finance_enabled: bool,
+    /// Isle preferred finance ticker symbol (e.g. "BTC", "ETH", "SOL", "EUR").
+    #[serde(default = "default_btc", alias = "notch_isle_finance_symbol")]
+    pub notch_isle_finance_symbol: String,
+    /// MacIsland battery and fast charge HUD indicator at the notch.
+    #[serde(default = "default_true", alias = "notch_macisland_battery_hud_enabled")]
+    pub notch_macisland_battery_hud_enabled: bool,
+    /// MacIsland direct AirDrop target from notch shelf.
+    #[serde(default = "default_true", alias = "notch_macisland_airdrop_enabled")]
+    pub notch_macisland_airdrop_enabled: bool,
+    /// MacWake keyboard and screen cleaning lock mode.
+    #[serde(default = "default_true", alias = "notch_macwake_cleaning_mode_enabled")]
+    pub notch_macwake_cleaning_mode_enabled: bool,
+    /// MacWake CPU/GPU thermal telemetry monitor.
+    #[serde(default = "default_true", alias = "notch_macwake_thermal_monitor_enabled")]
+    pub notch_macwake_thermal_monitor_enabled: bool,
+    /// PiIsland AI coding agent session monitor and LLM quota telemetry.
+    #[serde(default = "default_true", alias = "notch_piisland_session_monitor_enabled")]
+    pub notch_piisland_session_monitor_enabled: bool,
+    /// Pookify Claude Code animated spark/crab glyphs and multi-session aggregator.
+    #[serde(default = "default_true", alias = "notch_pookify_agent_glyphs_enabled")]
+    pub notch_pookify_agent_glyphs_enabled: bool,
+    /// Windows Dynamic Island "Find on Screen" Live Vision OCR Search Engine.
+    #[serde(default = "default_true", alias = "notch_vision_ocr_search_enabled")]
+    pub notch_vision_ocr_search_enabled: bool,
+    /// TopNotch Pomodoro Focus & Quick Scratchpad Engine.
+    #[serde(default = "default_true", alias = "notch_topnotch_focus_enabled")]
+    pub notch_topnotch_focus_enabled: bool,
+    /// MacIsland2 Video Call Ring Light & Audio Hardware Switcher.
+    #[serde(default = "default_true", alias = "notch_macisland_studio_enabled")]
+    pub notch_macisland_studio_enabled: bool,
     /// Automatically launch LiquidDynamo helper when MacLink starts.
     #[serde(default, alias = "dynamo_autostart")]
     pub dynamo_autostart: bool,
@@ -582,11 +764,65 @@ impl Default for Settings {
             open_shared_files: false,
             flow_follow_clipboard: true,
             folder_sync_rules: Vec::new(),
-            maclink_island: false,
+            maclink_island: true,
             maclink_island_calls: true,
             maclink_island_transfers: true,
             maclink_island_media: true,
             maclink_island_notifications: false,
+            notch_wings_enabled: true,
+            notch_left_wing_content: default_left_wing_content(),
+            notch_right_wing_content: default_right_wing_content(),
+            notch_hardware_attached: true,
+            notch_auto_hide_fullscreen: false,
+            notch_hud_enabled: true,
+            notch_scroll_gestures: true,
+            notch_debug_overlay: false,
+            notch_override_width: 0.0,
+            notch_override_height: 0.0,
+            notch_override_radius: 0.0,
+            notch_drag_to_shelf: true,
+            notch_battery_hud: true,
+            notch_system_media: true,
+            notch_calendar_sneak_peek: true,
+            notch_mochi_companion: true,
+            notch_coucoudoro_enabled: true,
+            notch_agent_hooks_enabled: true,
+            notch_agent_tasks_enabled: true,
+            notch_mascot_type: "mochi".to_string(),
+            notch_quickshare_enabled: true,
+            notch_quickshare_visibility: "everyone".to_string(),
+            notch_quickshare_auto_accept_trusted: false,
+            notch_capslock_hud: true,
+            notch_focus_hud: true,
+            notch_bluetooth_hud: true,
+            notch_launcher_enabled: true,
+            notch_downloads_hud: true,
+            notch_privacy_sensor_hud: true,
+            notch_announcements_enabled: true,
+            notch_teleprompter_enabled: true,
+            notch_emoji_picker_enabled: true,
+            notch_ai_usage_enabled: true,
+            notch_synth_audio_enabled: true,
+            notch_terminal_jumper_enabled: true,
+            notch_network_status_enabled: true,
+            notch_lock_screen_overlay_enabled: true,
+            notch_quiet_inline_hud_enabled: true,
+            notch_quiet_notifications_enabled: true,
+            notch_quiet_hours_enabled: false,
+            notch_clipboard_shelf_enabled: true,
+            notch_fan_telemetry_enabled: true,
+            notch_command_engine_enabled: true,
+            notch_isle_finance_enabled: false,
+            notch_isle_finance_symbol: "BTC".to_string(),
+            notch_macisland_battery_hud_enabled: true,
+            notch_macisland_airdrop_enabled: true,
+            notch_macwake_cleaning_mode_enabled: true,
+            notch_macwake_thermal_monitor_enabled: true,
+            notch_piisland_session_monitor_enabled: true,
+            notch_pookify_agent_glyphs_enabled: true,
+            notch_vision_ocr_search_enabled: true,
+            notch_topnotch_focus_enabled: true,
+            notch_macisland_studio_enabled: true,
             dynamo_autostart: false,
             automation_rules: Vec::new(),
             stream_pc_audio_to_phone: false,
@@ -725,7 +961,7 @@ mod tests {
         assert_eq!(def.local_api_port, 53320);
         def.apply_runtime();
         assert!(flow_follow_clipboard());
-        assert!(!maclink_island());
+        assert!(maclink_island());
         assert!(!stream_pc_audio_to_phone());
 
         let settings = Settings {
@@ -776,6 +1012,60 @@ mod tests {
             maclink_island_transfers: true,
             maclink_island_media: true,
             maclink_island_notifications: false,
+            notch_wings_enabled: true,
+            notch_left_wing_content: default_left_wing_content(),
+            notch_right_wing_content: default_right_wing_content(),
+            notch_hardware_attached: true,
+            notch_auto_hide_fullscreen: false,
+            notch_hud_enabled: true,
+            notch_scroll_gestures: true,
+            notch_debug_overlay: false,
+            notch_override_width: 0.0,
+            notch_override_height: 0.0,
+            notch_override_radius: 0.0,
+            notch_drag_to_shelf: true,
+            notch_battery_hud: true,
+            notch_system_media: true,
+            notch_calendar_sneak_peek: true,
+            notch_mochi_companion: true,
+            notch_coucoudoro_enabled: true,
+            notch_agent_hooks_enabled: true,
+            notch_agent_tasks_enabled: true,
+            notch_mascot_type: "mochi".to_string(),
+            notch_quickshare_enabled: true,
+            notch_quickshare_visibility: "everyone".to_string(),
+            notch_quickshare_auto_accept_trusted: false,
+            notch_capslock_hud: true,
+            notch_focus_hud: true,
+            notch_bluetooth_hud: true,
+            notch_launcher_enabled: true,
+            notch_downloads_hud: true,
+            notch_privacy_sensor_hud: true,
+            notch_announcements_enabled: true,
+            notch_teleprompter_enabled: true,
+            notch_emoji_picker_enabled: true,
+            notch_ai_usage_enabled: true,
+            notch_synth_audio_enabled: true,
+            notch_terminal_jumper_enabled: true,
+            notch_network_status_enabled: true,
+            notch_lock_screen_overlay_enabled: true,
+            notch_quiet_inline_hud_enabled: true,
+            notch_quiet_notifications_enabled: true,
+            notch_quiet_hours_enabled: false,
+            notch_clipboard_shelf_enabled: true,
+            notch_fan_telemetry_enabled: true,
+            notch_command_engine_enabled: true,
+            notch_isle_finance_enabled: false,
+            notch_isle_finance_symbol: "BTC".to_string(),
+            notch_macisland_battery_hud_enabled: true,
+            notch_macisland_airdrop_enabled: true,
+            notch_macwake_cleaning_mode_enabled: true,
+            notch_macwake_thermal_monitor_enabled: true,
+            notch_piisland_session_monitor_enabled: true,
+            notch_pookify_agent_glyphs_enabled: true,
+            notch_vision_ocr_search_enabled: true,
+            notch_topnotch_focus_enabled: true,
+            notch_macisland_studio_enabled: true,
             dynamo_autostart: false,
             automation_rules: Vec::new(),
             stream_pc_audio_to_phone: true,

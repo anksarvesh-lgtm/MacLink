@@ -364,17 +364,17 @@ Item {
         },
         {
             id: "maclink_island",
-            name: "MacLink Island",
+            name: "MacLink Island & Notch Dynamo",
             icon: Icons.island,
             area: "surfaces",
             capKey: "",
             toggleKey: "",
             pcLocal: true,
             prefKey: "maclinkIsland",
-            summary: "Compact floating pill at the top center of your monitor for calls, transfers, media, and alerts.",
-            whereLabel: "Settings › General › MacLink Island",
-            needsLabel: "MacLink Island enabled in Settings",
-            targetId: "settings:general:island",
+            summary: "Dynamic Island pill, hardware notch telemetry wings, sneak-peek HUD, and 22 modular extensions.",
+            whereLabel: "Navigation rail › Dynamo (or Settings › Dynamo & Notch)",
+            needsLabel: "Dynamic Island enabled in Settings or Dynamo tab",
+            targetId: "dynamo",
             docKey: "maclink-island"
         },
         {
@@ -571,6 +571,8 @@ Item {
             return { from: qsTr("Phone Media Player"), to: qsTr("Mac Now Playing"), badge: qsTr("Playback Remote"), icon: Icons.sound, color: Theme.primary }
         if (id === "timeline")
             return { from: qsTr("Device Events"), to: qsTr("Chronological Feed"), badge: qsTr("Unified Timeline"), icon: Icons.history, color: Theme.primary }
+        if (id === "maclink_island" || id === "dynamo")
+            return { from: qsTr("Hardware Notch"), to: qsTr("Desktop / Apps"), badge: qsTr("Dynamic Island HUD"), icon: Icons.island, color: Theme.primary }
         if (id === "command_palette")
             return { from: qsTr("Command Palette (⌘K)"), to: qsTr("MacLink Actions"), badge: qsTr("Action Runner"), icon: Icons.terminal, color: Theme.primary }
         if (id === "wol")
@@ -950,12 +952,13 @@ Item {
 
                     // Visual Representation Box
                     Rectangle {
+                        id: visualBox
                         Layout.fillWidth: true
                         implicitHeight: 46
                         radius: Theme.radiusSm
-                        color: Qt.rgba(visualFlow.color.r, visualFlow.color.g, visualFlow.color.b, 0.08)
+                        color: visualFlow ? Qt.rgba(visualFlow.color.r, visualFlow.color.g, visualFlow.color.b, 0.08) : "transparent"
                         border.width: 1
-                        border.color: Qt.rgba(visualFlow.color.r, visualFlow.color.g, visualFlow.color.b, 0.22)
+                        border.color: visualFlow ? Qt.rgba(visualFlow.color.r, visualFlow.color.g, visualFlow.color.b, 0.22) : "transparent"
 
                         readonly property var visualFlow: guide.visualFlowForFeature(modelData.id)
 
@@ -984,7 +987,7 @@ Item {
                                     }
                                     Txt {
                                         id: srcTxt
-                                        text: parent.parent.parent.parent.visualFlow.from
+                                        text: visualBox.visualFlow ? visualBox.visualFlow.from : ""
                                         role: "caption"
                                         size: 11
                                     }
@@ -999,14 +1002,14 @@ Item {
                                 Rectangle {
                                     Layout.fillWidth: true
                                     height: 1
-                                    color: Qt.rgba(parent.parent.visualFlow.color.r, parent.parent.visualFlow.color.g, parent.parent.visualFlow.color.b, 0.40)
+                                    color: visualBox.visualFlow ? Qt.rgba(visualBox.visualFlow.color.r, visualBox.visualFlow.color.g, visualBox.visualFlow.color.b, 0.40) : "transparent"
                                 }
 
                                 Rectangle {
                                     radius: 10
-                                    color: Qt.rgba(parent.parent.visualFlow.color.r, parent.parent.visualFlow.color.g, parent.parent.visualFlow.color.b, 0.16)
+                                    color: visualBox.visualFlow ? Qt.rgba(visualBox.visualFlow.color.r, visualBox.visualFlow.color.g, visualBox.visualFlow.color.b, 0.16) : "transparent"
                                     border.width: 1
-                                    border.color: parent.parent.visualFlow.color
+                                    border.color: visualBox.visualFlow ? visualBox.visualFlow.color : "transparent"
                                     implicitWidth: flowBadgeTxt.implicitWidth + 14
                                     implicitHeight: 20
 
@@ -1014,17 +1017,17 @@ Item {
                                         anchors.centerIn: parent
                                         spacing: 4
                                         Icon {
-                                            path: parent.parent.parent.parent.visualFlow.icon
+                                            path: visualBox.visualFlow ? visualBox.visualFlow.icon : ""
                                             width: 10; height: 10
-                                            color: parent.parent.parent.parent.visualFlow.color
+                                            color: visualBox.visualFlow ? visualBox.visualFlow.color : Theme.primary
                                         }
                                         Txt {
                                             id: flowBadgeTxt
-                                            text: parent.parent.parent.parent.visualFlow.badge
+                                            text: visualBox.visualFlow ? visualBox.visualFlow.badge : ""
                                             role: "code"
                                             size: 9
                                             weight: 600
-                                            color: parent.parent.parent.parent.visualFlow.color
+                                            color: visualBox.visualFlow ? visualBox.visualFlow.color : Theme.primary
                                         }
                                     }
                                 }
@@ -1032,7 +1035,7 @@ Item {
                                 Rectangle {
                                     Layout.fillWidth: true
                                     height: 1
-                                    color: Qt.rgba(parent.parent.visualFlow.color.r, parent.parent.visualFlow.color.g, parent.parent.visualFlow.color.b, 0.40)
+                                    color: visualBox.visualFlow ? Qt.rgba(visualBox.visualFlow.color.r, visualBox.visualFlow.color.g, visualBox.visualFlow.color.b, 0.40) : "transparent"
                                 }
                             }
 
@@ -1055,7 +1058,7 @@ Item {
                                     }
                                     Txt {
                                         id: dstTxt
-                                        text: parent.parent.parent.parent.visualFlow.to
+                                        text: visualBox.visualFlow ? visualBox.visualFlow.to : ""
                                         role: "caption"
                                         size: 11
                                     }

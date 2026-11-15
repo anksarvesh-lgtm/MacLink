@@ -98,6 +98,10 @@ NativeWindow {
             window.page = "timeline"
             return
         }
+        if (targetId === "dynamo" || targetId.indexOf("dynamo:") === 0) {
+            window.page = "dynamo"
+            return
+        }
         window.page = "home"
     }
     function navigateTab(tabId) {
@@ -131,7 +135,7 @@ NativeWindow {
 
     width: normalWidth
     height: normalHeight
-    title: "MacLink"
+    title: "Nexora"
 
     function screenKey(s) {
         if (!s) return ""
@@ -792,7 +796,6 @@ NativeWindow {
             { id: "files", label: qsTr("Files"), icon: Icons.folder },
             { id: "apps", label: qsTr("Apps"), icon: Icons.apps },
             { id: "deck", label: qsTr("Deck"), icon: Icons.deck },
-            { id: "guide", label: qsTr("Guide"), icon: Icons.info },
             { id: "dynamo", label: qsTr("Dynamo"), icon: Icons.island },
             { id: "settings", label: qsTr("Settings"), icon: Icons.settings }
         ]
@@ -810,10 +813,8 @@ NativeWindow {
             case "file_manager": return 4
             case "apps": return 5
             case "deck": return 6
-            case "help_center":
-            case "guide": return 7
-            case "dynamo": return 8
-            case "settings": return 9
+            case "dynamo": return 7
+            case "settings": return 8
             default: return 0
             }
         }

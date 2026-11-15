@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- SPDX-License-Identifier: GPL-3.0-or-later -->
 <resources>
-    <string name="app_name">MacLink</string>
+    <string name="app_name">Nexora</string>
 
     <!-- Pairing -->
     <string name="pair_title">Pair with your PC</string>

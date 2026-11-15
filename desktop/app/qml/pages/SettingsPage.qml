@@ -19,6 +19,7 @@ Item {
     readonly property var categories: [
         { id: "appearance", title: qsTr("Appearance"), icon: Icons.palette, subtitle: qsTr("Liquid Glass & system theme") },
         { id: "general", title: qsTr("General"), icon: Icons.laptop, subtitle: qsTr("Startup, clipboard & desktop") },
+        { id: "dynamo", title: qsTr("Dynamo & Notch"), icon: Icons.island, subtitle: qsTr("Dynamic Island, notch wings & 22 add-ons") },
         { id: "devices", title: qsTr("Devices"), icon: Icons.phone, subtitle: qsTr("Paired phones & permissions") },
         { id: "camera_audio", title: qsTr("Audio & Calls"), icon: Icons.speaker, subtitle: qsTr("Speaker, mic & phone calls") },
         { id: "notifications", title: qsTr("Notifications"), icon: Icons.bell, subtitle: qsTr("Do not disturb & app rules") },
@@ -2902,6 +2903,135 @@ Item {
                             }
 
                             Item { Layout.fillWidth: true }
+                        }
+                    }
+                }
+            }
+
+            // ================================================================
+            // 10. DYNAMO & NOTCH
+            // ================================================================
+            Column {
+                visible: page.currentSection === "dynamo"
+                width: visible ? parent.width : 0
+                spacing: Theme.gutter
+
+                Card {
+                    width: parent.width
+                    Column {
+                        width: parent.width
+
+                        ListRow {
+                            width: parent.width
+                            iconPath: Icons.island
+                            title: qsTr("MacLink Dynamic Island & Notch Wings")
+                            description: qsTr("Anchor hardware camera notch status island with live CPU flame and RAM track wings.")
+                            Toggle {
+                                checked: Preferences.maclinkIsland
+                                onToggled: (val) => Preferences.maclinkIsland = val
+                            }
+                        }
+
+                        Divider { width: parent.width }
+
+                        ListRow {
+                            width: parent.width
+                            iconPath: Icons.bolt
+                            title: qsTr("Full Dynamo Control Hub")
+                            description: qsTr("Open the dedicated Dynamo control center with all 22 live add-on widgets, telemetry cards, and developer tools.")
+                            Button {
+                                variant: "primary"
+                                size: "sm"
+                                text: qsTr("Open Dynamo")
+                                onClicked: window.page = "dynamo"
+                            }
+                        }
+
+                        Divider { width: parent.width }
+
+                        ListRow {
+                            width: parent.width
+                            iconPath: Icons.flame
+                            title: qsTr("Live Telemetry Wings")
+                            description: qsTr("Display sinusoidal CPU oscillation and continuous RAM track flush beside notch.")
+                            Toggle {
+                                checked: Preferences.notchWingsEnabled
+                                onToggled: (val) => Preferences.notchWingsEnabled = val
+                            }
+                        }
+
+                        Divider { width: parent.width }
+
+                        ListRow {
+                            width: parent.width
+                            iconPath: Icons.bug
+                            title: qsTr("Debug Geometry Overlay")
+                            description: qsTr("Show live AppKit safe-area insets, notch centerX, and auxiliary cutout bounds.")
+                            Toggle {
+                                checked: Preferences.notchDebugOverlay
+                                onToggled: (val) => Preferences.notchDebugOverlay = val
+                            }
+                        }
+                    }
+                }
+
+                Card {
+                    width: parent.width
+
+                    Column {
+                        width: parent.width
+
+                        ListRow {
+                            width: parent.width
+                            iconPath: Icons.bolt
+                            title: qsTr("AI Agent Session Monitor (CodeIsland, PiIsland, Pookify)")
+                            description: qsTr("Live token burn rate, active tool execution pills, and animated spark & crab glyphs.")
+                            Toggle {
+                                checked: Preferences.notchPookifyAgentGlyphsEnabled && Preferences.notchPiislandSessionMonitorEnabled
+                                onToggled: (val) => {
+                                    Preferences.notchPookifyAgentGlyphsEnabled = val
+                                    Preferences.notchPiislandSessionMonitorEnabled = val
+                                }
+                            }
+                        }
+
+                        Divider { width: parent.width }
+
+                        ListRow {
+                            width: parent.width
+                            iconPath: Icons.search
+                            title: qsTr("Vision OCR Search Engine (Windows Dynamic Island)")
+                            description: qsTr("ScreenCaptureKit frame capture and Apple Vision OCR text locator.")
+                            Toggle {
+                                checked: Preferences.notchVisionOcrSearchEnabled
+                                onToggled: (val) => Preferences.notchVisionOcrSearchEnabled = val
+                            }
+                        }
+
+                        Divider { width: parent.width }
+
+                        ListRow {
+                            width: parent.width
+                            iconPath: Icons.clock
+                            title: qsTr("Pomodoro Focus Ring & Scratchpad (TopNotch)")
+                            description: qsTr("Dedicated focus countdown ring and persistent quick notes parked directly at the notch.")
+                            Toggle {
+                                checked: Preferences.notchTopnotchFocusEnabled
+                                onToggled: (val) => Preferences.notchTopnotchFocusEnabled = val
+                            }
+                        }
+
+                        Divider { width: parent.width }
+
+                        ListRow {
+                            width: parent.width
+                            iconPath: Icons.sun
+                            title: qsTr("Video Call Ring Light & Audio Studio (MacIsland2)")
+                            description: qsTr("Soft display border lighting for video calls and CoreAudio hardware switcher.")
+                            Toggle {
+                                checked: Preferences.notchMacislandStudioEnabled
+                                onToggled: (val) => Preferences.notchMacislandStudioEnabled = val
+                            }
                         }
                     }
                 }

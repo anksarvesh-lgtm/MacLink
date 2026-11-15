@@ -59,14 +59,15 @@ done
 iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/MacLink.icns"
 cp -f "assets/brand/maclink-liquid-logo.png" "$APP/Contents/Resources/maclink-liquid-logo.png"
 cp -f "assets/brand/maclink-liquid-logo.png" "$APP/Contents/MacOS/maclink-liquid-logo.png"
+cp -f "assets/brand/notification-icon.png" "$APP/Contents/Resources/notification-icon.png"
 
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>CFBundleName</key><string>MacLink</string>
-    <key>CFBundleDisplayName</key><string>MacLink</string>
+    <key>CFBundleName</key><string>Nexora</string>
+    <key>CFBundleDisplayName</key><string>Nexora</string>
     <key>CFBundleIdentifier</key><string>in.maclink.srv</string>
     <key>CFBundleExecutable</key><string>maclink-desktop</string>
     <key>CFBundleIconFile</key><string>MacLink</string>
@@ -115,6 +116,9 @@ PLIST
 
 # Clean any extended attributes/resource forks before signing
 xattr -cr "$APP"
+
+# Ensure macOS system Swift concurrency libraries in /usr/lib/swift are reachable via rpath
+install_name_tool -add_rpath /usr/lib/swift "$APP/Contents/MacOS/maclink-desktop" 2>/dev/null || true
 
 # Optional: embed LiquidDynamo helper application if DYNAMO_APP is set
 if [[ -n "${DYNAMO_APP:-}" && -d "$DYNAMO_APP" ]]; then

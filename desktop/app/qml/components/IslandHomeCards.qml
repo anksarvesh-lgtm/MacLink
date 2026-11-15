@@ -15,11 +15,37 @@ import app.maclink
 Item {
     id: homeCardsRoot
 
+    signal requestTab(string tab)
+
     property var storageData: {
         try {
             return JSON.parse(DynamoController.getStorageStats() || "{}")
         } catch (e) {
             return { totalBytes: 256000000000, usedBytes: 80000000000, freeBytes: 176000000000, devCacheBytes: 4200000000 }
+        }
+    }
+
+    readonly property var sysCal: {
+        try {
+            return JSON.parse(DynamoController.calendarJson || "{}")
+        } catch (e) {
+            return {}
+        }
+    }
+
+    readonly property var coucoudoro: {
+        try {
+            return JSON.parse(DynamoController.coucoudoroJson || "{}")
+        } catch (e) {
+            return {}
+        }
+    }
+
+    readonly property var agentTasks: {
+        try {
+            return JSON.parse(DynamoController.agentTasksJson || "{}")
+        } catch (e) {
+            return {}
         }
     }
 
@@ -47,8 +73,11 @@ Item {
     // 4-Card Responsive Grid / Row
     RowLayout {
         anchors.fill: parent
-        anchors.margins: 10
-        spacing: 10
+        anchors.leftMargin: 8
+        anchors.rightMargin: 8
+        anchors.topMargin: 4
+        anchors.bottomMargin: 8
+        spacing: 8
 
         // ====================================================================
         // CARD 1: CONNECTED DEVICES
@@ -254,26 +283,57 @@ Item {
                     }
                 }
 
-                // Copy Action
-                Rectangle {
+                // Actions: Copy & History
+                Row {
                     width: parent.width
                     height: 24
-                    radius: 12
-                    color: clipBtnHover.hovered ? Qt.rgba(1, 1, 1, 0.22) : Qt.rgba(1, 1, 1, 0.12)
-                    border.width: 0.75
-                    border.color: Qt.rgba(1, 1, 1, 0.18)
+                    spacing: 6
 
-                    Txt {
-                        anchors.centerIn: parent
-                        text: qsTr("Copy Clip")
-                        size: 10.5
-                        weight: Font.Medium
-                        color: "#FFFFFF"
+                    Rectangle {
+                        width: (parent.width - 6) / 2
+                        height: 24
+                        radius: 12
+                        color: clipBtnHover.hovered ? Qt.rgba(1, 1, 1, 0.22) : Qt.rgba(1, 1, 1, 0.12)
+                        border.width: 0.75
+                        border.color: Qt.rgba(1, 1, 1, 0.18)
+
+                        Txt {
+                            anchors.centerIn: parent
+                            text: qsTr("Copy")
+                            size: 10
+                            weight: Font.Medium
+                            color: "#FFFFFF"
+                        }
+
+                        HoverHandler { id: clipBtnHover; cursorShape: Qt.PointingHandCursor }
+                        TapHandler {
+                            onTapped: AppController.copyText("MacLink Synced Clip")
+                        }
                     }
 
-                    HoverHandler { id: clipBtnHover; cursorShape: Qt.PointingHandCursor }
-                    TapHandler {
-                        onTapped: AppController.copyText("MacLink Synced Clip")
+                    Rectangle {
+                        width: (parent.width - 6) / 2
+                        height: 24
+                        radius: 12
+                        color: clipHistMouseArea.containsMouse ? Theme.primary : Qt.rgba(1, 1, 1, 0.12)
+                        border.width: 0.75
+                        border.color: clipHistMouseArea.containsMouse ? Theme.primary : Qt.rgba(1, 1, 1, 0.18)
+
+                        Txt {
+                            anchors.centerIn: parent
+                            text: qsTr("History ↗")
+                            size: 10
+                            weight: Font.Medium
+                            color: "#FFFFFF"
+                        }
+
+                        MouseArea {
+                            id: clipHistMouseArea
+                            anchors.fill: parent
+                            hoverEnabled: true
+                            cursorShape: Qt.PointingHandCursor
+                            onClicked: homeCardsRoot.requestTab("clipboard")
+                        }
                     }
                 }
             }
@@ -514,15 +574,92 @@ Item {
                     }
                 }
 
+                Row {
+                    width: parent.width
+                    height: 24
+                    spacing: 4
+                    visible: !!(Preferences.notchAgentTasksEnabled && agentTasks && agentTasks.hasTasks)
+                    Rectangle {
+                        width: 8; height: 8; radius: 4
+                        color: (agentTasks && agentTasks.isAllCompleted) ? "#10B981" : "#3B82F6"
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                    Txt {
+                        width: parent.width - 16
+                        text: qsTr("Tasks: %1/%2 (%3%) • %4").arg(agentTasks ? agentTasks.completed : 0).arg(agentTasks ? agentTasks.total : 0).arg(agentTasks ? Math.round(agentTasks.percent) : 0).arg(agentTasks && agentTasks.activeTitle ? agentTasks.activeTitle : "Active")
+                        size: 9.5
+                        weight: Font.DemiBold
+                        color: (agentTasks && agentTasks.isAllCompleted) ? "#10B981" : "#60A5FA"
+                        elide: Text.ElideRight
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                }
+
+                Row {
+                    width: parent.width
+                    height: 24
+                    spacing: 4
+                    visible: !!(Preferences.notchCoucoudoroEnabled && coucoudoro && coucoudoro.active)
+                    Icon {
+                        width: 10; height: 10
+                        path: Icons.clock
+                        color: (coucoudoro && coucoudoro.phase === "work") ? "#EF4444" : "#10B981"
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                    Txt {
+                        width: parent.width - 16
+                        text: qsTr("Coucoudoro: %1 • %2").arg(coucoudoro ? coucoudoro.clockString : "").arg(coucoudoro && coucoudoro.phase === "work" ? qsTr("Work Focus") : qsTr("Break"))
+                        size: 9.5
+                        weight: Font.DemiBold
+                        color: (coucoudoro && coucoudoro.phase === "work") ? "#EF4444" : "#10B981"
+                        elide: Text.ElideRight
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                    HoverHandler { cursorShape: Qt.PointingHandCursor }
+                    TapHandler {
+                        onTapped: {
+                            if (coucoudoro && !coucoudoro.isPaused) DynamoController.coucoudoroPause()
+                            else DynamoController.coucoudoroResume()
+                        }
+                    }
+                }
+
+                Row {
+                    width: parent.width
+                    height: 24
+                    spacing: 4
+                    visible: !(Preferences.notchCoucoudoroEnabled && coucoudoro && coucoudoro.active) && Preferences.notchCalendarSneakPeek && sysCal && sysCal.hasEvent
+                    Icon {
+                        width: 10; height: 10
+                        path: Icons.clock
+                        color: "#A78BFA"
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                    Txt {
+                        width: parent.width - 16
+                        text: sysCal.isOngoing
+                            ? qsTr("Now: %1").arg(sysCal.title)
+                            : qsTr("In %1m: %2").arg(sysCal.minutesUntil).arg(sysCal.title)
+                        size: 9.5
+                        weight: Font.DemiBold
+                        color: "#A78BFA"
+                        elide: Text.ElideRight
+                        anchors.verticalCenter: parent.verticalCenter
+                    }
+                    HoverHandler { cursorShape: Qt.PointingHandCursor }
+                    TapHandler { onTapped: DynamoController.openCalendar() }
+                }
+
                 // Quick Summary
                 Txt {
                     width: parent.width
-                    height: 24
+                    height: 20
                     verticalAlignment: Text.AlignVCenter
                     text: qsTr("Favorite shortcuts pinned for 1-click access.")
-                    size: 9.5
+                    size: 9.0
                     color: Qt.rgba(1, 1, 1, 0.50)
                     elide: Text.ElideRight
+                    visible: !(Preferences.notchAgentTasksEnabled && agentTasks && agentTasks.hasTasks) && !(Preferences.notchCalendarSneakPeek && sysCal && sysCal.hasEvent)
                 }
             }
         }

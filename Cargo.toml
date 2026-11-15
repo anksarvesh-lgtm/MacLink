@@ -11,10 +11,10 @@ members = [
 ]
 
 [workspace.package]
-version = "0.0.9"
+version = "0.1.0"
 edition = "2024"
 rust-version = "1.97"
-authors = ["MacLink"]
+authors = ["Nexora"]
 repository = "https://github.com/anksarvesh-lgtm/MacLink"
 
 # Each release's name, from a bee's life (0.1 Pollen, …); the release
@@ -23,9 +23,9 @@ repository = "https://github.com/anksarvesh-lgtm/MacLink"
 name = "Beta"
 
 [workspace.dependencies]
-maclink-adb = { path = "core/maclink-adb", version = "0.0.9" }
-maclink-protocol = { path = "core/maclink-protocol", version = "0.0.9" }
-maclink-core = { path = "core/maclink-core", version = "0.0.9" }
+maclink-adb = { path = "core/maclink-adb", version = "0.1.0" }
+maclink-protocol = { path = "core/maclink-protocol", version = "0.1.0" }
+maclink-core = { path = "core/maclink-core", version = "0.1.0" }
 
 anyhow = "1"
 ciborium = "0.2"
