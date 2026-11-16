@@ -755,6 +755,7 @@ static id s_spaceObserver = nil;
 static id s_islandGlobalMouseMonitor = nil;
 static id s_islandLocalMouseMonitor = nil;
 static BOOL s_isIslandHoverExpanded = NO;
+static BOOL s_isCollapsePending = NO;
 static uint64_t s_islandCollapseGeneration = 0;
 
 extern "C" void maclink_update_layout(void);
@@ -827,17 +828,29 @@ static void handle_island_mouse_event(NSEvent *event) {
     NSPoint mouseLoc = [NSEvent mouseLocation];
 
     if (!s_isIslandHoverExpanded) {
+        // Fast-path spatial exit: if cursor is below the notch/wings area, drop event immediately with 0 overhead
+        if (mouseLoc.y < s_collapsedHitRect.origin.y) {
+            return;
+        }
         if (NSPointInRect(mouseLoc, s_collapsedHitRect)) {
             s_islandCollapseGeneration++;
             s_isIslandHoverExpanded = YES;
+            s_isCollapsePending = NO;
             maclink_set_island_hover_state(true);
         }
     } else {
         if (NSPointInRect(mouseLoc, s_expandedHitRect)) {
             s_islandCollapseGeneration++;
+            s_isCollapsePending = NO;
         } else {
+            // Debounce collapse: do not enqueue redundant GCD blocks on every mouse movement
+            if (s_isCollapsePending) {
+                return;
+            }
+            s_isCollapsePending = YES;
             uint64_t currentGen = ++s_islandCollapseGeneration;
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(200 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
+                s_isCollapsePending = NO;
                 if (currentGen != s_islandCollapseGeneration) return;
                 NSPoint currentMouseLoc = [NSEvent mouseLocation];
                 if (!NSPointInRect(currentMouseLoc, s_expandedHitRect)) {
@@ -875,6 +888,7 @@ static void stop_island_hover_monitor(void) {
         [NSEvent removeMonitor:s_islandLocalMouseMonitor];
         s_islandLocalMouseMonitor = nil;
     }
+    s_isCollapsePending = NO;
     s_islandCollapseGeneration++;
 }
 
@@ -886,7 +900,7 @@ static void setup_screen_and_space_observers(void) {
         dispatch_async(dispatch_get_main_queue(), ^{
             maclink_update_layout();
             for (NSWindow *win in [NSApp windows]) {
-                if ([win.title isEqualToString:@"MacLink Island"]) {
+                if ([win.title isEqualToString:@"Nexora Island"] || [win.title isEqualToString:@"MacLink Island"]) {
                     NSScreen *screen = maclink_target_notch_screen(win);
                     if (!screen) break;
                     maclink_update_layout_for_screen(screen);
@@ -931,7 +945,7 @@ void shelf_edge_style_shelf_window(const char *window_title) {
     dispatch_async(dispatch_get_main_queue(), ^{
         for (NSWindow *win in [NSApp windows]) {
             if ([win.title isEqualToString:title]) {
-                if ([title isEqualToString:@"MacLink Island"]) {
+                if ([title isEqualToString:@"Nexora Island"] || [title isEqualToString:@"MacLink Island"]) {
                     // Dynamically subclass Qt's QNSWindow so QPlatformWindow pointers and delegate data are fully preserved
                     apply_island_window_class(win);
                     [win setCollectionBehavior:(NSWindowCollectionBehaviorCanJoinAllSpaces |
@@ -974,12 +988,16 @@ void shelf_edge_style_shelf_window(const char *window_title) {
     });
 }
 
+static BOOL s_isPositioningWindow = NO;
+
 void maclink_position_island_window(double x, double width, double height) {
     (void)x; // Strictly center on physical notch / target display midX
+    if (s_isPositioningWindow) return;
     setup_screen_and_space_observers();
     dispatch_async(dispatch_get_main_queue(), ^{
+        if (s_isPositioningWindow) return;
         for (NSWindow *win in [NSApp windows]) {
-            if ([win.title isEqualToString:@"MacLink Island"]) {
+            if ([win.title isEqualToString:@"Nexora Island"] || [win.title isEqualToString:@"MacLink Island"]) {
                 apply_island_window_class(win);
                 NSScreen *screen = maclink_target_notch_screen(win);
                 if (!screen) break;
@@ -991,8 +1009,13 @@ void maclink_position_island_window(double x, double width, double height) {
                 CGFloat screenCenterX = scFrame.origin.x + (scFrame.size.width / 2.0);
                 CGFloat originX = screenCenterX - ((CGFloat)width / 2.0);
                 NSRect newFrame = NSMakeRect(originX, originY, (CGFloat)width, (CGFloat)height);
-                if (!NSEqualRects(win.frame, newFrame)) {
+                if (fabs(win.frame.origin.x - newFrame.origin.x) > 1.0 ||
+                    fabs(win.frame.origin.y - newFrame.origin.y) > 1.0 ||
+                    fabs(win.frame.size.width - newFrame.size.width) > 1.0 ||
+                    fabs(win.frame.size.height - newFrame.size.height) > 1.0) {
+                    s_isPositioningWindow = YES;
                     [win setFrame:newFrame display:YES];
+                    s_isPositioningWindow = NO;
                 }
 
                 if (height > 50.0) {

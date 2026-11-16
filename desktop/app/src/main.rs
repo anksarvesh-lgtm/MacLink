@@ -442,7 +442,8 @@ fn run_setup_window(mode: setup::Mode) -> ExitCode {
     bridge::native::ffi::prepare_qt_without_log();
     let mut app = QGuiApplication::new();
     if let Some(mut app) = app.as_mut() {
-        app.as_mut().set_application_name(&QString::from("MacLink Setup"));
+        app.as_mut().set_application_name(&QString::from("Nexora Setup"));
+        app.as_mut().set_application_display_name(&QString::from("Nexora Setup"));
         app.as_mut().set_application_version(&QString::from(env!("CARGO_PKG_VERSION")));
     }
     // Before any QML loads, so every string is right on the first pass.
@@ -644,7 +645,8 @@ fn main() -> ExitCode {
     }
     let mut app = QGuiApplication::new();
     if let Some(mut app) = app.as_mut() {
-        app.as_mut().set_application_name(&QString::from("MacLink"));
+        app.as_mut().set_application_name(&QString::from("Nexora"));
+        app.as_mut().set_application_display_name(&QString::from("Nexora"));
         app.as_mut().set_application_version(&QString::from(env!("CARGO_PKG_VERSION")));
     }
     // Before any QML loads, so every string is right on the first pass.

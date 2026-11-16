@@ -86,23 +86,23 @@ cat > "$APP/Contents/Info.plist" <<PLIST
         <string>INSendMessageIntent</string>
     </array>
     <key>NSBluetoothAlwaysUsageDescription</key>
-    <string>MacLink uses Bluetooth to detect paired phones nearby.</string>
+    <string>Nexora uses Bluetooth to detect paired phones nearby.</string>
     <key>NSLocalNetworkUsageDescription</key>
-    <string>MacLink finds your phone and connects to it on this network.</string>
+    <string>Nexora finds your phone and connects to it on this network.</string>
     <key>NSBonjourServices</key>
     <array>
         <string>_maclink._udp</string>
     </array>
     <key>NSMicrophoneUsageDescription</key>
-    <string>MacLink uses the microphone for calls you take on this Mac.</string>
+    <string>Nexora uses the microphone for calls you take on this Mac.</string>
     <key>NSCameraUsageDescription</key>
-    <string>MacLink uses the camera only when you start a feature that needs it.</string>
+    <string>Nexora uses the camera only when you start a feature that needs it.</string>
     <key>NSAppleEventsUsageDescription</key>
-    <string>MacLink controls media players on this Mac when you ask it to from your phone.</string>
+    <string>Nexora controls media players on this Mac when you ask it to from your phone.</string>
     <key>CFBundleURLTypes</key>
     <array>
         <dict>
-            <key>CFBundleURLName</key><string>MacLink</string>
+            <key>CFBundleURLName</key><string>Nexora</string>
             <key>CFBundleURLSchemes</key>
             <array>
                 <string>maclink</string>
@@ -154,7 +154,7 @@ cp assets/brand/MacLink.icns "$DMG_STAGING/.VolumeIcon.icns"
 SetFile -c icnC "$DMG_STAGING/.VolumeIcon.icns" 2>/dev/null || true
 SetFile -a C "$DMG_STAGING" 2>/dev/null || true
 rm -f "$DMG"
-hdiutil create -volname "MacLink" -srcfolder "$DMG_STAGING" -ov -format UDZO "$DMG" >/dev/null
+hdiutil create -volname "Nexora" -srcfolder "$DMG_STAGING" -ov -format UDZO "$DMG" >/dev/null
 rm -rf "$DMG_STAGING"
 echo "Built $DMG"
 cp -f "$DMG" "${OUT_DIR}/MacLink-${VERSION}.dmg"

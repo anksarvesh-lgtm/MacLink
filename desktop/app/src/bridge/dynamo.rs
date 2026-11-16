@@ -621,54 +621,128 @@ impl qobject::DynamoController {
         let qn_hud = crate::dynamo::get_quietnotch_hud_json();
         let qn_notif = crate::dynamo::get_quietnotch_notification_json();
 
-        self.as_mut().set_telemetry_json(QString::from(&telemetry));
-        self.as_mut().set_notch_geometry_json(QString::from(&notch_geom));
-        self.as_mut().set_debug_overlay_enabled(crate::dynamo::is_debug_overlay_enabled());
-        self.as_mut().set_battery_json(QString::from(&battery));
-        self.as_mut().set_system_media_json(QString::from(&media));
-        self.as_mut().set_calendar_json(QString::from(&cal));
-        self.as_mut().set_notch_drag_active(drag_act);
-        self.as_mut().set_mochi_json(QString::from(&mochi));
-        self.as_mut().set_coucoudoro_json(QString::from(&coucou));
-        self.as_mut().set_agent_hook_json(QString::from(&agent));
-        self.as_mut().set_agent_tasks_json(QString::from(&agent_tasks));
-        self.as_mut().set_agent_question_json(QString::from(&agent_q));
-        self.as_mut().set_quickshare_json(QString::from(&quickshare));
-        self.as_mut().set_quickshare_trusted_json(QString::from(&quickshare_trusted));
-        self.as_mut().set_atoll_hud_json(QString::from(&atoll_hud));
-        self.as_mut().set_launcher_results_json(QString::from(&launcher_res));
-        self.as_mut().set_downloads_json(QString::from(&downloads));
-        self.as_mut().set_privacy_sensors_json(QString::from(&privacy_sensors));
-        self.as_mut().set_ledge_announcement_json(QString::from(&ledge_announcement));
-        self.as_mut().set_teleprompter_json(QString::from(&teleprompter));
-        self.as_mut().set_ai_usage_json(QString::from(&ai_usage));
-        self.as_mut().set_terminals_json(QString::from(&terminals));
-        self.as_mut().set_network_status_json(QString::from(&net));
-        self.as_mut().set_screen_locked(locked);
-        self.as_mut().set_quietnotch_hud_json(QString::from(&qn_hud));
-        self.as_mut().set_quietnotch_notification_json(QString::from(&qn_notif));
+        if self.as_ref().telemetry_json().to_string() != telemetry {
+            self.as_mut().set_telemetry_json(QString::from(&telemetry));
+        }
+        if self.as_ref().notch_geometry_json().to_string() != notch_geom {
+            self.as_mut().set_notch_geometry_json(QString::from(&notch_geom));
+        }
+        if *self.as_ref().debug_overlay_enabled() != crate::dynamo::is_debug_overlay_enabled() {
+            self.as_mut().set_debug_overlay_enabled(crate::dynamo::is_debug_overlay_enabled());
+        }
+        if self.as_ref().battery_json().to_string() != battery {
+            self.as_mut().set_battery_json(QString::from(&battery));
+        }
+        if self.as_ref().system_media_json().to_string() != media {
+            self.as_mut().set_system_media_json(QString::from(&media));
+        }
+        if self.as_ref().calendar_json().to_string() != cal {
+            self.as_mut().set_calendar_json(QString::from(&cal));
+        }
+        if *self.as_ref().notch_drag_active() != drag_act {
+            self.as_mut().set_notch_drag_active(drag_act);
+        }
+        if self.as_ref().mochi_json().to_string() != mochi {
+            self.as_mut().set_mochi_json(QString::from(&mochi));
+        }
+        if self.as_ref().coucoudoro_json().to_string() != coucou {
+            self.as_mut().set_coucoudoro_json(QString::from(&coucou));
+        }
+        if self.as_ref().agent_hook_json().to_string() != agent {
+            self.as_mut().set_agent_hook_json(QString::from(&agent));
+        }
+        if self.as_ref().agent_tasks_json().to_string() != agent_tasks {
+            self.as_mut().set_agent_tasks_json(QString::from(&agent_tasks));
+        }
+        if self.as_ref().agent_question_json().to_string() != agent_q {
+            self.as_mut().set_agent_question_json(QString::from(&agent_q));
+        }
+        if self.as_ref().quickshare_json().to_string() != quickshare {
+            self.as_mut().set_quickshare_json(QString::from(&quickshare));
+        }
+        if self.as_ref().quickshare_trusted_json().to_string() != quickshare_trusted {
+            self.as_mut().set_quickshare_trusted_json(QString::from(&quickshare_trusted));
+        }
+        if self.as_ref().atoll_hud_json().to_string() != atoll_hud {
+            self.as_mut().set_atoll_hud_json(QString::from(&atoll_hud));
+        }
+        if self.as_ref().launcher_results_json().to_string() != launcher_res {
+            self.as_mut().set_launcher_results_json(QString::from(&launcher_res));
+        }
+        if self.as_ref().downloads_json().to_string() != downloads {
+            self.as_mut().set_downloads_json(QString::from(&downloads));
+        }
+        if self.as_ref().privacy_sensors_json().to_string() != privacy_sensors {
+            self.as_mut().set_privacy_sensors_json(QString::from(&privacy_sensors));
+        }
+        if self.as_ref().ledge_announcement_json().to_string() != ledge_announcement {
+            self.as_mut().set_ledge_announcement_json(QString::from(&ledge_announcement));
+        }
+        if self.as_ref().teleprompter_json().to_string() != teleprompter {
+            self.as_mut().set_teleprompter_json(QString::from(&teleprompter));
+        }
+        if self.as_ref().ai_usage_json().to_string() != ai_usage {
+            self.as_mut().set_ai_usage_json(QString::from(&ai_usage));
+        }
+        if self.as_ref().terminals_json().to_string() != terminals {
+            self.as_mut().set_terminals_json(QString::from(&terminals));
+        }
+        if self.as_ref().network_status_json().to_string() != net {
+            self.as_mut().set_network_status_json(QString::from(&net));
+        }
+        if *self.as_ref().screen_locked() != locked {
+            self.as_mut().set_screen_locked(locked);
+        }
+        if self.as_ref().quietnotch_hud_json().to_string() != qn_hud {
+            self.as_mut().set_quietnotch_hud_json(QString::from(&qn_hud));
+        }
+        if self.as_ref().quietnotch_notification_json().to_string() != qn_notif {
+            self.as_mut().set_quietnotch_notification_json(QString::from(&qn_notif));
+        }
         let clips = crate::dynamo::get_clipboard_history_json("");
         let fans = crate::dynamo::get_fan_telemetry_json();
-        self.as_mut().set_clipboard_history_json(QString::from(&clips));
-        self.as_mut().set_fan_telemetry_json(QString::from(&fans));
+        if self.as_ref().clipboard_history_json().to_string() != clips {
+            self.as_mut().set_clipboard_history_json(QString::from(&clips));
+        }
+        if self.as_ref().fan_telemetry_json().to_string() != fans {
+            self.as_mut().set_fan_telemetry_json(QString::from(&fans));
+        }
         let finance = crate::dynamo::get_isle_finance_json();
-        self.as_mut().set_isle_finance_json(QString::from(&finance));
+        if self.as_ref().isle_finance_json().to_string() != finance {
+            self.as_mut().set_isle_finance_json(QString::from(&finance));
+        }
         let battery = crate::dynamo::get_macisland_battery_json();
-        self.as_mut().set_macisland_battery_json(QString::from(&battery));
+        if self.as_ref().macisland_battery_json().to_string() != battery {
+            self.as_mut().set_macisland_battery_json(QString::from(&battery));
+        }
         let thermal = crate::dynamo::get_macwake_thermal_json();
-        self.as_mut().set_macwake_thermal_json(QString::from(&thermal));
+        if self.as_ref().macwake_thermal_json().to_string() != thermal {
+            self.as_mut().set_macwake_thermal_json(QString::from(&thermal));
+        }
         let cleaning = crate::dynamo::get_macwake_cleaning_json();
-        self.as_mut().set_macwake_cleaning_json(QString::from(&cleaning));
+        if self.as_ref().macwake_cleaning_json().to_string() != cleaning {
+            self.as_mut().set_macwake_cleaning_json(QString::from(&cleaning));
+        }
         let pi = crate::dynamo::get_piisland_sessions_json();
-        self.as_mut().set_piisland_sessions_json(QString::from(&pi));
+        if self.as_ref().piisland_sessions_json().to_string() != pi {
+            self.as_mut().set_piisland_sessions_json(QString::from(&pi));
+        }
         let pookify = crate::dynamo::get_pookify_animation_json();
-        self.as_mut().set_pookify_animation_json(QString::from(&pookify));
+        if self.as_ref().pookify_animation_json().to_string() != pookify {
+            self.as_mut().set_pookify_animation_json(QString::from(&pookify));
+        }
         let ocr = crate::dynamo::get_screen_ocr_json();
-        self.as_mut().set_screen_ocr_json(QString::from(&ocr));
+        if self.as_ref().screen_ocr_json().to_string() != ocr {
+            self.as_mut().set_screen_ocr_json(QString::from(&ocr));
+        }
         let topnotch = crate::dynamo::get_topnotch_focus_json();
-        self.as_mut().set_topnotch_focus_json(QString::from(&topnotch));
+        if self.as_ref().topnotch_focus_json().to_string() != topnotch {
+            self.as_mut().set_topnotch_focus_json(QString::from(&topnotch));
+        }
         let studio = crate::dynamo::get_macisland_studio_json();
-        self.as_mut().set_macisland_studio_json(QString::from(&studio));
+        if self.as_ref().macisland_studio_json().to_string() != studio {
+            self.as_mut().set_macisland_studio_json(QString::from(&studio));
+        }
     }
 
     pub fn set_manual_notch_override(

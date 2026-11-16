@@ -344,8 +344,8 @@ void mac_status_item_init(MacLifecycleCallback on_open,
 
         [menu addItem:[NSMenuItem separatorItem]];
 
-        // 2. Open MacLink
-        NSMenuItem *openItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Open MacLink", nil)
+        // 2. Open Nexora
+        NSMenuItem *openItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Open Nexora", nil)
                                                           action:@selector(openClicked:)
                                                    keyEquivalent:@""];
         [openItem setTarget:g_menuTarget];
@@ -370,8 +370,8 @@ void mac_status_item_init(MacLifecycleCallback on_open,
 
         [menu addItem:[NSMenuItem separatorItem]];
 
-        // 5. Start MacLink at login
-        g_loginMenuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Start MacLink at login", nil)
+        // 5. Start Nexora at login
+        g_loginMenuItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Start Nexora at login", nil)
                                                      action:@selector(toggleLoginClicked:)
                                               keyEquivalent:@""];
         [g_loginMenuItem setTarget:g_menuTarget];
@@ -382,8 +382,8 @@ void mac_status_item_init(MacLifecycleCallback on_open,
 
         [menu addItem:[NSMenuItem separatorItem]];
 
-        // 6. Quit MacLink (⌘Q)
-        NSMenuItem *quitItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Quit MacLink", nil)
+        // 6. Quit Nexora (⌘Q)
+        NSMenuItem *quitItem = [[NSMenuItem alloc] initWithTitle:NSLocalizedString(@"Quit Nexora", nil)
                                                           action:@selector(quitClicked:)
                                                    keyEquivalent:@"q"];
         [quitItem setTarget:g_menuTarget];
@@ -423,9 +423,9 @@ void mac_status_item_update(const char *status_line,
             MacLoginItemStatus status = mac_login_item_get_status();
             [g_loginMenuItem setState:(status == MAC_LOGIN_ITEM_ENABLED ? NSControlStateValueOn : NSControlStateValueOff)];
             if (status == MAC_LOGIN_ITEM_REQUIRES_APPROVAL) {
-                g_loginMenuItem.title = NSLocalizedString(@"Start MacLink at login (Approval Required)", nil);
+                g_loginMenuItem.title = NSLocalizedString(@"Start Nexora at login (Approval Required)", nil);
             } else {
-                g_loginMenuItem.title = NSLocalizedString(@"Start MacLink at login", nil);
+                g_loginMenuItem.title = NSLocalizedString(@"Start Nexora at login", nil);
             }
         }
     });

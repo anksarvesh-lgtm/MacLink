@@ -31,9 +31,9 @@ Window {
     property real mockRamPercent: 68.0
     Timer {
         id: telemetryTickTimer
-        interval: 1000
+        interval: islandWin.expanded ? 1000 : 3000
         repeat: true
-        running: true
+        running: islandWin.visible && !islandWin.isFullscreen
         onTriggered: {
             mockCpuPercent = Math.max(8.0, Math.min(85.0, mockCpuPercent + (Math.random() * 8.0 - 4.0)))
             mockRamPercent = Math.max(50.0, Math.min(82.0, mockRamPercent + (Math.random() * 2.0 - 1.0)))
@@ -43,7 +43,7 @@ Window {
         }
     }
 
-    title: qsTr("MacLink Island")
+    title: qsTr("Nexora Island")
     flags: Qt.Tool | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.WindowDoesNotAcceptFocus
     color: "transparent"
 
@@ -241,9 +241,9 @@ Window {
     property string liveClockStr: Qt.formatTime(new Date(), "h:mm")
     Timer {
         id: liveClockTimer
-        interval: 1000
+        interval: 15000
         repeat: true
-        running: true
+        running: islandWin.visible
         onTriggered: {
             islandWin.liveClockStr = Qt.formatTime(new Date(), "h:mm")
         }
@@ -623,7 +623,7 @@ Window {
     function checkHoverState() {
         const inNotchOrWings = notchHovered || floatingHovered || leftHovered || rightHovered
         if (expanded) {
-            if (expHovered || inNotchOrWings) {
+            if (expHovered || inNotchOrWings || DynamoController.islandExpanded || userPinnedOpen) {
                 autoCollapseTimer.stop()
             } else {
                 autoCollapseTimer.restart()
@@ -632,7 +632,8 @@ Window {
             if (inNotchOrWings) {
                 autoCollapseTimer.stop()
                 isHoverExpanded = true
-            } else {
+                if (DynamoController) DynamoController.islandExpanded = true
+            } else if (!DynamoController.islandExpanded) {
                 autoCollapseTimer.restart()
             }
         }
@@ -682,15 +683,13 @@ Window {
         interval: 200
         repeat: false
         onTriggered: {
-            if (!PhoneCall.active) {
+            if (!PhoneCall.active && !DynamoController.islandExpanded && !userPinnedOpen) {
                 islandWin.isHoverExpanded = false
-                islandWin.userPinnedOpen = false
                 islandWin.notchHovered = false
                 islandWin.floatingHovered = false
                 islandWin.leftHovered = false
                 islandWin.rightHovered = false
                 islandWin.expHovered = false
-                if (DynamoController) DynamoController.islandExpanded = false
             }
         }
     }
@@ -748,6 +747,16 @@ Window {
         NumberAnimation { duration: 220; easing.type: Easing.OutCubic }
     }
 
+    property bool _syncPending: false
+    function requestSyncNativeWindow() {
+        if (_syncPending) return
+        _syncPending = true
+        Qt.callLater(() => {
+            _syncPending = false
+            syncNativeWindow()
+        })
+    }
+
     function syncNativeWindow() {
         if (DynamoController && typeof DynamoController.positionIslandWindow === "function") {
             DynamoController.positionIslandWindow(x, width, height)
@@ -756,10 +765,10 @@ Window {
             DynamoController.updateNotchGestureBounds(x, y, width, height)
         }
     }
-    onXChanged: syncNativeWindow()
-    onYChanged: syncNativeWindow()
-    onWidthChanged: syncNativeWindow()
-    onHeightChanged: syncNativeWindow()
+    onXChanged: requestSyncNativeWindow()
+    onYChanged: requestSyncNativeWindow()
+    onWidthChanged: requestSyncNativeWindow()
+    onHeightChanged: requestSyncNativeWindow()
 
     readonly property string primaryLabel: {
         if (mode === "call")
@@ -792,8 +801,8 @@ Window {
             return qsTr("System HUD")
         }
         return DeviceList.count > 0
-            ? qsTr("MacLink Island · %1").arg(DeviceList.deviceNameAt(0))
-            : qsTr("MacLink Island · Ready")
+            ? qsTr("Nexora Island · %1").arg(DeviceList.deviceNameAt(0))
+            : qsTr("Nexora Island · Ready")
     }
 
     readonly property string secondaryLabel: {
@@ -829,7 +838,7 @@ Window {
                 : base
         }
         if (mode === "notification")
-            return qsTr("Click to view in MacLink")
+            return qsTr("Click to view in Nexora")
         if (mode === "waiting") {
             return DeviceList.count > 0
                 ? qsTr("Will send when %1 is back").arg(DeviceList.deviceNameAt(0))
@@ -2070,7 +2079,7 @@ Window {
                     weight: Font.Medium
                     color: Qt.rgba(1, 1, 1, 0.80)
                     elide: Text.ElideRight
-                    text: islandWin.mode === "media" ? islandWin.mediaTitle : "MacLink"
+                    text: islandWin.mode === "media" ? islandWin.mediaTitle : "Nexora"
                 }
             }
 
