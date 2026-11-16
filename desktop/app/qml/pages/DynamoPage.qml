@@ -1899,21 +1899,7 @@ Item {
 
                     Divider { width: parent.width }
 
-                    // Toggle 3: Mac System Media Controls
-                    ListRow {
-                        width: parent.width
-                        iconPath: Icons.music
-                        title: qsTr("Mac System Media Controls")
-                        description: qsTr("Control macOS Apple Music and Spotify playback with live animated waveform directly in the Island.")
-                        Toggle {
-                            checked: Preferences.notchSystemMedia
-                            onToggled: (val) => Preferences.notchSystemMedia = val
-                        }
-                    }
-
-                    Divider { width: parent.width }
-
-                    // Toggle 4: Calendar Sneak-Peek
+                    // Toggle 3: Calendar Sneak-Peek
                     ListRow {
                         width: parent.width
                         iconPath: Icons.history

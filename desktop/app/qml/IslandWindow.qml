@@ -146,20 +146,6 @@ Window {
             mediaCanPrev = best.canPrevious
             mediaDuration = best.duration
             mediaPosition = best.position
-        } else if (Preferences.notchSystemMedia && sysMedia && sysMedia.hasTrack) {
-            mediaDeviceId = "local_system"
-            mediaPlayerId = sysMedia.player || "Music"
-            mediaApp = sysMedia.player || "Music"
-            mediaTitle = sysMedia.title || ""
-            mediaArtist = sysMedia.artist || ""
-            mediaArt = ""
-            mediaPlaying = sysMedia.isPlaying
-            mediaCanPlay = true
-            mediaCanPause = true
-            mediaCanNext = true
-            mediaCanPrev = true
-            mediaDuration = sysMedia.duration || 0
-            mediaPosition = sysMedia.position || 0
         } else {
             mediaDeviceId = ""
             mediaPlayerId = ""
@@ -408,7 +394,7 @@ Window {
     readonly property var sysCal: {
         try { return JSON.parse(DynamoController.calendarJson || "{}") } catch (e) { return {} }
     }
-    readonly property bool localMediaPlaying: Preferences.notchSystemMedia && sysMedia && sysMedia.hasTrack && sysMedia.isPlaying
+    readonly property bool localMediaPlaying: false
 
     // Coucou Extensions (Reverse engineered from coucou)
     readonly property var mochiState: {
@@ -4629,11 +4615,7 @@ Window {
                         HoverHandler { id: expPrevHover; cursorShape: Qt.PointingHandCursor }
                         TapHandler {
                             onTapped: {
-                                if (islandWin.mediaDeviceId === "local_system" || Preferences.notchSystemMedia) {
-                                    DynamoController.mediaPrevious()
-                                } else {
-                                    MediaList.command(islandWin.mediaDeviceId, islandWin.mediaPlayerId, "previous", 0)
-                                }
+                                MediaList.command(islandWin.mediaDeviceId, islandWin.mediaPlayerId, "previous", 0)
                             }
                         }
                     }
@@ -4652,16 +4634,12 @@ Window {
                         HoverHandler { cursorShape: Qt.PointingHandCursor }
                         TapHandler {
                             onTapped: {
-                                if (islandWin.mediaDeviceId === "local_system" || Preferences.notchSystemMedia) {
-                                    DynamoController.mediaPlayPause()
-                                } else {
-                                    MediaList.command(
-                                        islandWin.mediaDeviceId,
-                                        islandWin.mediaPlayerId,
-                                        islandWin.mediaPlaying ? "pause" : "play",
-                                        0
-                                    )
-                                }
+                                MediaList.command(
+                                    islandWin.mediaDeviceId,
+                                    islandWin.mediaPlayerId,
+                                    islandWin.mediaPlaying ? "pause" : "play",
+                                    0
+                                )
                             }
                         }
                     }
@@ -4680,11 +4658,7 @@ Window {
                         HoverHandler { id: expNextHover; cursorShape: Qt.PointingHandCursor }
                         TapHandler {
                             onTapped: {
-                                if (islandWin.mediaDeviceId === "local_system" || Preferences.notchSystemMedia) {
-                                    DynamoController.mediaNext()
-                                } else {
-                                    MediaList.command(islandWin.mediaDeviceId, islandWin.mediaPlayerId, "next", 0)
-                                }
+                                MediaList.command(islandWin.mediaDeviceId, islandWin.mediaPlayerId, "next", 0)
                             }
                         }
                     }

@@ -14,7 +14,6 @@ private var powerConnectedCallback: (@convention(c) () -> Void)?
 @_cdecl("maclink_init_boring_services")
 public func maclink_init_boring_services() {
     _ = BatteryActivityManager.shared
-    _ = SystemMediaController.shared
     _ = CalendarManager.shared
 
     NotchDragDetector.shared.onDragEnter = {
@@ -84,14 +83,10 @@ public func maclink_get_battery_status_json(buffer: UnsafeMutablePointer<CChar>,
 
 @_cdecl("maclink_get_system_media_json")
 public func maclink_get_system_media_json(buffer: UnsafeMutablePointer<CChar>, maxLen: Int) -> Int {
-    let state = SystemMediaController.shared.getCurrentState()
-    guard let data = try? JSONEncoder().encode(state),
-          let str = String(data: data, encoding: .utf8) else {
-        return 0
-    }
-    let count = str.utf8.count
+    let fallback = "{}"
+    let count = fallback.utf8.count
     if count < maxLen {
-        str.withCString { ptr in
+        fallback.withCString { ptr in
             buffer.initialize(from: ptr, count: count + 1)
         }
         return count
@@ -101,17 +96,17 @@ public func maclink_get_system_media_json(buffer: UnsafeMutablePointer<CChar>, m
 
 @_cdecl("maclink_media_play_pause")
 public func maclink_media_play_pause() {
-    SystemMediaController.shared.playPause()
+    // Unrelated system media controller removed
 }
 
 @_cdecl("maclink_media_next")
 public func maclink_media_next() {
-    SystemMediaController.shared.nextTrack()
+    // Unrelated system media controller removed
 }
 
 @_cdecl("maclink_media_previous")
 public func maclink_media_previous() {
-    SystemMediaController.shared.previousTrack()
+    // Unrelated system media controller removed
 }
 
 @_cdecl("maclink_get_calendar_event_json")

@@ -411,7 +411,6 @@ fn main() {
     println!("cargo:rerun-if-changed=swift/NotchGeometry.swift");
     println!("cargo:rerun-if-changed=swift/DragDetector.swift");
     println!("cargo:rerun-if-changed=swift/BatteryActivityManager.swift");
-    println!("cargo:rerun-if-changed=swift/SystemMediaController.swift");
     println!("cargo:rerun-if-changed=swift/CalendarManager.swift");
     println!("cargo:rerun-if-changed=swift/BoringNotchBridge.swift");
     println!("cargo:rerun-if-changed=swift/MochiEngine.swift");
@@ -488,7 +487,6 @@ fn main() {
                     "swift/NotchDetector.swift",
                     "swift/DragDetector.swift",
                     "swift/BatteryActivityManager.swift",
-                    "swift/SystemMediaController.swift",
                     "swift/CalendarManager.swift",
                     "swift/BoringNotchBridge.swift",
                     "swift/MochiEngine.swift",
