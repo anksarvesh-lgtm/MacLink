@@ -15,3 +15,10 @@
 ## Rule 4: Write All Code in macOS-Supported Swift
 - Where new code, services, extensions, or modular add-ons are written, prioritize macOS-supported native Swift (using AppKit, SwiftUI, Combine, CoreGraphics, and Apple platform frameworks).
 - All implementations must be strictly compatible with macOS and follow native Apple guidelines.
+
+## Rule 5: Only Modify and Build MacLink (Single-App Target)
+- All modifications, new features, and code changes are done **strictly and solely inside the `MacLink` repository and application**.
+- All external repositories (such as `dynamo-mac`, `liquid-glass-react`, or any other reference repositories) serve **exclusively as references** for code, architecture, designs, feature logic, and tool code to be integrated directly into MacLink.
+- Under no circumstances should separate apps (such as `LiquidDynamo.app`) be built, run, installed, or distributed.
+- Any build, package, or install commands (`build`, `install`, `cargo build`, packaging scripts, etc.) must target and operate **exclusively on MacLink** (`/Applications/MacLink.app`).
+
