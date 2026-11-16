@@ -20,7 +20,7 @@ FocusScope {
     signal doctorRequested()
 
     readonly property int totalSteps: 3
-    readonly property string adbCommand: "adb install -r MacLink-" + AppController.version + "-android.apk"
+    readonly property string adbCommand: "adb install -r Nexora-" + AppController.version + "-android.apk"
     property int step: Math.max(0, Math.min(totalSteps - 1, Preferences.walkthroughStep))
     property alias currentStep: walkthrough.step
 
@@ -543,7 +543,7 @@ FocusScope {
                                     variant: "fill"
                                     size: "sm"
                                     Accessible.name: "Download Android APK directly"
-                                    onClicked: Qt.openUrlExternally("https://github.com/anksarvesh-lgtm/MacLink/releases/latest/download/MacLink-" + AppController.version + "-android.apk")
+                                    onClicked: Qt.openUrlExternally("https://github.com/anksarvesh-lgtm/MacLink/releases/latest/download/Nexora-" + AppController.version + "-android.apk")
                                 }
 
                                 Button {
@@ -564,7 +564,7 @@ FocusScope {
                                     size: "sm"
                                     Accessible.name: "Copy Android APK download URL"
                                     onClicked: {
-                                        AppController.copyText("https://github.com/anksarvesh-lgtm/MacLink/releases/latest/download/MacLink-" + AppController.version + "-android.apk")
+                                        AppController.copyText("https://github.com/anksarvesh-lgtm/MacLink/releases/latest/download/Nexora-" + AppController.version + "-android.apk")
                                         copied = true
                                         resetCopyUrlTimer.restart()
                                     }

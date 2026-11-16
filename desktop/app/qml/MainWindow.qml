@@ -776,7 +776,7 @@ NativeWindow {
             backdrop: windowBackdrop
         }
 
-        // App logo (icon only, no "MacLink" text, below title bar)
+        // App logo (Nexora Ribbon, below title bar)
         Image {
             id: railLogo
             anchors.horizontalCenter: parent.horizontalCenter
@@ -786,6 +786,8 @@ NativeWindow {
             mipmap: true
             smooth: true
             fillMode: Image.PreserveAspectFit
+            Accessible.role: Accessible.Graphic
+            Accessible.name: "Nexora"
         }
 
         readonly property var navItems: [

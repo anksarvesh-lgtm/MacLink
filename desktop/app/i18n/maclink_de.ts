@@ -50,28 +50,28 @@
     </message>
     <message>
         <location filename="rust_strings.h" line="16" />
-        <source>MacLink · %1</source>
-        <translation>MacLink · %1</translation>
+        <source>Nexora · %1</source>
+        <translation>Nexora · %1</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="17" />
-        <source>MacLink · %1 devices connected</source>
-        <translation>MacLink · %1 Geräte verbunden</translation>
+        <source>Nexora · %1 devices connected</source>
+        <translation>Nexora · %1 Geräte verbunden</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="18" />
-        <source>MacLink · 1 device connected</source>
-        <translation>MacLink · 1 Gerät verbunden</translation>
+        <source>Nexora · 1 device connected</source>
+        <translation>Nexora · 1 Gerät verbunden</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="19" />
-        <source>MacLink · no devices paired</source>
-        <translation>MacLink · keine Geräte gekoppelt</translation>
+        <source>Nexora · no devices paired</source>
+        <translation>Nexora · keine Geräte gekoppelt</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="20" />
-        <source>MacLink · not connected</source>
-        <translation>MacLink · nicht verbunden</translation>
+        <source>Nexora · not connected</source>
+        <translation>Nexora · nicht verbunden</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="21" />
@@ -80,8 +80,8 @@
     </message>
     <message>
         <location filename="rust_strings.h" line="22" />
-        <source>Open MacLink</source>
-        <translation>MacLink öffnen</translation>
+        <source>Open Nexora</source>
+        <translation>Nexora öffnen</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="23" />
@@ -90,8 +90,8 @@
     </message>
     <message>
         <location filename="rust_strings.h" line="24" />
-        <source>Quit MacLink</source>
-        <translation>MacLink beenden</translation>
+        <source>Quit Nexora</source>
+        <translation>Nexora beenden</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="25" />
@@ -178,8 +178,8 @@
     </message>
     <message>
         <location filename="../qml/pages/AppsPage.qml" line="90" />
-        <source>Set up Wireless debugging in MacLink on the phone to open its apps here.</source>
-        <translation>Richte Kabelloses Debugging in MacLink auf dem Gerät ein, um seine Apps hier zu öffnen.</translation>
+        <source>Set up Wireless debugging in Nexora on the phone to open its apps here.</source>
+        <translation>Richte Kabelloses Debugging in Nexora auf dem Gerät ein, um seine Apps hier zu öffnen.</translation>
     </message>
     <message>
         <location filename="../qml/pages/AppsPage.qml" line="143" />
@@ -787,8 +787,8 @@
     </message>
     <message>
         <location filename="rust_strings.h" line="61" />
-        <source>Update MacLink on %1 to send it images.</source>
-        <translation>Aktualisiere MacLink auf %1, um Bilder dorthin zu senden.</translation>
+        <source>Update Nexora on %1 to send it images.</source>
+        <translation>Aktualisiere Nexora auf %1, um Bilder dorthin zu senden.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="62" />
@@ -1040,8 +1040,8 @@
     </message>
     <message>
         <location filename="rust_strings.h" line="102" />
-        <source>Opened Recordings folder. Start a voice note in MacLink on %1 to send it here.</source>
-        <translation>Ordner „Aufnahmen“ geöffnet. Starte eine Sprachnotiz in MacLink auf %1, um sie hierher zu senden.</translation>
+        <source>Opened Recordings folder. Start a voice note in Nexora on %1 to send it here.</source>
+        <translation>Ordner „Aufnahmen“ geöffnet. Starte eine Sprachnotiz in Nexora auf %1, um sie hierher zu senden.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="103" />
@@ -1200,8 +1200,8 @@
     </message>
     <message>
         <location filename="rust_strings.h" line="134" />
-        <source>Stream %1's camera into the MacLink virtual webcam</source>
-        <translation>Kamera von %1 an die virtuelle MacLink-Webcam übertragen</translation>
+        <source>Stream %1's camera into the Nexora virtual webcam</source>
+        <translation>Kamera von %1 an die virtuelle Nexora-Webcam übertragen</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="135" />
@@ -1841,8 +1841,8 @@
     <name>Doctor</name>
     <message>
         <location filename="rust_strings.h" line="183" />
-        <source>%1 Open MacLink on the phone and keep both on the same network. If the phone asks to run in the background, allow it.</source>
-        <translation>%1 Öffne MacLink auf dem Gerät und halte beide Geräte im selben Netzwerk. Wenn das Gerät nach der Ausführung im Hintergrund fragt, erlaube sie.</translation>
+        <source>%1 Open Nexora on the phone and keep both on the same network. If the phone asks to run in the background, allow it.</source>
+        <translation>%1 Öffne Nexora auf dem Gerät und halte beide Geräte im selben Netzwerk. Wenn das Gerät nach der Ausführung im Hintergrund fragt, erlaube sie.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="184" />
@@ -1926,33 +1926,33 @@
     </message>
     <message>
         <location filename="rust_strings.h" line="200" />
-        <source>MacLink isn't allowed through Windows Firewall</source>
-        <translation>MacLink ist in der Windows-Firewall nicht zugelassen</translation>
+        <source>Nexora isn't allowed through Windows Firewall</source>
+        <translation>Nexora ist in der Windows-Firewall nicht zugelassen</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="201" />
-        <source>On Huawei / Honor: open Settings → Battery → App launch, turn off Manage automatically for MacLink, and keep Auto-launch, Secondary launch, and Run in background on.</source>
-        <translation>Auf Huawei / Honor: Öffne Einstellungen → Akku → App-Start, deaktiviere „Automatisch verwalten“ für MacLink und lasse „Auto-Start“, „Sekundärer Start“ und „Im Hintergrund ausführen“ aktiviert.</translation>
+        <source>On Huawei / Honor: open Settings → Battery → App launch, turn off Manage automatically for Nexora, and keep Auto-launch, Secondary launch, and Run in background on.</source>
+        <translation>Auf Huawei / Honor: Öffne Einstellungen → Akku → App-Start, deaktiviere „Automatisch verwalten“ für Nexora und lasse „Auto-Start“, „Sekundärer Start“ und „Im Hintergrund ausführen“ aktiviert.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="202" />
-        <source>On OnePlus / OxygenOS: open Settings → Apps → App management → MacLink → Battery usage and turn on Allow background activity and Allow auto-launch.</source>
-        <translation>Auf OnePlus / OxygenOS: Öffne Einstellungen → Apps → App-Verwaltung → MacLink → Akkunutzung und aktiviere „Hintergrundaktivität zulassen“ sowie „Automatischen Start zulassen“.</translation>
+        <source>On OnePlus / OxygenOS: open Settings → Apps → App management → Nexora → Battery usage and turn on Allow background activity and Allow auto-launch.</source>
+        <translation>Auf OnePlus / OxygenOS: Öffne Einstellungen → Apps → App-Verwaltung → Nexora → Akkunutzung und aktiviere „Hintergrundaktivität zulassen“ sowie „Automatischen Start zulassen“.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="203" />
-        <source>On Oppo / Realme: open Settings → Apps → App management → MacLink → Battery usage and turn on Allow background activity and Allow auto-launch.</source>
-        <translation>Auf Oppo / Realme: Öffne Einstellungen → Apps → App-Verwaltung → MacLink → Akkunutzung und aktiviere „Hintergrundaktivität zulassen“ sowie „Automatischen Start zulassen“.</translation>
+        <source>On Oppo / Realme: open Settings → Apps → App management → Nexora → Battery usage and turn on Allow background activity and Allow auto-launch.</source>
+        <translation>Auf Oppo / Realme: Öffne Einstellungen → Apps → App-Verwaltung → Nexora → Akkunutzung und aktiviere „Hintergrundaktivität zulassen“ sowie „Automatischen Start zulassen“.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="204" />
-        <source>On Pixel: open Settings → Apps → See all apps → MacLink → App battery usage, tap Allow background usage, and choose Unrestricted.</source>
-        <translation>Auf Pixel: Öffne Einstellungen → Apps → Alle Apps ansehen → MacLink → Akkunutzung der App, tippe auf „Hintergrundnutzung zulassen“ und wähle „Uneingeschränkt“.</translation>
+        <source>On Pixel: open Settings → Apps → See all apps → Nexora → App battery usage, tap Allow background usage, and choose Unrestricted.</source>
+        <translation>Auf Pixel: Öffne Einstellungen → Apps → Alle Apps ansehen → Nexora → Akkunutzung der App, tippe auf „Hintergrundnutzung zulassen“ und wähle „Uneingeschränkt“.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="205" />
-        <source>On Samsung: open Settings → Apps → MacLink → Battery and choose Unrestricted, then in Device care → Battery → Background usage limits make sure MacLink is never put to sleep.</source>
-        <translation>Auf Samsung: Öffne Einstellungen → Apps → MacLink → Akku und wähle „Nicht eingeschränkt“. Stelle dann unter Gerätewartung → Akku → Grenzen der Hintergrundnutzung sicher, dass MacLink nie in den Standby versetzt wird.</translation>
+        <source>On Samsung: open Settings → Apps → Nexora → Battery and choose Unrestricted, then in Device care → Battery → Background usage limits make sure Nexora is never put to sleep.</source>
+        <translation>Auf Samsung: Öffne Einstellungen → Apps → Nexora → Akku und wähle „Nicht eingeschränkt“. Stelle dann unter Gerätewartung → Akku → Grenzen der Hintergrundnutzung sicher, dass Nexora nie in den Standby versetzt wird.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="206" />
@@ -1961,13 +1961,13 @@
     </message>
     <message>
         <location filename="rust_strings.h" line="207" />
-        <source>On Vivo / OriginOS / Funtouch: open Settings → Battery → Background power consumption management → MacLink and choose Unrestricted, and allow Autostart.</source>
-        <translation>Auf Vivo / OriginOS / Funtouch: Öffne Einstellungen → Akku → Hintergrund-Stromverbrauchsverwaltung → MacLink, wähle „Uneingeschränkt“ und erlaube „Autostart“.</translation>
+        <source>On Vivo / OriginOS / Funtouch: open Settings → Battery → Background power consumption management → Nexora and choose Unrestricted, and allow Autostart.</source>
+        <translation>Auf Vivo / OriginOS / Funtouch: Öffne Einstellungen → Akku → Hintergrund-Stromverbrauchsverwaltung → Nexora, wähle „Uneingeschränkt“ und erlaube „Autostart“.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="208" />
-        <source>On Xiaomi / HyperOS / MIUI: open Settings → Apps → Manage apps → MacLink, turn on Autostart, and set Battery saver to No restrictions.</source>
-        <translation>Auf Xiaomi / HyperOS / MIUI: Öffne Einstellungen → Apps → Apps verwalten → MacLink, aktiviere „Autostart“ und stelle das Energiesparen auf „Keine Beschränkungen“.</translation>
+        <source>On Xiaomi / HyperOS / MIUI: open Settings → Apps → Manage apps → Nexora, turn on Autostart, and set Battery saver to No restrictions.</source>
+        <translation>Auf Xiaomi / HyperOS / MIUI: Öffne Einstellungen → Apps → Apps verwalten → Nexora, aktiviere „Autostart“ und stelle das Energiesparen auf „Keine Beschränkungen“.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="209" />
@@ -2016,8 +2016,8 @@
     </message>
     <message>
         <location filename="rust_strings.h" line="218" />
-        <source>Windows Firewall blocks MacLink</source>
-        <translation>Die Windows-Firewall blockiert MacLink</translation>
+        <source>Windows Firewall blocks Nexora</source>
+        <translation>Die Windows-Firewall blockiert Nexora</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="219" />
@@ -2268,8 +2268,8 @@
     </message>
     <message>
         <location filename="../qml/pages/FeaturesGuidePage.qml" line="572" />
-        <source>Every feature in MacLink, what it needs, and where to find it.</source>
-        <translation>Jede Funktion in MacLink, was sie benötigt und wo du sie findest.</translation>
+        <source>Every feature in Nexora, what it needs, and where to find it.</source>
+        <translation>Jede Funktion in Nexora, was sie benötigt und wo du sie findest.</translation>
     </message>
     <message>
         <location filename="../qml/pages/FeaturesGuidePage.qml" line="611" />
@@ -2354,15 +2354,15 @@
     <name>Guide</name>
     <message>
         <location filename="rust_strings.h" line="233" />
-        <source>1. Install MacLink on your Windows 11 PC and your Android phone (Android 8.0 or newer).
+        <source>1. Install Nexora on your Windows 11 PC and your Android phone (Android 8.0 or newer).
 2. Connect both devices to the same Wi-Fi network, or plug your phone into your PC with a USB cable.
 3. Open the Pair step in the setup walkthrough, or click + (Pair a new device) at the bottom of the left rail.
-4. Scan the QR code from the MacLink Android app, or select your phone from the nearby devices list and confirm that the 6-digit code matches on both screens.
+4. Scan the QR code from the Nexora Android app, or select your phone from the nearby devices list and confirm that the 6-digit code matches on both screens.
 5. Choose which features to share for that phone and grant only the Android permissions you want to use.</source>
-        <translation>1. Installiere MacLink auf deinem Windows-11-PC und deinem Android-Gerät (Android 8.0 oder neuer).
+        <translation>1. Installiere Nexora auf deinem Windows-11-PC und deinem Android-Gerät (Android 8.0 oder neuer).
 2. Verbinde beide Geräte mit demselben WLAN oder schließe dein Gerät per USB-Kabel an deinen PC an.
 3. Öffne den Kopplungsschritt im Einrichtungsassistenten oder klicke unten in der linken Seitenleiste auf „+“ (Neues Gerät koppeln).
-4. Scanne den QR-Code in der MacLink-Android-App oder wähle dein Gerät aus der Liste der Geräte in der Nähe aus und bestätige, dass der 6-stellige Code auf beiden Bildschirmen übereinstimmt.
+4. Scanne den QR-Code in der Nexora-Android-App oder wähle dein Gerät aus der Liste der Geräte in der Nähe aus und bestätige, dass der 6-stellige Code auf beiden Bildschirmen übereinstimmt.
 5. Wähle aus, welche Funktionen für dieses Gerät freigegeben werden sollen, und erteile nur die Android-Berechtigungen, die du nutzen möchtest.</translation>
     </message>
     <message>
@@ -2435,15 +2435,15 @@
         <source>If your phone and PC do not see each other:
 
 1. Open Connection Doctor from Settings › Connection &amp; About or the Command Palette.
-2. Check that your Wi-Fi network profile in Windows is set to Private rather than Public, or click Fix in Connection Doctor to allow MacLink through Windows Firewall.
+2. Check that your Wi-Fi network profile in Windows is set to Private rather than Public, or click Fix in Connection Doctor to allow Nexora through Windows Firewall.
 3. Verify that both devices are on the same subnet and that guest Wi-Fi client isolation is turned off on your router.
-4. You can also connect over a USB cable with USB debugging enabled; MacLink automatically sets up a local tunnel.</source>
+4. You can also connect over a USB cable with USB debugging enabled; Nexora automatically sets up a local tunnel.</source>
         <translation>Wenn dein Gerät und dein PC einander nicht finden:
 
 1. Öffne den Verbindungs-Doktor über Einstellungen › Verbindung &amp; Info oder über die Befehlspalette.
-2. Prüfe, ob dein WLAN-Netzwerkprofil in Windows auf „Privat“ statt auf „Öffentlich“ eingestellt ist, oder klicke im Verbindungs-Doktor auf „Zulassen“, um MacLink in der Windows-Firewall freizugeben.
+2. Prüfe, ob dein WLAN-Netzwerkprofil in Windows auf „Privat“ statt auf „Öffentlich“ eingestellt ist, oder klicke im Verbindungs-Doktor auf „Zulassen“, um Nexora in der Windows-Firewall freizugeben.
 3. Stelle sicher, dass sich beide Geräte im selben Subnetz befinden und dass die Gast-WLAN-/Client-Isolation auf deinem Router deaktiviert ist.
-4. Du kannst die Verbindung auch über ein USB-Kabel bei aktiviertem USB-Debugging herstellen; MacLink richtet dann automatisch einen lokalen Tunnel ein.</translation>
+4. Du kannst die Verbindung auch über ein USB-Kabel bei aktiviertem USB-Debugging herstellen; Nexora richtet dann automatisch einen lokalen Tunnel ein.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="248" />
@@ -2486,7 +2486,7 @@ Sensible Funktionen wie „PC-Ordner freigeben“, „Ferneingabe“ und die umg
     </message>
     <message>
         <location filename="rust_strings.h" line="253" />
-        <source>Most MacLink features work in Standard mode with regular Android permissions. Two optional modes unlock deeper system integration:
+        <source>Most Nexora features work in Standard mode with regular Android permissions. Two optional modes unlock deeper system integration:
 
 Elevated mode (Wireless debugging or root)
 - Captures the phone screen without showing the Android cast confirmation prompt every time.
@@ -2495,8 +2495,8 @@ Elevated mode (Wireless debugging or root)
 
 Assist mode (Android Accessibility Service)
 - Injects mouse clicks, scrolling, and touch gestures when you control your phone from your PC.
-- MacLink never reads screen text or logs keystrokes through the Accessibility service.</source>
-        <translation>Die meisten Funktionen von MacLink arbeiten im Standardmodus mit normalen Android-Berechtigungen. Zwei optionale Modi schalten eine tiefere Systemintegration frei:
+- Nexora never reads screen text or logs keystrokes through the Accessibility service.</source>
+        <translation>Die meisten Funktionen von Nexora arbeiten im Standardmodus mit normalen Android-Berechtigungen. Zwei optionale Modi schalten eine tiefere Systemintegration frei:
 
 Erweiterter Modus / Elevated (Kabelloses Debugging oder Root)
 - Überträgt den Gerätebildschirm, ohne jedes Mal den Android-Bestätigungsdialog anzuzeigen.
@@ -2505,16 +2505,16 @@ Erweiterter Modus / Elevated (Kabelloses Debugging oder Root)
 
 Assistenz-Modus (Android-Bedienungshilfen)
 - Führt Mausklicks, Scrollbewegungen und Touch-Gesten aus, wenn du dein Gerät vom PC aus steuerst.
-- MacLink liest über die Bedienungshilfen niemals Bildschirmtexte aus und zeichnet keine Tastenanschläge auf.</translation>
+- Nexora liest über die Bedienungshilfen niemals Bildschirmtexte aus und zeichnet keine Tastenanschläge auf.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="254" />
-        <source>MacLink Island</source>
-        <translation>MacLink Island</translation>
+        <source>Nexora Island</source>
+        <translation>Nexora Island</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="255" />
-        <source>MacLink links your Android phone and your PC directly on your local network or over a USB cable.
+        <source>Nexora links your Android phone and your PC directly on your local network or over a USB cable.
 
 How it works
 - Devices discover each other over local Wi-Fi (mDNS) or USB (ADB reverse tunnel) and connect over QUIC (TLS 1.3).
@@ -2525,7 +2525,7 @@ Capability tiers on Android
 - Standard mode: Works right after installation with standard Android permissions.
 - Elevated mode (optional): Uses Wireless debugging (set up once in the phone app) or root for phone apps in their own windows, mirroring without the screen capture prompt, and more phone controls.
 - Assist mode (optional): Uses the Android Accessibility service only when you enable Remote input so your PC mouse and keyboard can control the phone.</source>
-        <translation>MacLink verbindet dein Android-Gerät und deinen PC direkt über dein lokales Netzwerk oder ein USB-Kabel.
+        <translation>Nexora verbindet dein Android-Gerät und deinen PC direkt über dein lokales Netzwerk oder ein USB-Kabel.
 
 So funktioniert es
 - Geräte erkennen einander über das lokale WLAN (mDNS) oder USB (ADB-Reverse-Tunnel) und verbinden sich über QUIC (TLS 1.3).
@@ -2539,14 +2539,14 @@ Funktionsstufen unter Android
     </message>
     <message>
         <location filename="rust_strings.h" line="256" />
-        <source>MacLink never asks for every permission up front. Each feature works independently:
+        <source>Nexora never asks for every permission up front. Each feature works independently:
 
 - Notification Access: Required only if you want phone notifications, inline replies, and notification-backed chat threads on your PC.
 - SMS and Contacts: Required only if you want to read and send SMS/MMS messages or look up contact names on your PC.
 - Phone and Call Log: Required only if you want incoming call alerts, call history, or dialing from your PC.
 - Media and Photos: Required only if you want the Photos gallery, Shelf latest photo, or folder sync.
 - Camera and Microphone: Required only while streaming your phone as a webcam, taking a Continuity Camera shot, or recording a voice note.</source>
-        <translation>MacLink verlangt niemals alle Berechtigungen im Voraus. Jede Funktion arbeitet unabhängig:
+        <translation>Nexora verlangt niemals alle Berechtigungen im Voraus. Jede Funktion arbeitet unabhängig:
 
 - Benachrichtigungszugriff: Nur erforderlich, wenn du Gerätebenachrichtigungen, direkte Antworten und benachrichtigungsbasierte Chats auf deinem PC nutzen möchtest.
 - SMS und Kontakte: Nur erforderlich, wenn du SMS-/MMS-Nachrichten lesen und senden oder Kontaktnamen auf deinem PC nachschlagen möchtest.
@@ -2556,8 +2556,8 @@ Funktionsstufen unter Android
     </message>
     <message>
         <location filename="rust_strings.h" line="257" />
-        <source>MacLink overview</source>
-        <translation>MacLink-Übersicht</translation>
+        <source>Nexora overview</source>
+        <translation>Nexora-Übersicht</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="258" />
@@ -2713,23 +2713,23 @@ Voraussetzungen
 Displays a compact pill at the top center of your primary monitor for incoming calls, live file transfer progress, media playback, and optional notification previews.
 
 Where to find it
-- Settings › General › MacLink Island.
+- Settings › General › Nexora Island.
 
 What it needs
-- Turn on MacLink Island in Settings › General and pick which events should appear.</source>
+- Turn on Nexora Island in Settings › General and pick which events should appear.</source>
         <translation>Funktion
 Zeigt oben mittig auf deinem Hauptbildschirm eine kompakte Leiste für eingehende Anrufe, laufende Dateiübertragungen, Medienwiedergabe und optionale Benachrichtigungsvorschauen an.
 
 Wo zu finden
-- Einstellungen › Allgemein › MacLink Island.
+- Einstellungen › Allgemein › Nexora Island.
 
 Voraussetzungen
-- Aktiviere MacLink Island unter Einstellungen › Allgemein und wähle aus, welche Ereignisse angezeigt werden sollen.</translation>
+- Aktiviere Nexora Island unter Einstellungen › Allgemein und wähle aus, welche Ereignisse angezeigt werden sollen.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="279" />
         <source>What it does
-Exposes an opt-in localhost HTTP/JSON and Server-Sent Events API on 127.0.0.1 (default port 53320) protected by a bearer token so scripts, CLI tools, and Stream Deck plugins can trigger MacLink actions.
+Exposes an opt-in localhost HTTP/JSON and Server-Sent Events API on 127.0.0.1 (default port 53320) protected by a bearer token so scripts, CLI tools, and Stream Deck plugins can trigger Nexora actions.
 
 Where to find it
 - Settings › Connection &amp; About › Local automation API.
@@ -2737,7 +2737,7 @@ Where to find it
 What it needs
 - Turn on Local automation API in Settings › Connection &amp; About and read the bearer token from api-token.json.</source>
         <translation>Funktion
-Stellt auf Wunsch eine lokale HTTP/JSON- und Server-Sent-Events-API unter 127.0.0.1 (Standardport 53320) bereit, die durch ein Bearer-Token geschützt ist, damit Skripte, CLI-Tools und Stream-Deck-Plugins MacLink-Aktionen auslösen können.
+Stellt auf Wunsch eine lokale HTTP/JSON- und Server-Sent-Events-API unter 127.0.0.1 (Standardport 53320) bereit, die durch ein Bearer-Token geschützt ist, damit Skripte, CLI-Tools und Stream-Deck-Plugins Nexora-Aktionen auslösen können.
 
 Wo zu finden
 - Einstellungen › Verbindung &amp; Info › Lokale Automatisierungs-API.
@@ -2755,7 +2755,7 @@ Where to find it
 - Command Palette › Type on phone with PC keyboard.
 
 What it needs
-- Assist mode (Accessibility service), the MacLink input method, or Elevated mode on your phone.</source>
+- Assist mode (Accessibility service), the Nexora input method, or Elevated mode on your phone.</source>
         <translation>Funktion
 Leitet Tastenanschläge und eingefügten Text von deiner PC-Tastatur direkt an dein Gerät weiter, ohne dass der Gerätebildschirm gespiegelt werden muss.
 
@@ -2764,7 +2764,7 @@ Wo zu finden
 - Befehlspalette › Mit der PC-Tastatur auf dem Gerät tippen.
 
 Voraussetzungen
-- Assistenz-Modus (Bedienungshilfen), die MacLink-Eingabemethode oder den erweiterten Modus auf deinem Gerät.</translation>
+- Assistenz-Modus (Bedienungshilfen), die Nexora-Eingabemethode oder den erweiterten Modus auf deinem Gerät.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="281" />
@@ -2884,7 +2884,7 @@ Where to find it
 - Settings › General › Copy one-time codes.
 
 What it needs
-- Notification Access permission enabled for MacLink on your Android phone.
+- Notification Access permission enabled for Nexora on your Android phone.
 - The per-device Notifications toggle enabled on your PC.</source>
         <translation>Funktion
 Spiegelt deine Gerätebenachrichtigungen auf die Startseite und als Windows-Benachrichtigungen. Du kannst direkt auf Nachrichten antworten, Aktionsschaltflächen anklicken, einzelne Benachrichtigungen oder Gruppen verwerfen und das Verwerfen rückgängig machen.
@@ -2895,7 +2895,7 @@ Wo zu finden
 - Einstellungen › Allgemein › Einmalcodes kopieren.
 
 Voraussetzungen
-- Aktivierter Benachrichtigungszugriff für MacLink auf deinem Android-Gerät.
+- Aktivierter Benachrichtigungszugriff für Nexora auf deinem Android-Gerät.
 - Aktivierter Schalter „Benachrichtigungen“ für dieses Gerät auf deinem PC.</translation>
     </message>
     <message>
@@ -2904,7 +2904,7 @@ Voraussetzungen
 Opens a keyboard-first search bar over actions, contacts, message threads, mirrorable apps, phone quick toggles, clipboard history, and navigation pages.
 
 Where to find it
-- Global hotkey Ctrl+Alt+Space (or Ctrl+K inside the MacLink window).
+- Global hotkey Ctrl+Alt+Space (or Ctrl+K inside the Nexora window).
 - Commands in the top bar.
 
 What it needs
@@ -2913,7 +2913,7 @@ What it needs
 Öffnet eine schnelle Tastatur-Suchleiste für Aktionen, Kontakte, Nachrichtenverläufe, spiegelbare Apps, Geräte-Schnelleinstellungen, den Zwischenablageverlauf und Navigationsseiten.
 
 Wo zu finden
-- Globales Tastenkürzel Strg+Alt+Leertaste (oder Strg+K im MacLink-Fenster).
+- Globales Tastenkürzel Strg+Alt+Leertaste (oder Strg+K im Nexora-Fenster).
 - „Befehle“ in der oberen Leiste.
 
 Voraussetzungen
@@ -3006,7 +3006,7 @@ Voraussetzungen
     <message>
         <location filename="rust_strings.h" line="292" />
         <source>What it does
-Sends files, folders, links, and text between your phone and PC at local network speed. If your phone is offline when you send, MacLink places the item in the Waiting to send queue and delivers it automatically as soon as your phone reconnects.
+Sends files, folders, links, and text between your phone and PC at local network speed. If your phone is offline when you send, Nexora places the item in the Waiting to send queue and delivers it automatically as soon as your phone reconnects.
 
 Where to find it
 - Home › Send files button, drag-and-drop anywhere on the window, Waiting to send card, and Transfers list.
@@ -3015,7 +3015,7 @@ Where to find it
 What it needs
 - Paired phone and the per-device Files toggle enabled.</source>
         <translation>Funktion
-Sendet Dateien, Ordner, Links und Text in lokaler Netzwerkgeschwindigkeit zwischen deinem Gerät und deinem PC. Wenn dein Gerät beim Senden offline ist, legt MacLink das Element in die Warteschlange „Wartet auf Senden“ und überträgt es automatisch, sobald sich dein Gerät wieder verbindet.
+Sendet Dateien, Ordner, Links und Text in lokaler Netzwerkgeschwindigkeit zwischen deinem Gerät und deinem PC. Wenn dein Gerät beim Senden offline ist, legt Nexora das Element in die Warteschlange „Wartet auf Senden“ und überträgt es automatisch, sobald sich dein Gerät wieder verbindet.
 
 Wo zu finden
 - Startseite › Schaltfläche „Dateien senden“, per Drag &amp; Drop überall im Fenster, Karte „Wartet auf Senden“ und Liste „Übertragungen“.
@@ -3054,7 +3054,7 @@ Where to find it
 
 What it needs
 - Automatic PC-to-phone clipboard send works whenever your phone is connected.
-- Background phone-to-PC clipboard sync on Android 10+ uses notifications, the MacLink quick tile, or Elevated mode.</source>
+- Background phone-to-PC clipboard sync on Android 10+ uses notifications, the Nexora quick tile, or Elevated mode.</source>
         <translation>Funktion
 Teilt kopierten Text, formatierten HTML-/RTF-Text, Bilder und kleinere Dateiauswahlen zwischen deinem PC und deinem Gerät. Führt einen verschlüsselten lokalen Verlauf von bis zu 50 Einträgen mit Anheftfunktion und intelligenten Aktionen für Links, Telefonnummern, Adressen und Sendungsnummern.
 
@@ -3064,7 +3064,7 @@ Wo zu finden
 
 Voraussetzungen
 - Das automatische Senden der Zwischenablage vom PC zum Gerät funktioniert immer, sobald dein Gerät verbunden ist.
-- Die Hintergrundsynchronisierung vom Gerät zum PC nutzt ab Android 10 Benachrichtigungen, die MacLink-Schnelleinstellungskachel oder den erweiterten Modus.</translation>
+- Die Hintergrundsynchronisierung vom Gerät zum PC nutzt ab Android 10 Benachrichtigungen, die Nexora-Schnelleinstellungskachel oder den erweiterten Modus.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="295" />
@@ -3073,7 +3073,7 @@ Shows incoming and active phone calls on your PC with Answer, Decline, and Rejec
 
 Where to find it
 - Left navigation rail › Calls.
-- Incoming call banner on Home and MacLink Island.
+- Incoming call banner on Home and Nexora Island.
 
 What it needs
 - Phone, Call Log, and Contacts permissions on your Android phone.
@@ -3083,7 +3083,7 @@ Zeigt eingehende und aktive Telefonate auf deinem PC mit Aktionen zum Annehmen, 
 
 Wo zu finden
 - Linke Seitenleiste › Anrufe.
-- Banner für eingehende Anrufe auf der Startseite und in der MacLink Island.
+- Banner für eingehende Anrufe auf der Startseite und in der Nexora Island.
 
 Voraussetzungen
 - Berechtigungen für Telefon, Anrufliste und Kontakte auf deinem Android-Gerät.
@@ -3116,7 +3116,7 @@ Voraussetzungen
 Streams your PC's screen to your phone so you can view your desktop from across the room and use your phone as a trackpad or laser pointer.
 
 Where to find it
-- Started from the MacLink app on your phone.
+- Started from the Nexora app on your phone.
 - Settings › Devices › Share PC screen to phone.
 
 What it needs
@@ -3125,7 +3125,7 @@ What it needs
 Überträgt den Bildschirm deines PCs auf dein Gerät, sodass du deinen Desktop aus der Ferne sehen und dein Gerät als Trackpad oder Laserpointer nutzen kannst.
 
 Wo zu finden
-- Wird in der MacLink-App auf deinem Gerät gestartet.
+- Wird in der Nexora-App auf deinem Gerät gestartet.
 - Einstellungen › Geräte › PC-Bildschirm für Gerät freigeben.
 
 Voraussetzungen
@@ -3134,7 +3134,7 @@ Voraussetzungen
     <message>
         <location filename="rust_strings.h" line="298" />
         <source>What it does
-Streams your phone camera into the MacLink Virtual Camera on Windows so Zoom, Teams, Meet, Discord, and OBS can use your phone's rear or front camera at up to 4K.
+Streams your phone camera into the Nexora Virtual Camera on Windows so Zoom, Teams, Meet, Discord, and OBS can use your phone's rear or front camera at up to 4K.
 
 Where to find it
 - Home › Phone as webcam.
@@ -3144,7 +3144,7 @@ What it needs
 - Camera permission on your phone.
 - For other apps to see it: Virtual camera add-on in Settings › Camera &amp; Audio.</source>
         <translation>Funktion
-Überträgt das Kamerabild deines Geräts an die virtuelle MacLink-Kamera unter Windows, sodass Zoom, Teams, Meet, Discord und OBS die Rück- oder Frontkamera deines Geräts in bis zu 4K nutzen können.
+Überträgt das Kamerabild deines Geräts an die virtuelle Nexora-Kamera unter Windows, sodass Zoom, Teams, Meet, Discord und OBS die Rück- oder Frontkamera deines Geräts in bis zu 4K nutzen können.
 
 Wo zu finden
 - Startseite › Gerät als Webcam.
@@ -4124,8 +4124,8 @@ Voraussetzungen
     <name>IslandWindow</name>
     <message>
         <location filename="../qml/IslandWindow.qml" line="16" />
-        <source>MacLink Island</source>
-        <translation>MacLink Island</translation>
+        <source>Nexora Island</source>
+        <translation>Nexora Island</translation>
     </message>
     <message>
         <location filename="../qml/IslandWindow.qml" line="213" />
@@ -4161,13 +4161,13 @@ Voraussetzungen
     </message>
     <message>
         <location filename="../qml/IslandWindow.qml" line="228" />
-        <source>MacLink Island · %1</source>
-        <translation>MacLink Island · %1</translation>
+        <source>Nexora Island · %1</source>
+        <translation>Nexora Island · %1</translation>
     </message>
     <message>
         <location filename="../qml/IslandWindow.qml" line="229" />
-        <source>MacLink Island · Ready</source>
-        <translation>MacLink Island · Bereit</translation>
+        <source>Nexora Island · Ready</source>
+        <translation>Nexora Island · Bereit</translation>
     </message>
     <message>
         <location filename="../qml/IslandWindow.qml" line="234" />
@@ -4196,8 +4196,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="../qml/IslandWindow.qml" line="258" />
-        <source>Click to view in MacLink</source>
-        <translation>Klicken, um in MacLink anzuzeigen</translation>
+        <source>Click to view in Nexora</source>
+        <translation>Klicken, um in Nexora anzuzeigen</translation>
     </message>
     <message>
         <location filename="../qml/IslandWindow.qml" line="261" />
@@ -4274,8 +4274,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="rust_strings.h" line="316" />
-        <source>Update MacLink on %1.</source>
-        <translation>Aktualisiere MacLink auf %1.</translation>
+        <source>Update Nexora on %1.</source>
+        <translation>Aktualisiere Nexora auf %1.</translation>
     </message>
 </context>
 <context>
@@ -4337,8 +4337,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="46" />
-        <source>On your phone, open MacLink › Settings › Control from your PC and turn on the Accessibility service.</source>
-        <translation>Öffne auf deinem Gerät MacLink › Einstellungen › Vom PC aus steuern und aktiviere die Bedienungshilfe.</translation>
+        <source>On your phone, open Nexora › Settings › Control from your PC and turn on the Accessibility service.</source>
+        <translation>Öffne auf deinem Gerät Nexora › Einstellungen › Vom PC aus steuern und aktiviere die Bedienungshilfe.</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="48" />
@@ -4347,33 +4347,33 @@ Voraussetzungen
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="50" />
-        <source>On your phone, set MacLink as the default SMS/Caller ID app when prompted.</source>
-        <translation>Lege MacLink auf deinem Gerät als Standard-App für SMS/Anrufer-ID fest, wenn du dazu aufgefordert wirst.</translation>
+        <source>On your phone, set Nexora as the default SMS/Caller ID app when prompted.</source>
+        <translation>Lege Nexora auf deinem Gerät als Standard-App für SMS/Anrufer-ID fest, wenn du dazu aufgefordert wirst.</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="53" />
-        <source>On your phone, open MacLink and allow Notification access.</source>
-        <translation>Öffne MacLink auf deinem Gerät und erlaube den Benachrichtigungszugriff.</translation>
+        <source>On your phone, open Nexora and allow Notification access.</source>
+        <translation>Öffne Nexora auf deinem Gerät und erlaube den Benachrichtigungszugriff.</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="55" />
-        <source>On your phone, open MacLink and allow Do Not Disturb access.</source>
-        <translation>Öffne MacLink auf deinem Gerät und erlaube den Zugriff auf „Nicht stören“.</translation>
+        <source>On your phone, open Nexora and allow Do Not Disturb access.</source>
+        <translation>Öffne Nexora auf deinem Gerät und erlaube den Zugriff auf „Nicht stören“.</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="57" />
-        <source>On your phone, open MacLink and allow Modify system settings.</source>
-        <translation>Öffne MacLink auf deinem Gerät und erlaube das Ändern von Systemeinstellungen.</translation>
+        <source>On your phone, open Nexora and allow Modify system settings.</source>
+        <translation>Öffne Nexora auf deinem Gerät und erlaube das Ändern von Systemeinstellungen.</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="58" />
-        <source>Open MacLink on your phone and grant this permission in Settings.</source>
-        <translation>Öffne MacLink auf deinem Gerät und erteile diese Berechtigung in den Einstellungen.</translation>
+        <source>Open Nexora on your phone and grant this permission in Settings.</source>
+        <translation>Öffne Nexora auf deinem Gerät und erteile diese Berechtigung in den Einstellungen.</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="60" />
-        <source>Open Settings › Camera &amp; Audio to set up the MacLink virtual camera add-on.</source>
-        <translation>Öffne Einstellungen › Kamera &amp; Audio, um das Add-on für die virtuelle MacLink-Kamera einzurichten.</translation>
+        <source>Open Settings › Camera &amp; Audio to set up the Nexora virtual camera add-on.</source>
+        <translation>Öffne Einstellungen › Kamera &amp; Audio, um das Add-on für die virtuelle Nexora-Kamera einzurichten.</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="62" />
@@ -4938,8 +4938,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="rust_strings.h" line="327" />
-        <source>Recording from %1, saved in Downloads\MacLink</source>
-        <translation>Aufnahme von %1, gespeichert unter Downloads\MacLink</translation>
+        <source>Recording from %1, saved in Downloads\Nexora</source>
+        <translation>Aufnahme von %1, gespeichert unter Downloads\Nexora</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="328" />
@@ -4948,8 +4948,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="rust_strings.h" line="329" />
-        <source>Saved %1 to Downloads\MacLink.</source>
-        <translation>%1 unter Downloads\MacLink gespeichert.</translation>
+        <source>Saved %1 to Downloads\Nexora.</source>
+        <translation>%1 unter Downloads\Nexora gespeichert.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="330" />
@@ -4958,8 +4958,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="rust_strings.h" line="331" />
-        <source>Screenshot from %1, saved in Downloads\MacLink</source>
-        <translation>Screenshot von %1, gespeichert unter Downloads\MacLink</translation>
+        <source>Screenshot from %1, saved in Downloads\Nexora</source>
+        <translation>Screenshot von %1, gespeichert unter Downloads\Nexora</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="332" />
@@ -4973,8 +4973,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="rust_strings.h" line="334" />
-        <source>Set up Wireless debugging in MacLink on the phone to open its apps here.</source>
-        <translation>Richte Kabelloses Debugging in MacLink auf dem Gerät ein, um dessen Apps hier zu öffnen.</translation>
+        <source>Set up Wireless debugging in Nexora on the phone to open its apps here.</source>
+        <translation>Richte Kabelloses Debugging in Nexora auf dem Gerät ein, um dessen Apps hier zu öffnen.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="335" />
@@ -4983,8 +4983,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="rust_strings.h" line="336" />
-        <source>The app didn't open on the phone. Try again, or open MacLink on the phone to check Wireless debugging.</source>
-        <translation>Die App wurde auf dem Gerät nicht geöffnet. Versuche es erneut oder öffne MacLink auf dem Gerät, um das Kabellose Debugging zu prüfen.</translation>
+        <source>The app didn't open on the phone. Try again, or open Nexora on the phone to check Wireless debugging.</source>
+        <translation>Die App wurde auf dem Gerät nicht geöffnet. Versuche es erneut oder öffne Nexora auf dem Gerät, um das Kabellose Debugging zu prüfen.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="337" />
@@ -5008,8 +5008,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="rust_strings.h" line="341" />
-        <source>This phone's app doesn't share its screen yet. Update MacLink on the phone.</source>
-        <translation>Die App auf diesem Gerät unterstützt noch keine Bildschirmfreigabe. Aktualisiere MacLink auf dem Gerät.</translation>
+        <source>This phone's app doesn't share its screen yet. Update Nexora on the phone.</source>
+        <translation>Die App auf diesem Gerät unterstützt noch keine Bildschirmfreigabe. Aktualisiere Nexora auf dem Gerät.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="342" />
@@ -5026,13 +5026,13 @@ Voraussetzungen
     </message>
     <message>
         <location filename="../qml/MirrorWindow.qml" line="25" />
-        <source>%1 · MacLink</source>
-        <translation>%1 · MacLink</translation>
+        <source>%1 · Nexora</source>
+        <translation>%1 · Nexora</translation>
     </message>
     <message>
         <location filename="../qml/MirrorWindow.qml" line="25" />
-        <source>Phone screen · MacLink</source>
-        <translation>Gerätebildschirm · MacLink</translation>
+        <source>Phone screen · Nexora</source>
+        <translation>Gerätebildschirm · Nexora</translation>
     </message>
     <message>
         <location filename="../qml/MirrorWindow.qml" line="325" />
@@ -5097,8 +5097,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="../qml/MirrorWindow.qml" line="480" />
-        <source>To control the phone, turn on Control from your PC in MacLink's settings on the phone.</source>
-        <translation>Um das Gerät zu steuern, aktiviere „Vom PC aus steuern“ in den MacLink-Einstellungen auf dem Gerät.</translation>
+        <source>To control the phone, turn on Control from your PC in Nexora's settings on the phone.</source>
+        <translation>Um das Gerät zu steuern, aktiviere „Vom PC aus steuern“ in den Nexora-Einstellungen auf dem Gerät.</translation>
     </message>
     <message>
         <location filename="../qml/MirrorWindow.qml" line="489" />
@@ -5456,8 +5456,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="../qml/pages/PairingPanel.qml" line="99" />
-        <source>Install MacLink</source>
-        <translation>MacLink installieren</translation>
+        <source>Install Nexora</source>
+        <translation>Nexora installieren</translation>
     </message>
     <message>
         <location filename="../qml/pages/PairingPanel.qml" line="99" />
@@ -5484,8 +5484,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="../qml/pages/PairingPanel.qml" line="172" />
-        <source>Open MacLink on your phone</source>
-        <translation>Öffne MacLink auf deinem Gerät</translation>
+        <source>Open Nexora on your phone</source>
+        <translation>Öffne Nexora auf deinem Gerät</translation>
     </message>
     <message>
         <location filename="../qml/pages/PairingPanel.qml" line="172" />
@@ -5494,8 +5494,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="../qml/pages/PairingPanel.qml" line="220" />
-        <source>On your phone, open MacLink and choose “Pair nearby”. It shows up here.</source>
-        <translation>Öffne MacLink auf deinem Gerät und wähle „In der Nähe koppeln“. Es erscheint dann hier.</translation>
+        <source>On your phone, open Nexora and choose “Pair nearby”. It shows up here.</source>
+        <translation>Öffne Nexora auf deinem Gerät und wähle „In der Nähe koppeln“. Es erscheint dann hier.</translation>
     </message>
     <message>
         <location filename="../qml/pages/PairingPanel.qml" line="250" />
@@ -5605,8 +5605,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="rust_strings.h" line="357" />
-        <source>Update MacLink on %1 to use its microphone.</source>
-        <translation>Aktualisiere MacLink auf %1, um das Mikrofon zu verwenden.</translation>
+        <source>Update Nexora on %1 to use its microphone.</source>
+        <translation>Aktualisiere Nexora auf %1, um das Mikrofon zu verwenden.</translation>
     </message>
 </context>
 <context>
@@ -5658,8 +5658,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="rust_strings.h" line="367" />
-        <source>Update MacLink on %1 to back up its photos.</source>
-        <translation>Aktualisiere MacLink auf %1, um dessen Fotos zu sichern.</translation>
+        <source>Update Nexora on %1 to back up its photos.</source>
+        <translation>Aktualisiere Nexora auf %1, um dessen Fotos zu sichern.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="368" />
@@ -5731,8 +5731,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="rust_strings.h" line="381" />
-        <source>The photo couldn't be copied. It's in Downloads\MacLink.</source>
-        <translation>Das Foto konnte nicht kopiert werden. Es liegt unter Downloads\MacLink.</translation>
+        <source>The photo couldn't be copied. It's in Downloads\Nexora.</source>
+        <translation>Das Foto konnte nicht kopiert werden. Es liegt unter Downloads\Nexora.</translation>
     </message>
 </context>
 <context>
@@ -6036,8 +6036,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="rust_strings.h" line="387" />
-        <source>Update MacLink on %1 to play on it.</source>
-        <translation>Aktualisiere MacLink auf %1, um darauf abzuspielen.</translation>
+        <source>Update Nexora on %1 to play on it.</source>
+        <translation>Aktualisiere Nexora auf %1, um darauf abzuspielen.</translation>
     </message>
 </context>
 <context>
@@ -6098,8 +6098,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="rust_strings.h" line="396" />
-        <source>Send to %1 with MacLink</source>
-        <translation>Mit MacLink an %1 senden</translation>
+        <source>Send to %1 with Nexora</source>
+        <translation>Mit Nexora an %1 senden</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="397" />
@@ -6557,8 +6557,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="900" />
-        <source>MacLink follows Windows unless you pick one.</source>
-        <translation>MacLink übernimmt die Windows-Sprache, sofern du keine auswählst.</translation>
+        <source>Nexora follows Windows unless you pick one.</source>
+        <translation>Nexora übernimmt die Windows-Sprache, sofern du keine auswählst.</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="908" />
@@ -6590,8 +6590,8 @@ Voraussetzungen
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="998" />
         <location filename="../qml/pages/SettingsPage.qml" line="1001" />
-        <source>MacLink Island</source>
-        <translation>MacLink Island</translation>
+        <source>Nexora Island</source>
+        <translation>Nexora Island</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="999" />
@@ -7441,8 +7441,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="3200" />
-        <source>MacLink %1</source>
-        <translation>MacLink %1</translation>
+        <source>Nexora %1</source>
+        <translation>Nexora %1</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="3203" />
@@ -7514,8 +7514,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="3361" />
-        <source>Wi-Fi networks this PC has joined before. Windows keeps their passwords; MacLink never sees them.</source>
-        <translation>WLAN-Netzwerke, mit denen dieser PC bereits verbunden war. Windows speichert deren Passwörter; MacLink sieht sie nie.</translation>
+        <source>Wi-Fi networks this PC has joined before. Windows keeps their passwords; Nexora never sees them.</source>
+        <translation>WLAN-Netzwerke, mit denen dieser PC bereits verbunden war. Windows speichert deren Passwörter; Nexora sieht sie nie.</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="3362" />
@@ -7590,21 +7590,21 @@ Voraussetzungen
     </message>
     <message>
         <location filename="rust_strings.h" line="404" />
-        <source>The uninstaller is missing. Reinstall MacLink, then uninstall it.</source>
-        <translation>Das Deinstallationsprogramm fehlt. Installiere MacLink erneut und deinstalliere es anschließend.</translation>
+        <source>The uninstaller is missing. Reinstall Nexora, then uninstall it.</source>
+        <translation>Das Deinstallationsprogramm fehlt. Installiere Nexora erneut und deinstalliere es anschließend.</translation>
     </message>
 </context>
 <context>
     <name>SetupWindow</name>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="45" />
-        <source>Uninstall MacLink</source>
-        <translation>MacLink deinstallieren</translation>
+        <source>Uninstall Nexora</source>
+        <translation>Nexora deinstallieren</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="45" />
-        <source>MacLink Setup</source>
-        <translation>MacLink-Installation</translation>
+        <source>Nexora Setup</source>
+        <translation>Nexora-Installation</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="108" />
@@ -7616,13 +7616,13 @@ Voraussetzungen
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="175" />
-        <source>MacLink</source>
-        <translation>MacLink</translation>
+        <source>Nexora</source>
+        <translation>Nexora</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="204" />
-        <source>Couldn't uninstall MacLink</source>
-        <translation>MacLink konnte nicht deinstalliert werden</translation>
+        <source>Couldn't uninstall Nexora</source>
+        <translation>Nexora konnte nicht deinstalliert werden</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="204" />
@@ -7631,28 +7631,28 @@ Voraussetzungen
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="206" />
-        <source>Uninstalling MacLink</source>
-        <translation>MacLink wird deinstalliert</translation>
+        <source>Uninstalling Nexora</source>
+        <translation>Nexora wird deinstalliert</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="207" />
-        <source>Updating MacLink</source>
-        <translation>MacLink wird aktualisiert</translation>
+        <source>Updating Nexora</source>
+        <translation>Nexora wird aktualisiert</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="208" />
-        <source>Installing MacLink</source>
-        <translation>MacLink wird installiert</translation>
+        <source>Installing Nexora</source>
+        <translation>Nexora wird installiert</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="209" />
-        <source>Uninstall MacLink?</source>
-        <translation>MacLink deinstallieren?</translation>
+        <source>Uninstall Nexora?</source>
+        <translation>Nexora deinstallieren?</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="224" />
-        <source>Sorry to see you go. This uninstalls MacLink and deletes its settings and pairings on this PC. Files you received stay in %1.</source>
-        <translation>Schade, dass du gehst. Dadurch wird MacLink deinstalliert und alle Einstellungen sowie Kopplungen auf diesem PC werden gelöscht. Empfangene Dateien bleiben in %1 erhalten.</translation>
+        <source>Sorry to see you go. This uninstalls Nexora and deletes its settings and pairings on this PC. Files you received stay in %1.</source>
+        <translation>Schade, dass du gehst. Dadurch wird Nexora deinstalliert und alle Einstellungen sowie Kopplungen auf diesem PC werden gelöscht. Empfangene Dateien bleiben in %1 erhalten.</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="226" />
@@ -7701,8 +7701,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="286" />
-        <source>Keep MacLink</source>
-        <translation>MacLink behalten</translation>
+        <source>Keep Nexora</source>
+        <translation>Nexora behalten</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="301" />
@@ -7712,13 +7712,13 @@ Voraussetzungen
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="334" />
-        <source>MacLink is uninstalled</source>
-        <translation>MacLink wurde deinstalliert</translation>
+        <source>Nexora is uninstalled</source>
+        <translation>Nexora wurde deinstalliert</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="334" />
-        <source>MacLink is ready</source>
-        <translation>MacLink ist bereit</translation>
+        <source>Nexora is ready</source>
+        <translation>Nexora ist bereit</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="346" />
@@ -7742,18 +7742,18 @@ Voraussetzungen
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="396" />
-        <source>Open MacLink</source>
-        <translation>MacLink öffnen</translation>
+        <source>Open Nexora</source>
+        <translation>Nexora öffnen</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="456" />
-        <source>MacLink goes into Program Files for everyone on this PC. Setup also:</source>
-        <translation>MacLink wird unter „Programme“ für alle Benutzer dieses PCs installiert. Außerdem führt die Installation Folgendes aus:</translation>
+        <source>Nexora goes into Program Files for everyone on this PC. Setup also:</source>
+        <translation>Nexora wird unter „Programme“ für alle Benutzer dieses PCs installiert. Außerdem führt die Installation Folgendes aus:</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="457" />
         <source>allows it through Windows Firewall on private networks, so your phone can connect</source>
-        <translation>lässt MacLink in privaten Netzwerken durch die Windows-Firewall zu, damit sich dein Gerät verbinden kann</translation>
+        <translation>lässt Nexora in privaten Netzwerken durch die Windows-Firewall zu, damit sich dein Gerät verbinden kann</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="458" />
@@ -7768,7 +7768,7 @@ Voraussetzungen
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="460" />
         <source>adds it to the Windows Share sheet</source>
-        <translation>fügt MacLink zum Teilen-Menü von Windows hinzu</translation>
+        <translation>fügt Nexora zum Teilen-Menü von Windows hinzu</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="461" />
@@ -7785,8 +7785,8 @@ Voraussetzungen
     <name>ShelfWindow</name>
     <message>
         <location filename="../qml/ShelfWindow.qml" line="16" />
-        <source>MacLink Shelf</source>
-        <translation>MacLink Shelf</translation>
+        <source>Nexora Shelf</source>
+        <translation>Nexora Shelf</translation>
     </message>
     <message>
         <location filename="../qml/ShelfWindow.qml" line="50" />
@@ -8392,8 +8392,8 @@ Voraussetzungen
     <name>Transfers</name>
     <message>
         <location filename="rust_strings.h" line="434" />
-        <source>Accept in MacLink to save to Downloads\MacLink</source>
-        <translation>In MacLink annehmen, um unter Downloads\MacLink zu speichern</translation>
+        <source>Accept in Nexora to save to Downloads\Nexora</source>
+        <translation>In Nexora annehmen, um unter Downloads\Nexora zu speichern</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="435" />
@@ -8402,13 +8402,13 @@ Voraussetzungen
     </message>
     <message>
         <location filename="rust_strings.h" line="436" />
-        <source>From %1, opened from Downloads\MacLink</source>
-        <translation>Von %1, geöffnet aus Downloads\MacLink</translation>
+        <source>From %1, opened from Downloads\Nexora</source>
+        <translation>Von %1, geöffnet aus Downloads\Nexora</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="437" />
-        <source>From %1, saved in Downloads\MacLink</source>
-        <translation>Von %1, gespeichert unter Downloads\MacLink</translation>
+        <source>From %1, saved in Downloads\Nexora</source>
+        <translation>Von %1, gespeichert unter Downloads\Nexora</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="438" />
@@ -8435,28 +8435,28 @@ Voraussetzungen
     </message>
     <message>
         <location filename="rust_strings.h" line="442" />
-        <source>MacLink %1 is available</source>
-        <translation>MacLink %1 ist verfügbar</translation>
+        <source>Nexora %1 is available</source>
+        <translation>Nexora %1 ist verfügbar</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="443" />
-        <source>MacLink %1 is available.</source>
-        <translation>MacLink %1 ist verfügbar.</translation>
+        <source>Nexora %1 is available.</source>
+        <translation>Nexora %1 ist verfügbar.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="444" />
-        <source>MacLink is still on the version you had. Try again from Settings.</source>
-        <translation>MacLink befindet sich noch auf der bisherigen Version. Versuche es über die Einstellungen erneut.</translation>
+        <source>Nexora is still on the version you had. Try again from Settings.</source>
+        <translation>Nexora befindet sich noch auf der bisherigen Version. Versuche es über die Einstellungen erneut.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="445" />
-        <source>MacLink is up to date.</source>
-        <translation>MacLink ist auf dem neuesten Stand.</translation>
+        <source>Nexora is up to date.</source>
+        <translation>Nexora ist auf dem neuesten Stand.</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="446" />
-        <source>MacLink is updated to %1</source>
-        <translation>MacLink wurde auf %1 aktualisiert</translation>
+        <source>Nexora is updated to %1</source>
+        <translation>Nexora wurde auf %1 aktualisiert</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="447" />
@@ -8657,8 +8657,8 @@ Voraussetzungen
     </message>
     <message>
         <location filename="../qml/pages/WalkthroughPage.qml" line="1548" />
-        <source>Keep MacLink ready in the system tray when you sign in.</source>
-        <translation>MacLink beim Anmelden im Infobereich bereithalten.</translation>
+        <source>Keep Nexora ready in the system tray when you sign in.</source>
+        <translation>Nexora beim Anmelden im Infobereich bereithalten.</translation>
     </message>
     <message>
         <location filename="../qml/pages/WalkthroughPage.qml" line="1606" />
@@ -8703,13 +8703,13 @@ Voraussetzungen
     <name>WelcomePage</name>
     <message>
         <location filename="../qml/pages/WelcomePage.qml" line="36" />
-        <source>Welcome to MacLink</source>
-        <translation>Willkommen bei MacLink</translation>
+        <source>Welcome to Nexora</source>
+        <translation>Willkommen bei Nexora</translation>
     </message>
     <message>
         <location filename="../qml/pages/WelcomePage.qml" line="46" />
-        <source>MacLink couldn't start.</source>
-        <translation>MacLink konnte nicht gestartet werden.</translation>
+        <source>Nexora couldn't start.</source>
+        <translation>Nexora konnte nicht gestartet werden.</translation>
     </message>
     <message>
         <location filename="../qml/pages/WelcomePage.qml" line="47" />

@@ -307,7 +307,7 @@ Item {
 
                         HoverHandler { id: clipBtnHover; cursorShape: Qt.PointingHandCursor }
                         TapHandler {
-                            onTapped: AppController.copyText("MacLink Synced Clip")
+                            onTapped: AppController.copyText("Nexora Synced Clip")
                         }
                     }
 

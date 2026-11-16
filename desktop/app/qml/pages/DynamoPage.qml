@@ -4313,7 +4313,7 @@ Item {
                             text: qsTr("Add Test Clip")
                             variant: "tonal"
                             size: "sm"
-                            onClicked: DynamoController.addClipboardEntry("MacLink dynamic island clipboard clip test " + Math.floor(Math.random() * 1000))
+                            onClicked: DynamoController.addClipboardEntry("Nexora dynamic island clipboard clip test " + Math.floor(Math.random() * 1000))
                         }
 
                         Button {
