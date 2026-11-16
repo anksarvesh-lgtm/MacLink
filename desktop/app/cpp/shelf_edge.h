@@ -41,6 +41,15 @@ void shelf_edge_set_shelf_open(bool is_open);
 /// Applies native NSWindow collection behaviors and floating window level to the Shelf window
 void shelf_edge_style_shelf_window(const char *window_title);
 
+/// Positions the MacLink Island NSWindow flush against the top screen bezel (y = 0 in top-down screen coordinates)
+void maclink_position_island_window(double x, double width, double height);
+
+/// Updates notch, wings, collapsed and expanded layout frames for screen and re-centers the Island window
+void maclink_update_layout(void);
+
+/// Dispatches hover expansion state to DynamoController on the Qt thread
+void maclink_set_island_hover_state(bool expanded);
+
 /// Cleans up monitors, timers, and glow window
 void shelf_edge_cleanup(void);
 

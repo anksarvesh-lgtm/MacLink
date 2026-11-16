@@ -914,16 +914,16 @@ impl cxx_qt::Initialize for qobject::AppController {
         );
 
         let labels = tray::MenuLabels {
-            open: tr!("App", "Open MacLink"),
+            open: tr!("App", "Open Nexora"),
             command_palette: tr!("App", "Command palette"),
             shelf: tr!("App", "Toggle Shelf"),
             take_photo: tr!("App", "Take photo with phone"),
             scan_document: tr!("App", "Scan document with phone"),
             find_phone: tr!("App", "Find my phone"),
             open_link: tr!("App", "Open copied link on phone"),
-            quit: tr!("App", "Quit MacLink"),
+            quit: tr!("App", "Quit Nexora"),
         };
-        match tray::Tray::create("MacLink", labels, move |event| on_tray_event(&qt, event)) {
+        match tray::Tray::create("Nexora", labels, move |event| on_tray_event(&qt, event)) {
             Ok(tray) => self.rust_mut().tray = Some(tray),
             Err(e) => tracing::warn!(error = %e, "no tray icon"),
         }
@@ -1373,13 +1373,13 @@ impl qobject::AppController {
         self.as_mut().set_phone_toggles_revision(toggles_version as i32);
 
         let mut tooltip = match (devices, online) {
-            (0, _) => tr!("App", "MacLink · no devices paired"),
-            (_, 0) => tr!("App", "MacLink · not connected"),
+            (0, _) => tr!("App", "Nexora · no devices paired"),
+            (_, 0) => tr!("App", "Nexora · not connected"),
             (_, 1) => battery.map_or_else(
-                || tr!("App", "MacLink · 1 device connected"),
-                |b| tr!("App", "MacLink · %1", b),
+                || tr!("App", "Nexora · 1 device connected"),
+                |b| tr!("App", "Nexora · %1", b),
             ),
-            (_, n) => tr!("App", "MacLink · %1 devices connected", n),
+            (_, n) => tr!("App", "Nexora · %1 devices connected", n),
         };
         if waiting_count > 0 {
             tooltip.push_str(&format!(" · {waiting_count} waiting"));
@@ -2344,6 +2344,7 @@ impl qobject::AppController {
 
     pub fn style_shelf_window(&self) {
         win::tray::apply_no_activate_style_by_title("MacLink Shelf");
+        win::tray::apply_no_activate_style_by_title("Nexora Island");
         win::tray::apply_no_activate_style_by_title("MacLink Island");
     }
 

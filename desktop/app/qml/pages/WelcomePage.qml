@@ -28,7 +28,7 @@ Item {
             Txt {
                 width: parent.width
                 horizontalAlignment: Text.AlignHCenter
-                text: qsTr("Welcome to MacLink")
+                text: qsTr("Welcome to Nexora")
                 role: "displaySmall"
             }
             Txt {
@@ -38,7 +38,7 @@ Item {
                 role: "body"
                 muted: true
                 text: page.status === "failed"
-                      ? qsTr("MacLink couldn't start.")
+                      ? qsTr("Nexora couldn't start.")
                       : qsTr("Your phone and this Mac, together. Pair once and they find each other from then on.")
             }
         }

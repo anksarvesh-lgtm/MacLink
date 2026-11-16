@@ -13,7 +13,7 @@ import app.maclink
 Window {
     id: shelfWin
 
-    title: qsTr("MacLink Shelf")
+    title: qsTr("Nexora Shelf")
     flags: Qt.Tool | Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint | Qt.WindowDoesNotAcceptFocus
     color: "transparent"
     visible: true

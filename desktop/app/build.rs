@@ -33,6 +33,11 @@ const QML: &[&str] = &[
     "qml/components/CommandPalette.qml",
     "qml/components/Divider.qml",
     "qml/components/GlassRim.qml",
+    "qml/components/IslandToolbar.qml",
+    "qml/components/IslandHomeCards.qml",
+    "qml/components/IslandMorePopover.qml",
+    "qml/components/IslandEditSheet.qml",
+    "qml/components/NotchDebugOverlay.qml",
     "qml/components/DoctorSheet.qml",
     "qml/components/HistoryItem.qml",
     "qml/components/Icon.qml",
@@ -57,6 +62,7 @@ const QML: &[&str] = &[
     "qml/pages/AppsPage.qml",
     "qml/pages/CallsPage.qml",
     "qml/pages/DeckPage.qml",
+    "qml/pages/DynamoPage.qml",
     "qml/pages/FeaturesGuidePage.qml",
     "qml/pages/HomePage.qml",
     "qml/pages/MessagesPage.qml",
@@ -365,6 +371,7 @@ fn main() {
             "src/bridge/timeline.rs",
             "src/bridge/transfers.rs",
             "src/bridge/webcam.rs",
+            "src/bridge/dynamo.rs",
         ])
         .build();
 
@@ -382,6 +389,8 @@ fn main() {
     println!("cargo:rustc-link-lib=framework=CoreMedia");
     println!("cargo:rustc-link-lib=framework=CoreVideo");
     println!("cargo:rustc-link-lib=framework=IOBluetooth");
+    println!("cargo:rustc-link-lib=framework=EventKit");
+    println!("cargo:rustc-link-lib=framework=AVFoundation");
     println!("cargo:rerun-if-changed=cpp/app_helpers.h");
     println!("cargo:rerun-if-changed=cpp/app_helpers.cpp");
     println!("cargo:rerun-if-changed=cpp/native_window.h");
@@ -398,9 +407,164 @@ fn main() {
     println!("cargo:rerun-if-changed=cpp/mac_lifecycle.mm");
     println!("cargo:rerun-if-changed=cpp/mac_hfp.h");
     println!("cargo:rerun-if-changed=cpp/mac_hfp.mm");
+    println!("cargo:rerun-if-changed=swift/NotchDetector.swift");
+    println!("cargo:rerun-if-changed=swift/NotchGeometry.swift");
+    println!("cargo:rerun-if-changed=swift/DragDetector.swift");
+    println!("cargo:rerun-if-changed=swift/BatteryActivityManager.swift");
+    println!("cargo:rerun-if-changed=swift/CalendarManager.swift");
+    println!("cargo:rerun-if-changed=swift/BoringNotchBridge.swift");
+    println!("cargo:rerun-if-changed=swift/MochiEngine.swift");
+    println!("cargo:rerun-if-changed=swift/CoucoudoroService.swift");
+    println!("cargo:rerun-if-changed=swift/AgentHookRelay.swift");
+    println!("cargo:rerun-if-changed=swift/CoucouBridge.swift");
+    println!("cargo:rerun-if-changed=swift/AgentTaskProgressService.swift");
+    println!("cargo:rerun-if-changed=swift/CodeIslandBridge.swift");
+    println!("cargo:rerun-if-changed=swift/QuickShareService.swift");
+    println!("cargo:rerun-if-changed=swift/QuickShareBridge.swift");
+    println!("cargo:rerun-if-changed=swift/AtollHUDService.swift");
+    println!("cargo:rerun-if-changed=swift/AtollBridge.swift");
+    println!("cargo:rerun-if-changed=swift/NotchIslandLauncherService.swift");
+    println!("cargo:rerun-if-changed=swift/NotchIslandBridge.swift");
+    println!("cargo:rerun-if-changed=swift/IslandDownloadService.swift");
+    println!("cargo:rerun-if-changed=swift/IslandPrivacySensorService.swift");
+    println!("cargo:rerun-if-changed=swift/IslandExtensionBridge.swift");
+    println!("cargo:rerun-if-changed=swift/LedgeAnnouncementService.swift");
+    println!("cargo:rerun-if-changed=swift/LedgeBridge.swift");
+    println!("cargo:rerun-if-changed=swift/SuperIslandTeleprompterService.swift");
+    println!("cargo:rerun-if-changed=swift/SuperIslandEmojiService.swift");
+    println!("cargo:rerun-if-changed=swift/SuperIslandAIUsageService.swift");
+    println!("cargo:rerun-if-changed=swift/SuperIslandBridge.swift");
+    println!("cargo:rerun-if-changed=swift/MioIslandSoundSynthesizer.swift");
+    println!("cargo:rerun-if-changed=swift/MioIslandTerminalJumperService.swift");
+    println!("cargo:rerun-if-changed=swift/MioIslandBridge.swift");
+    println!("cargo:rerun-if-changed=swift/NotchlyNetworkStatusService.swift");
+    println!("cargo:rerun-if-changed=swift/NotchlyLockStateService.swift");
+    println!("cargo:rerun-if-changed=swift/NotchlyBridge.swift");
+    println!("cargo:rerun-if-changed=swift/QuietNotchInlineHUDService.swift");
+    println!("cargo:rerun-if-changed=swift/QuietNotchNotificationFilterService.swift");
+    println!("cargo:rerun-if-changed=swift/QuietNotchBridge.swift");
+    println!("cargo:rerun-if-changed=swift/AnotherNotchClipboardService.swift");
+    println!("cargo:rerun-if-changed=swift/AnotherNotchFanService.swift");
+    println!("cargo:rerun-if-changed=swift/AnotherNotchBridge.swift");
+    println!("cargo:rerun-if-changed=swift/GHNotchCommandEngineService.swift");
+    println!("cargo:rerun-if-changed=swift/GHNotchBridge.swift");
+    println!("cargo:rerun-if-changed=swift/IsleFinanceService.swift");
+    println!("cargo:rerun-if-changed=swift/IsleBridge.swift");
+    println!("cargo:rerun-if-changed=swift/MacIslandBatteryService.swift");
+    println!("cargo:rerun-if-changed=swift/MacIslandAirDropService.swift");
+    println!("cargo:rerun-if-changed=swift/MacIslandBridge.swift");
+    println!("cargo:rerun-if-changed=swift/MacWakeCleaningModeService.swift");
+    println!("cargo:rerun-if-changed=swift/MacWakeThermalMonitorService.swift");
+    println!("cargo:rerun-if-changed=swift/MacWakeBridge.swift");
+    println!("cargo:rerun-if-changed=swift/PiIslandAgentSessionService.swift");
+    println!("cargo:rerun-if-changed=swift/PiIslandBridge.swift");
+    println!("cargo:rerun-if-changed=swift/PookifyAgentAnimationService.swift");
+    println!("cargo:rerun-if-changed=swift/PookifyBridge.swift");
+    println!("cargo:rerun-if-changed=swift/DynamicIslandVisionOCRService.swift");
+    println!("cargo:rerun-if-changed=swift/DynamicIslandVisionBridge.swift");
+    println!("cargo:rerun-if-changed=swift/TopNotchFocusService.swift");
+    println!("cargo:rerun-if-changed=swift/TopNotchBridge.swift");
+    println!("cargo:rerun-if-changed=swift/MacIslandStudioService.swift");
+    println!("cargo:rerun-if-changed=swift/MacIslandStudioBridge.swift");
 
     #[cfg(target_os = "macos")]
     {
+        let out_dir = std::env::var("OUT_DIR").unwrap();
+        let swift_detector = Path::new("swift/NotchDetector.swift");
+        let swift_geometry = Path::new("swift/NotchGeometry.swift");
+        if swift_detector.exists() && swift_geometry.exists() {
+            let obj_file = format!("{}/NotchDetector.o", out_dir);
+            let lib_file = format!("{}/libnotch_detector.a", out_dir);
+            let compile_res = std::process::Command::new("swiftc")
+                .args([
+                    "-c",
+                    "-O",
+                    "-whole-module-optimization",
+                    "-parse-as-library",
+                    "-module-name",
+                    "NotchDetectorModule",
+                    "swift/NotchGeometry.swift",
+                    "swift/NotchDetector.swift",
+                    "swift/DragDetector.swift",
+                    "swift/BatteryActivityManager.swift",
+                    "swift/CalendarManager.swift",
+                    "swift/BoringNotchBridge.swift",
+                    "swift/MochiEngine.swift",
+                    "swift/CoucoudoroService.swift",
+                    "swift/AgentHookRelay.swift",
+                    "swift/CoucouBridge.swift",
+                    "swift/AgentTaskProgressService.swift",
+                    "swift/CodeIslandBridge.swift",
+                    "swift/QuickShareService.swift",
+                    "swift/QuickShareBridge.swift",
+                    "swift/AtollHUDService.swift",
+                    "swift/AtollBridge.swift",
+                    "swift/NotchIslandLauncherService.swift",
+                    "swift/NotchIslandBridge.swift",
+                    "swift/IslandDownloadService.swift",
+                    "swift/IslandPrivacySensorService.swift",
+                    "swift/IslandExtensionBridge.swift",
+                    "swift/LedgeAnnouncementService.swift",
+                    "swift/LedgeBridge.swift",
+                    "swift/SuperIslandTeleprompterService.swift",
+                    "swift/SuperIslandEmojiService.swift",
+                    "swift/SuperIslandAIUsageService.swift",
+                    "swift/SuperIslandBridge.swift",
+                    "swift/MioIslandSoundSynthesizer.swift",
+                    "swift/MioIslandTerminalJumperService.swift",
+                    "swift/MioIslandBridge.swift",
+                    "swift/NotchlyNetworkStatusService.swift",
+                    "swift/NotchlyLockStateService.swift",
+                    "swift/NotchlyBridge.swift",
+                    "swift/QuietNotchInlineHUDService.swift",
+                    "swift/QuietNotchNotificationFilterService.swift",
+                    "swift/QuietNotchBridge.swift",
+                    "swift/AnotherNotchClipboardService.swift",
+                    "swift/AnotherNotchFanService.swift",
+                    "swift/AnotherNotchBridge.swift",
+                    "swift/GHNotchCommandEngineService.swift",
+                    "swift/GHNotchBridge.swift",
+                    "swift/IsleFinanceService.swift",
+                    "swift/IsleBridge.swift",
+                    "swift/MacIslandBatteryService.swift",
+                    "swift/MacIslandAirDropService.swift",
+                    "swift/MacIslandBridge.swift",
+                    "swift/MacWakeCleaningModeService.swift",
+                    "swift/MacWakeThermalMonitorService.swift",
+                    "swift/MacWakeBridge.swift",
+                    "swift/PiIslandAgentSessionService.swift",
+                    "swift/PiIslandBridge.swift",
+                    "swift/PookifyAgentAnimationService.swift",
+                    "swift/PookifyBridge.swift",
+                    "swift/DynamicIslandVisionOCRService.swift",
+                    "swift/DynamicIslandVisionBridge.swift",
+                    "swift/TopNotchFocusService.swift",
+                    "swift/TopNotchBridge.swift",
+                    "swift/MacIslandStudioService.swift",
+                    "swift/MacIslandStudioBridge.swift",
+                    "-o",
+                    &obj_file,
+                ])
+                .status()
+                .expect("Failed to execute swiftc");
+
+            if !compile_res.success() {
+                panic!("swiftc compilation failed for NotchDetector");
+            }
+
+            let ar_res = std::process::Command::new("ar")
+                .args(["rcs", &lib_file, &obj_file])
+                .status()
+                .expect("Failed to execute ar");
+
+            if !ar_res.success() {
+                panic!("ar failed to create libnotch_detector.a");
+            }
+
+            println!("cargo:rustc-link-search=native={}", out_dir);
+            println!("cargo:rustc-link-lib=static=notch_detector");
+        }
+
         cc::Build::new()
             .file("cpp/mac_notifications.mm")
             .file("cpp/shelf_edge.mm")

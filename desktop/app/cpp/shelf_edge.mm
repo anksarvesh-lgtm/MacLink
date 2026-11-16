@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 #import <Cocoa/Cocoa.h>
 #import <QuartzCore/QuartzCore.h>
+#import <objc/runtime.h>
 #include "shelf_edge.h"
 
 static ShelfEdgeConfig g_config = {
@@ -672,18 +673,401 @@ void shelf_edge_set_shelf_open(bool is_open) {
     });
 }
 
+static NSRect MacLinkIsland_constrainFrameRect(id self, SEL _cmd, NSRect frameRect, NSScreen *screen) {
+    (void)self; (void)_cmd; (void)screen;
+    // Allow window to be positioned anywhere on screen including inside/over the Menu Bar (y = 0)
+    return frameRect;
+}
+
+static BOOL MacLinkIsland_canBecomeKeyWindow(id self, SEL _cmd) {
+    (void)self; (void)_cmd;
+    return NO;
+}
+
+static BOOL MacLinkIsland_canBecomeMainWindow(id self, SEL _cmd) {
+    (void)self; (void)_cmd;
+    return NO;
+}
+
+static BOOL MacLinkIsland_preventsActivation(id self, SEL _cmd) {
+    (void)self; (void)_cmd;
+    return YES;
+}
+
+static BOOL MacLinkIsland_avoidsActivation(id self, SEL _cmd) {
+    (void)self; (void)_cmd;
+    return YES;
+}
+
+static BOOL MacLinkIsland_isNonactivatingPanel(id self, SEL _cmd) {
+    (void)self; (void)_cmd;
+    return YES;
+}
+
+static void apply_island_window_class(NSWindow *win) {
+    if (!win) return;
+    Class originalClass = [win class];
+    NSString *className = NSStringFromClass(originalClass);
+    if ([className hasSuffix:@"_MacLinkIsland"]) {
+        return; // already applied
+    }
+    NSString *subclassName = [NSString stringWithFormat:@"%@_MacLinkIsland", className];
+    Class subclass = objc_getClass([subclassName UTF8String]);
+    if (!subclass) {
+        subclass = objc_allocateClassPair(originalClass, [subclassName UTF8String], 0);
+        if (subclass) {
+            Method m1 = class_getInstanceMethod(originalClass, @selector(constrainFrameRect:toScreen:));
+            const char *types1 = m1 ? method_getTypeEncoding(m1) : "{CGRect={CGPoint=dd}{CGSize=dd}}@:{CGRect={CGPoint=dd}{CGSize=dd}}@";
+            class_addMethod(subclass, @selector(constrainFrameRect:toScreen:), (IMP)MacLinkIsland_constrainFrameRect, types1);
+
+            Method m2 = class_getInstanceMethod(originalClass, @selector(canBecomeKeyWindow));
+            const char *types2 = m2 ? method_getTypeEncoding(m2) : "c@:";
+            class_addMethod(subclass, @selector(canBecomeKeyWindow), (IMP)MacLinkIsland_canBecomeKeyWindow, types2);
+
+            Method m3 = class_getInstanceMethod(originalClass, @selector(canBecomeMainWindow));
+            const char *types3 = m3 ? method_getTypeEncoding(m3) : "c@:";
+            class_addMethod(subclass, @selector(canBecomeMainWindow), (IMP)MacLinkIsland_canBecomeMainWindow, types3);
+
+            Method m4 = class_getInstanceMethod(originalClass, @selector(_preventsActivation));
+            const char *types4 = m4 ? method_getTypeEncoding(m4) : "c@:";
+            class_addMethod(subclass, @selector(_preventsActivation), (IMP)MacLinkIsland_preventsActivation, types4);
+
+            Method m5 = class_getInstanceMethod(originalClass, @selector(_avoidsActivation));
+            const char *types5 = m5 ? method_getTypeEncoding(m5) : "c@:";
+            class_addMethod(subclass, @selector(_avoidsActivation), (IMP)MacLinkIsland_avoidsActivation, types5);
+
+            Method m6 = class_getInstanceMethod(originalClass, @selector(_isNonactivatingPanel));
+            const char *types6 = m6 ? method_getTypeEncoding(m6) : "c@:";
+            class_addMethod(subclass, @selector(_isNonactivatingPanel), (IMP)MacLinkIsland_isNonactivatingPanel, types6);
+
+            objc_registerClassPair(subclass);
+        }
+    }
+    if (subclass) {
+        object_setClass(win, subclass);
+    }
+}
+
+static id s_screenObserver = nil;
+static id s_wakeObserver = nil;
+static id s_spaceObserver = nil;
+
+static id s_islandGlobalMouseMonitor = nil;
+static id s_islandLocalMouseMonitor = nil;
+static BOOL s_isIslandHoverExpanded = NO;
+static BOOL s_isCollapsePending = NO;
+static uint64_t s_islandCollapseGeneration = 0;
+static NSTimer *s_islandWatchdogTimer = nil;
+static NSInteger s_outsideTicks = 0;
+
+static void stop_island_watchdog(void) {
+    if (s_islandWatchdogTimer) {
+        [s_islandWatchdogTimer invalidate];
+        s_islandWatchdogTimer = nil;
+    }
+    s_outsideTicks = 0;
+}
+
+static void start_island_watchdog(void);
+
+extern "C" void maclink_update_layout(void);
+
+static NSRect s_notchRect = NSZeroRect;
+static NSRect s_leftWingRect = NSZeroRect;
+static NSRect s_rightWingRect = NSZeroRect;
+static NSRect s_collapsedHitRect = NSZeroRect;
+static NSRect s_expandedHitRect = NSZeroRect;
+
+static NSScreen *maclink_target_notch_screen(NSWindow *fallbackWin) {
+    if (@available(macOS 12.0, *)) {
+        for (NSScreen *sc in [NSScreen screens]) {
+            if (sc.safeAreaInsets.top > 0) {
+                return sc;
+            }
+        }
+    }
+    return [fallbackWin screen] ?: [NSScreen mainScreen] ?: [[NSScreen screens] firstObject];
+}
+
+void maclink_update_layout_for_screen(NSScreen *screen) {
+    if (!screen) {
+        screen = maclink_target_notch_screen(nil);
+    }
+    if (!screen) return;
+
+    NSRect scFrame = [screen frame];
+    CGFloat screenTop = scFrame.origin.y + scFrame.size.height;
+    CGFloat screenCenterX = scFrame.origin.x + (scFrame.size.width / 2.0);
+
+    CGFloat notchWidth = 0.0;
+    CGFloat notchHeight = 0.0;
+
+    if (@available(macOS 12.0, *)) {
+        if (screen.safeAreaInsets.top > 0) {
+            notchHeight = screen.safeAreaInsets.top;
+            NSRect leftArea = screen.auxiliaryTopLeftArea;
+            NSRect rightArea = screen.auxiliaryTopRightArea;
+            if (leftArea.size.width > 0 && rightArea.size.width > 0) {
+                notchWidth = scFrame.size.width - leftArea.size.width - rightArea.size.width;
+            }
+        }
+    }
+
+    if (notchWidth <= 0.0) {
+        notchWidth = 180.0; // Standard fallback for non-notch displays
+    }
+    if (notchHeight <= 0.0) {
+        notchHeight = 32.0;
+    }
+
+    s_notchRect = NSMakeRect(screenCenterX - (notchWidth / 2.0), screenTop - notchHeight, notchWidth, notchHeight);
+    s_leftWingRect = NSMakeRect(s_notchRect.origin.x - 130.0, screenTop - notchHeight, 130.0, notchHeight);
+    s_rightWingRect = NSMakeRect(s_notchRect.origin.x + notchWidth, screenTop - notchHeight, 130.0, notchHeight);
+
+    // Collapsed hit rect covers notch and wings with small padding
+    CGFloat colW = notchWidth + 260.0 + 8.0;
+    CGFloat colH = notchHeight + 6.0;
+    s_collapsedHitRect = NSMakeRect(screenCenterX - (colW / 2.0), screenTop - colH, colW, colH);
+
+    // Default expanded hit rect covers expanded island with ~24pt padding
+    CGFloat expW = 680.0 + 48.0;
+    CGFloat expH = 260.0 + 24.0;
+    s_expandedHitRect = NSMakeRect(screenCenterX - (expW / 2.0), screenTop - expH, expW, expH);
+}
+
+static void start_island_watchdog(void) {
+    if (s_islandWatchdogTimer) return;
+    s_outsideTicks = 0;
+    s_islandWatchdogTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 repeats:YES block:^(NSTimer * _Nonnull timer) {
+        (void)timer;
+        if (!s_isIslandHoverExpanded) {
+            stop_island_watchdog();
+            return;
+        }
+        NSPoint mouseLoc = [NSEvent mouseLocation];
+        if (!NSPointInRect(mouseLoc, s_expandedHitRect)) {
+            s_outsideTicks++;
+            if (s_outsideTicks >= 2) { // 200ms outside
+                s_isIslandHoverExpanded = NO;
+                stop_island_watchdog();
+                maclink_set_island_hover_state(false);
+            }
+        } else {
+            s_outsideTicks = 0;
+        }
+    }];
+}
+
+static void handle_island_mouse_event(NSEvent *event) {
+    (void)event;
+    NSPoint mouseLoc = [NSEvent mouseLocation];
+
+    if (!s_isIslandHoverExpanded) {
+        // Fast-path spatial exit: if cursor is below the notch/wings area, drop event immediately with 0 overhead
+        if (mouseLoc.y < s_collapsedHitRect.origin.y) {
+            return;
+        }
+        if (NSPointInRect(mouseLoc, s_collapsedHitRect)) {
+            s_islandCollapseGeneration++;
+            s_isIslandHoverExpanded = YES;
+            s_isCollapsePending = NO;
+            start_island_watchdog();
+            maclink_set_island_hover_state(true);
+        }
+    } else {
+        if (NSPointInRect(mouseLoc, s_expandedHitRect)) {
+            s_islandCollapseGeneration++;
+            s_isCollapsePending = NO;
+            s_outsideTicks = 0;
+        } else {
+            // Debounce collapse: do not enqueue redundant GCD blocks on every mouse movement
+            if (s_isCollapsePending) {
+                return;
+            }
+            s_isCollapsePending = YES;
+            uint64_t currentGen = ++s_islandCollapseGeneration;
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(200 * NSEC_PER_MSEC)), dispatch_get_main_queue(), ^{
+                s_isCollapsePending = NO;
+                if (currentGen != s_islandCollapseGeneration) return;
+                NSPoint currentMouseLoc = [NSEvent mouseLocation];
+                if (!NSPointInRect(currentMouseLoc, s_expandedHitRect)) {
+                    s_isIslandHoverExpanded = NO;
+                    stop_island_watchdog();
+                    maclink_set_island_hover_state(false);
+                }
+            });
+        }
+    }
+}
+
+static void start_island_hover_monitor(void) {
+    if (s_islandGlobalMouseMonitor || s_islandLocalMouseMonitor) return;
+
+    NSEventMask moveMask = NSEventMaskMouseMoved |
+                           NSEventMaskLeftMouseDragged |
+                           NSEventMaskRightMouseDragged;
+
+    s_islandGlobalMouseMonitor = [NSEvent addGlobalMonitorForEventsMatchingMask:moveMask handler:^(NSEvent *event) {
+        handle_island_mouse_event(event);
+    }];
+
+    s_islandLocalMouseMonitor = [NSEvent addLocalMonitorForEventsMatchingMask:moveMask handler:^NSEvent *(NSEvent *event) {
+        handle_island_mouse_event(event);
+        return event;
+    }];
+}
+
+static void stop_island_hover_monitor(void) {
+    if (s_islandGlobalMouseMonitor) {
+        [NSEvent removeMonitor:s_islandGlobalMouseMonitor];
+        s_islandGlobalMouseMonitor = nil;
+    }
+    if (s_islandLocalMouseMonitor) {
+        [NSEvent removeMonitor:s_islandLocalMouseMonitor];
+        s_islandLocalMouseMonitor = nil;
+    }
+    stop_island_watchdog();
+    s_isCollapsePending = NO;
+    s_islandCollapseGeneration++;
+}
+
+static void setup_screen_and_space_observers(void) {
+    if (s_screenObserver) return;
+
+    void (^realignIsland)(NSNotification *) = ^(NSNotification *note) {
+        (void)note;
+        dispatch_async(dispatch_get_main_queue(), ^{
+            maclink_update_layout();
+            for (NSWindow *win in [NSApp windows]) {
+                if ([win.title isEqualToString:@"Nexora Island"] || [win.title isEqualToString:@"MacLink Island"]) {
+                    NSScreen *screen = maclink_target_notch_screen(win);
+                    if (!screen) break;
+                    maclink_update_layout_for_screen(screen);
+                    NSRect scFrame = [screen frame];
+                    CGFloat screenTop = scFrame.origin.y + scFrame.size.height;
+                    CGFloat originY = screenTop - win.frame.size.height;
+                    CGFloat screenCenterX = scFrame.origin.x + (scFrame.size.width / 2.0);
+                    CGFloat originX = screenCenterX - (win.frame.size.width / 2.0);
+                    NSRect newFrame = NSMakeRect(originX, originY, win.frame.size.width, win.frame.size.height);
+                    if (!NSEqualRects(win.frame, newFrame)) {
+                        [win setFrame:newFrame display:YES];
+                    }
+                    break;
+                }
+            }
+        });
+    };
+
+    s_screenObserver = [[NSNotificationCenter defaultCenter]
+        addObserverForName:NSApplicationDidChangeScreenParametersNotification
+                    object:nil
+                     queue:[NSOperationQueue mainQueue]
+                usingBlock:realignIsland];
+
+    s_wakeObserver = [[[NSWorkspace sharedWorkspace] notificationCenter]
+        addObserverForName:NSWorkspaceDidWakeNotification
+                    object:nil
+                     queue:[NSOperationQueue mainQueue]
+                usingBlock:realignIsland];
+
+    s_spaceObserver = [[[NSWorkspace sharedWorkspace] notificationCenter]
+        addObserverForName:NSWorkspaceActiveSpaceDidChangeNotification
+                    object:nil
+                     queue:[NSOperationQueue mainQueue]
+                usingBlock:realignIsland];
+}
+
 void shelf_edge_style_shelf_window(const char *window_title) {
     if (!window_title) return;
+    setup_screen_and_space_observers();
     NSString *title = [NSString stringWithUTF8String:window_title];
     dispatch_async(dispatch_get_main_queue(), ^{
         for (NSWindow *win in [NSApp windows]) {
             if ([win.title isEqualToString:title]) {
-                s_shelfWindow = win;
-                [win setCollectionBehavior:(NSWindowCollectionBehaviorCanJoinAllSpaces |
-                                            NSWindowCollectionBehaviorFullScreenAuxiliary |
-                                            NSWindowCollectionBehaviorStationary)];
-                [win setLevel:NSFloatingWindowLevel];
-                [win setHidesOnDeactivate:NO];
+                if ([title isEqualToString:@"Nexora Island"] || [title isEqualToString:@"MacLink Island"]) {
+                    // Dynamically subclass Qt's QNSWindow so QPlatformWindow pointers and delegate data are fully preserved
+                    apply_island_window_class(win);
+                    [win setCollectionBehavior:(NSWindowCollectionBehaviorCanJoinAllSpaces |
+                                                NSWindowCollectionBehaviorFullScreenAuxiliary |
+                                                NSWindowCollectionBehaviorStationary |
+                                                NSWindowCollectionBehaviorIgnoresCycle)];
+                    // Set level above Menu Bar so it anchors directly inside and over the Menu Bar
+                    [win setLevel:(NSWindowLevel)(kCGMainMenuWindowLevel + 3)];
+                    [win setHidesOnDeactivate:NO];
+                    [win setOpaque:NO];
+                    [win setBackgroundColor:[NSColor clearColor]];
+                    [win setHasShadow:NO];
+                    [win setMovable:NO];
+                    [win setAcceptsMouseMovedEvents:YES];
+                    SEL sPrevents = @selector(_setPreventsActivation:);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+                    if ([win respondsToSelector:sPrevents]) {
+                        [win performSelector:sPrevents withObject:@YES];
+                    }
+                    SEL sAvoids = @selector(_setAvoidsActivation:);
+                    if ([win respondsToSelector:sAvoids]) {
+                        [win performSelector:sAvoids withObject:@YES];
+                    }
+#pragma clang diagnostic pop
+                    NSScreen *screen = maclink_target_notch_screen(win);
+                    maclink_update_layout_for_screen(screen);
+                    start_island_hover_monitor();
+                } else {
+                    s_shelfWindow = win;
+                    [win setCollectionBehavior:(NSWindowCollectionBehaviorCanJoinAllSpaces |
+                                                NSWindowCollectionBehaviorFullScreenAuxiliary |
+                                                NSWindowCollectionBehaviorStationary)];
+                    [win setLevel:NSFloatingWindowLevel];
+                    [win setHidesOnDeactivate:NO];
+                }
+                break;
+            }
+        }
+    });
+}
+
+static BOOL s_isPositioningWindow = NO;
+
+void maclink_position_island_window(double x, double width, double height) {
+    (void)x; // Strictly center on physical notch / target display midX
+    if (s_isPositioningWindow) return;
+    setup_screen_and_space_observers();
+    dispatch_async(dispatch_get_main_queue(), ^{
+        if (s_isPositioningWindow) return;
+        for (NSWindow *win in [NSApp windows]) {
+            if ([win.title isEqualToString:@"Nexora Island"] || [win.title isEqualToString:@"MacLink Island"]) {
+                apply_island_window_class(win);
+                NSScreen *screen = maclink_target_notch_screen(win);
+                if (!screen) break;
+                maclink_update_layout_for_screen(screen);
+
+                NSRect scFrame = [screen frame];
+                CGFloat screenTop = scFrame.origin.y + scFrame.size.height;
+                CGFloat originY = screenTop - (CGFloat)height;
+                CGFloat screenCenterX = scFrame.origin.x + (scFrame.size.width / 2.0);
+                CGFloat originX = screenCenterX - ((CGFloat)width / 2.0);
+                NSRect newFrame = NSMakeRect(originX, originY, (CGFloat)width, (CGFloat)height);
+                if (fabs(win.frame.origin.x - newFrame.origin.x) > 1.0 ||
+                    fabs(win.frame.origin.y - newFrame.origin.y) > 1.0 ||
+                    fabs(win.frame.size.width - newFrame.size.width) > 1.0 ||
+                    fabs(win.frame.size.height - newFrame.size.height) > 1.0) {
+                    s_isPositioningWindow = YES;
+                    [win setFrame:newFrame display:YES];
+                    s_isPositioningWindow = NO;
+                }
+
+                if (height > 50.0) {
+                    CGFloat pad = 24.0;
+                    s_expandedHitRect = NSMakeRect(originX - pad, originY - pad, (CGFloat)width + (pad * 2.0), (CGFloat)height + (pad * 2.0));
+                    s_isIslandHoverExpanded = YES;
+                    start_island_watchdog();
+                } else {
+                    s_collapsedHitRect = NSMakeRect(originX - 4.0, originY - 4.0, (CGFloat)width + 8.0, (CGFloat)height + 4.0);
+                    s_isIslandHoverExpanded = NO;
+                    s_isCollapsePending = NO;
+                    stop_island_watchdog();
+                }
                 break;
             }
         }
@@ -692,6 +1076,20 @@ void shelf_edge_style_shelf_window(const char *window_title) {
 
 void shelf_edge_cleanup(void) {
     dispatch_async(dispatch_get_main_queue(), ^{
+        stop_island_watchdog();
+        stop_island_hover_monitor();
+        if (s_screenObserver) {
+            [[NSNotificationCenter defaultCenter] removeObserver:s_screenObserver];
+            s_screenObserver = nil;
+        }
+        if (s_wakeObserver) {
+            [[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver:s_wakeObserver];
+            s_wakeObserver = nil;
+        }
+        if (s_spaceObserver) {
+            [[[NSWorkspace sharedWorkspace] notificationCenter] removeObserver:s_spaceObserver];
+            s_spaceObserver = nil;
+        }
         if (s_instance) {
             [s_instance stop];
             s_instance = nil;

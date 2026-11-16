@@ -197,7 +197,7 @@ Item {
                         iconPath: Icons.folder
                         variant: "ghost"
                         size: "sm"
-                        Accessible.name: qsTr("Open local MacLink Downloads folder in Finder")
+                        Accessible.name: qsTr("Open local Nexora Downloads folder in Finder")
                         onClicked: AppController.openLocalDownloads()
                     }
 
@@ -479,7 +479,7 @@ Item {
 
                 Txt {
                     Layout.fillWidth: true
-                    text: qsTr("To view files and folders on your Android device, open MacLink on your phone and toggle on 'Storage' permissions, or grant 'All files access' in Android Settings.")
+                    text: qsTr("To view files and folders on your Android device, open Nexora on your phone and toggle on 'Storage' permissions, or grant 'All files access' in Android Settings.")
                     role: "body"
                     wrapMode: Text.WordWrap
                 }
@@ -751,7 +751,7 @@ Item {
 
                     Txt {
                         Layout.fillWidth: true
-                        text: qsTr("1. On your phone: Open MacLink › Settings › Data & Storage › Turn on 'FTP file server'.")
+                        text: qsTr("1. On your phone: Open Nexora › Settings › Data & Storage › Turn on 'FTP file server'.")
                         role: "caption"
                         color: Theme.textSecondary
                         wrapMode: Text.WordWrap

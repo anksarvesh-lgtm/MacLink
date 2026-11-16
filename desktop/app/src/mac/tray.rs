@@ -156,7 +156,11 @@ impl Tray {
 
     pub fn set_tooltip(&self, text: &str) {
         let connected = text.contains("connected");
-        let line = if connected { text.replace("MacLink · ", "") } else { "No phone connected".to_string() };
+        let line = if connected {
+            text.replace("Nexora · ", "").replace("MacLink · ", "")
+        } else {
+            "No phone connected".to_string()
+        };
         let c_line = CString::new(line).unwrap_or_default();
         let find_phone = FIND_PHONE_ENABLED.load(std::sync::atomic::Ordering::Relaxed) && connected;
         unsafe {

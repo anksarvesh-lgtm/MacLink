@@ -47,7 +47,8 @@ for ts in desktop/app/i18n/maclink_*.ts; do
 done
 
 # The icon: every size macOS asks for, from the 1024 px brand icon.
-ICONSET="$(mktemp -d)/MacLink.iconset"
+ICONSET_DIR="$(mktemp -d)"
+ICONSET="${ICONSET_DIR}/MacLink.iconset"
 mkdir -p "$ICONSET"
 SOURCE_ICON="assets/brand/icon-1024.png"
 [[ -f "$SOURCE_ICON" ]] || SOURCE_ICON="assets/brand/icon-512.png"
@@ -56,17 +57,19 @@ for size in 16 32 128 256 512; do
     double=$((size * 2))
     sips -z "$double" "$double" "$SOURCE_ICON" --out "$ICONSET/icon_${size}x${size}@2x.png" >/dev/null
 done
-iconutil -c icns "$ICONSET" -o "$APP/Contents/Resources/MacLink.icns"
+iconutil -c icns "$ICONSET" -o "assets/brand/MacLink.icns"
+cp -f "assets/brand/MacLink.icns" "$APP/Contents/Resources/MacLink.icns"
 cp -f "assets/brand/maclink-liquid-logo.png" "$APP/Contents/Resources/maclink-liquid-logo.png"
 cp -f "assets/brand/maclink-liquid-logo.png" "$APP/Contents/MacOS/maclink-liquid-logo.png"
+cp -f "assets/brand/notification-icon.png" "$APP/Contents/Resources/notification-icon.png"
 
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-    <key>CFBundleName</key><string>MacLink</string>
-    <key>CFBundleDisplayName</key><string>MacLink</string>
+    <key>CFBundleName</key><string>Nexora</string>
+    <key>CFBundleDisplayName</key><string>Nexora</string>
     <key>CFBundleIdentifier</key><string>in.maclink.srv</string>
     <key>CFBundleExecutable</key><string>maclink-desktop</string>
     <key>CFBundleIconFile</key><string>MacLink</string>
@@ -83,23 +86,23 @@ cat > "$APP/Contents/Info.plist" <<PLIST
         <string>INSendMessageIntent</string>
     </array>
     <key>NSBluetoothAlwaysUsageDescription</key>
-    <string>MacLink uses Bluetooth to detect paired phones nearby.</string>
+    <string>Nexora uses Bluetooth to detect paired phones nearby.</string>
     <key>NSLocalNetworkUsageDescription</key>
-    <string>MacLink finds your phone and connects to it on this network.</string>
+    <string>Nexora finds your phone and connects to it on this network.</string>
     <key>NSBonjourServices</key>
     <array>
         <string>_maclink._udp</string>
     </array>
     <key>NSMicrophoneUsageDescription</key>
-    <string>MacLink uses the microphone for calls you take on this Mac.</string>
+    <string>Nexora uses the microphone for calls you take on this Mac.</string>
     <key>NSCameraUsageDescription</key>
-    <string>MacLink uses the camera only when you start a feature that needs it.</string>
+    <string>Nexora uses the camera only when you start a feature that needs it.</string>
     <key>NSAppleEventsUsageDescription</key>
-    <string>MacLink controls media players on this Mac when you ask it to from your phone.</string>
+    <string>Nexora controls media players on this Mac when you ask it to from your phone.</string>
     <key>CFBundleURLTypes</key>
     <array>
         <dict>
-            <key>CFBundleURLName</key><string>MacLink</string>
+            <key>CFBundleURLName</key><string>Nexora</string>
             <key>CFBundleURLSchemes</key>
             <array>
                 <string>maclink</string>
@@ -115,6 +118,16 @@ PLIST
 
 # Clean any extended attributes/resource forks before signing
 xattr -cr "$APP"
+
+# Ensure macOS system Swift concurrency libraries in /usr/lib/swift are reachable via rpath
+install_name_tool -add_rpath /usr/lib/swift "$APP/Contents/MacOS/maclink-desktop" 2>/dev/null || true
+
+# Optional: embed LiquidDynamo helper application if DYNAMO_APP is set
+if [[ -n "${DYNAMO_APP:-}" && -d "$DYNAMO_APP" ]]; then
+    echo "Embedding LiquidDynamo from $DYNAMO_APP into $APP/Contents/Helpers/LiquidDynamo.app..."
+    mkdir -p "$APP/Contents/Helpers"
+    cp -Rf "$DYNAMO_APP" "$APP/Contents/Helpers/LiquidDynamo.app"
+fi
 
 # Ad-hoc signature: no identity, but Apple Silicon won't run unsigned code.
 codesign --force --deep --sign - "$APP"
@@ -141,7 +154,7 @@ cp assets/brand/MacLink.icns "$DMG_STAGING/.VolumeIcon.icns"
 SetFile -c icnC "$DMG_STAGING/.VolumeIcon.icns" 2>/dev/null || true
 SetFile -a C "$DMG_STAGING" 2>/dev/null || true
 rm -f "$DMG"
-hdiutil create -volname "MacLink" -srcfolder "$DMG_STAGING" -ov -format UDZO "$DMG" >/dev/null
+hdiutil create -volname "Nexora" -srcfolder "$DMG_STAGING" -ov -format UDZO "$DMG" >/dev/null
 rm -rf "$DMG_STAGING"
 echo "Built $DMG"
 cp -f "$DMG" "${OUT_DIR}/MacLink-${VERSION}.dmg"

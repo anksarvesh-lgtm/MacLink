@@ -915,7 +915,7 @@ Item {
                         role: "caption"
                         muted: true
                         wrapMode: Text.WordWrap
-                        text: qsTr("To answer or place calls from your Mac, turn on \"Let my paired Mac answer and place calls\" in MacLink settings on your phone.")
+                        text: qsTr("To answer or place calls from your Mac, turn on \"Let my paired Mac answer and place calls\" in Nexora settings on your phone.")
                     }
                 }
             }

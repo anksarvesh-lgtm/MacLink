@@ -96,7 +96,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 14
                 Repeater {
-                    model: [qsTr("Install MacLink"), qsTr("Tap “Pair with Mac”"), qsTr("Scan this code")]
+                    model: [qsTr("Install Nexora"), qsTr("Tap “Pair with Mac”"), qsTr("Scan this code")]
                     delegate: Row {
                         required property int index
                         required property string modelData
@@ -169,7 +169,7 @@ Item {
                     width: parent.width
                     spacing: 6
                     Repeater {
-                        model: [qsTr("Open MacLink on your phone"), qsTr("Tap “Pair with Mac”"), qsTr("Scan this QR code")]
+                        model: [qsTr("Open Nexora on your phone"), qsTr("Tap “Pair with Mac”"), qsTr("Scan this QR code")]
                         delegate: Row {
                             required property int index
                             required property string modelData
@@ -217,7 +217,7 @@ Item {
                 wrapMode: Text.WordWrap
                 role: "body"
                 muted: true
-                text: qsTr("On your phone, open MacLink and choose “Pair nearby”. It shows up here.")
+                text: qsTr("On your phone, open Nexora and choose “Pair nearby”. It shows up here.")
             }
             Repeater {
                 model: Pairing.nearby

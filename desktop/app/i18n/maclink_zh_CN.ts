@@ -50,28 +50,28 @@
     </message>
     <message>
         <location filename="rust_strings.h" line="16"/>
-        <source>MacLink · %1</source>
-        <translation>MacLink · %1</translation>
+        <source>Nexora · %1</source>
+        <translation>Nexora · %1</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="17"/>
-        <source>MacLink · %1 devices connected</source>
-        <translation>MacLink · 已连接 %1 台设备</translation>
+        <source>Nexora · %1 devices connected</source>
+        <translation>Nexora · 已连接 %1 台设备</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="18"/>
-        <source>MacLink · 1 device connected</source>
-        <translation>MacLink · 已连接 1 台设备</translation>
+        <source>Nexora · 1 device connected</source>
+        <translation>Nexora · 已连接 1 台设备</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="19"/>
-        <source>MacLink · no devices paired</source>
-        <translation>MacLink · 未配对设备</translation>
+        <source>Nexora · no devices paired</source>
+        <translation>Nexora · 未配对设备</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="20"/>
-        <source>MacLink · not connected</source>
-        <translation>MacLink · 未连接</translation>
+        <source>Nexora · not connected</source>
+        <translation>Nexora · 未连接</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="21"/>
@@ -80,8 +80,8 @@
     </message>
     <message>
         <location filename="rust_strings.h" line="22"/>
-        <source>Open MacLink</source>
-        <translation>打开 MacLink</translation>
+        <source>Open Nexora</source>
+        <translation>打开 Nexora</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="23"/>
@@ -90,8 +90,8 @@
     </message>
     <message>
         <location filename="rust_strings.h" line="24"/>
-        <source>Quit MacLink</source>
-        <translation>退出 MacLink</translation>
+        <source>Quit Nexora</source>
+        <translation>退出 Nexora</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="25"/>
@@ -178,8 +178,8 @@
     </message>
     <message>
         <location filename="../qml/pages/AppsPage.qml" line="90"/>
-        <source>Set up Wireless debugging in MacLink on the phone to open its apps here.</source>
-        <translation>在手机上的 MacLink 中设置无线调试，即可在此打开其应用。</translation>
+        <source>Set up Wireless debugging in Nexora on the phone to open its apps here.</source>
+        <translation>在手机上的 Nexora 中设置无线调试，即可在此打开其应用。</translation>
     </message>
     <message>
         <location filename="../qml/pages/AppsPage.qml" line="143"/>
@@ -787,8 +787,8 @@
     </message>
     <message>
         <location filename="rust_strings.h" line="61"/>
-        <source>Update MacLink on %1 to send it images.</source>
-        <translation>请更新 %1 上的 MacLink 以向其发送图片。</translation>
+        <source>Update Nexora on %1 to send it images.</source>
+        <translation>请更新 %1 上的 Nexora 以向其发送图片。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="62"/>
@@ -1040,8 +1040,8 @@
     </message>
     <message>
         <location filename="rust_strings.h" line="102"/>
-        <source>Opened Recordings folder. Start a voice note in MacLink on %1 to send it here.</source>
-        <translation>已打开录音文件夹。在 %1 上的 MacLink 中开始语音备忘，即可发送到这里。</translation>
+        <source>Opened Recordings folder. Start a voice note in Nexora on %1 to send it here.</source>
+        <translation>已打开录音文件夹。在 %1 上的 Nexora 中开始语音备忘，即可发送到这里。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="103"/>
@@ -1200,8 +1200,8 @@
     </message>
     <message>
         <location filename="rust_strings.h" line="134"/>
-        <source>Stream %1&apos;s camera into the MacLink virtual webcam</source>
-        <translation>将 %1 的摄像头画面传入 MacLink 虚拟摄像头</translation>
+        <source>Stream %1&apos;s camera into the Nexora virtual webcam</source>
+        <translation>将 %1 的摄像头画面传入 Nexora 虚拟摄像头</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="135"/>
@@ -1841,8 +1841,8 @@
     <name>Doctor</name>
     <message>
         <location filename="rust_strings.h" line="183"/>
-        <source>%1 Open MacLink on the phone and keep both on the same network. If the phone asks to run in the background, allow it.</source>
-        <translation>%1 在手机上打开 MacLink，并让两台设备处于同一网络。如果手机询问是否允许在后台运行，请允许。</translation>
+        <source>%1 Open Nexora on the phone and keep both on the same network. If the phone asks to run in the background, allow it.</source>
+        <translation>%1 在手机上打开 Nexora，并让两台设备处于同一网络。如果手机询问是否允许在后台运行，请允许。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="184"/>
@@ -1926,33 +1926,33 @@
     </message>
     <message>
         <location filename="rust_strings.h" line="200"/>
-        <source>MacLink isn&apos;t allowed through Windows Firewall</source>
-        <translation>Windows 防火墙未允许 MacLink</translation>
+        <source>Nexora isn&apos;t allowed through Windows Firewall</source>
+        <translation>Windows 防火墙未允许 Nexora</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="201"/>
-        <source>On Huawei / Honor: open Settings → Battery → App launch, turn off Manage automatically for MacLink, and keep Auto-launch, Secondary launch, and Run in background on.</source>
-        <translation>华为 / 荣耀：打开 设置 → 电池 → 应用启动管理，为 MacLink 关闭“自动管理”，并保持“允许自启动”“允许关联启动”和“允许后台活动”开启。</translation>
+        <source>On Huawei / Honor: open Settings → Battery → App launch, turn off Manage automatically for Nexora, and keep Auto-launch, Secondary launch, and Run in background on.</source>
+        <translation>华为 / 荣耀：打开 设置 → 电池 → 应用启动管理，为 Nexora 关闭“自动管理”，并保持“允许自启动”“允许关联启动”和“允许后台活动”开启。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="202"/>
-        <source>On OnePlus / OxygenOS: open Settings → Apps → App management → MacLink → Battery usage and turn on Allow background activity and Allow auto-launch.</source>
-        <translation>一加 / OxygenOS：打开 设置 → 应用 → 应用管理 → MacLink → 耗电管理，开启“允许后台活动”和“允许自启动”。</translation>
+        <source>On OnePlus / OxygenOS: open Settings → Apps → App management → Nexora → Battery usage and turn on Allow background activity and Allow auto-launch.</source>
+        <translation>一加 / OxygenOS：打开 设置 → 应用 → 应用管理 → Nexora → 耗电管理，开启“允许后台活动”和“允许自启动”。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="203"/>
-        <source>On Oppo / Realme: open Settings → Apps → App management → MacLink → Battery usage and turn on Allow background activity and Allow auto-launch.</source>
-        <translation>OPPO / 真我：打开 设置 → 应用 → 应用管理 → MacLink → 耗电管理，开启“允许后台活动”和“允许自启动”。</translation>
+        <source>On Oppo / Realme: open Settings → Apps → App management → Nexora → Battery usage and turn on Allow background activity and Allow auto-launch.</source>
+        <translation>OPPO / 真我：打开 设置 → 应用 → 应用管理 → Nexora → 耗电管理，开启“允许后台活动”和“允许自启动”。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="204"/>
-        <source>On Pixel: open Settings → Apps → See all apps → MacLink → App battery usage, tap Allow background usage, and choose Unrestricted.</source>
-        <translation>Pixel：打开 设置 → 应用 → 查看所有应用 → MacLink → 应用的电池用量，点按“允许后台使用”，然后选择“无限制”。</translation>
+        <source>On Pixel: open Settings → Apps → See all apps → Nexora → App battery usage, tap Allow background usage, and choose Unrestricted.</source>
+        <translation>Pixel：打开 设置 → 应用 → 查看所有应用 → Nexora → 应用的电池用量，点按“允许后台使用”，然后选择“无限制”。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="205"/>
-        <source>On Samsung: open Settings → Apps → MacLink → Battery and choose Unrestricted, then in Device care → Battery → Background usage limits make sure MacLink is never put to sleep.</source>
-        <translation>三星：打开 设置 → 应用程序 → MacLink → 电池，选择“不受限制”，然后在 设备维护 → 电池 → 后台使用限制 中确保 MacLink 不会被设为休眠。</translation>
+        <source>On Samsung: open Settings → Apps → Nexora → Battery and choose Unrestricted, then in Device care → Battery → Background usage limits make sure Nexora is never put to sleep.</source>
+        <translation>三星：打开 设置 → 应用程序 → Nexora → 电池，选择“不受限制”，然后在 设备维护 → 电池 → 后台使用限制 中确保 Nexora 不会被设为休眠。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="206"/>
@@ -1961,13 +1961,13 @@
     </message>
     <message>
         <location filename="rust_strings.h" line="207"/>
-        <source>On Vivo / OriginOS / Funtouch: open Settings → Battery → Background power consumption management → MacLink and choose Unrestricted, and allow Autostart.</source>
-        <translation>vivo / OriginOS / Funtouch：打开 设置 → 电池 → 后台耗电管理 → MacLink，选择“允许后台高耗电”，并允许自启动。</translation>
+        <source>On Vivo / OriginOS / Funtouch: open Settings → Battery → Background power consumption management → Nexora and choose Unrestricted, and allow Autostart.</source>
+        <translation>vivo / OriginOS / Funtouch：打开 设置 → 电池 → 后台耗电管理 → Nexora，选择“允许后台高耗电”，并允许自启动。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="208"/>
-        <source>On Xiaomi / HyperOS / MIUI: open Settings → Apps → Manage apps → MacLink, turn on Autostart, and set Battery saver to No restrictions.</source>
-        <translation>小米 / HyperOS / MIUI：打开 设置 → 应用设置 → 应用管理 → MacLink，开启“自启动”，并将省电策略设为“无限制”。</translation>
+        <source>On Xiaomi / HyperOS / MIUI: open Settings → Apps → Manage apps → Nexora, turn on Autostart, and set Battery saver to No restrictions.</source>
+        <translation>小米 / HyperOS / MIUI：打开 设置 → 应用设置 → 应用管理 → Nexora，开启“自启动”，并将省电策略设为“无限制”。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="209"/>
@@ -2016,8 +2016,8 @@
     </message>
     <message>
         <location filename="rust_strings.h" line="218"/>
-        <source>Windows Firewall blocks MacLink</source>
-        <translation>Windows 防火墙阻止了 MacLink</translation>
+        <source>Windows Firewall blocks Nexora</source>
+        <translation>Windows 防火墙阻止了 Nexora</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="219"/>
@@ -2268,8 +2268,8 @@
     </message>
     <message>
         <location filename="../qml/pages/FeaturesGuidePage.qml" line="572"/>
-        <source>Every feature in MacLink, what it needs, and where to find it.</source>
-        <translation>MacLink 的每一项功能、所需条件，以及在哪里找到它。</translation>
+        <source>Every feature in Nexora, what it needs, and where to find it.</source>
+        <translation>Nexora 的每一项功能、所需条件，以及在哪里找到它。</translation>
     </message>
     <message>
         <location filename="../qml/pages/FeaturesGuidePage.qml" line="611"/>
@@ -2354,15 +2354,15 @@
     <name>Guide</name>
     <message>
         <location filename="rust_strings.h" line="233"/>
-        <source>1. Install MacLink on your Windows 11 PC and your Android phone (Android 8.0 or newer).
+        <source>1. Install Nexora on your Windows 11 PC and your Android phone (Android 8.0 or newer).
 2. Connect both devices to the same Wi-Fi network, or plug your phone into your PC with a USB cable.
 3. Open the Pair step in the setup walkthrough, or click + (Pair a new device) at the bottom of the left rail.
-4. Scan the QR code from the MacLink Android app, or select your phone from the nearby devices list and confirm that the 6-digit code matches on both screens.
+4. Scan the QR code from the Nexora Android app, or select your phone from the nearby devices list and confirm that the 6-digit code matches on both screens.
 5. Choose which features to share for that phone and grant only the Android permissions you want to use.</source>
-        <translation>1. 在 Windows 11 电脑和 Android 手机（Android 8.0 或更高版本）上安装 MacLink。
+        <translation>1. 在 Windows 11 电脑和 Android 手机（Android 8.0 或更高版本）上安装 Nexora。
 2. 让两台设备连接到同一个 Wi‑Fi 网络，或用 USB 数据线将手机连接到电脑。
 3. 在设置向导中打开“配对”步骤，或点击左侧栏底部的 +（配对新设备）。
-4. 用 MacLink 安卓应用扫描二维码，或在附近设备列表中选择你的手机，并确认两边屏幕上的 6 位验证码一致。
+4. 用 Nexora 安卓应用扫描二维码，或在附近设备列表中选择你的手机，并确认两边屏幕上的 6 位验证码一致。
 5. 选择要为这部手机共享的功能，只授予你想使用的 Android 权限。</translation>
     </message>
     <message>
@@ -2435,15 +2435,15 @@
         <source>If your phone and PC do not see each other:
 
 1. Open Connection Doctor from Settings › Connection &amp; About or the Command Palette.
-2. Check that your Wi-Fi network profile in Windows is set to Private rather than Public, or click Fix in Connection Doctor to allow MacLink through Windows Firewall.
+2. Check that your Wi-Fi network profile in Windows is set to Private rather than Public, or click Fix in Connection Doctor to allow Nexora through Windows Firewall.
 3. Verify that both devices are on the same subnet and that guest Wi-Fi client isolation is turned off on your router.
-4. You can also connect over a USB cable with USB debugging enabled; MacLink automatically sets up a local tunnel.</source>
+4. You can also connect over a USB cable with USB debugging enabled; Nexora automatically sets up a local tunnel.</source>
         <translation>如果手机和电脑找不到彼此：
 
 1. 从 设置 › 连接与关于 或命令面板打开连接诊断。
-2. 检查 Windows 中 Wi‑Fi 网络的配置文件是否设为“专用”而不是“公用”，或在连接诊断中点击“修复”，允许 MacLink 通过 Windows 防火墙。
+2. 检查 Windows 中 Wi‑Fi 网络的配置文件是否设为“专用”而不是“公用”，或在连接诊断中点击“修复”，允许 Nexora 通过 Windows 防火墙。
 3. 确认两台设备在同一子网中，并且路由器已关闭访客 Wi‑Fi 的客户端隔离。
-4. 你也可以在开启 USB 调试后用 USB 数据线连接；MacLink 会自动建立本地隧道。</translation>
+4. 你也可以在开启 USB 调试后用 USB 数据线连接；Nexora 会自动建立本地隧道。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="248"/>
@@ -2486,7 +2486,7 @@ Sensitive capabilities such as Share PC folders, Remote input, and Reverse PC sc
     </message>
     <message>
         <location filename="rust_strings.h" line="253"/>
-        <source>Most MacLink features work in Standard mode with regular Android permissions. Two optional modes unlock deeper system integration:
+        <source>Most Nexora features work in Standard mode with regular Android permissions. Two optional modes unlock deeper system integration:
 
 Elevated mode (Wireless debugging or root)
 - Captures the phone screen without showing the Android cast confirmation prompt every time.
@@ -2495,8 +2495,8 @@ Elevated mode (Wireless debugging or root)
 
 Assist mode (Android Accessibility Service)
 - Injects mouse clicks, scrolling, and touch gestures when you control your phone from your PC.
-- MacLink never reads screen text or logs keystrokes through the Accessibility service.</source>
-        <translation>MacLink 的大多数功能在标准模式下使用常规 Android 权限即可运行。两个可选模式可解锁更深的系统集成：
+- Nexora never reads screen text or logs keystrokes through the Accessibility service.</source>
+        <translation>Nexora 的大多数功能在标准模式下使用常规 Android 权限即可运行。两个可选模式可解锁更深的系统集成：
 
 提升模式（无线调试或 root）
 - 捕获手机屏幕时无需每次显示 Android 的投屏确认提示。
@@ -2505,16 +2505,16 @@ Assist mode (Android Accessibility Service)
 
 辅助模式（Android 无障碍服务）
 - 在你用电脑控制手机时注入鼠标点击、滚动和触摸手势。
-- MacLink 绝不会通过无障碍服务读取屏幕文字或记录按键。</translation>
+- Nexora 绝不会通过无障碍服务读取屏幕文字或记录按键。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="254"/>
-        <source>MacLink Island</source>
-        <translation>MacLink 岛</translation>
+        <source>Nexora Island</source>
+        <translation>Nexora 岛</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="255"/>
-        <source>MacLink links your Android phone and your PC directly on your local network or over a USB cable.
+        <source>Nexora links your Android phone and your PC directly on your local network or over a USB cable.
 
 How it works
 - Devices discover each other over local Wi-Fi (mDNS) or USB (ADB reverse tunnel) and connect over QUIC (TLS 1.3).
@@ -2525,7 +2525,7 @@ Capability tiers on Android
 - Standard mode: Works right after installation with standard Android permissions.
 - Elevated mode (optional): Uses Wireless debugging (set up once in the phone app) or root for phone apps in their own windows, mirroring without the screen capture prompt, and more phone controls.
 - Assist mode (optional): Uses the Android Accessibility service only when you enable Remote input so your PC mouse and keyboard can control the phone.</source>
-        <translation>MacLink 通过本地网络或 USB 数据线直接连接你的 Android 手机和电脑。
+        <translation>Nexora 通过本地网络或 USB 数据线直接连接你的 Android 手机和电脑。
 
 工作原理
 - 设备通过本地 Wi‑Fi（mDNS）或 USB（ADB 反向隧道）互相发现，并通过 QUIC（TLS 1.3）连接。
@@ -2539,14 +2539,14 @@ Android 上的功能层级
     </message>
     <message>
         <location filename="rust_strings.h" line="256"/>
-        <source>MacLink never asks for every permission up front. Each feature works independently:
+        <source>Nexora never asks for every permission up front. Each feature works independently:
 
 - Notification Access: Required only if you want phone notifications, inline replies, and notification-backed chat threads on your PC.
 - SMS and Contacts: Required only if you want to read and send SMS/MMS messages or look up contact names on your PC.
 - Phone and Call Log: Required only if you want incoming call alerts, call history, or dialing from your PC.
 - Media and Photos: Required only if you want the Photos gallery, Shelf latest photo, or folder sync.
 - Camera and Microphone: Required only while streaming your phone as a webcam, taking a Continuity Camera shot, or recording a voice note.</source>
-        <translation>MacLink 从不一次性请求所有权限。每项功能都独立工作：
+        <translation>Nexora 从不一次性请求所有权限。每项功能都独立工作：
 
 - 通知使用权：仅当你想在电脑上看到手机通知、直接回复以及基于通知的聊天对话时才需要。
 - 短信和通讯录：仅当你想在电脑上读取和发送短信/彩信或查找联系人姓名时才需要。
@@ -2556,8 +2556,8 @@ Android 上的功能层级
     </message>
     <message>
         <location filename="rust_strings.h" line="257"/>
-        <source>MacLink overview</source>
-        <translation>MacLink 概览</translation>
+        <source>Nexora overview</source>
+        <translation>Nexora 概览</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="258"/>
@@ -2713,23 +2713,23 @@ What it needs
 Displays a compact pill at the top center of your primary monitor for incoming calls, live file transfer progress, media playback, and optional notification previews.
 
 Where to find it
-- Settings › General › MacLink Island.
+- Settings › General › Nexora Island.
 
 What it needs
-- Turn on MacLink Island in Settings › General and pick which events should appear.</source>
+- Turn on Nexora Island in Settings › General and pick which events should appear.</source>
         <translation>功能
 在主显示器顶部中央显示一个小巧的胶囊，用于来电、实时文件传输进度、媒体播放以及可选的通知预览。
 
 位置
-- 设置 › 通用 › MacLink 岛。
+- 设置 › 通用 › Nexora 岛。
 
 需要
-- 在 设置 › 通用 中开启 MacLink 岛，并选择要显示哪些事件。</translation>
+- 在 设置 › 通用 中开启 Nexora 岛，并选择要显示哪些事件。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="279"/>
         <source>What it does
-Exposes an opt-in localhost HTTP/JSON and Server-Sent Events API on 127.0.0.1 (default port 53320) protected by a bearer token so scripts, CLI tools, and Stream Deck plugins can trigger MacLink actions.
+Exposes an opt-in localhost HTTP/JSON and Server-Sent Events API on 127.0.0.1 (default port 53320) protected by a bearer token so scripts, CLI tools, and Stream Deck plugins can trigger Nexora actions.
 
 Where to find it
 - Settings › Connection &amp; About › Local automation API.
@@ -2737,7 +2737,7 @@ Where to find it
 What it needs
 - Turn on Local automation API in Settings › Connection &amp; About and read the bearer token from api-token.json.</source>
         <translation>功能
-在 127.0.0.1（默认端口 53320）上提供一个需手动开启的本地 HTTP/JSON 与服务器发送事件（SSE）API，由持有者令牌保护，供脚本、命令行工具和 Stream Deck 插件触发 MacLink 的操作。
+在 127.0.0.1（默认端口 53320）上提供一个需手动开启的本地 HTTP/JSON 与服务器发送事件（SSE）API，由持有者令牌保护，供脚本、命令行工具和 Stream Deck 插件触发 Nexora 的操作。
 
 位置
 - 设置 › 连接与关于 › 本地自动化 API。
@@ -2755,7 +2755,7 @@ Where to find it
 - Command Palette › Type on phone with PC keyboard.
 
 What it needs
-- Assist mode (Accessibility service), the MacLink input method, or Elevated mode on your phone.</source>
+- Assist mode (Accessibility service), the Nexora input method, or Elevated mode on your phone.</source>
         <translation>功能
 将电脑键盘的按键和粘贴的文本直接发送到手机，无需镜像手机屏幕。
 
@@ -2764,7 +2764,7 @@ What it needs
 - 命令面板 › 用电脑键盘在手机上输入。
 
 需要
-- 手机上的辅助模式（无障碍服务）、MacLink 输入法或提升模式。</translation>
+- 手机上的辅助模式（无障碍服务）、Nexora 输入法或提升模式。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="281"/>
@@ -2884,7 +2884,7 @@ Where to find it
 - Settings › General › Copy one-time codes.
 
 What it needs
-- Notification Access permission enabled for MacLink on your Android phone.
+- Notification Access permission enabled for Nexora on your Android phone.
 - The per-device Notifications toggle enabled on your PC.</source>
         <translation>功能
 将手机通知同步到首页动态和 Windows 通知弹窗。你可以直接回复消息、点击操作按钮、清除单条或整组通知，并撤销最近一次清除。
@@ -2895,7 +2895,7 @@ What it needs
 - 设置 › 通用 › 复制一次性验证码。
 
 需要
-- 在 Android 手机上为 MacLink 开启通知使用权。
+- 在 Android 手机上为 Nexora 开启通知使用权。
 - 在电脑上为该设备开启“通知”开关。</translation>
     </message>
     <message>
@@ -2904,7 +2904,7 @@ What it needs
 Opens a keyboard-first search bar over actions, contacts, message threads, mirrorable apps, phone quick toggles, clipboard history, and navigation pages.
 
 Where to find it
-- Global hotkey Ctrl+Alt+Space (or Ctrl+K inside the MacLink window).
+- Global hotkey Ctrl+Alt+Space (or Ctrl+K inside the Nexora window).
 - Commands in the top bar.
 
 What it needs
@@ -2913,7 +2913,7 @@ What it needs
 打开一个以键盘为主的搜索栏，覆盖操作、联系人、消息对话、可镜像的应用、手机快捷开关、剪贴板历史和导航页面。
 
 位置
-- 全局快捷键 Ctrl+Alt+Space（在 MacLink 窗口内也可用 Ctrl+K）。
+- 全局快捷键 Ctrl+Alt+Space（在 Nexora 窗口内也可用 Ctrl+K）。
 - 顶栏中的“命令”。
 
 需要
@@ -3006,7 +3006,7 @@ What it needs
     <message>
         <location filename="rust_strings.h" line="292"/>
         <source>What it does
-Sends files, folders, links, and text between your phone and PC at local network speed. If your phone is offline when you send, MacLink places the item in the Waiting to send queue and delivers it automatically as soon as your phone reconnects.
+Sends files, folders, links, and text between your phone and PC at local network speed. If your phone is offline when you send, Nexora places the item in the Waiting to send queue and delivers it automatically as soon as your phone reconnects.
 
 Where to find it
 - Home › Send files button, drag-and-drop anywhere on the window, Waiting to send card, and Transfers list.
@@ -3015,7 +3015,7 @@ Where to find it
 What it needs
 - Paired phone and the per-device Files toggle enabled.</source>
         <translation>功能
-以本地网络的速度在手机和电脑之间发送文件、文件夹、链接和文本。如果发送时手机离线，MacLink 会把它放入“等待发送”队列，并在手机重新连接后自动送达。
+以本地网络的速度在手机和电脑之间发送文件、文件夹、链接和文本。如果发送时手机离线，Nexora 会把它放入“等待发送”队列，并在手机重新连接后自动送达。
 
 位置
 - 首页 › “发送文件”按钮、在窗口任意位置拖放、“等待发送”卡片以及传输列表。
@@ -3054,7 +3054,7 @@ Where to find it
 
 What it needs
 - Automatic PC-to-phone clipboard send works whenever your phone is connected.
-- Background phone-to-PC clipboard sync on Android 10+ uses notifications, the MacLink quick tile, or Elevated mode.</source>
+- Background phone-to-PC clipboard sync on Android 10+ uses notifications, the Nexora quick tile, or Elevated mode.</source>
         <translation>功能
 在电脑和手机之间共享复制的文本、富文本（HTML/RTF）、图片和少量复制的文件。在本地加密保存最多 50 条历史记录，支持置顶，并为链接、电话号码、地址和快递单号提供智能上下文标签。
 
@@ -3064,7 +3064,7 @@ What it needs
 
 需要
 - 只要手机已连接，电脑到手机的剪贴板就会自动发送。
-- 在 Android 10 及以上版本上，手机到电脑的后台剪贴板同步通过通知、MacLink 快捷设置图块或提升模式实现。</translation>
+- 在 Android 10 及以上版本上，手机到电脑的后台剪贴板同步通过通知、Nexora 快捷设置图块或提升模式实现。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="295"/>
@@ -3073,7 +3073,7 @@ Shows incoming and active phone calls on your PC with Answer, Decline, and Rejec
 
 Where to find it
 - Left navigation rail › Calls.
-- Incoming call banner on Home and MacLink Island.
+- Incoming call banner on Home and Nexora Island.
 
 What it needs
 - Phone, Call Log, and Contacts permissions on your Android phone.
@@ -3083,7 +3083,7 @@ What it needs
 
 位置
 - 左侧导航栏 › 通话。
-- 首页和 MacLink 岛上的来电横幅。
+- 首页和 Nexora 岛上的来电横幅。
 
 需要
 - Android 手机上的电话、通话记录和通讯录权限。
@@ -3116,7 +3116,7 @@ What it needs
 Streams your PC&apos;s screen to your phone so you can view your desktop from across the room and use your phone as a trackpad or laser pointer.
 
 Where to find it
-- Started from the MacLink app on your phone.
+- Started from the Nexora app on your phone.
 - Settings › Devices › Share PC screen to phone.
 
 What it needs
@@ -3125,7 +3125,7 @@ What it needs
 将电脑屏幕串流到手机，让你在房间另一头查看桌面，并把手机用作触控板或激光笔。
 
 位置
-- 从手机上的 MacLink 应用开始。
+- 从手机上的 Nexora 应用开始。
 - 设置 › 设备 › 将电脑屏幕共享到手机。
 
 需要
@@ -3134,7 +3134,7 @@ What it needs
     <message>
         <location filename="rust_strings.h" line="298"/>
         <source>What it does
-Streams your phone camera into the MacLink Virtual Camera on Windows so Zoom, Teams, Meet, Discord, and OBS can use your phone&apos;s rear or front camera at up to 4K.
+Streams your phone camera into the Nexora Virtual Camera on Windows so Zoom, Teams, Meet, Discord, and OBS can use your phone&apos;s rear or front camera at up to 4K.
 
 Where to find it
 - Home › Phone as webcam.
@@ -3144,7 +3144,7 @@ What it needs
 - Camera permission on your phone.
 - For other apps to see it: Virtual camera add-on in Settings › Camera &amp; Audio.</source>
         <translation>功能
-将手机摄像头的画面传入 Windows 上的 MacLink 虚拟摄像头，让 Zoom、Teams、Meet、Discord 和 OBS 使用手机的后置或前置摄像头，最高可达 4K。
+将手机摄像头的画面传入 Windows 上的 Nexora 虚拟摄像头，让 Zoom、Teams、Meet、Discord 和 OBS 使用手机的后置或前置摄像头，最高可达 4K。
 
 位置
 - 首页 › 手机作为摄像头。
@@ -4122,8 +4122,8 @@ What it needs
     <name>IslandWindow</name>
     <message>
         <location filename="../qml/IslandWindow.qml" line="16"/>
-        <source>MacLink Island</source>
-        <translation>MacLink 岛</translation>
+        <source>Nexora Island</source>
+        <translation>Nexora 岛</translation>
     </message>
     <message>
         <location filename="../qml/IslandWindow.qml" line="213"/>
@@ -4159,13 +4159,13 @@ What it needs
     </message>
     <message>
         <location filename="../qml/IslandWindow.qml" line="228"/>
-        <source>MacLink Island · %1</source>
-        <translation>MacLink 岛 · %1</translation>
+        <source>Nexora Island · %1</source>
+        <translation>Nexora 岛 · %1</translation>
     </message>
     <message>
         <location filename="../qml/IslandWindow.qml" line="229"/>
-        <source>MacLink Island · Ready</source>
-        <translation>MacLink 岛 · 就绪</translation>
+        <source>Nexora Island · Ready</source>
+        <translation>Nexora 岛 · 就绪</translation>
     </message>
     <message>
         <location filename="../qml/IslandWindow.qml" line="234"/>
@@ -4194,8 +4194,8 @@ What it needs
     </message>
     <message>
         <location filename="../qml/IslandWindow.qml" line="258"/>
-        <source>Click to view in MacLink</source>
-        <translation>点击在 MacLink 中查看</translation>
+        <source>Click to view in Nexora</source>
+        <translation>点击在 Nexora 中查看</translation>
     </message>
     <message>
         <location filename="../qml/IslandWindow.qml" line="261"/>
@@ -4272,8 +4272,8 @@ What it needs
     </message>
     <message>
         <location filename="rust_strings.h" line="316"/>
-        <source>Update MacLink on %1.</source>
-        <translation>请更新 %1 上的 MacLink。</translation>
+        <source>Update Nexora on %1.</source>
+        <translation>请更新 %1 上的 Nexora。</translation>
     </message>
 </context>
 <context>
@@ -4335,8 +4335,8 @@ What it needs
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="46"/>
-        <source>On your phone, open MacLink › Settings › Control from your PC and turn on the Accessibility service.</source>
-        <translation>请在手机上打开 MacLink › 设置 › 从电脑控制，并开启无障碍服务。</translation>
+        <source>On your phone, open Nexora › Settings › Control from your PC and turn on the Accessibility service.</source>
+        <translation>请在手机上打开 Nexora › 设置 › 从电脑控制，并开启无障碍服务。</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="48"/>
@@ -4345,33 +4345,33 @@ What it needs
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="50"/>
-        <source>On your phone, set MacLink as the default SMS/Caller ID app when prompted.</source>
-        <translation>请在手机上按提示将 MacLink 设为默认短信/来电显示应用。</translation>
+        <source>On your phone, set Nexora as the default SMS/Caller ID app when prompted.</source>
+        <translation>请在手机上按提示将 Nexora 设为默认短信/来电显示应用。</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="53"/>
-        <source>On your phone, open MacLink and allow Notification access.</source>
-        <translation>请在手机上打开 MacLink 并允许通知使用权。</translation>
+        <source>On your phone, open Nexora and allow Notification access.</source>
+        <translation>请在手机上打开 Nexora 并允许通知使用权。</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="55"/>
-        <source>On your phone, open MacLink and allow Do Not Disturb access.</source>
-        <translation>请在手机上打开 MacLink 并允许免打扰权限。</translation>
+        <source>On your phone, open Nexora and allow Do Not Disturb access.</source>
+        <translation>请在手机上打开 Nexora 并允许免打扰权限。</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="57"/>
-        <source>On your phone, open MacLink and allow Modify system settings.</source>
-        <translation>请在手机上打开 MacLink 并允许修改系统设置。</translation>
+        <source>On your phone, open Nexora and allow Modify system settings.</source>
+        <translation>请在手机上打开 Nexora 并允许修改系统设置。</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="58"/>
-        <source>Open MacLink on your phone and grant this permission in Settings.</source>
-        <translation>请在手机上打开 MacLink，并在设置中授予此权限。</translation>
+        <source>Open Nexora on your phone and grant this permission in Settings.</source>
+        <translation>请在手机上打开 Nexora，并在设置中授予此权限。</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="60"/>
-        <source>Open Settings › Camera &amp; Audio to set up the MacLink virtual camera add-on.</source>
-        <translation>请打开设置 › 摄像头与音频，设置 MacLink 虚拟摄像头附加组件。</translation>
+        <source>Open Settings › Camera &amp; Audio to set up the Nexora virtual camera add-on.</source>
+        <translation>请打开设置 › 摄像头与音频，设置 Nexora 虚拟摄像头附加组件。</translation>
     </message>
     <message>
         <location filename="../qml/components/LockChip.qml" line="62"/>
@@ -4935,8 +4935,8 @@ What it needs
     </message>
     <message>
         <location filename="rust_strings.h" line="327"/>
-        <source>Recording from %1, saved in Downloads\MacLink</source>
-        <translation>来自 %1 的录制，已保存到 Downloads\MacLink</translation>
+        <source>Recording from %1, saved in Downloads\Nexora</source>
+        <translation>来自 %1 的录制，已保存到 Downloads\Nexora</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="328"/>
@@ -4945,8 +4945,8 @@ What it needs
     </message>
     <message>
         <location filename="rust_strings.h" line="329"/>
-        <source>Saved %1 to Downloads\MacLink.</source>
-        <translation>已将 %1 保存到 Downloads\MacLink。</translation>
+        <source>Saved %1 to Downloads\Nexora.</source>
+        <translation>已将 %1 保存到 Downloads\Nexora。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="330"/>
@@ -4955,8 +4955,8 @@ What it needs
     </message>
     <message>
         <location filename="rust_strings.h" line="331"/>
-        <source>Screenshot from %1, saved in Downloads\MacLink</source>
-        <translation>来自 %1 的截图，已保存到 Downloads\MacLink</translation>
+        <source>Screenshot from %1, saved in Downloads\Nexora</source>
+        <translation>来自 %1 的截图，已保存到 Downloads\Nexora</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="332"/>
@@ -4970,8 +4970,8 @@ What it needs
     </message>
     <message>
         <location filename="rust_strings.h" line="334"/>
-        <source>Set up Wireless debugging in MacLink on the phone to open its apps here.</source>
-        <translation>在手机上的 MacLink 中设置无线调试，即可在这里打开其应用。</translation>
+        <source>Set up Wireless debugging in Nexora on the phone to open its apps here.</source>
+        <translation>在手机上的 Nexora 中设置无线调试，即可在这里打开其应用。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="335"/>
@@ -4980,8 +4980,8 @@ What it needs
     </message>
     <message>
         <location filename="rust_strings.h" line="336"/>
-        <source>The app didn&apos;t open on the phone. Try again, or open MacLink on the phone to check Wireless debugging.</source>
-        <translation>应用未在手机上打开。请重试，或在手机上打开 MacLink 检查无线调试。</translation>
+        <source>The app didn&apos;t open on the phone. Try again, or open Nexora on the phone to check Wireless debugging.</source>
+        <translation>应用未在手机上打开。请重试，或在手机上打开 Nexora 检查无线调试。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="337"/>
@@ -5005,8 +5005,8 @@ What it needs
     </message>
     <message>
         <location filename="rust_strings.h" line="341"/>
-        <source>This phone&apos;s app doesn&apos;t share its screen yet. Update MacLink on the phone.</source>
-        <translation>此手机上的应用尚不能共享屏幕。请更新手机上的 MacLink。</translation>
+        <source>This phone&apos;s app doesn&apos;t share its screen yet. Update Nexora on the phone.</source>
+        <translation>此手机上的应用尚不能共享屏幕。请更新手机上的 Nexora。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="342"/>
@@ -5023,13 +5023,13 @@ What it needs
     </message>
     <message>
         <location filename="../qml/MirrorWindow.qml" line="25"/>
-        <source>%1 · MacLink</source>
-        <translation>%1 · MacLink</translation>
+        <source>%1 · Nexora</source>
+        <translation>%1 · Nexora</translation>
     </message>
     <message>
         <location filename="../qml/MirrorWindow.qml" line="25"/>
-        <source>Phone screen · MacLink</source>
-        <translation>手机屏幕 · MacLink</translation>
+        <source>Phone screen · Nexora</source>
+        <translation>手机屏幕 · Nexora</translation>
     </message>
     <message>
         <location filename="../qml/MirrorWindow.qml" line="325"/>
@@ -5094,8 +5094,8 @@ What it needs
     </message>
     <message>
         <location filename="../qml/MirrorWindow.qml" line="480"/>
-        <source>To control the phone, turn on Control from your PC in MacLink&apos;s settings on the phone.</source>
-        <translation>要控制手机，请在手机上的 MacLink 设置中开启“从电脑控制”。</translation>
+        <source>To control the phone, turn on Control from your PC in Nexora&apos;s settings on the phone.</source>
+        <translation>要控制手机，请在手机上的 Nexora 设置中开启“从电脑控制”。</translation>
     </message>
     <message>
         <location filename="../qml/MirrorWindow.qml" line="489"/>
@@ -5452,8 +5452,8 @@ What it needs
     </message>
     <message>
         <location filename="../qml/pages/PairingPanel.qml" line="99"/>
-        <source>Install MacLink</source>
-        <translation>安装 MacLink</translation>
+        <source>Install Nexora</source>
+        <translation>安装 Nexora</translation>
     </message>
     <message>
         <location filename="../qml/pages/PairingPanel.qml" line="99"/>
@@ -5480,8 +5480,8 @@ What it needs
     </message>
     <message>
         <location filename="../qml/pages/PairingPanel.qml" line="172"/>
-        <source>Open MacLink on your phone</source>
-        <translation>在手机上打开 MacLink</translation>
+        <source>Open Nexora on your phone</source>
+        <translation>在手机上打开 Nexora</translation>
     </message>
     <message>
         <location filename="../qml/pages/PairingPanel.qml" line="172"/>
@@ -5490,8 +5490,8 @@ What it needs
     </message>
     <message>
         <location filename="../qml/pages/PairingPanel.qml" line="220"/>
-        <source>On your phone, open MacLink and choose “Pair nearby”. It shows up here.</source>
-        <translation>请在手机上打开 MacLink 并选择“就近配对”，本机会显示该设备。</translation>
+        <source>On your phone, open Nexora and choose “Pair nearby”. It shows up here.</source>
+        <translation>请在手机上打开 Nexora 并选择“就近配对”，本机会显示该设备。</translation>
     </message>
     <message>
         <location filename="../qml/pages/PairingPanel.qml" line="250"/>
@@ -5601,8 +5601,8 @@ What it needs
     </message>
     <message>
         <location filename="rust_strings.h" line="357"/>
-        <source>Update MacLink on %1 to use its microphone.</source>
-        <translation>请更新 %1 上的 MacLink 以使用其麦克风。</translation>
+        <source>Update Nexora on %1 to use its microphone.</source>
+        <translation>请更新 %1 上的 Nexora 以使用其麦克风。</translation>
     </message>
 </context>
 <context>
@@ -5654,8 +5654,8 @@ What it needs
     </message>
     <message>
         <location filename="rust_strings.h" line="367"/>
-        <source>Update MacLink on %1 to back up its photos.</source>
-        <translation>请在 %1 上更新 MacLink 以备份其照片。</translation>
+        <source>Update Nexora on %1 to back up its photos.</source>
+        <translation>请在 %1 上更新 Nexora 以备份其照片。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="368"/>
@@ -5727,8 +5727,8 @@ What it needs
     </message>
     <message>
         <location filename="rust_strings.h" line="381"/>
-        <source>The photo couldn&apos;t be copied. It&apos;s in Downloads\MacLink.</source>
-        <translation>无法复制照片。它在 Downloads\MacLink 中。</translation>
+        <source>The photo couldn&apos;t be copied. It&apos;s in Downloads\Nexora.</source>
+        <translation>无法复制照片。它在 Downloads\Nexora 中。</translation>
     </message>
 </context>
 <context>
@@ -6032,8 +6032,8 @@ What it needs
     </message>
     <message>
         <location filename="rust_strings.h" line="387"/>
-        <source>Update MacLink on %1 to play on it.</source>
-        <translation>请更新 %1 上的 MacLink 以在其上播放。</translation>
+        <source>Update Nexora on %1 to play on it.</source>
+        <translation>请更新 %1 上的 Nexora 以在其上播放。</translation>
     </message>
 </context>
 <context>
@@ -6094,8 +6094,8 @@ What it needs
     </message>
     <message>
         <location filename="rust_strings.h" line="396"/>
-        <source>Send to %1 with MacLink</source>
-        <translation>用 MacLink 发送到 %1</translation>
+        <source>Send to %1 with Nexora</source>
+        <translation>用 Nexora 发送到 %1</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="397"/>
@@ -6553,8 +6553,8 @@ What it needs
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="900"/>
-        <source>MacLink follows Windows unless you pick one.</source>
-        <translation>除非你另行选择，MacLink 会跟随 Windows 的语言。</translation>
+        <source>Nexora follows Windows unless you pick one.</source>
+        <translation>除非你另行选择，Nexora 会跟随 Windows 的语言。</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="908"/>
@@ -6586,8 +6586,8 @@ What it needs
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="998"/>
         <location filename="../qml/pages/SettingsPage.qml" line="1001"/>
-        <source>MacLink Island</source>
-        <translation>MacLink 岛</translation>
+        <source>Nexora Island</source>
+        <translation>Nexora 岛</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="999"/>
@@ -7437,8 +7437,8 @@ What it needs
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="3200"/>
-        <source>MacLink %1</source>
-        <translation>MacLink %1</translation>
+        <source>Nexora %1</source>
+        <translation>Nexora %1</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="3203"/>
@@ -7510,8 +7510,8 @@ What it needs
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="3361"/>
-        <source>Wi-Fi networks this PC has joined before. Windows keeps their passwords; MacLink never sees them.</source>
-        <translation>此电脑以前连接过的 Wi-Fi 网络。密码由 Windows 保存，MacLink 不会看到。</translation>
+        <source>Wi-Fi networks this PC has joined before. Windows keeps their passwords; Nexora never sees them.</source>
+        <translation>此电脑以前连接过的 Wi-Fi 网络。密码由 Windows 保存，Nexora 不会看到。</translation>
     </message>
     <message>
         <location filename="../qml/pages/SettingsPage.qml" line="3362"/>
@@ -7586,21 +7586,21 @@ What it needs
     </message>
     <message>
         <location filename="rust_strings.h" line="404"/>
-        <source>The uninstaller is missing. Reinstall MacLink, then uninstall it.</source>
-        <translation>缺少卸载程序。请重新安装 MacLink，然后再卸载。</translation>
+        <source>The uninstaller is missing. Reinstall Nexora, then uninstall it.</source>
+        <translation>缺少卸载程序。请重新安装 Nexora，然后再卸载。</translation>
     </message>
 </context>
 <context>
     <name>SetupWindow</name>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="45"/>
-        <source>Uninstall MacLink</source>
-        <translation>卸载 MacLink</translation>
+        <source>Uninstall Nexora</source>
+        <translation>卸载 Nexora</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="45"/>
-        <source>MacLink Setup</source>
-        <translation>MacLink 安装程序</translation>
+        <source>Nexora Setup</source>
+        <translation>Nexora 安装程序</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="108"/>
@@ -7612,13 +7612,13 @@ What it needs
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="175"/>
-        <source>MacLink</source>
-        <translation>MacLink</translation>
+        <source>Nexora</source>
+        <translation>Nexora</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="204"/>
-        <source>Couldn&apos;t uninstall MacLink</source>
-        <translation>无法卸载 MacLink</translation>
+        <source>Couldn&apos;t uninstall Nexora</source>
+        <translation>无法卸载 Nexora</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="204"/>
@@ -7627,28 +7627,28 @@ What it needs
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="206"/>
-        <source>Uninstalling MacLink</source>
-        <translation>正在卸载 MacLink</translation>
+        <source>Uninstalling Nexora</source>
+        <translation>正在卸载 Nexora</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="207"/>
-        <source>Updating MacLink</source>
-        <translation>正在更新 MacLink</translation>
+        <source>Updating Nexora</source>
+        <translation>正在更新 Nexora</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="208"/>
-        <source>Installing MacLink</source>
-        <translation>正在安装 MacLink</translation>
+        <source>Installing Nexora</source>
+        <translation>正在安装 Nexora</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="209"/>
-        <source>Uninstall MacLink?</source>
-        <translation>要卸载 MacLink 吗？</translation>
+        <source>Uninstall Nexora?</source>
+        <translation>要卸载 Nexora 吗？</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="224"/>
-        <source>Sorry to see you go. This uninstalls MacLink and deletes its settings and pairings on this PC. Files you received stay in %1.</source>
-        <translation>很遗憾你要离开。这会卸载 MacLink，并删除这台电脑上的设置和配对。你收到的文件仍保留在 %1。</translation>
+        <source>Sorry to see you go. This uninstalls Nexora and deletes its settings and pairings on this PC. Files you received stay in %1.</source>
+        <translation>很遗憾你要离开。这会卸载 Nexora，并删除这台电脑上的设置和配对。你收到的文件仍保留在 %1。</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="226"/>
@@ -7697,8 +7697,8 @@ What it needs
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="286"/>
-        <source>Keep MacLink</source>
-        <translation>保留 MacLink</translation>
+        <source>Keep Nexora</source>
+        <translation>保留 Nexora</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="301"/>
@@ -7708,13 +7708,13 @@ What it needs
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="334"/>
-        <source>MacLink is uninstalled</source>
-        <translation>MacLink 已卸载</translation>
+        <source>Nexora is uninstalled</source>
+        <translation>Nexora 已卸载</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="334"/>
-        <source>MacLink is ready</source>
-        <translation>MacLink 已就绪</translation>
+        <source>Nexora is ready</source>
+        <translation>Nexora 已就绪</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="346"/>
@@ -7738,13 +7738,13 @@ What it needs
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="396"/>
-        <source>Open MacLink</source>
-        <translation>打开 MacLink</translation>
+        <source>Open Nexora</source>
+        <translation>打开 Nexora</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="456"/>
-        <source>MacLink goes into Program Files for everyone on this PC. Setup also:</source>
-        <translation>MacLink 将安装到 Program Files，供本机所有用户使用。安装程序还会：</translation>
+        <source>Nexora goes into Program Files for everyone on this PC. Setup also:</source>
+        <translation>Nexora 将安装到 Program Files，供本机所有用户使用。安装程序还会：</translation>
     </message>
     <message>
         <location filename="../qml/setup/SetupWindow.qml" line="457"/>
@@ -7781,8 +7781,8 @@ What it needs
     <name>ShelfWindow</name>
     <message>
         <location filename="../qml/ShelfWindow.qml" line="16"/>
-        <source>MacLink Shelf</source>
-        <translation>MacLink 收纳架</translation>
+        <source>Nexora Shelf</source>
+        <translation>Nexora 收纳架</translation>
     </message>
     <message>
         <location filename="../qml/ShelfWindow.qml" line="50"/>
@@ -8388,8 +8388,8 @@ What it needs
     <name>Transfers</name>
     <message>
         <location filename="rust_strings.h" line="434"/>
-        <source>Accept in MacLink to save to Downloads\MacLink</source>
-        <translation>在 MacLink 中接受即可保存到 Downloads\MacLink</translation>
+        <source>Accept in Nexora to save to Downloads\Nexora</source>
+        <translation>在 Nexora 中接受即可保存到 Downloads\Nexora</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="435"/>
@@ -8398,13 +8398,13 @@ What it needs
     </message>
     <message>
         <location filename="rust_strings.h" line="436"/>
-        <source>From %1, opened from Downloads\MacLink</source>
-        <translation>来自 %1，已从 Downloads\MacLink 打开</translation>
+        <source>From %1, opened from Downloads\Nexora</source>
+        <translation>来自 %1，已从 Downloads\Nexora 打开</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="437"/>
-        <source>From %1, saved in Downloads\MacLink</source>
-        <translation>来自 %1，已保存到 Downloads\MacLink</translation>
+        <source>From %1, saved in Downloads\Nexora</source>
+        <translation>来自 %1，已保存到 Downloads\Nexora</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="438"/>
@@ -8431,28 +8431,28 @@ What it needs
     </message>
     <message>
         <location filename="rust_strings.h" line="442"/>
-        <source>MacLink %1 is available</source>
-        <translation>MacLink %1 已发布</translation>
+        <source>Nexora %1 is available</source>
+        <translation>Nexora %1 已发布</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="443"/>
-        <source>MacLink %1 is available.</source>
-        <translation>MacLink %1 已发布。</translation>
+        <source>Nexora %1 is available.</source>
+        <translation>Nexora %1 已发布。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="444"/>
-        <source>MacLink is still on the version you had. Try again from Settings.</source>
-        <translation>MacLink 仍是原来的版本。请在设置中重试。</translation>
+        <source>Nexora is still on the version you had. Try again from Settings.</source>
+        <translation>Nexora 仍是原来的版本。请在设置中重试。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="445"/>
-        <source>MacLink is up to date.</source>
-        <translation>MacLink 已是最新版本。</translation>
+        <source>Nexora is up to date.</source>
+        <translation>Nexora 已是最新版本。</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="446"/>
-        <source>MacLink is updated to %1</source>
-        <translation>MacLink 已更新到 %1</translation>
+        <source>Nexora is updated to %1</source>
+        <translation>Nexora 已更新到 %1</translation>
     </message>
     <message>
         <location filename="rust_strings.h" line="447"/>
@@ -8653,8 +8653,8 @@ What it needs
     </message>
     <message>
         <location filename="../qml/pages/WalkthroughPage.qml" line="1548"/>
-        <source>Keep MacLink ready in the system tray when you sign in.</source>
-        <translation>登录后让 MacLink 常驻系统托盘待命。</translation>
+        <source>Keep Nexora ready in the system tray when you sign in.</source>
+        <translation>登录后让 Nexora 常驻系统托盘待命。</translation>
     </message>
     <message>
         <location filename="../qml/pages/WalkthroughPage.qml" line="1606"/>
@@ -8699,13 +8699,13 @@ What it needs
     <name>WelcomePage</name>
     <message>
         <location filename="../qml/pages/WelcomePage.qml" line="36"/>
-        <source>Welcome to MacLink</source>
-        <translation>欢迎使用 MacLink</translation>
+        <source>Welcome to Nexora</source>
+        <translation>欢迎使用 Nexora</translation>
     </message>
     <message>
         <location filename="../qml/pages/WelcomePage.qml" line="46"/>
-        <source>MacLink couldn&apos;t start.</source>
-        <translation>MacLink 无法启动。</translation>
+        <source>Nexora couldn&apos;t start.</source>
+        <translation>Nexora 无法启动。</translation>
     </message>
     <message>
         <location filename="../qml/pages/WelcomePage.qml" line="47"/>

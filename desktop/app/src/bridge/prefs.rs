@@ -117,6 +117,114 @@ pub mod qobject {
         #[qproperty(bool, maclink_island_media)]
         /// Trigger MacLink Island for phone notifications.
         #[qproperty(bool, maclink_island_notifications)]
+        /// Enable Live Telemetry Wings (sinusoidal CPU glow and RAM capsule track).
+        #[qproperty(bool, notch_wings_enabled, cxx_name = "notchWingsEnabled")]
+        /// What info to display in the Left Telemetry Wing.
+        #[qproperty(QString, notch_left_wing_content, cxx_name = "notchLeftWingContent")]
+        /// What info to display in the Right Telemetry Wing.
+        #[qproperty(QString, notch_right_wing_content, cxx_name = "notchRightWingContent")]
+        /// Anchor island flush against the hardware camera notch.
+        #[qproperty(bool, notch_hardware_attached, cxx_name = "notchHardwareAttached")]
+        /// Auto-hide island in fullscreen mode.
+        #[qproperty(bool, notch_auto_hide_fullscreen, cxx_name = "notchAutoHideFullscreen")]
+        /// Show system HUD feedback for volume and brightness.
+        #[qproperty(bool, notch_hud_enabled, cxx_name = "notchHudEnabled")]
+        /// Scroll gestures over hardware notch for volume & brightness.
+        #[qproperty(bool, notch_scroll_gestures, cxx_name = "notchScrollGestures")]
+        /// Draw debug-only geometry overlay over notch and wings.
+        #[qproperty(bool, notch_debug_overlay, cxx_name = "notchDebugOverlay")]
+        /// Manual calibration nudge for notch width.
+        #[qproperty(f64, notch_override_width, cxx_name = "notchOverrideWidth")]
+        /// Manual calibration nudge for notch height.
+        #[qproperty(f64, notch_override_height, cxx_name = "notchOverrideHeight")]
+        /// Manual calibration nudge for island corner radius.
+        #[qproperty(f64, notch_override_radius, cxx_name = "notchOverrideRadius")]
+        /// Drag and drop files onto hardware notch to open Shelf.
+        #[qproperty(bool, notch_drag_to_shelf, cxx_name = "notchDragToShelf")]
+        /// Show Mac battery percentage and MagSafe charging HUD in notch wings.
+        #[qproperty(bool, notch_battery_hud, cxx_name = "notchBatteryHud")]
+        /// Mac system media controls (Apple Music & Spotify) and live visualizer.
+        #[qproperty(bool, notch_system_media, cxx_name = "notchSystemMedia")]
+        /// Upcoming calendar event sneak-peek on hardware notch and island.
+        #[qproperty(bool, notch_calendar_sneak_peek, cxx_name = "notchCalendarSneakPeek")]
+        /// Mochi animated notch companion character (Coucou).
+        #[qproperty(bool, notch_mochi_companion, cxx_name = "notchMochiCompanion")]
+        /// Coucoudoro focus & Pomodoro notch countdown timer.
+        #[qproperty(bool, notch_coucoudoro_enabled, cxx_name = "notchCoucoudoroEnabled")]
+        /// AI agent session tracker and permission approval queue.
+        #[qproperty(bool, notch_agent_hooks_enabled, cxx_name = "notchAgentHooksEnabled")]
+        /// CodeIsland AI agent task checklist progress bar.
+        #[qproperty(bool, notch_agent_tasks_enabled, cxx_name = "notchAgentTasksEnabled")]
+        /// Notch mascot type: "mochi" or "antigravity".
+        #[qproperty(QString, notch_mascot_type, cxx_name = "notchMascotType")]
+        /// QuickShare Android receiver enabled.
+        #[qproperty(bool, notch_quickshare_enabled, cxx_name = "notchQuickshareEnabled")]
+        /// QuickShare visibility: "everyone", "temporary", "hidden".
+        #[qproperty(QString, notch_quickshare_visibility, cxx_name = "notchQuickshareVisibility")]
+        /// QuickShare auto-accept transfers from trusted devices.
+        #[qproperty(bool, notch_quickshare_auto_accept_trusted, cxx_name = "notchQuickshareAutoAcceptTrusted")]
+        /// Caps Lock visual HUD indicator on notch.
+        #[qproperty(bool, notch_capslock_hud, cxx_name = "notchCapsLockHud")]
+        /// macOS Focus / Do Not Disturb state change indicator on notch.
+        #[qproperty(bool, notch_focus_hud, cxx_name = "notchFocusHud")]
+        /// Bluetooth audio device connection & battery HUD.
+        #[qproperty(bool, notch_bluetooth_hud, cxx_name = "notchBluetoothHud")]
+        /// NotchIsland quick command launcher, math evaluator & unit converter.
+        #[qproperty(bool, notch_launcher_enabled, cxx_name = "notchLauncherEnabled")]
+        /// Island live system download progress HUD on notch.
+        #[qproperty(bool, notch_downloads_hud, cxx_name = "notchDownloadsHud")]
+        /// Island real-time hardware microphone & camera sensor indicator HUD.
+        #[qproperty(bool, notch_privacy_sensor_hud, cxx_name = "notchPrivacySensorHud")]
+        /// Ledge standing notch announcements & peripheral vision alerts.
+        #[qproperty(bool, notch_announcements_enabled, cxx_name = "notchAnnouncementsEnabled")]
+        /// SuperIsland camera-aligned notch teleprompter for presentations & meetings.
+        #[qproperty(bool, notch_teleprompter_enabled, cxx_name = "notchTeleprompterEnabled")]
+        /// SuperIsland docked instant emoji picker & fuzzy search.
+        #[qproperty(bool, notch_emoji_picker_enabled, cxx_name = "notchEmojiPickerEnabled")]
+        /// SuperIsland AI token quota and usage monitor rings.
+        #[qproperty(bool, notch_ai_usage_enabled, cxx_name = "notchAiUsageEnabled")]
+        /// MioIsland synthesized 8-bit chiptune audio cues for agent states & transitions.
+        #[qproperty(bool, notch_synth_audio_enabled, cxx_name = "notchSynthAudioEnabled")]
+        /// MioIsland direct-to-terminal activation jumper (Ghostty, iTerm, Terminal, Warp, etc.).
+        #[qproperty(bool, notch_terminal_jumper_enabled, cxx_name = "notchTerminalJumperEnabled")]
+        /// Notchly real-time Wi-Fi & Hotspot network tracking and connection toasts.
+        #[qproperty(bool, notch_network_status_enabled, cxx_name = "notchNetworkStatusEnabled")]
+        /// Notchly lock screen state detection and island presentation.
+        #[qproperty(bool, notch_lock_screen_overlay_enabled, cxx_name = "notchLockScreenOverlayEnabled")]
+        /// QuietNotch inline Volume & Brightness HUD directly in the notch.
+        #[qproperty(bool, notch_quiet_inline_hud_enabled, cxx_name = "notchQuietInlineHudEnabled")]
+        /// QuietNotch system notifications drop/toast directly at the notch.
+        #[qproperty(bool, notch_quiet_notifications_enabled, cxx_name = "notchQuietNotificationsEnabled")]
+        /// QuietNotch Quiet Hours / DND filter suppressing non-critical alerts.
+        #[qproperty(bool, notch_quiet_hours_enabled, cxx_name = "notchQuietHoursEnabled")]
+        /// AnotherNotch clipboard history shelf and quick-paste directly in the notch.
+        #[qproperty(bool, notch_clipboard_shelf_enabled, cxx_name = "notchClipboardShelfEnabled")]
+        /// AnotherNotch Mac fan speed and thermal telemetry monitor.
+        #[qproperty(bool, notch_fan_telemetry_enabled, cxx_name = "notchFanTelemetryEnabled")]
+        /// GHNotch fast local command bar and natural language expression evaluator.
+        #[qproperty(bool, notch_command_engine_enabled, cxx_name = "notchCommandEngineEnabled")]
+        /// Isle crypto and foreign exchange financial market ticker.
+        #[qproperty(bool, notch_isle_finance_enabled, cxx_name = "notchIsleFinanceEnabled")]
+        /// Isle preferred finance ticker symbol (e.g. "BTC", "ETH", "SOL", "EUR").
+        #[qproperty(QString, notch_isle_finance_symbol, cxx_name = "notchIsleFinanceSymbol")]
+        /// MacIsland battery and fast charge HUD indicator at the notch.
+        #[qproperty(bool, notch_macisland_battery_hud_enabled, cxx_name = "notchMacislandBatteryHudEnabled")]
+        /// MacIsland direct AirDrop target from notch shelf.
+        #[qproperty(bool, notch_macisland_airdrop_enabled, cxx_name = "notchMacislandAirdropEnabled")]
+        /// MacWake keyboard and screen cleaning lock mode.
+        #[qproperty(bool, notch_macwake_cleaning_mode_enabled, cxx_name = "notchMacwakeCleaningModeEnabled")]
+        /// MacWake CPU/GPU thermal telemetry monitor.
+        #[qproperty(bool, notch_macwake_thermal_monitor_enabled, cxx_name = "notchMacwakeThermalMonitorEnabled")]
+        /// PiIsland AI coding agent session monitor and LLM quota telemetry.
+        #[qproperty(bool, notch_piisland_session_monitor_enabled, cxx_name = "notchPiislandSessionMonitorEnabled")]
+        /// Pookify Claude Code animated spark/crab glyphs and multi-session aggregator.
+        #[qproperty(bool, notch_pookify_agent_glyphs_enabled, cxx_name = "notchPookifyAgentGlyphsEnabled")]
+        /// Windows Dynamic Island "Find on Screen" Live Vision OCR Search Engine.
+        #[qproperty(bool, notch_vision_ocr_search_enabled, cxx_name = "notchVisionOcrSearchEnabled")]
+        /// TopNotch Pomodoro Focus & Quick Scratchpad Engine.
+        #[qproperty(bool, notch_topnotch_focus_enabled, cxx_name = "notchTopnotchFocusEnabled")]
+        /// MacIsland2 Video Call Ring Light & Audio Hardware Switcher.
+        #[qproperty(bool, notch_macisland_studio_enabled, cxx_name = "notchMacislandStudioEnabled")]
         /// Stream PC system audio to the connected phone via WASAPI loopback.
         #[qproperty(bool, stream_pc_audio_to_phone)]
         /// Share PC user folders (Downloads, Documents, Desktop, Pictures) with phones.
@@ -342,6 +450,60 @@ pub struct PreferencesRust {
     maclink_island_transfers: bool,
     maclink_island_media: bool,
     maclink_island_notifications: bool,
+    notch_wings_enabled: bool,
+    notch_left_wing_content: QString,
+    notch_right_wing_content: QString,
+    notch_hardware_attached: bool,
+    notch_auto_hide_fullscreen: bool,
+    notch_hud_enabled: bool,
+    notch_scroll_gestures: bool,
+    notch_debug_overlay: bool,
+    notch_override_width: f64,
+    notch_override_height: f64,
+    notch_override_radius: f64,
+    notch_drag_to_shelf: bool,
+    notch_battery_hud: bool,
+    notch_system_media: bool,
+    notch_calendar_sneak_peek: bool,
+    notch_mochi_companion: bool,
+    notch_coucoudoro_enabled: bool,
+    notch_agent_hooks_enabled: bool,
+    notch_agent_tasks_enabled: bool,
+    notch_mascot_type: QString,
+    notch_quickshare_enabled: bool,
+    notch_quickshare_visibility: QString,
+    notch_quickshare_auto_accept_trusted: bool,
+    notch_capslock_hud: bool,
+    notch_focus_hud: bool,
+    notch_bluetooth_hud: bool,
+    notch_launcher_enabled: bool,
+    notch_downloads_hud: bool,
+    notch_privacy_sensor_hud: bool,
+    notch_announcements_enabled: bool,
+    notch_teleprompter_enabled: bool,
+    notch_emoji_picker_enabled: bool,
+    notch_ai_usage_enabled: bool,
+    notch_synth_audio_enabled: bool,
+    notch_terminal_jumper_enabled: bool,
+    notch_network_status_enabled: bool,
+    notch_lock_screen_overlay_enabled: bool,
+    notch_quiet_inline_hud_enabled: bool,
+    notch_quiet_notifications_enabled: bool,
+    notch_quiet_hours_enabled: bool,
+    notch_clipboard_shelf_enabled: bool,
+    notch_fan_telemetry_enabled: bool,
+    notch_command_engine_enabled: bool,
+    notch_isle_finance_enabled: bool,
+    notch_isle_finance_symbol: QString,
+    notch_macisland_battery_hud_enabled: bool,
+    notch_macisland_airdrop_enabled: bool,
+    notch_macwake_cleaning_mode_enabled: bool,
+    notch_macwake_thermal_monitor_enabled: bool,
+    notch_piisland_session_monitor_enabled: bool,
+    notch_pookify_agent_glyphs_enabled: bool,
+    notch_vision_ocr_search_enabled: bool,
+    notch_topnotch_focus_enabled: bool,
+    notch_macisland_studio_enabled: bool,
     stream_pc_audio_to_phone: bool,
     share_pc_storage: bool,
     forward_pc_notifications_to_phone: bool,
@@ -440,6 +602,66 @@ impl cxx_qt::Initialize for qobject::Preferences {
         self.as_mut().set_maclink_island_transfers(settings.maclink_island_transfers);
         self.as_mut().set_maclink_island_media(settings.maclink_island_media);
         self.as_mut().set_maclink_island_notifications(settings.maclink_island_notifications);
+        self.as_mut().set_notch_wings_enabled(settings.notch_wings_enabled);
+        self.as_mut().set_notch_left_wing_content(QString::from(&settings.notch_left_wing_content));
+        self.as_mut().set_notch_right_wing_content(QString::from(&settings.notch_right_wing_content));
+        self.as_mut().set_notch_hardware_attached(settings.notch_hardware_attached);
+        self.as_mut().set_notch_auto_hide_fullscreen(settings.notch_auto_hide_fullscreen);
+        self.as_mut().set_notch_hud_enabled(settings.notch_hud_enabled);
+        self.as_mut().set_notch_scroll_gestures(settings.notch_scroll_gestures);
+        self.as_mut().set_notch_debug_overlay(settings.notch_debug_overlay);
+        self.as_mut().set_notch_override_width(settings.notch_override_width);
+        self.as_mut().set_notch_override_height(settings.notch_override_height);
+        self.as_mut().set_notch_override_radius(settings.notch_override_radius);
+        self.as_mut().set_notch_drag_to_shelf(settings.notch_drag_to_shelf);
+        self.as_mut().set_notch_battery_hud(settings.notch_battery_hud);
+        self.as_mut().set_notch_system_media(settings.notch_system_media);
+        self.as_mut().set_notch_calendar_sneak_peek(settings.notch_calendar_sneak_peek);
+        self.as_mut().set_notch_mochi_companion(settings.notch_mochi_companion);
+        self.as_mut().set_notch_coucoudoro_enabled(settings.notch_coucoudoro_enabled);
+        self.as_mut().set_notch_agent_hooks_enabled(settings.notch_agent_hooks_enabled);
+        self.as_mut().set_notch_agent_tasks_enabled(settings.notch_agent_tasks_enabled);
+        self.as_mut().set_notch_mascot_type(QString::from(&settings.notch_mascot_type));
+        self.as_mut().set_notch_quickshare_enabled(settings.notch_quickshare_enabled);
+        self.as_mut().set_notch_quickshare_visibility(QString::from(&settings.notch_quickshare_visibility));
+        self.as_mut().set_notch_quickshare_auto_accept_trusted(settings.notch_quickshare_auto_accept_trusted);
+        self.as_mut().set_notch_capslock_hud(settings.notch_capslock_hud);
+        self.as_mut().set_notch_focus_hud(settings.notch_focus_hud);
+        self.as_mut().set_notch_bluetooth_hud(settings.notch_bluetooth_hud);
+        self.as_mut().set_notch_launcher_enabled(settings.notch_launcher_enabled);
+        self.as_mut().set_notch_downloads_hud(settings.notch_downloads_hud);
+        self.as_mut().set_notch_privacy_sensor_hud(settings.notch_privacy_sensor_hud);
+        self.as_mut().set_notch_announcements_enabled(settings.notch_announcements_enabled);
+        self.as_mut().set_notch_teleprompter_enabled(settings.notch_teleprompter_enabled);
+        self.as_mut().set_notch_emoji_picker_enabled(settings.notch_emoji_picker_enabled);
+        self.as_mut().set_notch_ai_usage_enabled(settings.notch_ai_usage_enabled);
+        self.as_mut().set_notch_synth_audio_enabled(settings.notch_synth_audio_enabled);
+        self.as_mut().set_notch_terminal_jumper_enabled(settings.notch_terminal_jumper_enabled);
+        self.as_mut().set_notch_network_status_enabled(settings.notch_network_status_enabled);
+        self.as_mut().set_notch_lock_screen_overlay_enabled(settings.notch_lock_screen_overlay_enabled);
+        self.as_mut().set_notch_quiet_inline_hud_enabled(settings.notch_quiet_inline_hud_enabled);
+        self.as_mut().set_notch_quiet_notifications_enabled(settings.notch_quiet_notifications_enabled);
+        self.as_mut().set_notch_quiet_hours_enabled(settings.notch_quiet_hours_enabled);
+        self.as_mut().set_notch_clipboard_shelf_enabled(settings.notch_clipboard_shelf_enabled);
+        self.as_mut().set_notch_fan_telemetry_enabled(settings.notch_fan_telemetry_enabled);
+        self.as_mut().set_notch_command_engine_enabled(settings.notch_command_engine_enabled);
+        self.as_mut().set_notch_isle_finance_enabled(settings.notch_isle_finance_enabled);
+        self.as_mut().set_notch_isle_finance_symbol(QString::from(&settings.notch_isle_finance_symbol));
+        self.as_mut().set_notch_macisland_battery_hud_enabled(settings.notch_macisland_battery_hud_enabled);
+        self.as_mut().set_notch_macisland_airdrop_enabled(settings.notch_macisland_airdrop_enabled);
+        self.as_mut().set_notch_macwake_cleaning_mode_enabled(settings.notch_macwake_cleaning_mode_enabled);
+        self.as_mut().set_notch_macwake_thermal_monitor_enabled(settings.notch_macwake_thermal_monitor_enabled);
+        self.as_mut().set_notch_piisland_session_monitor_enabled(settings.notch_piisland_session_monitor_enabled);
+        self.as_mut().set_notch_pookify_agent_glyphs_enabled(settings.notch_pookify_agent_glyphs_enabled);
+        self.as_mut().set_notch_vision_ocr_search_enabled(settings.notch_vision_ocr_search_enabled);
+        self.as_mut().set_notch_topnotch_focus_enabled(settings.notch_topnotch_focus_enabled);
+        self.as_mut().set_notch_macisland_studio_enabled(settings.notch_macisland_studio_enabled);
+        crate::dynamo::set_debug_overlay_enabled(settings.notch_debug_overlay);
+        crate::dynamo::set_manual_notch_override(
+            settings.notch_override_width,
+            settings.notch_override_height,
+            settings.notch_override_radius,
+        );
         self.as_mut().set_stream_pc_audio_to_phone(settings.stream_pc_audio_to_phone);
         self.as_mut().set_share_pc_storage(settings.share_pc_storage);
         self.as_mut().set_forward_pc_notifications_to_phone(settings.forward_pc_notifications_to_phone);
@@ -714,6 +936,268 @@ impl cxx_qt::Initialize for qobject::Preferences {
         self.as_mut().on_maclink_island_transfers_changed(|p| p.save()).release();
         self.as_mut().on_maclink_island_media_changed(|p| p.save()).release();
         self.as_mut().on_maclink_island_notifications_changed(|p| p.save()).release();
+        self.as_mut().on_notch_wings_enabled_changed(|p| p.save()).release();
+        self.as_mut().on_notch_left_wing_content_changed(|p| p.save()).release();
+        self.as_mut().on_notch_right_wing_content_changed(|p| p.save()).release();
+        self.as_mut().on_notch_hardware_attached_changed(|p| p.save()).release();
+        self.as_mut().on_notch_auto_hide_fullscreen_changed(|p| p.save()).release();
+        self.as_mut().on_notch_hud_enabled_changed(|p| p.save()).release();
+        self.as_mut().on_notch_scroll_gestures_changed(|p| p.save()).release();
+        self.as_mut()
+            .on_notch_debug_overlay_changed(|p| {
+                crate::dynamo::set_debug_overlay_enabled(*p.notch_debug_overlay());
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_override_width_changed(|p| {
+                crate::dynamo::set_manual_notch_override(
+                    *p.notch_override_width(),
+                    *p.notch_override_height(),
+                    *p.notch_override_radius(),
+                );
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_override_height_changed(|p| {
+                crate::dynamo::set_manual_notch_override(
+                    *p.notch_override_width(),
+                    *p.notch_override_height(),
+                    *p.notch_override_radius(),
+                );
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_override_radius_changed(|p| {
+                crate::dynamo::set_manual_notch_override(
+                    *p.notch_override_width(),
+                    *p.notch_override_height(),
+                    *p.notch_override_radius(),
+                );
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_drag_to_shelf_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_battery_hud_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_system_media_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_calendar_sneak_peek_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_mochi_companion_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_coucoudoro_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_agent_hooks_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_agent_tasks_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_mascot_type_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_quickshare_enabled_changed(|p| {
+                crate::dynamo::set_quickshare_enabled(p.notch_quickshare_enabled);
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_quickshare_visibility_changed(|p| {
+                crate::dynamo::set_quickshare_visibility(&p.notch_quickshare_visibility.to_string());
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_quickshare_auto_accept_trusted_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_capslock_hud_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_focus_hud_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_bluetooth_hud_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_launcher_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_downloads_hud_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_privacy_sensor_hud_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_announcements_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_teleprompter_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_emoji_picker_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_ai_usage_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_synth_audio_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_terminal_jumper_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_network_status_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_lock_screen_overlay_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_quiet_inline_hud_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_quiet_notifications_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_quiet_hours_enabled_changed(|p| {
+                crate::dynamo::set_quiet_hours_enabled(p.notch_quiet_hours_enabled);
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_clipboard_shelf_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_fan_telemetry_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_command_engine_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_isle_finance_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_isle_finance_symbol_changed(|p| {
+                crate::dynamo::set_isle_symbol(&p.notch_isle_finance_symbol.to_string());
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_macisland_battery_hud_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_macisland_airdrop_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_macwake_cleaning_mode_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_macwake_thermal_monitor_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_piisland_session_monitor_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_pookify_agent_glyphs_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_vision_ocr_search_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_topnotch_focus_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
+        self.as_mut()
+            .on_notch_macisland_studio_enabled_changed(|p| {
+                p.save();
+            })
+            .release();
         self.as_mut()
             .on_stream_pc_audio_to_phone_changed(|p| {
                 crate::settings::set_stream_pc_audio_to_phone(p.stream_pc_audio_to_phone);
@@ -1106,6 +1590,60 @@ impl qobject::Preferences {
             maclink_island_transfers: p.maclink_island_transfers,
             maclink_island_media: p.maclink_island_media,
             maclink_island_notifications: p.maclink_island_notifications,
+            notch_wings_enabled: p.notch_wings_enabled,
+            notch_left_wing_content: p.notch_left_wing_content.to_string(),
+            notch_right_wing_content: p.notch_right_wing_content.to_string(),
+            notch_hardware_attached: p.notch_hardware_attached,
+            notch_auto_hide_fullscreen: p.notch_auto_hide_fullscreen,
+            notch_hud_enabled: p.notch_hud_enabled,
+            notch_scroll_gestures: p.notch_scroll_gestures,
+            notch_debug_overlay: p.notch_debug_overlay,
+            notch_override_width: p.notch_override_width,
+            notch_override_height: p.notch_override_height,
+            notch_override_radius: p.notch_override_radius,
+            notch_drag_to_shelf: p.notch_drag_to_shelf,
+            notch_battery_hud: p.notch_battery_hud,
+            notch_system_media: p.notch_system_media,
+            notch_calendar_sneak_peek: p.notch_calendar_sneak_peek,
+            notch_mochi_companion: p.notch_mochi_companion,
+            notch_coucoudoro_enabled: p.notch_coucoudoro_enabled,
+            notch_agent_hooks_enabled: p.notch_agent_hooks_enabled,
+            notch_agent_tasks_enabled: p.notch_agent_tasks_enabled,
+            notch_mascot_type: p.notch_mascot_type.to_string(),
+            notch_quickshare_enabled: p.notch_quickshare_enabled,
+            notch_quickshare_visibility: p.notch_quickshare_visibility.to_string(),
+            notch_quickshare_auto_accept_trusted: p.notch_quickshare_auto_accept_trusted,
+            notch_capslock_hud: p.notch_capslock_hud,
+            notch_focus_hud: p.notch_focus_hud,
+            notch_bluetooth_hud: p.notch_bluetooth_hud,
+            notch_launcher_enabled: p.notch_launcher_enabled,
+            notch_downloads_hud: p.notch_downloads_hud,
+            notch_privacy_sensor_hud: p.notch_privacy_sensor_hud,
+            notch_announcements_enabled: p.notch_announcements_enabled,
+            notch_teleprompter_enabled: p.notch_teleprompter_enabled,
+            notch_emoji_picker_enabled: p.notch_emoji_picker_enabled,
+            notch_ai_usage_enabled: p.notch_ai_usage_enabled,
+            notch_synth_audio_enabled: p.notch_synth_audio_enabled,
+            notch_terminal_jumper_enabled: p.notch_terminal_jumper_enabled,
+            notch_network_status_enabled: p.notch_network_status_enabled,
+            notch_lock_screen_overlay_enabled: p.notch_lock_screen_overlay_enabled,
+            notch_quiet_inline_hud_enabled: p.notch_quiet_inline_hud_enabled,
+            notch_quiet_notifications_enabled: p.notch_quiet_notifications_enabled,
+            notch_quiet_hours_enabled: p.notch_quiet_hours_enabled,
+            notch_clipboard_shelf_enabled: p.notch_clipboard_shelf_enabled,
+            notch_fan_telemetry_enabled: p.notch_fan_telemetry_enabled,
+            notch_command_engine_enabled: p.notch_command_engine_enabled,
+            notch_isle_finance_enabled: p.notch_isle_finance_enabled,
+            notch_isle_finance_symbol: p.notch_isle_finance_symbol.to_string(),
+            notch_macisland_battery_hud_enabled: p.notch_macisland_battery_hud_enabled,
+            notch_macisland_airdrop_enabled: p.notch_macisland_airdrop_enabled,
+            notch_macwake_cleaning_mode_enabled: p.notch_macwake_cleaning_mode_enabled,
+            notch_macwake_thermal_monitor_enabled: p.notch_macwake_thermal_monitor_enabled,
+            notch_piisland_session_monitor_enabled: p.notch_piisland_session_monitor_enabled,
+            notch_pookify_agent_glyphs_enabled: p.notch_pookify_agent_glyphs_enabled,
+            notch_vision_ocr_search_enabled: p.notch_vision_ocr_search_enabled,
+            notch_topnotch_focus_enabled: p.notch_topnotch_focus_enabled,
+            notch_macisland_studio_enabled: p.notch_macisland_studio_enabled,
             automation_rules: crate::settings::automation_rules(),
             stream_pc_audio_to_phone: p.stream_pc_audio_to_phone,
             share_pc_storage: p.share_pc_storage,
@@ -1123,6 +1661,7 @@ impl qobject::Preferences {
             window_width: win_w,
             window_height: win_h,
             window_maximized: win_max,
+            dynamo_autostart: crate::settings::dynamo_autostart(),
         }
     }
 

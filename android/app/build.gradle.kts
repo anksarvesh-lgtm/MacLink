@@ -17,7 +17,7 @@ val appVersionCode: Int = appVersion.substringBefore('-').split('.').map(String:
 android {
     namespace = "app.maclink.android"
     compileSdk = 37
-    ndkVersion = "30.0.16248370"
+    ndkVersion = "26.1.10909125"
 
     defaultConfig {
         applicationId = "in.maclink.srv"
