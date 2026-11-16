@@ -46,31 +46,31 @@ Rectangle {
         const s = feature || {}
         switch (lockKind) {
         case "assist":
-            return qsTr("On your phone, open MacLink › Settings › Control from your Mac and turn on the Accessibility service.")
+            return qsTr("On your phone, open Nexora › Settings › Control from your Mac and turn on the Accessibility service.")
         case "elevated":
             return qsTr("Needs Elevated: set up Wireless debugging or connect over USB.")
         case "role":
-            return qsTr("On your phone, set MacLink as the default SMS/Caller ID app when prompted.")
+            return qsTr("On your phone, set Nexora as the default SMS/Caller ID app when prompted.")
         case "permission":
             if (s.target === "notification_access")
-                return qsTr("On your phone, open MacLink and allow Notification access.")
+                return qsTr("On your phone, open Nexora and allow Notification access.")
             if (s.target === "dnd_access")
-                return qsTr("On your phone, open MacLink and allow Do Not Disturb access.")
+                return qsTr("On your phone, open Nexora and allow Do Not Disturb access.")
             if (s.target === "write_settings")
-                return qsTr("On your phone, open MacLink and allow Modify system settings.")
-            return qsTr("Open MacLink on your phone and grant this permission in Settings.")
+                return qsTr("On your phone, open Nexora and allow Modify system settings.")
+            return qsTr("Open Nexora on your phone and grant this permission in Settings.")
         case "enableAddon":
-            return qsTr("Open Settings › Camera & Audio to set up the MacLink virtual camera add-on.")
+            return qsTr("Open Settings › Camera & Audio to set up the Nexora virtual camera add-on.")
         case "enablePath":
             return qsTr("Open Settings › Connection & About and turn on Connect over mobile data.")
         case "enableToggle":
             return qsTr("This feature is turned off for this phone in Settings › Devices.")
         case "updateApp":
             if (s.target === "desktop")
-                return qsTr("Update MacLink on your Mac to use this feature.")
+                return qsTr("Update Nexora on your Mac to use this feature.")
             if (s.target === "phone")
-                return qsTr("Update MacLink on your phone to use this feature.")
-            return qsTr("Update the MacLink app to use this feature.")
+                return qsTr("Update Nexora on your phone to use this feature.")
+            return qsTr("Update the Nexora app to use this feature.")
         default:
             return label
         }

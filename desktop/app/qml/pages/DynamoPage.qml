@@ -19,6 +19,22 @@ Item {
 
     readonly property var categoryList: [
         {
+            id: "devices",
+            label: qsTr("Connected Devices"),
+            desc: qsTr("Paired smartphones, 3D hardware models, battery & phone storage bridge"),
+            icon: Icons.phone,
+            badge: qsTr("3D Hardware"),
+            badgeColor: "#0A84FF"
+        },
+        {
+            id: "clipboard",
+            label: qsTr("Clipboard History"),
+            desc: qsTr("Universal synced clipboard history, vertical scroll & 1-click instant copy"),
+            icon: Icons.clipboard,
+            badge: qsTr("Synced"),
+            badgeColor: "#30D158"
+        },
+        {
             id: "island",
             label: qsTr("Dynamic Island"),
             desc: qsTr("Master island toggle, top pill status & instant quick actions"),
@@ -563,6 +579,665 @@ Item {
                                 muted: true
                                 elide: Text.ElideRight
                                 width: parent.width
+                            }
+                        }
+                    }
+                }
+            }
+
+            // ================================================================
+            // SECTION: Connected Devices (3D Hardware & Phone Storage Bridge)
+            // ================================================================
+            Card {
+                id: devicesSectionCard
+                width: parent.width
+                padding: 18
+                visible: dynamoPage.selectedCategory === "all" || dynamoPage.selectedCategory === "devices"
+
+                property string inspectedDevId: (typeof DeviceList !== "undefined" && DeviceList && DeviceList.count > 0)
+                    ? DeviceList.deviceIdAt(0) : "mock_phone_0"
+
+                Column {
+                    width: parent.width
+                    spacing: 16
+
+                    // Header Row
+                    RowLayout {
+                        width: parent.width
+                        spacing: 12
+
+                        Rectangle {
+                            width: 38; height: 38; radius: 11
+                            color: Qt.rgba(0.04, 0.52, 1.0, 0.14)
+                            border.width: 1; border.color: Qt.rgba(0.04, 0.52, 1.0, 0.28)
+                            Icon { anchors.centerIn: parent; width: 20; height: 20; path: Icons.phone; color: "#0A84FF" }
+                        }
+
+                        Column {
+                            Layout.fillWidth: true
+                            spacing: 2
+                            Txt {
+                                text: qsTr("Paired Hardware & 3D Devices")
+                                role: "title"
+                                weight: 600
+                            }
+                            Txt {
+                                text: qsTr("Interactive 3D smartphone models, wireless telemetry, battery gauge & direct storage bridge.")
+                                role: "bodySmall"
+                                muted: true
+                                wrapMode: Text.WordWrap
+                            }
+                        }
+
+                        Button {
+                            text: qsTr("Pair New Phone")
+                            size: "sm"
+                            variant: "tonal"
+                            onClicked: {
+                                if (typeof AppController !== "undefined" && typeof AppController.openPairing === "function") {
+                                    AppController.openPairing()
+                                } else {
+                                    AppController.currentPage = "settings"
+                                }
+                            }
+                        }
+                    }
+
+                    Divider { width: parent.width }
+
+                    // 3D Devices Flow / Grid
+                    Flow {
+                        width: parent.width
+                        spacing: 16
+
+                        Repeater {
+                            model: (typeof DeviceList !== "undefined" && DeviceList && DeviceList.count > 0) ? DeviceList : 1
+                            delegate: Rectangle {
+                                id: device3dCard
+                                readonly property bool isRealDevice: (typeof DeviceList !== "undefined" && DeviceList && DeviceList.count > 0)
+                                readonly property string dId: isRealDevice ? (model.deviceId || "") : "mock_phone_0"
+                                readonly property string dName: isRealDevice ? (model.name || "Android Phone") : "Pixel 9 Pro"
+                                readonly property string dModel: isRealDevice ? (model.model || "Smartphone") : "Google Pixel · Tensor G4"
+                                readonly property bool dOnline: isRealDevice ? (model.online || false) : true
+                                readonly property int dBattery: isRealDevice ? (model.battery !== undefined ? model.battery : 88) : 92
+                                readonly property bool dCharging: isRealDevice ? (model.charging || false) : false
+                                readonly property string dOs: isRealDevice ? (model.os || "Android 15") : "Android 15"
+                                readonly property int dRtt: isRealDevice ? (model.rttMs || 12) : 9
+
+                                readonly property bool isSelected: devicesSectionCard.inspectedDevId === dId
+
+                                width: Math.min(parent.width, 300)
+                                height: 160
+                                radius: 16
+                                color: isSelected ? Qt.rgba(0.04, 0.52, 1.0, 0.12) : (deviceCardHover.hovered ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.04))
+                                border.width: isSelected ? 1.5 : 1
+                                border.color: isSelected ? "#0A84FF" : (deviceCardHover.hovered ? Qt.rgba(1, 1, 1, 0.18) : Qt.rgba(1, 1, 1, 0.08))
+
+                                HoverHandler { id: deviceCardHover }
+
+                                MouseArea {
+                                    anchors.fill: parent
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: devicesSectionCard.inspectedDevId = dId
+                                }
+
+                                RowLayout {
+                                    anchors.fill: parent
+                                    anchors.margins: 14
+                                    spacing: 14
+
+                                    // 3D Isometric Smartphone Miniature
+                                    Item {
+                                        width: 80
+                                        height: 130
+                                        Layout.alignment: Qt.AlignVCenter
+
+                                        // Outer Isometric Shadow
+                                        Rectangle {
+                                            x: 5; y: 5
+                                            width: 70; height: 120
+                                            radius: 16
+                                            color: "#000000"
+                                            opacity: 0.40
+                                        }
+
+                                        // 3D Phone Chassis
+                                        Rectangle {
+                                            width: 70; height: 120
+                                            radius: 16
+                                            color: "#1C1C1E"
+                                            border.width: 1.5
+                                            border.color: isSelected ? "#0A84FF" : "#3A3A3C"
+
+                                            // Screen Bezel
+                                            Rectangle {
+                                                anchors.centerIn: parent
+                                                width: 64; height: 114
+                                                radius: 14
+                                                color: "#000000"
+                                                clip: true
+
+                                                // Live Wallpaper Gradient
+                                                Rectangle {
+                                                    anchors.fill: parent
+                                                    gradient: Gradient {
+                                                        GradientStop { position: 0.0; color: isSelected ? "#0A84FF" : "#4338CA" }
+                                                        GradientStop { position: 0.5; color: isSelected ? "#6366F1" : "#1E1B4B" }
+                                                        GradientStop { position: 1.0; color: "#0F172A" }
+                                                    }
+                                                    opacity: 0.85
+                                                }
+
+                                                // Top Camera Cutout
+                                                Rectangle {
+                                                    anchors.horizontalCenter: parent.horizontalCenter
+                                                    y: 5
+                                                    width: 16; height: 4.5
+                                                    radius: 2.25
+                                                    color: "#000000"
+                                                }
+
+                                                // Screen Status Elements
+                                                Column {
+                                                    anchors.centerIn: parent
+                                                    spacing: 4
+                                                    Icon {
+                                                        anchors.horizontalCenter: parent.horizontalCenter
+                                                        width: 20; height: 20
+                                                        path: Icons.phone
+                                                        color: "#FFFFFF"
+                                                    }
+                                                    Txt {
+                                                        anchors.horizontalCenter: parent.horizontalCenter
+                                                        text: dBattery + "%"
+                                                        size: 9
+                                                        weight: Font.Bold
+                                                        color: "#FFFFFF"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    // Device Info Details
+                                    Column {
+                                        Layout.fillWidth: true
+                                        Layout.alignment: Qt.AlignVCenter
+                                        spacing: 4
+
+                                        RowLayout {
+                                            spacing: 6
+                                            StatusDot { online: dOnline }
+                                            Txt {
+                                                text: dName
+                                                size: 13
+                                                weight: Font.DemiBold
+                                                color: "#FFFFFF"
+                                                elide: Text.ElideRight
+                                                Layout.fillWidth: true
+                                            }
+                                        }
+
+                                        Txt {
+                                            text: dModel
+                                            size: 10.5
+                                            muted: true
+                                            elide: Text.ElideRight
+                                            width: 150
+                                        }
+
+                                        Txt {
+                                            text: dOs + " • " + dRtt + "ms latency"
+                                            size: 9.5
+                                            color: Qt.rgba(1, 1, 1, 0.45)
+                                        }
+
+                                        Item { width: 1; height: 4 }
+
+                                        // Badge
+                                        Rectangle {
+                                            height: 20
+                                            width: statusTxt.implicitWidth + 14
+                                            radius: 10
+                                            color: isSelected ? Qt.rgba(0.04, 0.52, 1.0, 0.25) : Qt.rgba(1, 1, 1, 0.08)
+                                            border.width: 0.5
+                                            border.color: isSelected ? "#0A84FF" : Qt.rgba(1, 1, 1, 0.15)
+                                            Txt {
+                                                id: statusTxt
+                                                anchors.centerIn: parent
+                                                text: isSelected ? qsTr("Selected") : qsTr("Click to view")
+                                                size: 9
+                                                weight: Font.Medium
+                                                color: isSelected ? "#0A84FF" : "#DDDDDD"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    // Device Telemetry Inspector & Phone Storage Bridge Drawer
+                    Rectangle {
+                        width: parent.width
+                        radius: 14
+                        color: Qt.rgba(1, 1, 1, 0.05)
+                        border.width: 1
+                        border.color: Qt.rgba(1, 1, 1, 0.10)
+                        implicitHeight: inspectorCol.implicitHeight + 32
+
+                        Column {
+                            id: inspectorCol
+                            anchors.left: parent.left
+                            anchors.right: parent.right
+                            anchors.top: parent.top
+                            anchors.margins: 16
+                            spacing: 14
+
+                            RowLayout {
+                                width: parent.width
+                                spacing: 10
+
+                                Icon { width: 18; height: 18; path: Icons.phone; color: "#0A84FF" }
+                                Txt {
+                                    text: qsTr("Device Hardware Inspector & Storage Bridge")
+                                    size: 13
+                                    weight: Font.DemiBold
+                                    color: "#FFFFFF"
+                                }
+                                Item { Layout.fillWidth: true }
+                                Txt {
+                                    text: qsTr("Device ID: %1").arg(devicesSectionCard.inspectedDevId)
+                                    size: 10.5
+                                    color: Qt.rgba(1, 1, 1, 0.45)
+                                }
+                            }
+
+                            Divider { width: parent.width }
+
+                            // Telemetry Stats Grid
+                            RowLayout {
+                                width: parent.width
+                                spacing: 12
+
+                                Rectangle {
+                                    Layout.fillWidth: true
+                                    height: 56
+                                    radius: 10
+                                    color: Qt.rgba(1, 1, 1, 0.04)
+                                    border.width: 0.5; border.color: Qt.rgba(1, 1, 1, 0.08)
+                                    Column {
+                                        anchors.centerIn: parent
+                                        spacing: 2
+                                        Txt { text: qsTr("Battery Level"); size: 10; muted: true; anchors.horizontalCenter: parent.horizontalCenter }
+                                        Txt {
+                                            text: (typeof DeviceList !== "undefined" && DeviceList && DeviceList.count > 0 && typeof DeviceList.batteryAt === "function" && DeviceList.batteryAt(0) !== undefined) ? (DeviceList.batteryAt(0) + "% (Good)") : "88% (Good)"
+                                            size: 12
+                                            weight: Font.DemiBold
+                                            color: "#30D158"
+                                            anchors.horizontalCenter: parent.horizontalCenter
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    Layout.fillWidth: true
+                                    height: 56
+                                    radius: 10
+                                    color: Qt.rgba(1, 1, 1, 0.04)
+                                    border.width: 0.5; border.color: Qt.rgba(1, 1, 1, 0.08)
+                                    Column {
+                                        anchors.centerIn: parent
+                                        spacing: 2
+                                        Txt { text: qsTr("Transport / Link"); size: 10; muted: true; anchors.horizontalCenter: parent.horizontalCenter }
+                                        Txt { text: qsTr("Wi-Fi Direct • 12ms"); size: 12; weight: Font.DemiBold; color: "#0A84FF"; anchors.horizontalCenter: parent.horizontalCenter }
+                                    }
+                                }
+
+                                Rectangle {
+                                    Layout.fillWidth: true
+                                    height: 56
+                                    radius: 10
+                                    color: Qt.rgba(1, 1, 1, 0.04)
+                                    border.width: 0.5; border.color: Qt.rgba(1, 1, 1, 0.08)
+                                    Column {
+                                        anchors.centerIn: parent
+                                        spacing: 2
+                                        Txt { text: qsTr("Security & Protocol"); size: 10; muted: true; anchors.horizontalCenter: parent.horizontalCenter }
+                                        Txt { text: qsTr("TLS 1.3 / E2E Encrypted"); size: 12; weight: Font.DemiBold; color: "#AF52DE"; anchors.horizontalCenter: parent.horizontalCenter }
+                                    }
+                                }
+                            }
+
+                            // Phone Storage Bridge Actions
+                            RowLayout {
+                                width: parent.width
+                                spacing: 10
+
+                                Button {
+                                    Layout.fillWidth: true
+                                    iconPath: Icons.folder
+                                    text: qsTr("Browse Phone Storage")
+                                    variant: "filled"
+                                    onClicked: {
+                                        const dev = (typeof DeviceList !== "undefined" && DeviceList && DeviceList.count > 0)
+                                            ? DeviceList.deviceIdAt(0) : devicesSectionCard.inspectedDevId
+                                        AppController.browseRemoteStorage(dev, "")
+                                        AppController.currentPage = "files"
+                                    }
+                                }
+
+                                Button {
+                                    Layout.fillWidth: true
+                                    iconPath: Icons.folder
+                                    text: qsTr("Camera / DCIM")
+                                    variant: "tonal"
+                                    onClicked: {
+                                        const dev = (typeof DeviceList !== "undefined" && DeviceList && DeviceList.count > 0)
+                                            ? DeviceList.deviceIdAt(0) : devicesSectionCard.inspectedDevId
+                                        AppController.browseRemoteStorage(dev, "DCIM")
+                                        AppController.currentPage = "files"
+                                    }
+                                }
+
+                                Button {
+                                    Layout.fillWidth: true
+                                    iconPath: Icons.folder
+                                    text: qsTr("Phone Downloads")
+                                    variant: "tonal"
+                                    onClicked: {
+                                        const dev = (typeof DeviceList !== "undefined" && DeviceList && DeviceList.count > 0)
+                                            ? DeviceList.deviceIdAt(0) : devicesSectionCard.inspectedDevId
+                                        AppController.browseRemoteStorage(dev, "Download")
+                                        AppController.currentPage = "files"
+                                    }
+                                }
+
+                                Button {
+                                    iconPath: Icons.openExternal || Icons.folder
+                                    text: qsTr("Open in Finder")
+                                    variant: "outline"
+                                    onClicked: {
+                                        const dev = (typeof DeviceList !== "undefined" && DeviceList && DeviceList.count > 0)
+                                            ? DeviceList.deviceIdAt(0) : devicesSectionCard.inspectedDevId
+                                        AppController.openPhoneStorage(dev)
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            // ================================================================
+            // SECTION: Universal Clipboard History (Vertical Scroll & 1-Click Copy)
+            // ================================================================
+            Card {
+                id: clipboardSectionCard
+                width: parent.width
+                padding: 18
+                visible: dynamoPage.selectedCategory === "all" || dynamoPage.selectedCategory === "clipboard"
+
+                property string searchQuery: ""
+                property string toastMessage: ""
+
+                Timer {
+                    id: dynamoClipToastTimer
+                    interval: 1800
+                    repeat: false
+                    onTriggered: clipboardSectionCard.toastMessage = ""
+                }
+
+                readonly property var historyItems: {
+                    try {
+                        const allClips = JSON.parse(DynamoController.clipboardHistoryJson || "[]")
+                        if (!searchQuery || searchQuery.trim() === "") return allClips
+                        const q = searchQuery.trim().toLowerCase()
+                        return allClips.filter(c => (c.text && c.text.toLowerCase().indexOf(q) >= 0) || (c.preview && c.preview.toLowerCase().indexOf(q) >= 0))
+                    } catch (e) {
+                        return []
+                    }
+                }
+
+                Column {
+                    width: parent.width
+                    spacing: 14
+
+                    // Header Row
+                    RowLayout {
+                        width: parent.width
+                        spacing: 12
+
+                        Rectangle {
+                            width: 38; height: 38; radius: 11
+                            color: Qt.rgba(0.19, 0.82, 0.35, 0.14)
+                            border.width: 1; border.color: Qt.rgba(0.19, 0.82, 0.35, 0.28)
+                            Icon { anchors.centerIn: parent; width: 20; height: 20; path: Icons.clipboard; color: "#30D158" }
+                        }
+
+                        Column {
+                            Layout.fillWidth: true
+                            spacing: 2
+                            Txt {
+                                text: qsTr("Universal Clipboard History")
+                                role: "title"
+                                weight: 600
+                            }
+                            Txt {
+                                text: qsTr("Synced pasteboard snippets across your Mac and phones. Scroll vertically and click any item to copy.")
+                                role: "bodySmall"
+                                muted: true
+                                wrapMode: Text.WordWrap
+                            }
+                        }
+
+                        // Search Input Field
+                        Rectangle {
+                            width: 180; height: 32; radius: 8
+                            color: Qt.rgba(1, 1, 1, 0.06)
+                            border.width: 1
+                            border.color: searchInput.activeFocus ? Theme.primary : Qt.rgba(1, 1, 1, 0.10)
+
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.leftMargin: 8
+                                anchors.rightMargin: 8
+                                spacing: 6
+                                Icon { width: 13; height: 13; path: Icons.search; color: Qt.rgba(1, 1, 1, 0.45) }
+                                TextInput {
+                                    id: searchInput
+                                    Layout.fillWidth: true
+                                    color: "#FFFFFF"
+                                    font.pixelSize: 11.5
+                                    selectByMouse: true
+                                    clip: true
+                                    Text {
+                                        anchors.fill: parent
+                                        text: qsTr("Search clippings...")
+                                        color: Qt.rgba(1, 1, 1, 0.35)
+                                        font.pixelSize: 11.5
+                                        visible: !parent.text && !parent.activeFocus
+                                    }
+                                    onTextChanged: clipboardSectionCard.searchQuery = text
+                                }
+                                Text {
+                                    text: "✕"
+                                    color: Qt.rgba(1, 1, 1, 0.5)
+                                    font.pixelSize: 10
+                                    visible: searchInput.text.length > 0
+                                    MouseArea {
+                                        anchors.fill: parent
+                                        cursorShape: Qt.PointingHandCursor
+                                        onClicked: searchInput.text = ""
+                                    }
+                                }
+                            }
+                        }
+
+                        Button {
+                            text: qsTr("Clear All")
+                            size: "sm"
+                            variant: "outline"
+                            onClicked: DynamoController.clearClipboardHistory()
+                        }
+                    }
+
+                    // Toast Feedback
+                    Rectangle {
+                        width: parent.width
+                        height: 28
+                        radius: 6
+                        color: Qt.rgba(0.19, 0.82, 0.35, 0.18)
+                        border.width: 1
+                        border.color: "#30D158"
+                        visible: clipboardSectionCard.toastMessage.length > 0
+                        RowLayout {
+                            anchors.centerIn: parent
+                            spacing: 6
+                            Icon { width: 12; height: 12; path: Icons.check; color: "#30D158" }
+                            Txt { text: clipboardSectionCard.toastMessage; size: 11; weight: Font.DemiBold; color: "#30D158" }
+                        }
+                    }
+
+                    Divider { width: parent.width }
+
+                    // Scrollable List of Clipboard Items
+                    ListView {
+                        id: dynamoClipList
+                        width: parent.width
+                        height: 320
+                        clip: true
+                        spacing: 6
+                        interactive: true
+                        flickableDirection: Flickable.VerticalFlick
+                        boundsBehavior: Flickable.StopAtBounds
+
+                        WheelHandler {
+                            target: dynamoClipList
+                            orientation: Qt.Vertical
+                        }
+
+                        ScrollBar.vertical: ScrollBar {
+                            active: dynamoClipList.moving || dynamoClipList.flicking
+                            policy: ScrollBar.AsNeeded
+                            width: 6
+                            contentItem: Rectangle { radius: 3; color: Qt.rgba(1, 1, 1, 0.30) }
+                        }
+
+                        model: clipboardSectionCard.historyItems
+
+                        delegate: Rectangle {
+                            id: clipItemDelegate
+                            width: ListView.view.width
+                            height: 52
+                            radius: 10
+                            color: itemMouseArea.containsMouse ? Qt.rgba(1, 1, 1, 0.10) : Qt.rgba(1, 1, 1, 0.04)
+                            border.width: 1
+                            border.color: itemMouseArea.containsMouse ? Theme.primary : Qt.rgba(1, 1, 1, 0.08)
+
+                            RowLayout {
+                                anchors.fill: parent
+                                anchors.leftMargin: 12
+                                anchors.rightMargin: 12
+                                spacing: 12
+
+                                Rectangle {
+                                    width: 30; height: 30; radius: 8
+                                    color: Qt.rgba(0.04, 0.52, 1.0, 0.15)
+                                    Icon {
+                                        anchors.centerIn: parent
+                                        width: 15; height: 15
+                                        path: Icons.clipboard
+                                        color: "#38BDF8"
+                                    }
+                                }
+
+                                Column {
+                                    Layout.fillWidth: true
+                                    spacing: 2
+
+                                    Txt {
+                                        text: modelData.preview || modelData.text || ""
+                                        size: 12
+                                        weight: Font.Medium
+                                        color: "#FFFFFF"
+                                        elide: Text.ElideRight
+                                        width: clipItemDelegate.width - 150
+                                    }
+
+                                    RowLayout {
+                                        spacing: 8
+                                        Txt {
+                                            text: qsTr("%1 characters").arg(modelData.charCount || 0)
+                                            size: 10
+                                            muted: true
+                                        }
+                                        Txt {
+                                            text: "•"
+                                            size: 10
+                                            muted: true
+                                        }
+                                        Txt {
+                                            text: qsTr("1-Click Copy")
+                                            size: 10
+                                            color: Theme.primary
+                                        }
+                                    }
+                                }
+
+                                Rectangle {
+                                    width: 60; height: 26; radius: 6
+                                    color: itemMouseArea.containsMouse ? Theme.primary : Qt.rgba(1, 1, 1, 0.08)
+                                    Txt {
+                                        anchors.centerIn: parent
+                                        text: qsTr("Copy")
+                                        size: 11
+                                        weight: Font.DemiBold
+                                        color: "#FFFFFF"
+                                    }
+                                }
+                            }
+
+                            MouseArea {
+                                id: itemMouseArea
+                                anchors.fill: parent
+                                hoverEnabled: true
+                                cursorShape: Qt.PointingHandCursor
+                                preventStealing: false
+                                propagateComposedEvents: true
+                                onClicked: {
+                                    DynamoController.copyClipboardEntry(modelData.id)
+                                    clipboardSectionCard.toastMessage = qsTr("Copied to clipboard: \"%1\"").arg((modelData.preview || "").slice(0, 30))
+                                    dynamoClipToastTimer.restart()
+                                }
+                            }
+                        }
+
+                        // Empty State
+                        Item {
+                            anchors.fill: parent
+                            visible: !clipboardSectionCard.historyItems || clipboardSectionCard.historyItems.length === 0
+                            Column {
+                                anchors.centerIn: parent
+                                spacing: 8
+                                Icon {
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    width: 32; height: 32
+                                    path: Icons.clipboard
+                                    color: Qt.rgba(1, 1, 1, 0.25)
+                                }
+                                Txt {
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    text: qsTr("No clipboard snippets found.")
+                                    size: 12
+                                    muted: true
+                                }
+                                Txt {
+                                    anchors.horizontalCenter: parent.horizontalCenter
+                                    text: qsTr("Copy any text on this Mac or paired phones to automatically record it here.")
+                                    size: 10.5
+                                    color: Qt.rgba(1, 1, 1, 0.35)
+                                }
                             }
                         }
                     }
@@ -1194,7 +1869,7 @@ Item {
                         width: parent.width
                         iconPath: Icons.shelf
                         title: qsTr("Notch Drag-to-Shelf")
-                        description: qsTr("Drop files, URLs, or text directly onto the physical camera notch to reveal the MacLink Shelf.")
+                        description: qsTr("Drop files, URLs, or text directly onto the physical camera notch to reveal the Nexora Shelf.")
                         Toggle {
                             checked: Preferences.notchDragToShelf
                             onToggled: (val) => {
@@ -3878,10 +4553,10 @@ Item {
                         }
 
                         Button {
-                            text: qsTr("Count: Hello MacLink Island")
+                            text: qsTr("Count: Hello Nexora Island")
                             variant: "tonal"
                             size: "sm"
-                            onClicked: DynamoController.executeNotchCommand("count Hello MacLink Island")
+                            onClicked: DynamoController.executeNotchCommand("count Hello Nexora Island")
                         }
 
                         Button {

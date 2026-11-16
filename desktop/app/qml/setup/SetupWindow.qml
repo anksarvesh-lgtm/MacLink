@@ -42,7 +42,7 @@ NativeWindow {
     minimumHeight: height
     maximumHeight: height
     visible: true
-    title: removing ? qsTr("Uninstall MacLink") : qsTr("MacLink Setup")
+    title: removing ? qsTr("Uninstall Nexora") : qsTr("Nexora Setup")
     color: bg
     backdrop: false
     darkFrame: dark
@@ -192,7 +192,7 @@ NativeWindow {
                 mipmap: true
                 scale: 1 + emblem.breath * 0.04
                 Accessible.role: Accessible.Graphic
-                Accessible.name: qsTr("MacLink")
+                Accessible.name: qsTr("Nexora")
             }
             SadBee {
                 anchors.centerIn: parent
@@ -221,13 +221,13 @@ NativeWindow {
                 font.weight: Font.DemiBold
                 color: window.ink
                 text: window.phase === "failed"
-                    ? (window.removing ? qsTr("Couldn't uninstall MacLink") : qsTr("Setup couldn't finish"))
+                    ? (window.removing ? qsTr("Couldn't uninstall Nexora") : qsTr("Setup couldn't finish"))
                     : window.phase === "working"
-                    ? (window.action === "remove" ? qsTr("Uninstalling MacLink")
-                       : window.action === "update" ? qsTr("Updating MacLink")
-                       : qsTr("Installing MacLink"))
-                    : window.removing ? qsTr("Uninstall MacLink?")
-                    : "MacLink"
+                    ? (window.action === "remove" ? qsTr("Uninstalling Nexora")
+                       : window.action === "update" ? qsTr("Updating Nexora")
+                       : qsTr("Installing Nexora"))
+                    : window.removing ? qsTr("Uninstall Nexora?")
+                    : "Nexora"
             }
             Item { width: 1; height: 10 }
             Text {
@@ -241,7 +241,7 @@ NativeWindow {
                 text: window.phase === "failed" ? Setup.message
                     : window.phase === "working" ? Setup.step
                     : window.removing
-                    ? qsTr("Sorry to see you go. This uninstalls MacLink and deletes its settings and pairings on this device. Files you received stay in %1.").arg("Downloads/MacLink")
+                    ? qsTr("Sorry to see you go. This uninstalls Nexora and deletes its settings and pairings on this device. Files you received stay in %1.").arg("Downloads/Nexora")
                     : Setup.kind === "update"
                     ? qsTr("Update from %1 to %2. Your settings and pairings stay as they are.").arg(Setup.installedVersion).arg(Setup.version)
                     : Setup.kind === "reinstall"
@@ -303,7 +303,7 @@ NativeWindow {
                 SetupButton {
                     visible: window.removing || window.phase === "failed"
                     filled: false
-                    text: window.removing && window.phase !== "failed" ? qsTr("Keep MacLink") : qsTr("Close")
+                    text: window.removing && window.phase !== "failed" ? qsTr("Keep Nexora") : qsTr("Close")
                     ink: window.ink
                     focusColor: window.honey
                     onClicked: window.close()
@@ -351,7 +351,7 @@ NativeWindow {
                 font.pixelSize: 28
                 font.weight: Font.DemiBold
                 color: window.ink
-                text: window.removing ? qsTr("MacLink is uninstalled") : qsTr("MacLink is ready")
+                text: window.removing ? qsTr("Nexora is uninstalled") : qsTr("Nexora is ready")
             }
             Item { width: 1; height: 8 }
             Text {
@@ -363,7 +363,7 @@ NativeWindow {
                 font.pixelSize: 15
                 color: window.muted
                 text: window.removing
-                    ? qsTr("Your received files are still in %1. Thanks for giving it a try.").arg("Downloads/MacLink")
+                    ? qsTr("Your received files are still in %1. Thanks for giving it a try.").arg("Downloads/Nexora")
                     : qsTr("Next, get the Android app. Scan this code with your phone's camera to open its download page.")
             }
 
@@ -413,7 +413,7 @@ NativeWindow {
                 anchors.horizontalCenter: parent.horizontalCenter
                 spacing: 12
                 SetupButton {
-                    text: window.removing ? qsTr("Close") : qsTr("Open MacLink")
+                    text: window.removing ? qsTr("Close") : qsTr("Open Nexora")
                     fill: window.removing ? window.ink : window.honey
                     ink: window.removing ? window.bg : window.onHoney
                     focusColor: window.honey
@@ -473,7 +473,7 @@ NativeWindow {
                         font.pixelSize: 14
                         color: window.muted
                         textFormat: Text.StyledText
-                        text: qsTr("MacLink is installed for everyone on this system. Setup also:")
+                        text: qsTr("Nexora is installed for everyone on this system. Setup also:")
                             + "<br>&#8226; " + qsTr("allows it through Windows Firewall on private networks, so your phone can connect")
                             + "<br>&#8226; " + qsTr("adds a task that installs updates without an administrator prompt")
                             + "<br>&#8226; " + qsTr("adds Start menu and desktop shortcuts, and starts it with Windows (turn this off in Settings)")

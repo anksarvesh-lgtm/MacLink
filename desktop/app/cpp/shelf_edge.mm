@@ -757,6 +757,18 @@ static id s_islandLocalMouseMonitor = nil;
 static BOOL s_isIslandHoverExpanded = NO;
 static BOOL s_isCollapsePending = NO;
 static uint64_t s_islandCollapseGeneration = 0;
+static NSTimer *s_islandWatchdogTimer = nil;
+static NSInteger s_outsideTicks = 0;
+
+static void stop_island_watchdog(void) {
+    if (s_islandWatchdogTimer) {
+        [s_islandWatchdogTimer invalidate];
+        s_islandWatchdogTimer = nil;
+    }
+    s_outsideTicks = 0;
+}
+
+static void start_island_watchdog(void);
 
 extern "C" void maclink_update_layout(void);
 
@@ -823,6 +835,29 @@ void maclink_update_layout_for_screen(NSScreen *screen) {
     s_expandedHitRect = NSMakeRect(screenCenterX - (expW / 2.0), screenTop - expH, expW, expH);
 }
 
+static void start_island_watchdog(void) {
+    if (s_islandWatchdogTimer) return;
+    s_outsideTicks = 0;
+    s_islandWatchdogTimer = [NSTimer scheduledTimerWithTimeInterval:0.1 repeats:YES block:^(NSTimer * _Nonnull timer) {
+        (void)timer;
+        if (!s_isIslandHoverExpanded) {
+            stop_island_watchdog();
+            return;
+        }
+        NSPoint mouseLoc = [NSEvent mouseLocation];
+        if (!NSPointInRect(mouseLoc, s_expandedHitRect)) {
+            s_outsideTicks++;
+            if (s_outsideTicks >= 2) { // 200ms outside
+                s_isIslandHoverExpanded = NO;
+                stop_island_watchdog();
+                maclink_set_island_hover_state(false);
+            }
+        } else {
+            s_outsideTicks = 0;
+        }
+    }];
+}
+
 static void handle_island_mouse_event(NSEvent *event) {
     (void)event;
     NSPoint mouseLoc = [NSEvent mouseLocation];
@@ -836,12 +871,14 @@ static void handle_island_mouse_event(NSEvent *event) {
             s_islandCollapseGeneration++;
             s_isIslandHoverExpanded = YES;
             s_isCollapsePending = NO;
+            start_island_watchdog();
             maclink_set_island_hover_state(true);
         }
     } else {
         if (NSPointInRect(mouseLoc, s_expandedHitRect)) {
             s_islandCollapseGeneration++;
             s_isCollapsePending = NO;
+            s_outsideTicks = 0;
         } else {
             // Debounce collapse: do not enqueue redundant GCD blocks on every mouse movement
             if (s_isCollapsePending) {
@@ -855,6 +892,7 @@ static void handle_island_mouse_event(NSEvent *event) {
                 NSPoint currentMouseLoc = [NSEvent mouseLocation];
                 if (!NSPointInRect(currentMouseLoc, s_expandedHitRect)) {
                     s_isIslandHoverExpanded = NO;
+                    stop_island_watchdog();
                     maclink_set_island_hover_state(false);
                 }
             });
@@ -888,6 +926,7 @@ static void stop_island_hover_monitor(void) {
         [NSEvent removeMonitor:s_islandLocalMouseMonitor];
         s_islandLocalMouseMonitor = nil;
     }
+    stop_island_watchdog();
     s_isCollapsePending = NO;
     s_islandCollapseGeneration++;
 }
@@ -1020,9 +1059,14 @@ void maclink_position_island_window(double x, double width, double height) {
 
                 if (height > 50.0) {
                     CGFloat pad = 24.0;
-                    s_expandedHitRect = NSMakeRect(originX - pad, originY - pad, (CGFloat)width + (pad * 2.0), (CGFloat)height + pad);
+                    s_expandedHitRect = NSMakeRect(originX - pad, originY - pad, (CGFloat)width + (pad * 2.0), (CGFloat)height + (pad * 2.0));
+                    s_isIslandHoverExpanded = YES;
+                    start_island_watchdog();
                 } else {
                     s_collapsedHitRect = NSMakeRect(originX - 4.0, originY - 4.0, (CGFloat)width + 8.0, (CGFloat)height + 4.0);
+                    s_isIslandHoverExpanded = NO;
+                    s_isCollapsePending = NO;
+                    stop_island_watchdog();
                 }
                 break;
             }
@@ -1032,6 +1076,7 @@ void maclink_position_island_window(double x, double width, double height) {
 
 void shelf_edge_cleanup(void) {
     dispatch_async(dispatch_get_main_queue(), ^{
+        stop_island_watchdog();
         stop_island_hover_monitor();
         if (s_screenObserver) {
             [[NSNotificationCenter defaultCenter] removeObserver:s_screenObserver];

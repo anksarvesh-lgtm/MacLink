@@ -623,7 +623,7 @@ Window {
     function checkHoverState() {
         const inNotchOrWings = notchHovered || floatingHovered || leftHovered || rightHovered
         if (expanded) {
-            if (expHovered || inNotchOrWings || DynamoController.islandExpanded || userPinnedOpen) {
+            if (expHovered || inNotchOrWings) {
                 autoCollapseTimer.stop()
             } else {
                 autoCollapseTimer.restart()
@@ -633,7 +633,7 @@ Window {
                 autoCollapseTimer.stop()
                 isHoverExpanded = true
                 if (DynamoController) DynamoController.islandExpanded = true
-            } else if (!DynamoController.islandExpanded) {
+            } else {
                 autoCollapseTimer.restart()
             }
         }
@@ -683,13 +683,15 @@ Window {
         interval: 200
         repeat: false
         onTriggered: {
-            if (!PhoneCall.active && !DynamoController.islandExpanded && !userPinnedOpen) {
+            if (!PhoneCall.active) {
                 islandWin.isHoverExpanded = false
+                islandWin.userPinnedOpen = false
                 islandWin.notchHovered = false
                 islandWin.floatingHovered = false
                 islandWin.leftHovered = false
                 islandWin.rightHovered = false
                 islandWin.expHovered = false
+                if (DynamoController) DynamoController.islandExpanded = false
             }
         }
     }
@@ -951,8 +953,14 @@ Window {
                 }
                 onExited: islandWin.notchHovered = false
                 onClicked: {
-                    islandWin.userPinnedOpen = !islandWin.userPinnedOpen
-                    if (islandWin.userPinnedOpen) autoCollapseTimer.restart()
+                    if (islandWin.expanded) {
+                        islandWin.isHoverExpanded = false
+                        islandWin.userPinnedOpen = false
+                        if (DynamoController) DynamoController.islandExpanded = false
+                    } else {
+                        islandWin.isHoverExpanded = true
+                        if (DynamoController) DynamoController.islandExpanded = true
+                    }
                 }
             }
 
@@ -2267,8 +2275,14 @@ Window {
                 }
                 onExited: islandWin.floatingHovered = false
                 onClicked: {
-                    islandWin.userPinnedOpen = !islandWin.userPinnedOpen
-                    if (islandWin.userPinnedOpen) autoCollapseTimer.restart()
+                    if (islandWin.expanded) {
+                        islandWin.isHoverExpanded = false
+                        islandWin.userPinnedOpen = false
+                        if (DynamoController) DynamoController.islandExpanded = false
+                    } else {
+                        islandWin.isHoverExpanded = true
+                        if (DynamoController) DynamoController.islandExpanded = true
+                    }
                 }
             }
         }
@@ -3236,8 +3250,14 @@ Window {
                     islandWin.checkHoverState()
                 }
                 onClicked: {
-                    islandWin.userPinnedOpen = !islandWin.userPinnedOpen
-                    if (islandWin.userPinnedOpen) autoCollapseTimer.restart()
+                    if (islandWin.expanded) {
+                        islandWin.isHoverExpanded = false
+                        islandWin.userPinnedOpen = false
+                        if (DynamoController) DynamoController.islandExpanded = false
+                    } else {
+                        islandWin.isHoverExpanded = true
+                        if (DynamoController) DynamoController.islandExpanded = true
+                    }
                 }
             }
         }
@@ -4110,8 +4130,14 @@ Window {
                     islandWin.checkHoverState()
                 }
                 onClicked: {
-                    islandWin.userPinnedOpen = !islandWin.userPinnedOpen
-                    if (islandWin.userPinnedOpen) autoCollapseTimer.restart()
+                    if (islandWin.expanded) {
+                        islandWin.isHoverExpanded = false
+                        islandWin.userPinnedOpen = false
+                        if (DynamoController) DynamoController.islandExpanded = false
+                    } else {
+                        islandWin.isHoverExpanded = true
+                        if (DynamoController) DynamoController.islandExpanded = true
+                    }
                 }
             }
         }
@@ -4262,7 +4288,9 @@ Window {
                     }
                     // Click in top notch area toggles/collapses back to Menu Bar
                     if (mouse.y <= (islandWin.centerNotchHeight + 10) && Math.abs(mouse.x - (width / 2.0)) <= (islandWin.centerNotchWidth / 2.0 + 30)) {
-                        islandWin.userPinnedOpen = !islandWin.userPinnedOpen
+                        islandWin.isHoverExpanded = false
+                        islandWin.userPinnedOpen = false
+                        if (DynamoController) DynamoController.islandExpanded = false
                         return
                     }
                     if (expandedControlsRow.visible) {
@@ -4270,8 +4298,6 @@ Window {
                         if (p.x >= 0 && p.y >= 0 && p.x <= expandedControlsRow.width && p.y <= expandedControlsRow.height)
                             return
                     }
-                    // Pin island open cleanly without opening the main MacLink app window
-                    islandWin.userPinnedOpen = true
                 }
             }
 
@@ -4291,7 +4317,6 @@ Window {
                 activeTab: islandWin.activeTab
                 onHomeClicked: {
                     islandWin.activeTab = "home"
-                    islandWin.userPinnedOpen = true
                 }
                 onMoreClicked: (mouse) => {
                     morePopover.isOpen = !morePopover.isOpen
@@ -4300,7 +4325,6 @@ Window {
                     editSheet.isOpen = true
                 }
                 onToolSelected: (toolId) => {
-                    islandWin.userPinnedOpen = true
                     if (toolId === "music") islandWin.activeTab = "media"
                     else if (toolId === "home") islandWin.activeTab = "home"
                     else if (toolId === "launcher") islandWin.activeTab = "launcher"
@@ -5870,7 +5894,14 @@ Window {
                         height: Math.max(60, parent.height - 38)
                         clip: true
                         spacing: 4
+                        interactive: true
+                        flickableDirection: Flickable.VerticalFlick
                         boundsBehavior: Flickable.StopAtBounds
+
+                        WheelHandler {
+                            target: clipListView
+                            orientation: Qt.Vertical
+                        }
 
                         ScrollBar.vertical: ScrollBar {
                             id: clipScrollBar
@@ -5964,7 +5995,9 @@ Window {
                                 anchors.fill: parent
                                 hoverEnabled: true
                                 cursorShape: Qt.PointingHandCursor
-                                z: -1
+                                preventStealing: false
+                                propagateComposedEvents: true
+                                z: 0
                                 onClicked: {
                                     DynamoController.copyClipboardEntry(modelData.id)
                                     islandClipboardView.copiedFeedback = qsTr("Copied to clipboard!")

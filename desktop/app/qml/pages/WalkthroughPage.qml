@@ -64,7 +64,7 @@ FocusScope {
     ]
 
     readonly property var stepSubtitles: [
-        qsTr("Install MacLink on Android and scan the QR code to pair over local Wi-Fi."),
+        qsTr("Install Nexora on Android and scan the QR code to pair over local Wi-Fi."),
         qsTr("Configure notifications, universal clipboard, and file sharing."),
         qsTr("Your devices are connected with zero cloud dependencies and 100% direct encryption.")
     ]
@@ -454,7 +454,7 @@ FocusScope {
                                     elide: Text.ElideRight
                                 }
                                 Txt {
-                                    text: walkthrough.hasPairedDevice ? qsTr("Connected (LAN Direct)") : qsTr("Open MacLink App")
+                                    text: walkthrough.hasPairedDevice ? qsTr("Connected (LAN Direct)") : qsTr("Open Nexora App")
                                     role: "code"
                                     size: 10
                                     color: walkthrough.hasPairedDevice ? "#22c55e" : Theme.surfaceContentVariant
@@ -519,7 +519,7 @@ FocusScope {
 
                                 Txt {
                                     Layout.fillWidth: true
-                                    text: qsTr("Download MacLink Android APK (Android 8.0+)")
+                                    text: qsTr("Download Nexora Android APK (Android 8.0+)")
                                     role: "title"
                                     wrapMode: Text.WordWrap
                                 }
@@ -900,7 +900,7 @@ FocusScope {
                                 spacing: 8
                                 Icon { path: Icons.check; width: 18; height: 18; color: "#22c55e" }
                                 Txt {
-                                    text: qsTr("MacLink Engine is Ready")
+                                    text: qsTr("Nexora Engine is Ready")
                                     role: "title"
                                 }
                             }
@@ -1011,7 +1011,7 @@ FocusScope {
 
             Button {
                 text: walkthrough.step === walkthrough.totalSteps - 1
-                    ? qsTr("Start Using MacLink")
+                    ? qsTr("Start Using Nexora")
                     : (walkthrough.step === 0 ? qsTr("Get Started") : qsTr("Next"))
                 iconPath: walkthrough.step === walkthrough.totalSteps - 1 ? Icons.check : Icons.chevronRight
                 variant: "fill"

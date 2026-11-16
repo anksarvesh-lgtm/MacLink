@@ -364,7 +364,7 @@ Item {
         },
         {
             id: "maclink_island",
-            name: "MacLink Island & Notch Dynamo",
+            name: "Nexora Island & Notch Dynamo",
             icon: Icons.island,
             area: "surfaces",
             capKey: "",
@@ -574,12 +574,12 @@ Item {
         if (id === "maclink_island" || id === "dynamo")
             return { from: qsTr("Hardware Notch"), to: qsTr("Desktop / Apps"), badge: qsTr("Dynamic Island HUD"), icon: Icons.island, color: Theme.primary }
         if (id === "command_palette")
-            return { from: qsTr("Command Palette (⌘K)"), to: qsTr("MacLink Actions"), badge: qsTr("Action Runner"), icon: Icons.terminal, color: Theme.primary }
+            return { from: qsTr("Command Palette (⌘K)"), to: qsTr("Nexora Actions"), badge: qsTr("Action Runner"), icon: Icons.terminal, color: Theme.primary }
         if (id === "wol")
             return { from: qsTr("Phone Network"), to: qsTr("Mac Ethernet/Wi-Fi"), badge: qsTr("Wake-on-LAN Packet"), icon: Icons.power, color: Theme.primary }
         if (id === "doctor")
             return { from: qsTr("System Diagnostics"), to: qsTr("Local Network & QUIC"), badge: qsTr("Firewall Doctor"), icon: Icons.refresh, color: Theme.primary }
-        return { from: qsTr("MacLink Host"), to: qsTr("Android Node"), badge: qsTr("QUIC TLS 1.3 P2P"), icon: Icons.bolt, color: Theme.primary }
+        return { from: qsTr("Nexora Host"), to: qsTr("Android Node"), badge: qsTr("QUIC TLS 1.3 P2P"), icon: Icons.bolt, color: Theme.primary }
     }
 
     ColumnLayout {

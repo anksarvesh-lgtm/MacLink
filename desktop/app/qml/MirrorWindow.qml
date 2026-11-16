@@ -22,7 +22,7 @@ Window {
 
     visible: true
     title: info.app ? qsTr("%1 · %2").arg(info.title).arg(deviceName)
-         : deviceName.length > 0 ? qsTr("%1 · MacLink").arg(deviceName) : qsTr("Phone screen · MacLink")
+         : deviceName.length > 0 ? qsTr("%1 · Nexora").arg(deviceName) : qsTr("Phone screen · Nexora")
     color: "black"
     minimumWidth: 240
     minimumHeight: 240
@@ -477,7 +477,7 @@ Window {
             wrapMode: Text.WordWrap
             role: "bodySmall"
             color: "white"
-            text: qsTr("To control the phone, turn on Control from your Mac in MacLink's settings on the phone.")
+            text: qsTr("To control the phone, turn on Control from your Mac in Nexora's settings on the phone.")
         }
         Button {
             id: notifyPhoneBtn

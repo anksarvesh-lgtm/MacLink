@@ -18,7 +18,7 @@ Item {
     implicitHeight: 120
 
     Accessible.role: Accessible.Graphic
-    Accessible.name: qsTr("MacLink Removal")
+    Accessible.name: qsTr("Nexora Removal")
 
     Rectangle {
         anchors.centerIn: parent

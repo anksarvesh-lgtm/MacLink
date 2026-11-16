@@ -598,7 +598,7 @@ Item {
                             width: parent.width
                             iconPath: Icons.globe
                             title: qsTr("Language")
-                            description: qsTr("MacLink follows macOS unless you pick one.")
+                            description: qsTr("Nexora follows macOS unless you pick one.")
                             Segmented {
                                 readonly property var other: page.languages.find(
                                     (l) => l.code === Preferences.language && l.code !== "en")
@@ -636,7 +636,7 @@ Item {
                                 y: startupPairRow.splitCols ? Math.round((parent.height - height) / 2) : 0
                                 width: startupPairRow.colWidth
                                 iconPath: Icons.power
-                                title: qsTr("Start MacLink at login")
+                                title: qsTr("Start Nexora at login")
                                 description: Preferences.loginItemStatus === 2
                                     ? qsTr("Requires approval in System Settings → Login Items.")
                                     : qsTr("Launch in the menu bar when you log in.")
@@ -650,7 +650,7 @@ Item {
                                 }
                                 Toggle {
                                     visible: Preferences.loginItemStatus !== 2
-                                    label: qsTr("Start MacLink at login")
+                                    label: qsTr("Start Nexora at login")
                                     checked: Preferences.loginItemStatus === 1
                                     onToggled: (on) => Preferences.toggleLoginItem()
                                 }
@@ -707,10 +707,10 @@ Item {
                                 y: islandBatteryPairRow.splitCols ? Math.round((parent.height - height) / 2) : 0
                                 width: islandBatteryPairRow.colWidth
                                 iconPath: Icons.island
-                                title: qsTr("MacLink Island")
+                                title: qsTr("Nexora Island")
                                 description: qsTr("Top-screen pill for calls, transfers & media.")
                                 Toggle {
-                                    label: qsTr("MacLink Island")
+                                    label: qsTr("Nexora Island")
                                     checked: Preferences.maclinkIsland
                                     onToggled: (on) => Preferences.maclinkIsland = on
                                 }
@@ -2591,7 +2591,7 @@ Item {
                         ListRow {
                             width: parent.width
                             iconPath: Icons.desktop
-                            title: qsTr("MacLink %1").arg(AppController.version)
+                            title: qsTr("Nexora %1").arg(AppController.version)
                             description: AppController.updateStatus.length > 0
                                          ? AppController.updateStatus
                                          : qsTr("This Mac: %1").arg(AppController.deviceName)
@@ -2744,7 +2744,7 @@ Item {
                                 RowLayout {
                                     spacing: 8
                                     Txt {
-                                        text: qsTr("MacLink")
+                                        text: qsTr("Nexora")
                                         role: "title"
                                         size: 16
                                     }
@@ -2787,7 +2787,7 @@ Item {
                             ColumnLayout {
                                 spacing: 2
                                 Txt { text: qsTr("Application Version"); role: "caption"; color: Theme.surfaceContentVariant }
-                                Txt { text: "MacLink v" + AppController.version + " (Universal)"; role: "bodySmall"; weight: 600 }
+                                Txt { text: "Nexora v" + AppController.version + " (Universal)"; role: "bodySmall"; weight: 600 }
                             }
 
                             ColumnLayout {
@@ -2825,7 +2825,7 @@ Item {
 
                             Txt {
                                 Layout.fillWidth: true
-                                text: qsTr("What's New in MacLink")
+                                text: qsTr("What's New in Nexora")
                                 role: "title"
                                 size: 14
                             }
@@ -2924,7 +2924,7 @@ Item {
                         ListRow {
                             width: parent.width
                             iconPath: Icons.island
-                            title: qsTr("MacLink Dynamic Island & Notch Wings")
+                            title: qsTr("Nexora Dynamic Island & Notch Wings")
                             description: qsTr("Anchor hardware camera notch status island with live CPU flame and RAM track wings.")
                             Toggle {
                                 checked: Preferences.maclinkIsland
@@ -3084,7 +3084,7 @@ Item {
                 role: "body"
                 muted: true
                 text: hotspotSheet.networks.length > 0
-                    ? qsTr("Wi-Fi networks this Mac has joined before. macOS keeps their passwords; MacLink never sees them.")
+                    ? qsTr("Wi-Fi networks this Mac has joined before. macOS keeps their passwords; Nexora never sees them.")
                     : qsTr("This Mac hasn't saved any Wi-Fi networks yet. Join the phone's hotspot once from Wi-Fi settings first.")
             }
             // A PC can have saved dozens of networks: the list scrolls.
